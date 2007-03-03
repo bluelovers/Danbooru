@@ -30,7 +30,7 @@ module LoginSystem
 	end
 
 	def mod_only
-		if current_user.role?(:mod) rescue false
+		if (current_user.role?(:mod) rescue false)
 			return true
 		else
 			access_denied
@@ -39,7 +39,7 @@ module LoginSystem
 	end
 
 	def admin_only
-		if current_user.role?(:admin) rescue false
+		if (current_user.role?(:admin) rescue false)
 			return true
 		else
 			access_denied
@@ -48,7 +48,7 @@ module LoginSystem
 	end
 
 	def user_only
-		if current_user.role?(:member) rescue false
+		if (current_user.role?(:member) rescue false)
 			return true
 		else
 			access_denied
@@ -57,7 +57,7 @@ module LoginSystem
 	end
 
 	def user_only_api
-		if current_user.role?(:member) rescue false
+		if (current_user.role?(:member) rescue false)
 			return true
 		else
 			render :text => "Only registered users can use this feature", :status => 403
