@@ -30,6 +30,9 @@ module TagHelper
 		html << link_to("+", :controller => "post", :action => "list", :tags => name + " " + @params["tags"].to_s) << " "
 		html << link_to("&ndash;", :controller => "post", :action => "list", :tags => "-" + name + " " + @params["tags"].to_s) << " "
 		html << link_to(name, :controller => "post", :action => "list", :tags => name) << " "
+		if Tag.type(name) == Tag::TYPE_ARTIST
+			html << '<span class="artist-tag">(artist)</span> '
+		end
 		html << content_tag("span", count.to_s, :class => "post-count")
 
 		return html
