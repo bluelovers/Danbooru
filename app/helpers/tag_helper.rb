@@ -29,7 +29,7 @@ module TagHelper
 		html << link_to("?", :controller => "wiki", :action => "view", :title => name) << " "
 		html << link_to("+", :controller => "post", :action => "list", :tags => name + " " + @params["tags"].to_s) << " "
 		html << link_to("&ndash;", :controller => "post", :action => "list", :tags => "-" + name + " " + @params["tags"].to_s) << " "
-		html << link_to(name, :controller => "post", :action => "list", :tags => name) << " "
+		html << link_to(name.tr("_", " "), :controller => "post", :action => "list", :tags => name) << " "
 		if Tag.type(name) == Tag::TYPE_ARTIST
 			html << '<span class="artist-tag">(artist)</span> '
 		end
