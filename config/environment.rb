@@ -67,10 +67,7 @@ require 'uri'
 require 'arch'
 require 'acts_as_versioned'
 require 'local_config'
-require 'filemagic'
-require 'mimetypes'
-require 'memcache'
 
-CACHE = MemCache.new("localhost:11211", :c_threshold => 10_000, :debug => false, :namespace => "danbooru", :readonly => false, :urlencode => false, :compression => true)
-ActionController::Base.session_options[:expires] = 1800
-ActionController::Base.session_options[:cache] = CACHE
+#CACHE = MemCache.new("localhost:11211", :c_threshold => 10_000, :debug => false, :namespace => "danbooru", :readonly => false, :urlencode => false, :compression => true)
+#ActionController::Base.session_options[:expires] = 1800
+#ActionController::Base.session_options[:cache] = CACHE
