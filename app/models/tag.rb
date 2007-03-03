@@ -14,6 +14,10 @@ class Tag < ActiveRecord::Base
 		end
 	end
 
+	def self.type(name)
+		return connection.select_value(sanitize_sql(["SELECT tag_type FROM tags WHERE name = ?", name])).to_i
+	end
+
 	def self.find_or_create_by_name(name)
 		tag_type = TYPE_GENERAL
 

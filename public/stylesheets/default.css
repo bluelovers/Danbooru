@@ -695,3 +695,7 @@ ul.tag-explore li {
 div#tag-explore img {
 	margin: 1em;
 }
+
+span.artist-tag {
+	color: #f66;
+}
