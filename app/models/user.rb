@@ -1,7 +1,7 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
-	before_create :auto_admin
+	before_create :set_role
 	before_create :crypt_password
 	before_validation_on_update :crypt_unless_empty
 	validates_confirmation_of :password
@@ -9,10 +9,10 @@ class User < ActiveRecord::Base
 	class AlreadyFavoritedError < Exception; end
 	
 	# Users are in one of six possible roles:
-	ROLE_BLOCKED 	= 1
-	ROLE_MEMBER		= 2
-	ROLE_MOD		= 10
-	ROLE_ADMIN		= 20
+	LEVEL_BLOCKED 	= 1
+	LEVEL_MEMBER	= 2
+	LEVEL_MOD		= 10
+	LEVEL_ADMIN		= 20
 
 	# Please change the salt to something else, every application should use a different one
 	@@salt = 'choujin-steiner'
@@ -22,9 +22,11 @@ class User < ActiveRecord::Base
 		return connection.select_value("SELECT row_count FROM table_data WHERE name = 'users'").to_i
 	end
 
-	def auto_admin
+	def set_role
 		if User.fast_count == 0
-			self.level = ROLE_ADMIN
+			self.level = LEVEL_ADMIN
+		else
+			self.level = LEVEL_MEMBER
 		end
 	end
 
@@ -91,12 +93,7 @@ class User < ActiveRecord::Base
 
 	# Authenticate a user against a hashed password. Note that the password must be salted!
 	def self.authenticate_hash(name, pass)
-		u = find_first(["lower(name) = lower(?) AND password = ?", name, pass])
-		if u and u.active?
-			return u
-		else
-			return nil
-		end
+		find_first(["lower(name) = lower(?) AND password = ?", name, pass])
 	end
 
 	def self.find_people_who_favorited(post_id)

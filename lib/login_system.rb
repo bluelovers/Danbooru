@@ -6,7 +6,7 @@ module LoginSystem
 		if api_request?
 			render :text => "Access denied", :status => 403
 		else
-			flash["notice"] = "Access denied"
+			flash[:notice] = "Access denied"
 			redirect_to :controller => "account", :action => "login"
 		end
 	end

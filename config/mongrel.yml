@@ -9,11 +9,11 @@
 :debug: false
 :mime_map: 
 :user: 
-:port: "8020"
+:port: "8030"
 :group: 
 :daemon: true
 :prefix: 
-:cwd: /home/albert/danbooru
+:cwd: /var/www/sites/miezaru
 :includes: 
 - mongrel
 :log_file: log/mongrel.log

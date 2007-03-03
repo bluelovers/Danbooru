@@ -12,6 +12,8 @@ class AccountController < ApplicationController
 	public
 	def index
 		set_title "My Account"
+
+		@user = current_user()
 	end
 
 	def login

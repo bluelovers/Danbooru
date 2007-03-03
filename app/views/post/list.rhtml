@@ -42,7 +42,7 @@
 
 		<div id="footer">
 			<a href="/post/add" title="Upload new posts">Add</a> | <a href="/post/atom/tags/<%= @params['tags'] %>" title="Atom feed">Atom</a> | <a href="/post/popular">Popular</a> | <%= link_to "My Favorites", :controller => "account", :action => "favorites", :id => @user.id %>
-<% if @user.mod? %>
+<% if @user.role?(:mod) %>
 	| <a href="/post/queue">Queue</a>
 <% end %>
 		</div>

@@ -1,6 +1,6 @@
 <div id="account-index">
-	<%- if session[:user] -%>
-		<h2>Namasté <%= session[:user].name %>!</h2>
+	<%- if @user -%>
+		<h2>Namasté <%= @user.name %>!</h2>
 		<p>From here you can access account-specific options and features.</p>
 
 		<h4><a href="/account/logout">&raquo; Logout</a></h4>
@@ -9,7 +9,7 @@
 		<h4><a href="/account/change_password">&raquo; Change Password</a></h4>
 		<p>Change your password.</p>
 
-		<h4><%= link_to "&raquo; My Favorites", :controller => "account", :action => "favorites", :id => session[:user].id %></h4>
+		<h4><%= link_to "&raquo; My Favorites", :controller => "account", :action => "favorites", :id => @user.id %></h4>
 		<p>View and manage your favorite posts.</p>
 	<%- else -%>
 		<h2>You are not logged in.</h2>
