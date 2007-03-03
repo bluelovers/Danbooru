@@ -20,7 +20,7 @@ class CommentController < ApplicationController
 		@comment = Comment.new
 		@comment.post_id = params["comment"]["post_id"]
 		@comment.user_id = current_user().id rescue nil
-		@comment.user_id = nil if params["comment"]["anonymous"] != "1"
+		@comment.user_id = nil if params["comment"]["anonymous"] == "1"
 		@comment.body = params["comment"]["body"]
 		@comment.ip_addr = request.remote_ip
 
