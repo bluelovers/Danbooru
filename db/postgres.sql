@@ -475,7 +475,8 @@ CREATE TABLE users (
     id integer NOT NULL,
     name text NOT NULL,
     "password" text NOT NULL,
-    "level" integer DEFAULT 0 NOT NULL
+    "level" integer DEFAULT 0 NOT NULL,
+	login_count integer DEFAULT 0 NOT NULL
 );
 
 

@@ -8,8 +8,6 @@ module Votable
 		def votable(options = {})
 			class_eval do
 				include Votable::InstanceMethods
-
-				class AlreadyVotedError < Exception; end
 			end
 		end
 	end
@@ -17,10 +15,12 @@ module Votable
 	module InstanceMethods
 		def vote!(score, ip_addr)
 			if self.last_voter_ip == ip_addr
-				raise AlreadyVotedError
+				return false
 			else
 				self.update_attributes(:score => self.score + score, :last_voter_ip => ip_addr)
 			end
+
+			return true
 		end
 	end
 end
