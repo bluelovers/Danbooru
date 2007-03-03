@@ -4,14 +4,14 @@ class Comment < ActiveRecord::Base
 	belongs_to :user
 	after_create :update_last_commented_at
 
-	def mark_as_noise!
+	def spam!
 		connection.execute("UPDATE comments SET signal_level = 0 WHERE id = #{id}")
 		if connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{post_id} AND signal_level <> 0").to_i == 0
 			connection.execute("UPDATE posts SET last_commented_at = NULL WHERE id = #{post_id}")
 		end
 	end
 
-	def mark_as_signal!
+	def accept!
 		connection.execute("UPDATE comments SET signal_level = 2 WHERE id = #{id}")
 		connection.execute(Comment.sanitize_sql(["UPDATE posts SET last_commented_at = ? WHERE id = #{post_id}", Time.now]))
 	end

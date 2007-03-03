@@ -34,7 +34,7 @@ class NoteController < ApplicationController
 		note = Note.find(params["id"])
 
 		if note.locked?
-			render :text => "This post is locked and notes cannot be altered.", :status => 500
+			render :text => "This post is locked and notes cannot be altered", :status => 500
 			return
 		end
 
@@ -42,7 +42,7 @@ class NoteController < ApplicationController
 		note.ip_addr = request.remote_ip
 
 		if note.save_without_revision
-			redirect_to :controller => "post", :action => "view", :id => note.post_id
+			render :nothing => true
 		else
 			render_error(note)
 		end
@@ -62,8 +62,7 @@ class NoteController < ApplicationController
 		end
 
 		note.attributes = params["note"]
-		note.user_id = nil
-		note.user_id = session[:user].id if session[:user]
+		note.user_id = current_user().id rescue nil
 		note.ip_addr = request.remote_ip
 
 		if note.save
@@ -78,7 +77,7 @@ class NoteController < ApplicationController
 		note = Note.find(params['id'])
 
 		if note.locked?
-			render :text => "This post is locked and notes cannot be altered.", :status => 500
+			render :text => "This post is locked and notes cannot be altered", :status => 500
 			return
 		end
 

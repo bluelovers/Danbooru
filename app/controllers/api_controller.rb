@@ -18,14 +18,13 @@ class ApiController < ApplicationController
 #
 # === Notes
 # * The only necessary parameter is +tags+ and either +file+ or +source+.
-# * If you want to sign your post, you need a way to authenticate your account, either by supplying +login+ and +password+, or by supplying a cookie.
 # * If an account is not supplied or if it doesn't authenticate, he post will be added anonymously.
 # * If the md5 parameter is supplied and does not match the hash of what's on the server, the post is rejected.
 #
 # === Response
 # * X-Danbooru-Location set to the URL for newly uploaded post.
 	def add_post
-		if !CONFIG["allow_anonymous_posts"] && session[:user].nil?
+		if !CONFIG["allow_anonymous_posts"] && current_user() == nil
 			render :text => "You must be logged in to upload posts", :status => 403
 			return
 		end
@@ -39,7 +38,7 @@ class ApiController < ApplicationController
 		@post.file = params["file"]
 		@post.source = params["source"]
 		@post.ip_addr = request.remote_ip
-		@post.user_id = session[:user].id if session[:user]
+		@post.user_id = current_user().id rescue nil
 		@post.rating = params["rating"]
 
 		if @post.save
@@ -93,8 +92,7 @@ class ApiController < ApplicationController
 		end
 	end
 
-# Find all posts that match the search criteria. 
-# Posts will be ordered by id descending.
+# Find all posts that match the search criteria. Posts will be ordered by id descending.
 #
 # === Parameters
 # * md5: md5 hash to search for (comma delimited)
@@ -223,7 +221,7 @@ class ApiController < ApplicationController
 # * 200: success
 # * 500: error. response body will the the error message.
 	def add_comment
-		c = Comment.new(:body => params["body"], :post_id => params["post_id"], :user_id => session[:user] ? session[:user].id : nil)
+		c = Comment.new(:body => params["body"], :post_id => params["post_id"], :user_id => (current_user().id rescue nil))
 		if c.save
 			render :nothing => true
 		else
@@ -240,7 +238,7 @@ class ApiController < ApplicationController
 		if c.signal_level == 2
 			render :text => "This comment has already been marked", :status => 500
 		else
-			c.mark_as_noise!
+			c.spam!
 			render :nothing => true
 		end
 	end
@@ -303,9 +301,10 @@ class ApiController < ApplicationController
 	end
 
 	def add_favorite
-		if session[:user]
+		user = current_user()
+		if user
 			begin
-				session[:user].add_favorite(params["id"])
+				user.add_favorite(params["id"])
 				render :nothing => true
 			rescue User::AlreadyFavoritedError
 				render :text => "duplicate", :status => 409
@@ -316,8 +315,9 @@ class ApiController < ApplicationController
 	end
 
 	def del_favorite
-		if session[:user]
-			session[:user].del_favorite params["id"]
+		user = current_user()
+		if user
+			user.del_favorite(params["id"])
 			render :nothing => true
 		else
 			render :text => "not logged in", :status => 403

@@ -13,7 +13,7 @@
 	</tr>
 <% end %>
 	<tr>
-		<td colspan="3"><%= button_to_function "Select all", "document.getElementsByClassName('c').each(function (i) {i.checked = true}); return false" %> <%= button_to_function "Invert selection", "document.getElementsByClassName('c').each(function (i) {i.checked = !i.checked}); return false" %> <%= submit_tag "Mark as signal" %> <%= submit_tag "Delete" %></td>
+		<td colspan="3"><%= button_to_function "Select all", "document.getElementsByClassName('c').each(function (i) {i.checked = true}); return false" %> <%= button_to_function "Invert selection", "document.getElementsByClassName('c').each(function (i) {i.checked = !i.checked}); return false" %> <%= submit_tag "Accept" %> <%= submit_tag "Delete" %></td>
 	</tr>
 </table>
 </form>

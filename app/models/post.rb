@@ -1,7 +1,6 @@
 class Post < ActiveRecord::Base
 	before_validation_on_create :auto_download
 	before_validation_on_create :generate_hash
-	before_validation_on_create :check_mime_type
 	before_validation_on_create :rename_file
 	before_validation_on_create :get_image_dimensions
 	before_validation_on_create :generate_preview
@@ -13,8 +12,6 @@ class Post < ActiveRecord::Base
 	has_many :notes, :order => "id desc"
 	has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories"
 	belongs_to :user
-
-	include MimeTypes
 
 	def self.fast_count(tags = nil)
 		if tags.blank?
@@ -119,7 +116,7 @@ class Post < ActiveRecord::Base
 
 		begin
 			img = Net::HTTP.get(URI.parse(source))
-			self.file_ext = File.extname(source)[1..-1]
+			self.file_ext = find_ext(source)
 			File.open(tempfile_path, 'wb') do |out|
 				out.write(img)
 			end
@@ -134,7 +131,7 @@ class Post < ActiveRecord::Base
 	def file=(f)
 		return if f.nil? || f.size == 0
 
-		self.file_ext = File.extname(f.original_filename)[1..-1].downcase
+		self.file_ext = find_ext(f.original_filename)
 
 		if f.local_path
 			# Large files are stored in the temp directory, so instead of
@@ -360,6 +357,16 @@ class Post < ActiveRecord::Base
 
 		when "s"
 			return "Safe"
+		end
+	end
+
+	protected
+	def find_ext(file_path)
+		ext = File.extname(file_path)
+		if ext.blank?
+			return "txt"
+		else
+			return ext[1..-1].downcase
 		end
 	end
 end

@@ -36,7 +36,7 @@ class Note < ActiveRecord::Base
 	end
 
 	def locked?
-		if "t" == connection.select_value("SELECT is_note_locked FROM posts WHERE id = #{post_id}")
+		if connection.select_value("SELECT 1 FROM posts WHERE id = #{post_id} AND is_note_locked = TRUE")
 			return true
 		else
 			return false

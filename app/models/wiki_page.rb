@@ -1,7 +1,7 @@
 class WikiPage < ActiveRecord::Base
 	acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
 	before_save :make_title_canonical
-	belongs_to :creator, :class_name => "Account", :foreign_key => "creator_id"
+	belongs_to :user
 
 	TAG_DEL = '<del>'
 	TAG_INS = '<ins>'
@@ -23,7 +23,7 @@ class WikiPage < ActiveRecord::Base
 	end
 
 	def author
-		self.creator.name rescue CONFIG["default_guest_name"]
+		self.user.name rescue CONFIG["default_guest_name"]
 	end
 
 	def pretty_title

@@ -15,7 +15,7 @@ class Tag < ActiveRecord::Base
 	end
 
 	def self.find_or_create_by_name(name)
-		tag_type = 0
+		tag_type = TYPE_GENERAL
 
 		if name =~ /^artist:/
 			name.gsub!(/^artist:/, '')
@@ -30,7 +30,10 @@ class Tag < ActiveRecord::Base
 
 		t = Tag.find_by_name(name)
 		if t
-				return t
+			if t.tag_type != tag_type
+				connection.execute("UPDATE tags SET tag_type = #{tag_type} WHERE id = #{t.id}")
+			end
+			return t
 		end
 
 		connection.execute(Tag.sanitize_sql(["INSERT INTO tags (name, tag_type) VALUES (?, ?)", name, tag_type]))
