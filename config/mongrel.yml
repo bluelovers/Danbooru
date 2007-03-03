@@ -1,0 +1,20 @@
+--- 
+:environment: production
+:pid_file: log/mongrel.pid
+:config_file: 
+:num_processors: 1024
+:docroot: public
+:timeout: 0
+:host: 127.0.0.1
+:debug: false
+:mime_map: 
+:user: 
+:port: "8020"
+:group: 
+:daemon: true
+:prefix: 
+:cwd: /home/albert/danbooru
+:includes: 
+- mongrel
+:log_file: log/mongrel.log
+:config_script: 

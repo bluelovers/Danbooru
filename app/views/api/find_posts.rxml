@@ -1,0 +1,6 @@
+xml.instruct!
+xml.posts do
+	for post in @posts
+		xml.post(:id => post.id, :tags => h(post.cached_tags), :md5 => post.md5, :source => h(post.source), :file_name => post.file_name, :rating => post.pretty_rating, :author => h(post.author), :date => post.created_at, :score => post.score, :is_warehoused => post.is_warehoused)
+	end
+end

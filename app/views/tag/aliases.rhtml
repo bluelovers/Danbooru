@@ -1,0 +1,23 @@
+<%= form_tag "/tag/create_alias", :id => "create-alias" %>
+	<table>
+		<tr>
+			<th>Alias</th>
+			<th>To</th>
+			<th></th>
+		</tr>
+		<tr class="<%= cycle 'even', 'odd' %>">
+			<td><%= text_field_tag "name" %></td>
+			<td><%= text_field_tag "alias" %></td>
+			<td><%= submit_tag "Add" %></td>
+		</tr>
+		<%- @aliases.each do |s| -%>
+			<tr class="<%= cycle 'even', 'odd' %>">
+				<td><%= s.name %></td>
+				<td><%= Tag.find(s.alias_id).name %></td>
+				<td><%= link_to_function "Remove", "notice('Removing...'); new Ajax.Request('/tag/remove_alias', {parameters: 'name=#{s.name}', asynchronous: true, method: 'post', onComplete: function(req) {window.location.reload(true)}})" %></td>
+			</tr>
+		<%- end -%>
+	</table>
+<%= end_form_tag %>
+
+<%= render :partial => "footer" %>

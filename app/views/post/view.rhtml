@@ -1,0 +1,145 @@
+<script src="/javascripts/notes.js" type="text/javascript"></script>
+
+<div id="post-view">
+<%- if @post.nil? -%>
+	<h2>Nobody here but us chickens!</h2>
+<%- else -%>
+	<div class="sidebar">
+		<%= render :partial => 'search' %>
+		<%= render :partial => 'tags' %>
+		<div id="stats">
+			<h5>Statistics</h5>
+			<ul>
+				<li>Score: <%= @post.score %> (vote <a href="#" onclick="vote('up', <%= @post.id %>); return false">up</a>/<a href="#" onclick="vote('down', <%= @post.id %>); return false">down</a>)</li>
+				<li>Favorites: <a href="/post/view_favorites/<%= @post.id %>"> <%= pluralize @post.fav_count, "person" %></a></li>
+			</ul>
+		</div>
+		<div style="margin-top: 1em;">
+			<h5>Ads</h5>
+			<ul class="ad-list">
+				<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/search/magami_magazine">Megami Magazine</a></li>
+				<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/PHOTOBOOKS">Photobooks</a></li>
+				<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/HENTAI">Dating-Sim Games</a></li>
+				<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/MANGA">Doujinshi</a></li>
+				<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/DVD/DVOT_1.html">Adult DVDs</a></li>
+			</ul>
+			<a href="http://affiliates.jlist.com/click/1144" target="_blank" title="Visit J-List now"><img src="http://affiliates.jlist.com/media/1144/70" width="140" height="187" alt="Over 2000 adult and other products from Japan -- click now!"></a>
+		</div>
+<!--
+		<div style="margin-top: 1em;">
+			<h5>Affiliates</h5>
+			<ul class="ad-list">
+				<li><a href="http://browsehentai.com">BrowseHentai! (free)</a></li>
+			</ul>
+		</div>
+-->
+	</div>
+
+	<div class="content">
+		<div style="position: relative;">
+			<%- if @post.image? -%>
+				<div id="note-container">
+					<%- @post.notes.active.each do |note| -%>
+						<div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
+							<div class="note-corner" id="note-corner-<%= note.id %>"></div>
+						</div>
+
+						<div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= note.body %></div>
+					<%- end -%>
+				</div>
+				<%= image_tag(@post.file_url, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
+			<%- elsif @post.flash? -%>
+				<object width="<%= @post.width %>" height="<%= @post.height %>">
+					<param name="movie" value="<%= @post.file_url %>"/>
+					<embed src="<%= @post.file_url %>" width="<%= @post.width %>" height="<%= @post.height %>" allowScriptAccess="never">
+					</embed>
+				</object>
+
+				<p><%= link_to "Save this flash (right-click and save)", @post.file_url %></p>
+			<%- else -%>
+				<h2><a href="<%= @post.file_url %>">Download</a></h2>
+				<p>You must download this file manually.</p>
+			<%- end -%>
+		</div>
+
+		<div class="space">
+			<p id="poster">
+				Posted on <a href="/post/popular/<%= @post.created_at.month %>/<%= @post.created_at.day %>/<%= @post.created_at.year %>"><%= @post.created_at.strftime("%D %I:%M") %></a> by <a href="/post/list/tags/user%3A<%= escape_tags(@post.author) %>"><%= @post.author %></a>
+				<%- unless @post.source.blank? -%>
+					<%- if @post.source[/^http/] -%>
+						(<a href="/static/redirect?url=<%= h(@post.source) %>">source</a>)
+					<%- else -%>
+						(source: <%= @post.source %>)
+					<%- end -%>
+				<%- end -%>
+			</p>
+			<p id="note-count"></p>
+			<script type="text/javascript">
+			//<![CDATA[
+				Note.post_id = <%= @post.id %>
+
+				<%- @post.notes.active.each do |note| -%>
+					Note.all.push(new Note(<%= note.id %>, false))
+				<%- end -%>
+
+				Note.updateNoteCount()
+				Note.show()
+			//]]>
+			</script>
+
+			<p id="post_menu">
+				<a href="/post/remove/<%= @post.id %>">Remove</a>
+				<%- if @post.image? -%>
+					<strong class="divider">|</strong>
+					<a href="#" onclick="Note.create(<%= @post.id %>); return false" title="Add a translation note">Add Translation</a>
+				<%- end -%>
+				<strong class="divider">|</strong>
+				<a href="#" onclick="addFavorite(<%= @post.id %>); return false" title="Add to favorites">Add to Favorites</a>
+				<strong class="divider">|</strong>
+				<a href="#" onclick="Element.toggle('edit'); return false" title="Edit this post">Edit</a>
+				<strong class="divider">|</strong>
+				<a href="/note/history_for_post/<%= @post.id %>" title="View note history">Note History</a>
+				<strong class="divider">|</strong>
+				<a href="/post/tag_history/<%= @post.id %>">Tag History</a>
+				<strong class="divider">|</strong>
+				<a href="/post/moderate/<%= @post.id %>">Moderate</a>
+			</p>
+		</div>
+
+		<div id="edit" class="space">
+			<%= form_tag(:controller => "post", :action => "change", :id => @post.id) %>
+				<div class="option">
+					<label class="block" for="post_rating_questionable">Rating</label>
+					<%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> <label for="post_rating_explicit">Explicit</label> <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %> <label for="post_rating_questionable">Questionable</label> <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> <label for="post_rating_safe">Safe</label>
+				</div>
+				<div class="option">
+					<label class="block" for="post_source">Source</label>
+					<%= text_field "post", "source", :size => 40 %>
+				</div>
+				<div class="option">
+					<label class="block" for="post_tags">Tags</label>
+					<%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <a href="#" onclick="$('related').innerHTML = '<em>Fetching...</em>'; new Ajax.Request('/api/find_related_tags', {parameters: 'tags='+$F('post_tags'), method:'get', onComplete: function(req) {injectTags(req.responseText)}}); return false">Find related</a>
+				</div>
+				<div class="option">
+					<h6>My Tags</h6>
+					<div class="space" id="mytags"><a href="/account/options">Edit</a></div>
+
+					<h6>Recent Tags</h6>
+					<div class="space" id="recent"><em>None</em></div>
+
+					<h6>Related Tags</h6>
+					<div class="space" id="related"><em>None</em></div>
+
+					<%= javascript_tag "injectTags()" %>
+				</div>
+				<div class="option">
+					<%= submit_tag "Save changes" %>
+				</div>
+			<%= end_form_tag %>
+		</div>
+		<%= javascript_tag "Element.hide('edit'); var posts = {}; posts[#{@post.id}] = {}; posts[#{@post.id}].comments = {}; var cthreshold = parseInt(readCookie('comment_threshold')) || 0; var post_id = #{@post.id}; var users = readCookie('user_blacklist').split(/[,; ]/g)" %>
+		<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
+		<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
+	</div>
+<%- end -%>
+</div>

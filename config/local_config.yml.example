@@ -1,0 +1,11 @@
+# Copy this file to local_config.yml
+--- 
+app_name: danbooru
+admin_contact: danbooru-project@moetry.org
+server_host: danbooru.donmai.us
+default_guest_name: Anonymous
+allow_anonymous_posts: true
+allow_anonymous_comments: true
+allow_anonymous_post_access: false
+allow_anonymous_notes: true
+allow_anonymous_wiki_edits: true

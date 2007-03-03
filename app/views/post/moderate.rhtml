@@ -1,0 +1,10 @@
+<form method="post" action="/post/moderate">
+<div class="option">
+<label class="block" for="post_is_note_locked">Note locked?</label> <%= check_box "post", "is_note_locked" %>
+</div>
+<div class="option">
+<label class="block" for="post_is_rating_locked">Rating locked?</label> <%= check_box "post", "is_rating_locked" %>
+</div>
+<%= hidden_field_tag "id", params["id"] %>
+<%= submit_tag "Save" %>
+</form>

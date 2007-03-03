@@ -1,0 +1,13 @@
+<form method="post" action="/tag/set_type">
+	<input type="text" name="tag" size="25" id="tag"/>
+	<select name="type">
+		<option value="general">General</option>
+		<option value="ambiguous">Ambiguous</option>
+		<option value="artist">Artist</option>
+		<option value="character">Character</option>
+		<option value="copyright">Copyright</option>
+	</select>
+	<input type="submit" name="commit" value="Set"/>
+</form>
+
+<%= render :partial => "footer" %>

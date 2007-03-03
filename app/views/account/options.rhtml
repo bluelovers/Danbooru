@@ -1,0 +1,43 @@
+<div id="account-options">
+	<%= form_tag "/account/options" %>
+		<p class="short"><strong>Separate individual tags and users with spaces.</strong></p>
+		<p class="short">The following settings are saved in a cookie and are not saved to your account. You will have to reenter these settings if you access <%= CONFIG["app_name"] %> from another computer.</p>
+		<p class="short">You must have cookies and JavaScript enabled in order for filtering to work. Note that the user blacklist is case sensitive.</p>
+
+		<div class="option">
+			<label class="block" for="tag_blacklist">Tag Blacklist</label>
+			<input type="text" name="tag_blacklist" id="tag_blacklist"/>
+			<p>Any post containing a blacklisted tag will be ignored. Note that you can also blacklist ratings.</p>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_blacklist">User Blacklist</label>
+			<input type="text" name="user_blacklist" id="user_blacklist"/>
+			<p>Any post or comment from a blacklisted user will be ignored.</p>
+		</div>
+
+		<div class="option">
+			<label class="block" for="post_threshold">Post Threshold</label>
+			<input type="text" name="post_threshold" id="post_threshold"/>
+			<p>Any post with a score below this will be ignored.</p>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_tags">My Tags</label>
+			<input type="text" name="my_tags" id="my_tags"/>
+			<p>These will be accessible when you <a href="/post/add">add</a> or edit a post.</p>
+		</div>
+
+		<div class="option">
+			<%= submit_tag "Save", :onclick => "['tag_blacklist', 'user_blacklist', 'post_threshold', 'my_tags'].each(function(i) {createCookie(i, $F(i), 365);}); notice('Options saved'); return false" %>
+		</div>
+
+		<script type="text/javascript">
+// <![CDATA[
+			["tag_blacklist", "user_blacklist", "post_threshold", "my_tags"].each(function(i) {
+				$(i).value = readCookie(i)
+			})
+// ]]>
+		</script>
+	<%= end_form_tag %>
+</div>

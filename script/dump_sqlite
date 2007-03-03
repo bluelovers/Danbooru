@@ -1,0 +1,19 @@
+#!/bin/env ruby
+
+require "rubygems"
+require "postgres"
+require "sqlite3"
+
+`rm /home/albert/danbooru/public/sqlite.db`
+
+pg = PGconn.new("127.0.0.1", nil, nil, nil, "danbooru")
+sl = SQLite3::Database.new("/home/albert/danbooru/public/sqlite.db")
+
+sl.transaction do |db|
+	db.execute("CREATE TABLE posts_tags (post_id INTEGER, tag_id INTEGER)")
+	pg.exec("SELECT * FROM posts_tags").result.each do |row|
+		db.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)", row[0], row[1])
+	end
+end
+
+`gzip /home/albert/danbooru/public/sqlite.db`

@@ -1,0 +1,6 @@
+xml.instruct!
+xml.comments do
+	@comments.each do |c|
+		xml.comment(:id => c.id, :user => h(c.author), :date => c.created_at, :body => c.body)
+	end
+end

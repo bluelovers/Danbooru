@@ -1,0 +1,51 @@
+<div id="post-list">
+ 	<div class="sidebar">
+		<%= render :partial => "search" %>
+		<div class="space">
+			<h5>Mode</h5>
+			<form onsubmit="return false;" action="">
+				<select name="mode" id="mode" onchange="changeMode()" style="width: 12em;">
+					<option value="view">View Posts</option>
+					<option value="edit">Edit Posts</option>
+					<option value="fav">Add to Favorites</option>
+					<option value="vote-up">Vote Up</option>
+					<option value="vote-down">Vote Down</option>
+					<option value="rating-explicit">Rating: Explicit</option>
+					<option value="rating-quest">Rating: Questionable</option>
+					<option value="rating-safe">Rating: Safe</option>
+					<option value="lock-rating">Lock Rating</option>
+					<option value="lock-note">Lock Notes</option>
+					<option value="new-add-tag">Add tag (new)</option>
+					<option value="clear-add-tag">Add tag (clear)</option>
+					<option value="new-remove-tag">Remove tag (new)</option>
+					<option value="clear-remove-tag">Remove tag (clear)</option>
+				</select>
+			</form>
+
+			<%= javascript_tag "loadMode()" %>
+		</div>
+		<a href="/static/honeypot" style="display: none;">honeypot</a>
+		<%= render :partial => 'tags' %>
+	</div>
+	<div class="content">
+		<% if @amb_tags.any? %>
+			<div id="amb-content">
+				<%= link_to_amb_tags(@amb_tags) %>
+			</div>
+		<% end %>
+
+		<%= render :partial => 'posts' %>
+
+		<div id="paginator">
+			<%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "list", :tags => params["tags"]}) %>
+		</div>
+
+		<div id="footer">
+			<a href="/post/add" title="Upload new posts">Add</a> | <a href="/post/atom/tags/<%= @params['tags'] %>" title="Atom feed">Atom</a> | <a href="/post/popular">Popular</a> | <%= link_to "My Favorites", :controller => "account", :action => "favorites", :id => @user.id %>
+<% if @user.mod? %>
+	| <a href="/post/queue">Queue</a>
+<% end %>
+		</div>
+	</div>
+</div>
+

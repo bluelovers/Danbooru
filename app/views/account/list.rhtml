@@ -1,0 +1,19 @@
+<div id="account-list">
+	<table width="100%">
+		<tr>
+			<th width="85%">User</th>
+			<th width="15%">Posts</th>
+		</tr>
+
+		<%- @users.each do |user| -%>
+			<tr class="<%= cycle 'even', 'odd' %>">
+				<td><%= link_to user.name, post_list_url(:tags => "user:#{user.name}") %></td>
+				<td><%= Post.count(["user_id = ?", user.id]) %></td>
+			</tr>
+		<%- end -%>
+	</table>
+
+	<div id="paginator">
+		<%= custom_pagination_links(@pages) %>
+	</div>
+</div>

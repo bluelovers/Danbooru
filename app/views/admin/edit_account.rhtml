@@ -1,0 +1,27 @@
+<div id="admin-edit-account">
+	<%= form_tag "/admin/edit_account" %>
+		<div class="option">
+			<label class="block" for="user_id">User</label>
+			<%= collection_select "user", "id", User.find(:all), "id", "name" %>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_level">Level</label>
+			<%= select "user", "level", [["Admin", 3], ["Warehouse Admin", 2], ["Moderator", 1], ["User", 0]] %>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_password">Password</label>
+			<%= password_field("user", "password", :value => "") %>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_password_confirmation">Password Confirmation</label>
+			<%= password_field("user", "password_confirmation", :value => "") %>
+		</div>
+
+		<div class="option">
+			<%= submit_tag "Save" %>
+		</div>
+	<%= end_form_tag %>
+</div>

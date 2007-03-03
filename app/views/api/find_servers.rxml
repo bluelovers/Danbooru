@@ -1,0 +1,6 @@
+xml.instruct!
+xml.servers do
+	@servers.each do |s|
+		xml.server(:id => s.id, :host => s.host, :path => s.data_path)
+	end
+end

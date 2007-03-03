@@ -1,0 +1,10 @@
+xml.instruct!
+#xml.declare! :DOCTYPE, :wiki, :SYSTEM, "http://danbooru.donmai.us/dtd/wiki.dtd"
+
+xml.wikis do
+	if @wiki
+		xml.wiki(:title => @wiki.title.gsub('"', '&quot;')) do
+			xml.text! @wiki.body
+		end
+	end
+end

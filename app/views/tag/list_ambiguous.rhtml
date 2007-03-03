@@ -1,0 +1,9 @@
+<p>The following tags are ambiguous and need to be clarified.</p>
+
+<ul>
+<% @tags.each do |tag| %>
+<li><%= link_to tag.name, :controller => "post", :action => "list", :tags => tag.name %> (<%= tag.post_count %>)</li>
+<% end %>
+</ul>
+
+<%= render :partial => "footer" %>

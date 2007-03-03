@@ -1,0 +1,7 @@
+xml.instruct!
+xml.changes do
+	@history.each do |change|
+		xml.change(:id => change.id, :tags => h(change.tags))
+	end
+end
+

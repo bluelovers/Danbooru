@@ -1,0 +1,22 @@
+<p>Here you can easily search every tag on Danbooru. Simply enter a word you are searching for and Danbooru will return every tag that contains it.
+You can also search for artist tags. Enter something like "touhou" and you'll get a list of relevant Touhou artists.
+Alternatively, you can enter a URL to an image and (as long as the image is from the artist's site) Danbooru will try to name the artist for you.</p>
+
+<form method="post" action="/tag/search">
+<input type="text" name="name" size="30"/>
+<select name="type">
+	<option value="artist">Search for Artist</option>
+	<option value="search">Search Tags</option>
+</select>
+<input type="submit" name="commit" value="Search"/>
+</form>
+
+<% if @tags %>
+<ul>
+<% @tags.each do |tag| %>
+	<li><%= link_to tag.name, :controller => "post", :action => "list", :tags => tag.name %> (<%= tag.post_count %>)</li>
+<% end %>
+</ul>
+<% end %>
+
+<%= render :partial => "footer" %>

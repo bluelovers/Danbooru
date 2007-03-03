@@ -1,0 +1,28 @@
+Danbooru has the following general dependencies:
+- ruby-1.8.4
+- libgd
+- PostgreSQL (only tested with 8.2)
+
+Danbooru also has the following Ruby dependencies:
+- rubygems
+- rails (gem install rails)
+- postgres (gem install postgres)
+- diff-lcs (gem install diff-lcs)
+- redcloth (gem install redcloth)
+- acts_as_versioned (gem install acts_as_versioned)
+
+Installing the postgres gem might be tricky because the gem looks for PostgreSQL development files in the wrong location. If the gem install fails, download the PostgreSQL adapter and manually install it using "ruby extconf.rb --with-pgsql-lib-dir=/usr/local/pgsql/lib --with-pgsql-include-dir=/usr/local/pgsql/include" or something similar. Then do "make" and "make install". Then do "gem install postgres" again to have the gem get registered by rubygems.
+
+Once you've downloaded and installed everything, get the latest copy of Danbooru through Subversion:
+
+>> svn checkout svn://donmai.us/danbooru-dist/tags/stable
+
+Now it's time to configure your copy. Change into the config directory and edit the following files: database.yml, local_config.yml. Example files are provided.
+
+Create the database. A schema file is provided at db/postgres.sql.
+
+You should manually build the resizer program. This obviously requires gcc and the make tools. The resizer depends on the GD library. The source code is located in lib/resizer. A Makefile is provided.
+
+Configure your web server to connect to Danbooru, either through fastcgi (preferred) or cgi. Alternatively you can have Mongrel run Danbooru and direct your web server to proxy traffic to Mongrel. This is the ideal setup.
+
+The first account you create will automatically become the administrator, so you should do this first.

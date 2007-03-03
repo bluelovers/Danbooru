@@ -1,0 +1,4 @@
+<!ELEMENT wiki		(title,body)>
+<!ATTLIST wiki version	CDATA #IMPLIED>
+<!ELEMENT title		(#PCDATA)>
+<!ELEMENT body		(#PCDATA)>

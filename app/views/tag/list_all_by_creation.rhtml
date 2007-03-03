@@ -1,0 +1,11 @@
+<ul>
+<% @tags.each do |tag| %>
+<li><%= link_to tag.name, :controller => "post", :action => "list", :tags => tag.name %> (<%= tag.post_count %>)</li>
+<% end %>
+</ul>
+
+<div id="paginator">
+	<%= custom_pagination_links(@pages)  %>
+</div>
+
+<%= render :partial => "footer" %>

@@ -1,0 +1,26 @@
+<div id="account-index">
+	<%- if session[:user] -%>
+		<h2>Namasté <%= session[:user].name %>!</h2>
+		<p>From here you can access account-specific options and features.</p>
+
+		<h4><a href="/account/logout">&raquo; Logout</a></h4>
+		<p>Had enough? You can log out at any time.</p>
+
+		<h4><a href="/account/change_password">&raquo; Change Password</a></h4>
+		<p>Change your password.</p>
+
+		<h4><%= link_to "&raquo; My Favorites", :controller => "account", :action => "favorites", :id => session[:user].id %></h4>
+		<p>View and manage your favorite posts.</p>
+	<%- else -%>
+		<h2>You are not logged in.</h2>
+
+		<h4><a href="/account/login">&raquo; Login</a></h4>
+		<p>If you already have an account you can login here. Alternatively, accessing features that require an account will automatically log you in if you've enabled cookies.</p>
+
+		<h4><a href="/account/signup">&raquo; Sign Up</a></h4>
+		<p>You can access 90% of <%= CONFIG["app_name"] %> without an account, but you can sign up for that <a href="/wiki/view/Danbooru%3AAccounts">extra bit of functionality</a>. Just a login and password, no email required!</p>
+	<%- end -%>
+
+	<h4><a href="/account/options">&raquo; Options</a></h4>
+	<p>Manage account options.</p>
+</div>

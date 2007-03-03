@@ -1,0 +1,11 @@
+<div id="post-tag-history">
+<form method="post" action="/post/revert_tags">
+<ul>
+<% @histories.each do |history| %>
+	<li><input type="radio" name="history" value="<%=history.id%>"/> <%= history.tags %></li>
+<% end %>
+	<li><%= submit_tag "Revert" %></li>
+</ul>
+<input type="hidden" name="id" value="<%= params["id"] %>"/>
+</form>
+</div>

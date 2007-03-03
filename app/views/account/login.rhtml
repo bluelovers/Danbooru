@@ -1,0 +1,23 @@
+<div id="account-login">
+
+<%- if @login -%>
+	<h4>Your login failed!</h4>
+	<p style="margin-bottom: 1em;">Maybe you mistyped your user name or password.</p>
+<%- end -%>
+
+<%= start_form_tag({:controller => "account", :action => "login"}, :class => "simple-form") %>
+	<div class="option">
+		<label class="block" for="user_name">Name</label>
+		<%= text_field "user", "name" %>
+	</div>
+
+	<div class="option">
+		<label class="block" for="user_password">Password</label>
+		<%= password_field "user", "password" %>
+	</div>
+
+	<div class="option">
+		<%= submit_tag "Login" %>
+	</div>
+<%= end_form_tag %>
+</div>

@@ -1,0 +1,697 @@
+* {
+	font-family: verdana,sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font: 80% verdana, sans-serif;
+	background: white;
+	padding: 1em 3em;
+}
+
+h1 {
+	font-size: 2em;
+}
+
+h2 {
+	font-size: 1.8em;
+}
+
+h3 {
+	font-size: 1.6em;
+}
+
+h4 {
+	font-size: 1.4em;
+}
+
+h5 {
+	font-size: 1.2em;
+}
+
+h6 {
+	font-size: 1em;
+}
+
+img {
+	border: none;
+	vertical-align: middle;
+}
+
+input {
+	padding: 0 0.5em;
+}
+
+a:link {
+	color: #006FFA;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #006FFA;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #33CFFF;
+	text-decoration: none;
+}
+
+a:active {
+	color: #006FFA;
+	text-decoration: none;
+}
+
+a.spoilers {
+	color: black;
+	background: black;
+	cursor: text;
+}
+
+a.spoilers:hover {
+	color: black;
+	background: white;
+}
+
+a.help {
+	background: #E6E6E6;
+}
+
+.link {
+	color: #006FFA;
+	background: none;
+	border: none;
+	font-size: 1em;
+	cursor: pointer;
+}
+
+.link:hover	{
+	color: #33CFFF;
+}
+
+label {
+	font-weight: bold;
+	padding-right: 2em;
+}
+
+strong.divider {
+	font-weight: bold;
+	color: gray;
+}
+
+span.author	{
+	color: gray;
+}
+
+th {
+	font-weight: bold;
+	text-align: left;
+	color: white;
+	background: #66C;
+	padding: 0.2em 0.5em;
+}
+
+tr.padded th {
+	padding: 0 1em;
+	white-space: nowrap;
+}
+
+tr.even {
+	background: rgb(230, 230, 255);
+}
+
+tr.odd {
+	background: rgb(245, 245, 255);
+}
+
+td {
+	padding: 1px 4px; vertical-align: top;
+}
+
+fieldset {
+	border: 1px dashed gray;
+	margin-bottom: 1em;
+	padding: 0.5em 1em;
+	width: 50%;
+}
+
+legend {
+	letter-spacing: 0.5em;
+}
+
+code {
+	font-family: monospace;
+	font-size: 1.2em;
+}
+
+table {
+	margin-bottom: 2em;
+}
+
+textarea {
+	font-family: monospace;
+	font-size: 1.2em;
+	width: 100%;
+}
+
+ol {
+	margin-left: 1em;
+}
+
+ul {
+	margin-bottom: 1em;
+}
+
+li {
+	margin-left: 1em;
+}
+
+p {
+	margin-bottom: 1em;
+}
+
+h5 a:link	{
+	color: black;
+}
+
+h5 a:visited {
+	color: black;
+}
+
+h5 a:hover {
+	color: #33CFFF;
+}
+
+.space {
+	margin-bottom: 1em;
+}
+
+div#header {
+	margin-bottom: 1em;
+}
+
+div#content {
+}
+
+div#footer {
+	margin-top: 1em;
+	text-align: center;
+	font-size: 120%;
+	color: #CCC;
+	clear: both;
+}
+
+div.sidebar {
+	width: 20%;
+	margin-right: 1em;
+	float: left;
+	overflow: hidden;
+}
+
+div.sidebar li {
+	list-style-type: none;
+	margin: 0;
+}
+
+div.content {
+	float: left;
+	width: 78%;
+}
+
+div.option {
+	clear: both;
+	margin-bottom: 0.5em;
+}
+
+div.option p {
+	width: 15em;
+	font-size: 90%;
+}
+
+label.block {
+	float: left;
+	width: 15em;
+	padding-right: 1em;
+}
+
+span.informational {
+	cursor: help;
+}
+
+img.preview {
+	margin: 1.5em;
+}
+
+span.thumb {
+	height: 180px;
+	width: 180px;
+	display: block;
+	float: left;
+	text-align: center;
+}
+
+.hidden-comment {
+	background-color: #CCC;
+}
+
+.ignored-comment {
+	background-color: #FEE;
+}
+
+.good-comment {
+	background-color: #EFE;
+}
+
+.ignored-post {
+	background-color: #FEE;
+}
+
+span.date {
+	color: #AAA;
+}
+
+span.comment-info {
+	font-size: 120%;
+}
+
+span.comment-info a {
+	color: #AAA;
+}
+
+span.comment-info a:hover {
+	color: #33CFFF;
+}
+
+a.comment-link:link, a.comment-link:visited {
+	color: black;
+	font-weight: bold;
+}
+
+a.resp-link {
+	font-weight: bold;
+}
+
+span.post-count {
+	color: #AAA;
+}
+
+ul.flat-list {
+	display: inline;
+}
+
+ul.flat-list * {
+	display: inline;
+}
+
+ul.flat-list li {
+	list-style-type: none;
+	font-weight: bold;
+	margin: 0 1em 0 0;
+}
+
+ul.flat-list li a {
+	font-weight: normal;
+}
+
+li#notice {
+	color: red;
+	font-weight: bold;
+}
+
+form.button-to input {
+	border: none;
+	color: #006FFA;
+	background: none;
+	cursor: pointer;
+	font-size: 1em;
+	font-weight: normal;
+}
+
+form.button-to input:hover {
+	color: #33CFFF;
+}
+
+div#paginator {
+	display: block;
+	padding: 2em 0 1em 0;
+	font-size: 1em;
+	text-align: center;
+	font-weight: bold;
+	clear: both;
+}
+
+div#paginator span {
+	margin: 0 3px;
+	padding: 2px 6px;
+}
+
+div#paginator a {
+	margin: 0 3px;
+	padding: 2px 6px;
+	font-weight: normal;
+	border: 1px solid #EAEAEA;
+}
+
+div#paginator a.current {
+	border: 1px solid #AAA;
+}
+
+div#paginator a:hover {
+	background: rgb(60, 60, 220);
+	color: white;
+}
+
+div#paginator a.arrow {
+	border: none;
+}
+
+div#paginator a.arrow:hover {
+	background: white;
+	color: #33CFFF;
+}
+
+div#account-options p.short {
+	width: 40em;
+}
+
+div#static-index {
+	text-align: center;
+}
+
+div#static-index div#links a {
+	margin: 0 0.5em;
+}
+
+div#static-more li {
+	list-style-type: none;
+	margin: 0;
+}
+
+div#static-more div {
+	float: left;
+	width: 25%;
+}
+
+div#static-more ul {
+	margin-top: 2em;
+}
+
+div#account-stats li {
+	list-style-type: none;
+	margin: 0;
+}
+
+div#account-stats div {
+	float: left;
+	width: 30%;
+}
+
+div#account-stats ul {
+	margin-top: 2em;
+}
+
+div.comment-quote {
+	padding: 0 1em;
+	margin: 0;
+	background: #EEE;
+}
+
+div.comment-quote div.comment-quote {
+	background: #DDD;
+}
+
+div#comment-list2 li {
+	list-style-type: none;
+	margin: 0;
+}
+
+div#comment-list2 ul.post-info {
+	font-size: 1.2em;
+	color: #AAA;
+}
+
+div#comment-list2 h4 a {
+	color: #339;
+}
+
+div#comment-list2 h5.post-header {
+	margin-bottom: 1em;
+	font-weight: normal;
+	color: #AAA;
+}
+
+div#comment-list2 h5 a {
+	color: #666;
+}
+
+div#comment-list2 h5 a:hover {
+	color: #33CFFF;
+}
+
+div#comment-list2 div.col1 {
+	width: 200px; 
+	float: left; 
+	text-align: center;
+}
+
+div#comment-list2 div.col2 {
+	width: 500px; 
+	padding-right: 1em; 
+	float: left;
+}
+
+div#comment-list2 div.col3 {
+	width: 200px; 
+	float: left;
+}
+
+div#comment-list2 div.comment {
+	margin-bottom: 1em;
+}
+
+div#comment-list2 h4.comment-header {
+	font-weight: normal;
+	color: #AAA;
+}
+
+div#comment-list2 img.preview {
+	display: block;
+	margin: auto;
+}
+
+div#comment-list2 div.post {
+	margin: 0 2em 0 0;
+	padding: 2em 1em;
+	float: left;
+	clear: both;
+	width: 100%;
+}
+
+div#post-recent-tag-changes th a {
+	color: white;
+}
+
+div#post-recent-tag-changes table {
+	width: 35em;
+}
+
+div#post-list div.upload input {
+	margin-right: 1em;
+}
+
+div#post-view img.data {
+	margin-right: 5em;
+}
+
+div#post-view div#related0 img {
+	padding: 0;
+}
+
+div#post-view div#note-container {
+	position: absolute;
+}
+
+div#post-view div.note-box {
+	position: absolute;
+	border: 1px solid black;
+	width: 150px;
+	height: 150px;
+	cursor: move;
+	background: #FFE;
+	opacity: 0.5;
+}
+
+div#post-view div.note-corner {
+	background: black;
+	width: 7px;
+	height: 7px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	cursor: se-resize;
+}
+
+div#post-view div.note-body {
+	background: #FFE;
+	border: 1px solid black;
+	display: none;
+	width: 140px;
+	height: 100px;
+	position: absolute;
+	padding: 5px;
+	cursor: pointer;
+	overflow: auto;
+}
+
+div#post-view div#edit-box textarea {
+	width: 90%;
+}
+
+div#post-view div#edit-box {
+	position: absolute;
+	z-index: 100;
+	background: #FFE;
+	border: 1px solid black;
+	padding: 1em;
+}
+
+div#post-view p {
+	margin: 0;
+}
+
+div#post-view span.radio {
+	margin-right: 1em;
+}
+
+div#post-view div.comment {
+	margin-bottom: 1em;
+}
+
+div#post-remove * {
+	display: inline;
+}
+
+div#post-remove img {
+	margin: 1em 0;
+	display: block;
+}
+
+div#tag-list {
+	text-align: center;
+	margin-bottom: 2em;
+}
+
+div#tag-list div.space a {
+	padding-right: 5px;
+}
+
+div#wiki-view {
+	line-height: 2em;
+	width: 50em;
+	text-align: left;
+}
+
+h2.wiki-title {
+	color: #003DD8;
+	margin-bottom: 0.25em;
+}
+
+span.old-version {
+	color: gray;
+}
+
+p.linked-from {
+	color: gray;
+	font-style: italic;
+}
+
+div.diff {
+	font-family: monospace;
+	font-size: 1.2em;
+	margin-top: 1em;
+}
+
+del {
+	font-family: monospace;
+	background-color: #f88;
+	text-decoration: line-through;
+}
+
+ins {
+	font-family: monospace;
+	background-color: #8f8;
+}
+
+div#admin-edit-account option {
+	width: 15em;
+}
+
+div#upload-list td {
+	padding: 0 1em;
+}
+
+div#account-index {
+	width: 40em;
+}
+
+div#account-list {
+	width: 40em;
+}
+
+div#account-list table {
+	width: 100%;
+}
+
+div#post-add {
+}
+
+div#post-add table div {
+	width: 36em;
+}
+
+div#post-add div#mytags a,
+div#post-add div#recent a,
+div#post-add div#related a {
+	margin-right: 15px;
+}
+
+div#post-add label {
+	padding: 0;
+	margin: 0;
+}
+
+div#post-popular {
+	text-align: center;
+}
+
+div#post-popular * {
+	margin: auto;
+}
+
+div#post-popular h1 {
+	margin-bottom: 1em;
+}
+
+div#post-tag-history li {
+	list-style-type: none;
+	margin: 0;
+}
+
+div#amb-content {
+	font-size: 1.2em;
+	font-style: italic;
+}
+
+ul.tag-explore {
+	margin: 0;
+}
+
+ul.tag-explore li {
+	list-style-type: none;
+	margin: 0 0 0 1em;
+}
+
+div#tag-explore img {
+	margin: 1em;
+}

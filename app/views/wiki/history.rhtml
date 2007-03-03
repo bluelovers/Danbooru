@@ -1,0 +1,74 @@
+<%= render :partial => "sidebar" %>
+
+<div class="content">
+	<%- if params["title"] -%>
+		<%= form_tag({:action => 'diff'}, :method => 'get') %>
+	<%- end -%>
+	
+	<%= hidden_field_tag "title", params["title"] %>
+
+	<table width="100%">
+		<tr>
+			<%- if params["title"] -%>
+				<th width="10%">From</th>
+				<th width="10%">To</th>
+				<th width="40%">Page</th>
+				<th width="40%">Last edited</th>
+			<%- else -%>
+				<th width="60%">Page</th>
+				<th width="40%">Last edited</th>
+			<%- end -%>
+		</tr>
+		<%- @wiki_pages.each_with_index do |wiki_page, i| -%>
+			<tr class="<%= cycle 'even', 'odd' %>">
+				<%- if params["title"] -%>
+					<td><%= radio_button_tag "from", wiki_page.version, i==1, :id => "from_#{wiki_page.version}" %></td>
+					<td><%= radio_button_tag "to", wiki_page.version, i==0, :id => "to_#{wiki_page.version}" %></td>
+				<%- end -%>
+				<td><%= link_to wiki_page.pretty_title, :controller => "wiki", :action => "view", :title => wiki_page.title, :version => wiki_page.version %></td>
+				<td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= wiki_page.author %></td>
+			</tr>
+		<%- end -%>
+	</table>
+
+	<%- if params["title"] -%>
+		<input type="submit" value="Compare selected versions"/>
+		<%= end_form_tag %>
+
+		<script type="text/javascript">
+		//<![CDATA[
+			var from;
+			var to;
+
+			function validateFrom(self)
+			{
+				if(Number(self.value) >= to) return false;
+				from = new Number(self.value);
+				return true;
+			}
+
+			function validateTo(self)
+			{
+				if(Number(self.value) <= from) return false;
+				to = new Number(self.value);
+				return true;
+			}
+
+			for(var i=1, elem; i <= <%= @wiki_pages.length %>; i++)
+			{
+				elem = $("from_"+i);
+				elem.onclick = function() {return validateFrom(this);};
+				if(elem.checked) from = i;
+
+				elem = $("to_"+i);
+				elem.onclick = function() {return validateTo(this);};
+				if(elem.checked) to = i;
+			}
+		// ]]>
+		</script>
+	<%- else -%>
+		<div id="paginator">
+			<%= custom_pagination_links(@pages) %>
+		</div>
+	<%- end -%>
+</div>

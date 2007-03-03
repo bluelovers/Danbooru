@@ -1,0 +1,11 @@
+<div id="tag-list">
+	<div class="space">
+		<%- if @tags.empty? -%>
+			<h4>There are no tags.</h4>
+		<%- end -%>
+
+		<%= cloud_view(@tags) %>
+	</div>
+</div>
+
+<%= render :partial => "footer" %>

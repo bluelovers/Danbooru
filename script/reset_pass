@@ -1,0 +1,21 @@
+#!/bin/env ruby
+
+require "rubygems"
+require "postgres"
+require "digest/sha1"
+
+pass = ""
+
+4.times do 
+	pass += %w(b c d f g h j k l m n p q r s t v w x y z)[(rand() * 21).to_i]
+	pass += %w(a e i o u)[(rand() * 5).to_i]
+end
+
+username = ARGV[0]
+hash = Digest::SHA1.hexdigest("choujin-steiner--#{pass}--")
+
+db = PGconn.new("127.0.0.1", nil, nil, nil, "danbooru")
+
+db.exec("UPDATE users SET password = '%s' WHERE name = '%s'" % [hash, username])
+
+puts "New password for #{username} is #{pass}"

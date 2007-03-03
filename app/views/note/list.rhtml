@@ -1,0 +1,11 @@
+<div id="note-list">
+	<%= render :partial => 'post/posts' %>
+
+	<div id="paginator">
+		<%= custom_pagination_links(@pages) %>
+	</div>
+
+	<div id="footer">
+		<a href="/note/history">History of all notes</a> | <a href="/post/list/tags/translation_request">Translation Requests</a>
+	</div>
+</div>

@@ -1,0 +1,7 @@
+<div class="space">
+	<h5>Search</h5>
+	<%= start_form_tag("/post/list", :method => "get") %>
+		<%= text_field_tag("tags", "", :size => 20) %>
+		<%= submit_tag "Search", :style => "display: none;" %>
+	<%= end_form_tag %>
+</div>
