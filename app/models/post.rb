@@ -7,6 +7,7 @@ class Post < ActiveRecord::Base
 	before_destroy :delete_file
 
 	votable
+	uses_image_servers :servers => ["http://dan.paramnesiac.net", "http://danbooru.ichijou.org"]
 	has_and_belongs_to_many :tags, :order => "name"
 	has_many :comments, :order => "id", :conditions => "signal_level <> 0"
 	has_many :notes, :order => "id desc"
@@ -154,6 +155,10 @@ class Post < ActiveRecord::Base
 
 # Returns the URL for the post
 	def file_url
+		if self.class.method_defined? :file_url_alt
+			return file_url_alt()
+		end
+
 		"http://" + CONFIG["server_host"] + "/data/%s/%s/%s" % [md5[0,2], md5[2,2], file_name]
 	end
 
@@ -168,6 +173,10 @@ class Post < ActiveRecord::Base
 
 # Returns the URL for the preview
 	def preview_url
+		if self.class.method_defined?(:preview_url_alt)
+			return preview_url_alt()
+		end
+
 		if image?
 			"http://" + CONFIG["server_host"] + "/data/preview/%s/%s/%s" % [md5[0,2], md5[2,2], md5 + ".jpg"]
 		else

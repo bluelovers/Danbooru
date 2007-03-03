@@ -64,7 +64,7 @@
 
 		<div class="space">
 			<p id="poster">
-				Posted on <a href="/post/popular/<%= @post.created_at.month %>/<%= @post.created_at.day %>/<%= @post.created_at.year %>"><%= @post.created_at.strftime("%D %I:%M") %></a> by <a href="/post/list/tags/user%3A<%= escape_tags(@post.author) %>"><%= @post.author %></a>
+				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "list", :tags => "user:#{@post.author}" %>
 				<%- unless @post.source.blank? -%>
 					<%- if @post.source[/^http/] -%>
 						(<a href="/static/redirect?url=<%= h(@post.source) %>">source</a>)

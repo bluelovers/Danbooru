@@ -2,7 +2,7 @@
 module ApplicationHelper
 	def tag_links(tags)
 		if tags
-			'/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "list", :tags => t)}
+			'/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "list", :tags => t)}.join("+")
 		end
 	end
 

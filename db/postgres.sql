@@ -338,36 +338,6 @@ CREATE TABLE posts_tags (
 
 
 --
--- Name: servers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE servers (
-    id integer NOT NULL,
-    host text NOT NULL,
-    data_path text NOT NULL,
-    is_active boolean DEFAULT true NOT NULL
-);
-
-
---
--- Name: servers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE servers_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: servers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE servers_id_seq OWNED BY servers.id;
-
-
---
 -- Name: table_data; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -615,13 +585,6 @@ ALTER TABLE posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE servers ALTER COLUMN id SET DEFAULT nextval('servers_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE tag_aliases ALTER COLUMN id SET DEFAULT nextval('tag_aliases_id_seq'::regclass);
 
 
@@ -706,14 +669,6 @@ ALTER TABLE ONLY post_tag_histories
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
-
-
---
--- Name: servers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY servers
-    ADD CONSTRAINT servers_pkey PRIMARY KEY (id);
 
 
 --
