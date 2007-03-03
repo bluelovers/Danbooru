@@ -12,21 +12,21 @@ module LoginSystem
 	end
 
 	def current_user
-		user = nil
-
-		if session[:user_id]
-			user = User.find(session[:user_id])
+		if @current_user
+			# do nothing
+		elsif session[:user_id]
+			@current_user = User.find(session[:user_id])
 		elsif cookies["login"] && cookies["pass_hash"]
-			user = User.authenticate_hash(cookies["login"], cookies["pass_hash"])
+			@current_user = User.authenticate_hash(cookies["login"], cookies["pass_hash"])
 		elsif params["login"] && params["password"]
-			user = User.authenticate(params["login"], params["password"])
+			@current_user = User.authenticate(params["login"], params["password"])
 		end
 
-		if user
-			session[:user_id] = user.id
+		if @current_user
+			session[:user_id] = @current_user.id
 		end
 
-		return user
+		return @current_user
 	end
 
 	def mod_only
