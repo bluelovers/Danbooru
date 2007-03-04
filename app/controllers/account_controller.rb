@@ -31,7 +31,6 @@ class AccountController < ApplicationController
 
 	def signup
 		set_title "Signup"
-		return
 
 		if request.post?
 			if user = User.create(params[:user])
