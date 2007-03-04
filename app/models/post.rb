@@ -96,7 +96,7 @@ class Post < ActiveRecord::Base
 			FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
 
 			unless system("#{RAILS_ROOT}/lib/resizer/resizer #{file_path} #{preview_path}")
-				errors.add 'preview', "couldn't be generated. error code=#{err}"
+				errors.add 'preview', "couldn't be generated"
 				return false
 			end
 		rescue Exception => x
