@@ -31,6 +31,7 @@ class AccountController < ApplicationController
 
 	def signup
 		set_title "Signup"
+		return
 
 		if request.post?
 			if user = User.create(params[:user])
@@ -46,6 +47,8 @@ class AccountController < ApplicationController
 	def logout
 		set_title "Logout"
 		session[:user_id] = nil
+		cookies[:login] = nil
+		cookies[:pass_hash] = nil
 		redirect_to :action => "index"
 	end
 
