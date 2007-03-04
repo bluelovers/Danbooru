@@ -37,8 +37,6 @@ Rails::Initializer.run do |config|
   # config.active_record.schema_format = :ruby
 
   # See Rails::Configuration for more options
-
-  config.action_controller.session_store = :mem_cache_store
 end
 
 # Add new inflection rules using the following format
@@ -68,6 +66,3 @@ require 'arch'
 require 'acts_as_versioned'
 require 'local_config'
 
-#CACHE = MemCache.new("localhost:11211", :c_threshold => 10_000, :debug => false, :namespace => "danbooru", :readonly => false, :urlencode => false, :compression => true)
-#ActionController::Base.session_options[:expires] = 1800
-#ActionController::Base.session_options[:cache] = CACHE
