@@ -7,7 +7,6 @@ class Post < ActiveRecord::Base
 	before_destroy :delete_file
 
 	votable
-	uses_image_servers :servers => ["http://dan.paramnesiac.net", "http://danbooru.ichijou.org"]
 	has_and_belongs_to_many :tags, :order => "name"
 	has_many :comments, :order => "id", :conditions => "signal_level <> 0"
 	has_many :notes, :order => "id desc"
