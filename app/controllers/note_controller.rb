@@ -34,7 +34,8 @@ class NoteController < ApplicationController
 		note = Note.find(params["id"])
 
 		if note.locked?
-			render :text => "This post is locked and notes cannot be altered", :status => 500
+			flash[:notice] = "This post is locked and notes cannot be altered"
+			redirect_to :action => "history", :id => note.id
 			return
 		end
 
@@ -42,7 +43,8 @@ class NoteController < ApplicationController
 		note.ip_addr = request.remote_ip
 
 		if note.save_without_revision
-			render :nothing => true
+			flash[:notice] = "Note reverted"
+			redirect_to :action => "history", :id => note.id
 		else
 			render_error(note)
 		end
