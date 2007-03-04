@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
 	# Users are in one of six possible roles:
 	LEVEL_BLOCKED 	= 1
 	LEVEL_MEMBER	= 2
+	LEVEL_SPECIAL	= 3
 	LEVEL_MOD		= 10
 	LEVEL_ADMIN		= 20
 
