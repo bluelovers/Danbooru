@@ -1,3 +1,6 @@
+<h4>Signups are currently disabled.</h4>
+
+<% if CONFIG["allow_signups"] != false %>
 <%= form_tag :controller => "account", :action => "signup" %>
 	<div class="option">
 		<label class="block" for="user_name">Desired name</label>
@@ -18,3 +21,4 @@
 		<input type="submit" value="Signup" />
 	</div>
 <%= end_form_tag %>
+<% end %>

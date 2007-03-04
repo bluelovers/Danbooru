@@ -9,3 +9,4 @@ allow_anonymous_comments: true
 allow_anonymous_post_access: false
 allow_anonymous_notes: true
 allow_anonymous_wiki_edits: true
+allow_signups: true
