@@ -34,7 +34,7 @@ class Tag < ActiveRecord::Base
 
 		t = Tag.find_by_name(name)
 		if t
-			if t.tag_type != tag_type
+			if t.tag_type == TYPE_GENERAL && t.tag_type != tag_type
 				connection.execute("UPDATE tags SET tag_type = #{tag_type} WHERE id = #{t.id}")
 			end
 			return t
