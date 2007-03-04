@@ -25,7 +25,7 @@ class PostController < ApplicationController
 		@post = Post.find(params['id'])
 
 		if request.post?
-			if current_user().has_permission?(@post)
+			if (current_user().has_permission?(@post) rescue false)
 				@post.destroy
 			else
 				flash[:notice] = "You have insufficient permission to delete posts"

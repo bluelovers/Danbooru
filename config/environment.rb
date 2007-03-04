@@ -53,6 +53,12 @@ class ActiveRecord::Base
 	end
 end
 
+class NilClass
+	def id
+		raise NoMethodError
+	end
+end
+
 require 'base64'
 require 'diff/lcs/array'
 require 'image_size'
