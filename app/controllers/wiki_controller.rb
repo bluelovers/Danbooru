@@ -69,6 +69,17 @@ class WikiController < ApplicationController
 
 	def edit
 		@page = WikiPage.find_page(params["title"], params["version"]) || WikiPage.new(:title => params["title"], :user_id => (current_user().id rescue nil), :ip_addr => request.remote_ip)
+		if @page.new_record? && (Tag.find_by_name(@page.title).tag_type == Tag::TYPE_ARTIST rescue false)
+			@page.body =<<-EOL
+Artist.
+
+Japanese name:
+
+h4. See also
+
+* "Home page":
+			EOL
+		end
 		set_title @page.pretty_title + " (Editing)"
 	end
 
