@@ -17,8 +17,13 @@
 		<h4><a href="/account/login">&raquo; Login</a></h4>
 		<p>If you already have an account you can login here. Alternatively, accessing features that require an account will automatically log you in if you've enabled cookies.</p>
 
-		<h4><a href="/account/signup">&raquo; Sign Up</a></h4>
-		<p>You can access 90% of <%= CONFIG["app_name"] %> without an account, but you can sign up for that <a href="/wiki/view/Danbooru%3AAccounts">extra bit of functionality</a>. Just a login and password, no email required!</p>
+		<% if CONFIG["allow_signups"] %>
+			<h4><a href="/account/signup">&raquo; Sign Up</a></h4>
+			<p>Registration is simple. Just a login and password, no email required!</p>
+		<% else %>
+			<h4>&raquo; Sign Up</h4>
+			<p>Sorry, registration is currently disabled.</p>
+		<% end %>
 	<%- end -%>
 
 	<h4><a href="/account/options">&raquo; Options</a></h4>
