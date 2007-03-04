@@ -249,7 +249,7 @@ class Post < ActiveRecord::Base
 		end
 
 		if q[:source].is_a?(String)
-			conditions << "p.source LIKE ? ESCAPE '\\\\'"
+			conditions << "p.source ILIKE ? ESCAPE '\\\\'"
 			params << q[:source]
 		end
 
