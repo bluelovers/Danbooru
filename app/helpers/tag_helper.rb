@@ -50,6 +50,10 @@ module TagHelper
 	end
 
 	def related_tags(tags)
+		if tags.blank?
+			return ""
+		end
+
 		all = []
 		pattern, related = tags.split(/\s+/).partition {|i| i.include?("*")}
 		pattern.each {|i| all += Tag.find(:all, :conditions => ["name LIKE ?", i.tr("*", "%")]).map {|j| j.name}}
