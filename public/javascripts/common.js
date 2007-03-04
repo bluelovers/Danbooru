@@ -197,10 +197,10 @@ function postClick(post_id) {
 
 		return false
 	} else if (s.value == 'vote-down') {
-		vote("down", post_id)
+		vote(-1, post_id)
 		return false
 	} else if (s.value == 'vote-up') {
-		vote("up", post_id)
+		vote(1, post_id)
 		return false
 	} else if (s.value == 'lock-rating') {
 		notice("Locking post #" + post_id + "...")

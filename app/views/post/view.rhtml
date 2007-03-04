@@ -10,7 +10,7 @@
 		<div id="stats">
 			<h5>Statistics</h5>
 			<ul>
-				<li>Score: <%= @post.score %> (vote <a href="#" onclick="vote('up', <%= @post.id %>); return false">up</a>/<a href="#" onclick="vote('down', <%= @post.id %>); return false">down</a>)</li>
+				<li>Score: <%= @post.score %> (vote <a href="#" onclick="vote(1, <%= @post.id %>); return false">up</a>/<a href="#" onclick="vote(-1, <%= @post.id %>); return false">down</a>)</li>
 				<li>Favorites: <a href="/post/view_favorites/<%= @post.id %>"> <%= pluralize @post.fav_count, "person" %></a></li>
 			</ul>
 		</div>
