@@ -20,10 +20,8 @@ class ApplicationController < ActionController::Base
 	end
 
 	def save_tags_to_cookie
-		if cookies["recent_tags"]
-			tags = params["tags"] || params["post"]["tags"]
-			cookies["recent_tags"] = {:value => (tags + " " + cookies["recent_tags"].to_s).split(" ")[0..20].join(" "), :expires => 1.year.from_now}
-		end
+		tags = params["tags"] || params["post"]["tags"]
+		cookies["recent_tags"] = {:value => (tags + " " + cookies["recent_tags"].to_s).split(" ")[0..20].join(" "), :expires => 1.year.from_now}
 	end
 
 	public

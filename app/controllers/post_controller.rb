@@ -2,7 +2,7 @@ class PostController < ApplicationController
 	layout 'default'
 
 	before_filter :user_only, :except => [:rss, :atom] unless CONFIG["allow_anonymous_post_access"]
-	after_filter :save_tags_to_cookie, :only => [:change, :add]
+	after_filter :save_tags_to_cookie, :only => [:change]
 	helper :wiki, :tag, :comment
 	verify :method => :post, :only => [:change]
 
@@ -72,6 +72,7 @@ class PostController < ApplicationController
 				return
 			end
 
+			save_tags_to_cookie
 			redirect_to :action => "view", :id => post_id
 		end
 	end
