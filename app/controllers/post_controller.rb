@@ -99,7 +99,7 @@ class PostController < ApplicationController
 	end
 
 	def atom
-		@posts = Post.find_by_sql(Post.generate_sql(params["tags"], :limit => 10, :order => "p.id DESC"))
+		@posts = Post.find_by_sql(Post.generate_sql(params["tags"], :limit => 24, :order => "p.id DESC"))
 		render :layout => false
 	end
 
