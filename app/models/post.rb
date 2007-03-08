@@ -221,6 +221,30 @@ class Post < ActiveRecord::Base
 		end
 	end
 
+	def self.generate_sql__range_helper(arr, field, c, p)
+		case arr[0]
+		when :equal
+			c << "#{field} = ?"
+			p << arr[1]
+
+		when :gt
+			c << "#{field} >= ?"
+			p << arr[1]
+
+		when :lt
+			c << "#{field} <= ?"
+			p << arr[1]
+
+		when :between
+			c << "#{field} BETWEEN ? AND ?"
+			p << arr[1]
+			p << arr[2]
+
+		else
+			# do nothing
+		end
+	end
+
 	def self.generate_sql(q, options = {})
 		unless q.is_a?(Hash)
 			q = Tag.parse_query(q)
@@ -230,24 +254,14 @@ class Post < ActiveRecord::Base
 		from = ["posts p"]
 		params = []
 
-		if q[:after_id].is_a?(Integer)
-			conditions << "p.id > ?"
-			params << q[:after_id]
-		end
+		generate_sql__range_helper(q[:post_id], "p.id", conditions, params)
+		generate_sql__range_helper(q[:width], "p.width", conditions, params)
+		generate_sql__range_helper(q[:height], "p.height", conditions, params)
+		generate_sql__range_helper(q[:score], "p.score", conditions, params)
 
 		if q[:md5].is_a?(String)
 			conditions << "p.md5 = ?"
 			params << q[:md5]
-		end
-
-		if q[:width].is_a?(Integer)
-			conditions << "p.width #{q[:widthop]} ?"
-			params << q[:width]
-		end
-
-		if q[:height].is_a?(Integer)
-			conditions << "p.height #{q[:heightop]} ?"
-			params << q[:height]
 		end
 
 		if q[:source].is_a?(String)
@@ -307,11 +321,6 @@ class Post < ActiveRecord::Base
 		if q[:exclude].any?
 			conditions << "p.id NOT IN (SELECT pt_.post_id FROM posts_tags pt_, tags t_ WHERE pt_.tag_id = t_.id AND t_.name IN (?))"
 			params << q[:exclude]
-		end
-
-		if q[:score].is_a?(Integer)
-			conditions << "p.score #{q[:scoreop]} ?"
-			params << q[:score]
 		end
 
 		if q[:rating].is_a?(String)

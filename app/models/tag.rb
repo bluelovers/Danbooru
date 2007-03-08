@@ -166,6 +166,26 @@ class Tag < ActiveRecord::Base
 		return all
 	end
 
+	def self.parse_helper(range)
+		case range
+		when /^(\d+)\.\.(\d+)$/
+			return [:between, $1.to_i, $2.to_i]
+
+		when /^\.\.(\d+)$/
+			return [:lt, $1.to_i]
+
+		when /^(\d+)\.\.$/
+			return [:gt, $1.to_i]
+
+		when /^(\d+)$/
+			return [:eq, $1.to_i]
+
+		else
+			[]
+
+		end
+	end
+
 # Parses a query into three sets of tags: reject, union, and intersect.
 #
 # === Parameters
@@ -175,7 +195,7 @@ class Tag < ActiveRecord::Base
 		q = Hash.new {|h, k| h[k] = []}
 
 		scan_query(query).each do |token|
-			if token =~ /^(after_id|user|fav|md5|rating|name|width|height|score|source|unlocked):(.+)$/
+			if token =~ /^(after_id|user|fav|md5|rating|width|height|score|source|unlocked|id):(.+)$/
 				if $1 == "user"
 					q[:user] = $2
 				elsif $1 == "after_id"
@@ -186,48 +206,14 @@ class Tag < ActiveRecord::Base
 					q[:md5] = $2
 				elsif $1 == "rating"
 					q[:rating] = $2
-				elsif $1 == "name"
-					q[:include] << $2
-					split_name = $2.split("_")
-
-					if split_name.size == 2
-						q[:include] << split_name.reverse.join("_")
-						q[:include] << split_name[0]
-						q[:include] << split_name[1]
-					else
-						split_name[0].gsub!('\\', '\\\\')
-						split_name[0].gsub!('_', '\\_')
-						split_name[0].gsub!('%', '\\%')
-
-						q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\' OR name LIKE ? ESCAPE '\\\\'", split_name[0] + '\\_%', '%\\_' + split_name[0]]).map {|i| i.name}
-					end
+				elsif $1 == "id"
+					q[:post_id] = parse_helper($2)
 				elsif $1 == "width"
-					width = $2;
-					if width =~ /^([><]=?)(\d+)$/
-						q[:width] = $2.to_i
-						q[:widthop] = $1
-					else
-						q[:width] = width.to_i
-						q[:widthop] = "="
-					end
+					q[:width] = parse_helper($2)
 				elsif $1 == "height"
-					height = $2;
-					if height =~ /^([><]=?)(\d+)$/
-						q[:height] = $2.to_i
-						q[:heightop] = $1
-					else
-						q[:height] = height.to_i
-						q[:heightop] = "="
-					end
+					q[:height] = parse_helper($2)
 				elsif $1 == "score"
-					score = $2;
-					if score =~ /^([><]=?)(\d+)$/
-						q[:score] = $2.to_i
-						q[:scoreop] = $1
-					else
-						q[:score] = score.to_i
-						q[:scoreop] = "="
-					end
+					q[:score] = parse_helper($2)
 				elsif $1 == "source"
 					q[:source] = $2.gsub('\\', '\\\\').gsub('%', '\\%').gsub('_', '\\_') + "%"
 				end
