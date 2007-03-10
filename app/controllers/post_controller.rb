@@ -11,6 +11,8 @@ class PostController < ApplicationController
 
 		post.rating = params["post"]["rating"] if params["post"]["rating"]
 		post.source = params["post"]["source"] if params["post"]["source"]
+		post.next_post_id = params["post"]["next_post_id"] if params["post"]["next_post_id"]
+		post.prev_post_id = params["post"]["prev_post_id"] if params["post"]["prev_post_id"]
 
 		if post.save
 			post.tag! params["post"]["tags"]

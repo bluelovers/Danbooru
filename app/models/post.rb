@@ -5,6 +5,8 @@ class Post < ActiveRecord::Base
 	before_validation_on_create :get_image_dimensions
 	before_validation_on_create :generate_preview
 	before_destroy :delete_file
+	after_create :update_neighbor_links_on_create
+	before_destroy :update_neighbor_links_on_destroy
 
 	votable
 	uses_image_servers :servers => CONFIG["image_servers"] if CONFIG["image_servers"]
@@ -218,6 +220,35 @@ class Post < ActiveRecord::Base
 			@author
 		else
 			CONFIG["default_guest_name"]
+		end
+	end
+
+	def update_neighbor_links_on_create
+		prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC")
+
+		if prev_post != nil
+			# should only be nil for very first post created
+			self.update_attribute(:prev_post_id, prev_post.id)
+			prev_post.update_attribute(:next_post_id, id)
+		end
+	end
+
+	def update_neighbor_links_on_destroy
+		prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC")
+		next_post = Post.find(:first, :conditions => ["id > ?", id], :order => "id ASC")
+
+		if prev_post == nil && next_post == nil
+			# do nothing
+		elsif prev_post != nil && next_post != nil
+			# deleted post is in middle
+			prev_post.update_attribute(:next_post_id, next_post.id)
+			next_post.update_attribute(:prev_post_id, prev_post.id)
+		elsif prev_post == nil
+			# no previous post, therefore deleted post is first post
+			prev_post.update_attribute(:next_post_id, nil)
+		elsif next_post == nil
+			# no next post, therefore deleted post is last post
+			next_post.update_attribute(:prev_post_id, nil)
 		end
 	end
 

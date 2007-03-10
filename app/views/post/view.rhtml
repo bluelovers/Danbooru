@@ -14,6 +14,19 @@
 				<li>Favorites: <a href="/post/view_favorites/<%= @post.id %>"> <%= pluralize @post.fav_count, "person" %></a></li>
 			</ul>
 		</div>
+		<div>
+			<h5>Options</h5>
+			<ul>
+				<li><%= link_to "Remove", :controller => "post", :action => "remove", :id => @post.id %></li>
+				<%- if @post.image? -%>
+					<li><%= link_to_function "Add Translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
+				<%- end -%>
+				<li><%= link_to_function "Add to Favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
+				<li><%= link_to "Tag History", :controller => "post", :action => "tag_history", :id => @post.id %></li>
+				<li><%= link_to "Note History", :controller => "note", :action => "history_for_post", :id => @post.id %></li>
+				<li><%= link_to "Moderate", :controller => "post", :action => "moderate", :id => @post.id %></li>
+			</ul>
+		</div>
 	</div>
 
 	<div class="content">
@@ -69,21 +82,15 @@
 			</script>
 
 			<p id="post_menu">
-				<a href="/post/remove/<%= @post.id %>">Remove</a>
-				<%- if @post.image? -%>
+				<%= link_to_function "Edit", "Element.toggle('edit')" %>
+				<% if @post.prev_post_id %>
 					<strong class="divider">|</strong>
-					<a href="#" onclick="Note.create(<%= @post.id %>); return false" title="Add a translation note">Add Translation</a>
-				<%- end -%>
-				<strong class="divider">|</strong>
-				<a href="#" onclick="addFavorite(<%= @post.id %>); return false" title="Add to favorites">Add to Favorites</a>
-				<strong class="divider">|</strong>
-				<a href="#" onclick="Element.toggle('edit'); return false" title="Edit this post">Edit</a>
-				<strong class="divider">|</strong>
-				<a href="/note/history_for_post/<%= @post.id %>" title="View note history">Note History</a>
-				<strong class="divider">|</strong>
-				<a href="/post/tag_history/<%= @post.id %>">Tag History</a>
-				<strong class="divider">|</strong>
-				<a href="/post/moderate/<%= @post.id %>">Moderate</a>
+					<%= link_to "Previous", :controller => "post", :action => "view", :id => @post.prev_post_id %>
+				<% end %>
+				<% if @post.next_post_id %>
+					<strong class="divider">|</strong>
+					<%= link_to "Next", :controller => "post", :action => "view", :id => @post.next_post_id %>
+				<% end %>
 			</p>
 		</div>
 
@@ -92,6 +99,14 @@
 				<div class="option">
 					<label class="block" for="post_rating_questionable">Rating</label>
 					<%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> <label for="post_rating_explicit">Explicit</label> <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %> <label for="post_rating_questionable">Questionable</label> <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> <label for="post_rating_safe">Safe</label>
+				</div>
+				<div class="option">
+					<label class="block" for="post_prev_post_id">Previous Post ID</label>
+					<%= text_field "post", "prev_post_id", :size => 10 %>
+				</div>
+				<div class="option">
+					<label class="block" for="post_next_post_id">Next Post ID</label>
+					<%= text_field "post", "next_post_id", :size => 10 %>
 				</div>
 				<div class="option">
 					<label class="block" for="post_source">Source</label>
