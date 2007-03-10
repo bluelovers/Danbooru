@@ -697,5 +697,13 @@ div#tag-explore img {
 }
 
 span.artist-tag {
-	color: #f66;
+	color: #f00;
+}
+
+span.character-tag {
+	color: #0a0;
+}
+
+span.copyright-tag {
+	color: #a0a;
 }

@@ -20,7 +20,7 @@
 			<li><%= link_to "Comments", :controller => "comment", :action => "list" %></li>
 			<li><%= link_to "Tags", :controller => "tag", :action => "list" %></li>
 			<li><%= link_to "Notes", :controller => "note", :action => "list" %></li>
-			<li><%= link_to "Wiki", :controller => "wiki", :action => "view", :title => "Danbooru:Home" %></li>
+			<li><%= link_to "Wiki", :controller => "wiki", :action => "view", :title => "#{CONFIG['app_name']}:Home" %></li>
 			<% if (@current_user.role?(:admin) rescue false) %>
 				<li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
 			<% end %>
