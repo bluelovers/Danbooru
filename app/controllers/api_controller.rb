@@ -265,7 +265,7 @@ class ApiController < ApplicationController
 
 		if p.vote!(score, @request.remote_ip)
 			render :nothing => true
-		else Post::AlreadyVotedError
+		else
 			render :text => "already voted", :status => 500
 		end
 	end
