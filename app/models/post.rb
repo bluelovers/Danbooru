@@ -53,16 +53,20 @@ class Post < ActiveRecord::Base
 
 		connection.execute("BEGIN")
 		connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
+		foo = []
 		canonical.each do |t|
 			if t =~ /^rating:(.+)/
 				self.rate!($1)
 			else
 				hoge = Tag.find_or_create_by_name(t)
-				connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{hoge.id})")
+				unless foo.include?(hoge.name)
+					foo << hoge.name
+					connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{hoge.id})")
+				end
 			end
 		end
 		
-		foo = canonical.sort.join(" ")
+		foo = foo.sort.uniq.join(" ")
 
 		unless connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == foo
 			connection.execute(Post.sanitize_sql(["INSERT INTO post_tag_histories (post_id, tags) VALUES (#{id}, ?)", foo]))
