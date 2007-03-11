@@ -258,7 +258,7 @@ class Post < ActiveRecord::Base
 
 	def self.generate_sql__range_helper(arr, field, c, p)
 		case arr[0]
-		when :equal
+		when :eq
 			c << "#{field} = ?"
 			p << arr[1]
 
