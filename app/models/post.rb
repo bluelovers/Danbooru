@@ -249,10 +249,10 @@ class Post < ActiveRecord::Base
 			next_post.update_attribute(:prev_post_id, prev_post.id)
 		elsif prev_post == nil
 			# no previous post, therefore deleted post is first post
-			prev_post.update_attribute(:next_post_id, nil)
+			next_post.update_attribute(:prev_post_id, nil)
 		elsif next_post == nil
 			# no next post, therefore deleted post is last post
-			next_post.update_attribute(:prev_post_id, nil)
+			prev_post.update_attribute(:next_post_id, nil)
 		end
 	end
 
