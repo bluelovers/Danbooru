@@ -64,4 +64,4 @@ class CommentController < ApplicationController
 			@comments = Comment.find(:all, :conditions => "signal_level = 0", :order => "id DESC")
 		end
 	end
-end
+end if CONFIG["enable_comments"]

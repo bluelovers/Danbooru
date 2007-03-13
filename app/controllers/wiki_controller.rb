@@ -73,7 +73,7 @@ class WikiController < ApplicationController
 			@page.body =<<-EOL
 Artist.
 
-Japanese name:
+Japanese name: 
 
 h4. See also
 

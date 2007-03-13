@@ -84,47 +84,36 @@ function changeMode() {
 		document.body.style.background = "#AA3"
 	} else if (s == "lock-note") {
 		document.body.style.background = "#3AA"
-	} else if (s == "new-add-tag") {
-		var tag = prompt("Enter a tag")
-		if (readCookie("add_tags").length > 0) {
-			createCookie("add_tags", readCookie("add_tags") + "," + tag, 10000)
-		} else {
-			createCookie("add_tags", tag, 10000)
+	} else if (s == "new-tag-script") {
+		if (readCookie("tag-script-redirected") == "") {
+			writeCookie("tag-script-redirected", "1")
+			location.href = "/wiki/view?title=Help%3ATag_Scripts"
+			return
 		}
 
+		var name = prompt("Enter a name for this tag script")
+		var tag = prompt("Enter the tag script")
+
+		if (readCookie("tag-script") == "") {
+			writeCookie("tag-script", {}.toJSON())
+		}
+
+		var hash = eval("(" + readCookie("tag-script") + ")")
+		hash[name] = tag
+		writeCookie("tag-script", hash.toJSON())
+
 		var c = document.createElement("option")
-		c.value = "add=" + tag
-		c.innerHTML = "Add tag: " + tag
+		c.value = "script=" + name
+		c.innerHTML = "script: " + name
 		$("mode").appendChild(c)
 		$("mode").value = "view"
 		createCookie("mode", "view", 7)
 		document.body.style.background = "#FFF"
-	} else if (s == "clear-add-tag") {
+	} else if (s == "clear-tag-script") {
 		createCookie("mode", "view", 7)
 		$("mode").value = "view"
-		eraseCookie("add_tags")
-	} else if (s.match(/^add=/)) {
-		document.body.style.background = "#006"
-	} else if (s == "new-remove-tag") {
-		var tag = prompt("Enter a tag")
-		if (readCookie("remove_tags").length > 0) {
-			createCookie("remove_tags", readCookie("remove_tags") + "," + tag, 10000)
-		} else {
-			createCookie("remove_tags", tag, 10000)
-		}
-
-		var c = document.createElement("option")
-		c.value = "remove=" + tag
-		c.innerHTML = "Remove tag: " + tag
-		$("mode").appendChild(c)
-		$("mode").value = "view"
-		createCookie("mode", "view", 7)
-		document.body.style.background = "#FFF"
-	} else if (s == "clear-remove-tag") {
-		createCookie("mode", "view", 7)
-		$("mode").value = "view"
-		eraseCookie("remove_tags")
-	} else if (s.match(/^remove=/)) {
+		eraseCookie("tag-script")
+	} else if (s.match(/^script=/)) {
 		document.body.style.background = "#600"
 	} else {
 		document.body.style.background = "#AFA"

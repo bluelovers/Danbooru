@@ -2,7 +2,7 @@
 	<%= form_tag "/admin/edit_account" %>
 		<div class="option">
 			<label class="block" for="user_id">User</label>
-			<%= collection_select "user", "id", User.find(:all), "id", "name" %>
+			<%= collection_select "user", "id", User.find(:all, :order => "lower(name)"), "id", "name" %>
 		</div>
 
 		<div class="option">

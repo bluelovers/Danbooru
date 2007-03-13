@@ -7,6 +7,8 @@
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
+require 'local_config'
+
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service, :action_mailer ]
@@ -63,12 +65,10 @@ require 'base64'
 require 'diff/lcs/array'
 require 'image_size'
 require 'ipaddr'
-require 'net/https'
 require 'open-uri'
 require 'socket'
 require 'time'
 require 'uri'
 require 'arch'
 require 'acts_as_versioned'
-require 'local_config'
 
