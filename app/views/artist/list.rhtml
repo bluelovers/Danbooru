@@ -1,0 +1,26 @@
+<div id="artist-list">
+	<table>
+		<tr>
+			<th>(<%= link_to "new", :action => "add" %>)</th>
+			<th>Personal Name</th>
+			<th>Handle Name</th>
+			<th>Circle Name</th>
+			<th>Japanese Name</th>
+			<th>Site Name</th>
+			<th>Site</th>
+			<th>Image URL</th>
+		</tr>
+		<% @artists.each do |artist| %>
+			<tr class="<%= cycle 'even', 'odd' %>">
+				<td><%= link_to "Posts", :controller => "post", :action => "list", :tags => artist.name %> <%= link_to "Edit", :controller => "artist", :action => "edit", :id => artist.id %></td>
+				<td><%= artist.personal_name %></td>
+				<td><%= artist.handle_name %></td>
+				<td><%= artist.circle_name %></td>
+				<td><%= artist.japanese_name %></td>
+				<td><%= artist.site_name %></td>
+				<td><% unless artist.site_url.blank? %><%= link_to "Link", artist.site_url %><% end %></td>
+				<td><% unless artist.image_url.blank? %><%= link_to "Link", artist.image_url %><% end %></td>
+			</tr>
+		<% end %>
+	</table>
+</div>

@@ -1,0 +1,37 @@
+<div id="artist-add">
+	<form method="post" action="/artist/add">
+	<table>
+		<tr>
+			<th>Personal Name</th>
+			<td><%= text_field "artist", "personal_name" %></td>
+		</tr>
+		<tr>
+			<th>Handle Name</th>
+			<td><%= text_field "artist", "handle_name" %></td>
+		</tr>
+		<tr>
+			<th>Circle Name</th>
+			<td><%= text_field "artist", "circle_name" %></td>
+		</tr>
+		<tr>
+			<th>Japanese Name</th>
+			<td><%= text_field "artist", "japanese_name" %></td>
+		</tr>
+		<tr>
+			<th>Site Name</th>
+			<td><%= text_field "artist", "site_name" %></td>
+		</tr>
+		<tr>
+			<th>Site URL</th>
+			<td><%= text_field "artist", "site_url" %></td>
+		</tr>
+		<tr>
+			<th>Image URL</th>
+			<td><%= text_field "artist", "image_url" %></td>
+		</tr>
+		<tr>
+			<td colspan="2"><%= submit_tag "Save" %></td>
+		</tr>
+	</table>
+	</form>
+</div>

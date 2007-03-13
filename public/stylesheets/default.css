@@ -107,8 +107,7 @@ span.author	{
 th {
 	font-weight: bold;
 	text-align: left;
-	color: white;
-	background: #66C;
+	color: #66C;
 	padding: 0.2em 0.5em;
 }
 
@@ -118,11 +117,11 @@ tr.padded th {
 }
 
 tr.even {
-	background: rgb(230, 230, 255);
+	background: rgb(250, 250, 255);
 }
 
 tr.odd {
-	background: rgb(245, 245, 255);
+	background: rgb(240, 240, 255);
 }
 
 td {

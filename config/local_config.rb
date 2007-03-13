@@ -1,3 +1,5 @@
+require 'yaml'
+
 CONFIG = {}
 LOCAL_CONFIG_FILE = "#{RAILS_ROOT}/config/local_config.yml"
 DEFAULT_CONFIG = {

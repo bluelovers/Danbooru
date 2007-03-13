@@ -1,6 +1,7 @@
 class WikiPage < ActiveRecord::Base
 	acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
 	before_save :make_title_canonical
+	before_save :identify_artist
 	belongs_to :user
 
 	TAG_DEL = '<del>'
@@ -12,6 +13,23 @@ class WikiPage < ActiveRecord::Base
 
 	def make_title_canonical
 		self.title = title.tr(" ", "_")
+	end
+
+	def identify_artist
+		tag = Tag.find_by_name(self.title)
+		if tag != nil && tag.tag_type == Tag::TYPE_ARTIST
+			attribs = {}
+			attribs[:personal_name] = self.title
+			attribs[:handle_name] = self.title
+			attribs[:japanese_name] = self.body[/Japanese name:\s*(\S+)/, 1] rescue nil
+			attribs[:site_url] = self.body[/"Home page":(\S+)/, 1] rescue nil
+			attribs[:image_url] = site_url
+
+			artist = Artist.find_by_name(tag.name)
+			if artist == nil
+				Artist.create(attribs)
+			end
+		end
 	end
 
 	def last_version?
