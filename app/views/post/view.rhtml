@@ -133,8 +133,8 @@
 				</div>
 			<%= end_form_tag %>
 		</div>
+	<%= javascript_tag "Element.hide('edit')" %>
 	<% if CONFIG["enable_comments"] %>
-		<%= javascript_tag "Element.hide('edit'); var posts = {}; posts[#{@post.id}] = {}; posts[#{@post.id}].comments = {}; var cthreshold = parseInt(readCookie('comment_threshold')) || 0; var post_id = #{@post.id}; var users = readCookie('user_blacklist').split(/[,; ]/g)" %>
 		<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
 		<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
 	<% end %>

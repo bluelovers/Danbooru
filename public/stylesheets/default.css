@@ -107,8 +107,13 @@ span.author	{
 th {
 	font-weight: bold;
 	text-align: left;
-	color: #66C;
+	background-color: #66C;
+	color: white;
 	padding: 0.2em 0.5em;
+}
+
+th a, th a:link, th a:visited {
+	color: rgb(250, 250, 255);
 }
 
 tr.padded th {

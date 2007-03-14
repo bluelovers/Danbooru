@@ -21,22 +21,15 @@ function notice(msg) {
 }
 
 function loadMode() {
-	if (readCookie("add_tags").length > 0) {
-		readCookie("add_tags").split(/,/g).each(function(i) {
-			var c = document.createElement("option")
-			c.value = "add=" + i
-			c.innerHTML = "Add tag: " + i
-			$("mode").appendChild(c)
-		})
-	}
+	if (readCookie("tag-script") != "") {
+		var hash = eval("(" + readCookie("tag-script") + ")")
 
-	if (readCookie("remove_tags").length > 0) {
-		readCookie("remove_tags").split(/,/g).each(function(i) {
-			var c = document.createElement("option")
-			c.value = "remove=" + i
-			c.innerHTML = "Remove tag: " + i
-			$("mode").appendChild(c)
-		})
+		for (i in hash) {
+			var o = document.createElement("option")
+			o.value = "script-" + i
+			o.innerHTML = i
+			$("mode").appendChild(o)
+		}
 	}
 
 	$("mode").value = readCookie("mode") || "view"
@@ -60,6 +53,66 @@ function addFavorite(post_id) {
 	})
 }
 
+function tagScriptParse(script) {
+	return script.scan(/\[.+?\]|[^ ]+/g)
+}
+
+function tagScriptTest(tags, predicate) {
+	var split_tags = tags.match(/[^ ]+/g)
+	var split_pred = predicate.match(/[^ ]+/g)
+	var is_true = true
+
+	split_pred.each(function(x) {
+		if (x[0] == "-") {
+			if (split_tags.include(x.substring(1, 100)) {
+				is_true = false
+				throw $break
+			}
+		} else {
+			if (!split_tags.include(x)) {
+				is_true = false
+				throw $break
+			}
+		}
+	})
+
+	return is_true
+}
+
+function tagScriptProcess(tags, command) {
+	if (command.match(/^\[if/)) {
+		var match = command.match(/\[if\s*,\s*(.+?)\s*,\s*,(.+?)\]/)
+		if (tagScriptTest(tags, match[1]) {
+			return tagScriptProcess(tags, match[2])
+		} else {
+			return tags
+		}
+	} else if (command == "[reset]") {
+		return ""
+	} else if (command[0] == "-") {
+		return tags.reject(function(x) {x == command.substring(0, 100)})
+	}
+}
+
+
+function tagScriptUpdate(name, script) {
+	if (readCookie("tag-script") == "") {
+		writeCookie("tag-script", {}.toJSON())
+		location.href = "/wiki/view?title=Help%3ATag_Scripts"
+		return
+	}
+
+	var hash = eval("(" + readCookie("tag-script") + ")")
+	if (script == null) {
+		delete hash[name]
+	} else {
+		hash[name] = script
+	}
+
+	writeCookie("tag-script", hash.toJSON())
+}
+
+
 function changeMode() {
 	var s = $F("mode")
 	createCookie("mode", s, 7)
@@ -68,11 +121,6 @@ function changeMode() {
 		document.body.style.background = "white"
 	} else if (s == "edit") {
 		document.body.style.background = "#FAF"
-	} else if (s == "rating-explicit") {
-		document.body.style.background = "#A33"
-	} else if (s == "rating-quest") {
-		document.body.style.background = "#333"
-	} else if (s == "rating-safe") {
 		document.body.style.background = "#3A3"
 	} else if (s == "fav") {
 		document.body.style.background = "#FFA"
@@ -85,36 +133,22 @@ function changeMode() {
 	} else if (s == "lock-note") {
 		document.body.style.background = "#3AA"
 	} else if (s == "new-tag-script") {
-		if (readCookie("tag-script-redirected") == "") {
-			writeCookie("tag-script-redirected", "1")
-			location.href = "/wiki/view?title=Help%3ATag_Scripts"
-			return
-		}
-
 		var name = prompt("Enter a name for this tag script")
-		var tag = prompt("Enter the tag script")
+		var script = prompt("Enter the tag script")
 
-		if (readCookie("tag-script") == "") {
-			writeCookie("tag-script", {}.toJSON())
-		}
-
-		var hash = eval("(" + readCookie("tag-script") + ")")
-		hash[name] = tag
-		writeCookie("tag-script", hash.toJSON())
+		tagScriptUpdate(name, script)
 
 		var c = document.createElement("option")
-		c.value = "script=" + name
-		c.innerHTML = "script: " + name
+		c.value = "script-" + name
+		c.innerHTML = "Script: " + name
 		$("mode").appendChild(c)
 		$("mode").value = "view"
 		createCookie("mode", "view", 7)
 		document.body.style.background = "#FFF"
-	} else if (s == "clear-tag-script") {
-		createCookie("mode", "view", 7)
-		$("mode").value = "view"
-		eraseCookie("tag-script")
-	} else if (s.match(/^script=/)) {
-		document.body.style.background = "#600"
+	} else if (s == "delete-tag-script") {
+		var name = prompt("Enter the script's name")
+
+		tagScriptUpdate(name, null)
 	} else {
 		document.body.style.background = "#AFA"
 	}
@@ -213,54 +247,16 @@ function postClick(post_id) {
 			}
 		})
 		return false
-	} else if (s.value == 'rating-explicit' || s.value == 'rating-safe' || s.value == 'rating-quest') {
-		notice('Changing post #' + post_id + '...')
-		var rat = ""
-		if (s.value == 'rating-explicit') {
-			rat = "explicit"
-		} else if (s.value == "rating-safe") {
-			rat = "safe"
-		} else {
-			rat = "questionable"
-		}
-
-		new Ajax.Request("/api/change_post", {
-			asynchronous: true,
-			method: "post",
-			parameters: "id=" + post_id + "&rating=" + rat,
-			onComplete: function(req) {
-				if (req.status >= 200 && req.status < 300) {
-					notice("Rating changed for post #" + post_id)
-				} else {
-					notice("Failed: " + req.responseText)
-				}
-			}
+	} else if (s.value.match(/^tag-script-/)) {
+		var script = eval("(" + readCookie("tag-script") + ")")[s.value]
+		var commands = tagScriptParse(script)
+		commands.each(function(x) {
+			post[post_id].tags = tagScriptProcess(posts[post_id].tags, x)
 		})
 
-		return false
-	} else if (s.value.match(/^add=/)) {
-		var tags = s.value.match(/^add=(.+)/)[1] + " " + posts[post_id].tags.join(" ")
-
 		notice('Changing post #' + post_id + '...')
 
-		var newTags = tags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
-
-		new Ajax.Request('/api/change_post', {
-			asynchronous: true,
-			method: 'post',
-			parameters: 'id='+post_id+'&tags='+newTags.join(' '),
-			onComplete: function(req) {
-				notice('Tags changed for post #' + post_id)
-			}
-		})
-
-		return false
-	} else if (s.value.match(/^remove=/)) {
-		var tags = posts[post_id].tags.without(s.value.match(/^remove=(.+)/)[1]).join(" ")
-
-		notice('Changing post #' + post_id + '...')
-
-		var newTags = tags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
+		var newTags = post[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
 
 		new Ajax.Request('/api/change_post', {
 			asynchronous: true,
