@@ -107,7 +107,7 @@ class PostController < ApplicationController
 
 	def view
 		@post = Post.find(:first, :conditions => ["posts.id = ?", params['id']])
-		set_title @post.cached_tags
+		set_title @post.cached_tags rescue ""
 		@tags = {:include => @post.tags}
 	end
 
