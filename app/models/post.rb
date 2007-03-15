@@ -69,7 +69,7 @@ class Post < ActiveRecord::Base
 		foo = foo.sort.uniq.join(" ")
 
 		unless connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == foo
-			connection.execute(Post.sanitize_sql(["INSERT INTO post_tag_histories (post_id, tags, user_id, ip_addr) VALUES (#{id}, ?, ?, ?)", foo, user_id, ip_addr]))
+			connection.execute(Post.sanitize_sql(["INSERT INTO post_tag_histories (post_id, tags, user_id, ip_addr, created_at) VALUES (#{id}, ?, ?, ?, now())", foo, user_id, ip_addr]))
 		end
 		connection.execute(Post.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = #{id}", foo]))
 		connection.execute("COMMIT")

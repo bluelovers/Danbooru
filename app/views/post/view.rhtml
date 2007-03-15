@@ -133,7 +133,7 @@
 				</div>
 			<%= end_form_tag %>
 		</div>
-	<%= javascript_tag "Element.hide('edit')" %>
+	<%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
 	<% if CONFIG["enable_comments"] %>
 		<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
 		<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>

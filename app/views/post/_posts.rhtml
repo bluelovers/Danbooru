@@ -2,7 +2,7 @@
 	<%- if @posts.empty? -%>
 		<h4>Nobody here but us chickens!</h4>
 	<%- else -%>
-		<%= javascript_tag "var posts = {}" %>
+		<%= javascript_tag "posts = {}" %>
 
 		<%- for post in @posts -%>
 			<span id="p<%= post.id %>" class="thumb"><a href="/post/view/<%= post.id %>"><img alt="post" src="<%= post.preview_url %>" class="preview" onclick="return postClick(<%= post.id %>)" title="<%=h post.cached_tags %> score:<%= post.score %> rating:<%= post.pretty_rating %>"/></a></span>

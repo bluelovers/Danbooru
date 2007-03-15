@@ -15,7 +15,7 @@ class PostController < ApplicationController
 		post.prev_post_id = params["post"]["prev_post_id"] if params["post"]["prev_post_id"]
 
 		if post.save
-			post.tag! params["post"]["tags"], current_user(:id), request.remote_ip
+			post.tag! params["post"]["tags"], session[:user_id], request.remote_ip
 			redirect_to :controller => "post", :action => "view", :id => post.id
 		else
 			render_error(post)
