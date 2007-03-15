@@ -2,7 +2,7 @@ class TagController < ApplicationController
 	layout 'default'
 
 	before_filter :admin_only, :only => [:rename, :create_alias, :remove_alias, :create_implication, :remove_implication]
-	before_filter :mod_only, :only => [:set_type, :mass_edit]
+	before_filter :mod_only, :only => [:mass_edit]
 
 	def list
 		set_title "Tags"
