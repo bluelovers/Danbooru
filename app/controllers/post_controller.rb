@@ -1,7 +1,7 @@
 class PostController < ApplicationController
 	layout 'default'
 
-	before_filter :user_only, :except => [:rss, :atom] unless CONFIG["allow_anonymous_post_access"]
+	before_filter :user_only, :except => [:atom] unless CONFIG["allow_anonymous_post_access"]
 	after_filter :save_tags_to_cookie, :only => [:change]
 	helper :wiki, :tag, :comment
 	verify :method => :post, :only => [:change]
@@ -15,7 +15,7 @@ class PostController < ApplicationController
 		post.prev_post_id = params["post"]["prev_post_id"] if params["post"]["prev_post_id"]
 
 		if post.save
-			post.tag! params["post"]["tags"]
+			post.tag! params["post"]["tags"], current_user(:id), request.remote_ip
 			redirect_to :controller => "post", :action => "view", :id => post.id
 		else
 			render_error(post)
@@ -63,11 +63,11 @@ class PostController < ApplicationController
 			@post.user_id = current_user().id rescue nil
 
 			if @post.save
-				@post.tag! params["post"]["tags"]
+				@post.tag! params["post"]["tags"], session[:user_id], request.remote_ip
 				post_id = @post.id
 			elsif @post.errors.invalid?(:md5)
 				p = Post.find_by_md5(@post.md5)
-				p.tag!(p.cached_tags + " " + params["post"]["tags"])
+				p.tag!(p.cached_tags + " " + params["post"]["tags"], session[:user_id], request.remote_ip)
 				post_id = p.id
 			else
 				render_error(@post)
@@ -107,8 +107,10 @@ class PostController < ApplicationController
 
 	def view
 		@post = Post.find(:first, :conditions => ["posts.id = ?", params['id']])
-		set_title @post.cached_tags rescue ""
-		@tags = {:include => @post.tags}
+		if @post
+			set_title @post.cached_tags
+			@tags = {:include => @post.tags}
+		end
 	end
 
 	def popular
@@ -154,7 +156,7 @@ class PostController < ApplicationController
 	def revert_tags
 		if request.post?
 			@post = Post.find(params["id"])
-			@post.tag! @post.tag_history.find(params["history"]).tags
+			@post.tag! @post.tag_history.find(params["history"]).tags, session[:user_id], request.remote_ip
 		end
 
 		redirect_to :action => "view", :id => @post.id

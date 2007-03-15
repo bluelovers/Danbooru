@@ -44,7 +44,7 @@ class Post < ActiveRecord::Base
 	end
 
 # Saves the tags to the join table.
-	def tag!(tags)
+	def tag!(tags, user_id = nil, ip_addr = nil)
 		tags = "tagme" if tags.blank?
 		
 		canonical = Tag.scan_tags(tags)
@@ -69,7 +69,7 @@ class Post < ActiveRecord::Base
 		foo = foo.sort.uniq.join(" ")
 
 		unless connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == foo
-			connection.execute(Post.sanitize_sql(["INSERT INTO post_tag_histories (post_id, tags) VALUES (#{id}, ?)", foo]))
+			connection.execute(Post.sanitize_sql(["INSERT INTO post_tag_histories (post_id, tags, user_id, ip_addr) VALUES (#{id}, ?, ?, ?)", foo, user_id, ip_addr]))
 		end
 		connection.execute(Post.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = #{id}", foo]))
 		connection.execute("COMMIT")

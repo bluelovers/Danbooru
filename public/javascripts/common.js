@@ -64,7 +64,7 @@ function tagScriptTest(tags, predicate) {
 
 	split_pred.each(function(x) {
 		if (x[0] == "-") {
-			if (split_tags.include(x.substring(1, 100)) {
+			if (split_tags.include(x.substring(1, 100))) {
 				is_true = false
 				throw $break
 			}
@@ -82,7 +82,7 @@ function tagScriptTest(tags, predicate) {
 function tagScriptProcess(tags, command) {
 	if (command.match(/^\[if/)) {
 		var match = command.match(/\[if\s*,\s*(.+?)\s*,\s*,(.+?)\]/)
-		if (tagScriptTest(tags, match[1]) {
+		if (tagScriptTest(tags, match[1])) {
 			return tagScriptProcess(tags, match[2])
 		} else {
 			return tags
@@ -363,22 +363,7 @@ function filterComments(post_id, comment_size) {
 	var j = comment_size - 5
 
 	for (i in posts[post_id].comments) {
-		var hidden = false
-
-		if (posts[post_id].comments[i].score < cthreshold) {
-			hidden = true
-		}
-
-		if (!hidden && users.include(posts[post_id].comments[i].user)) {
-			hidden = true
-		}
-
-		if (hidden) {
-			j -= 1
-			Element.hide('c' + i)
-			Element.addClassName('c' + i, 'ignored-comment')
-			cignored.push('c' + i)
-		} else if (j-- > 0) {
+		if (j-- > 0) {
 			Element.hide('c' + i)
 			Element.addClassName('c' + i, 'hidden-comment')
 			cignored.push('c' + i)

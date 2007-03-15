@@ -43,7 +43,7 @@ class ApiController < ApplicationController
 		@post.rating = params["rating"]
 
 		if @post.save
-			@post.tag! params["tags"]
+			@post.tag! params["tags"], session[:user_id], request.remote_ip
 
 			if params["md5"] and params["md5"].downcase != @post.md5
 				response.headers["X-Danbooru-Errors"] = "mismatched md5"
@@ -55,7 +55,7 @@ class ApiController < ApplicationController
 			end
 		elsif @post.errors.invalid?(:md5)
 			p = Post.find_by_md5(@post.md5)
-			p.tag!(p.cached_tags.to_s + " " + params["tags"])
+			p.tag!(p.cached_tags.to_s + " " + params["tags"], session[:user_id], request.remote_ip)
 			response.headers["X-Danbooru-Errors"] = "duplicate"
 			response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "view", :id => Post.find_by_md5(@post.md5).id)
 			render :text => "duplicate", :status => 409
@@ -85,7 +85,7 @@ class ApiController < ApplicationController
 		@post.rating = params["rating"] if params["rating"]
 		
 		if @post.save
-			@post.tag! params["tags"] if params["tags"]
+			@post.tag!(params["tags"], session[:user_id], request.remote_ip) if params["tags"]
 			render :nothing => true
 		else
 			response.headers["X-Danbooru-Errors"] = "internal"

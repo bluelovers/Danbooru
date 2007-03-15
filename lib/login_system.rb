@@ -11,7 +11,7 @@ module LoginSystem
 		end
 	end
 
-	def current_user
+	def current_user(attrib = nil)
 		if @current_user
 			# do nothing
 		elsif session[:user_id]
@@ -24,6 +24,10 @@ module LoginSystem
 
 		if @current_user
 			session[:user_id] = @current_user.id
+		end
+
+		if @current_user && attrib
+			return @curent_user[attrib]
 		end
 
 		return @current_user
