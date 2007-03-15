@@ -41,6 +41,12 @@ class PostController < ApplicationController
 		set_title "Add Post"
 
 		if request.post?
+			if current_user() == nil && !CONFIG["allow_anonymous_posts"]
+				flash[:notice] = "Anonymous uploads have been disabled"
+				redirect_to :action => "list"
+				return
+			end
+
 			post_id = nil
 
 			if (params["post"]["file"].blank? || params["post"]["file"].size == 0) and params["post"]["source"].blank?
