@@ -19,7 +19,7 @@ Once you've downloaded and installed everything, get the latest copy of Danbooru
 
 Now it's time to configure your copy. Change into the config directory and edit the following files: database.yml, local_config.yml. Example files are provided.
 
-Create the database. A schema file is provided at db/postgres.sql.
+Create the database. A schema file is provided at db/postgres.sql. You should also run the migration scripts by entering "rake migrate".
 
 You should manually build the resizer program. This obviously requires gcc and the make tools. The resizer depends on the GD library. The source code is located in lib/resizer. A Makefile is provided.
 
