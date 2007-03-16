@@ -11,23 +11,21 @@ module LoginSystem
 		end
 	end
 
-	def current_user(attrib = nil)
-		if @current_user
-			# do nothing
-		elsif session[:user_id]
+	def current_user
+		if @current_user == nil && session[:user_id]
 			@current_user = User.find(session[:user_id])
-		elsif cookies["login"] && cookies["pass_hash"]
+		end
+
+		if @current_user == nil && cookies["login"] && cookies["pass_hash"]
 			@current_user = User.authenticate_hash(cookies["login"], cookies["pass_hash"])
-		elsif params["login"] && params["password"]
+		end
+
+		if @current_user == nil && params["login"] && params["password"]
 			@current_user = User.authenticate(params["login"], params["password"])
 		end
 
 		if @current_user
 			session[:user_id] = @current_user.id
-		end
-
-		if @current_user && attrib
-			return @curent_user[attrib]
 		end
 
 		return @current_user
