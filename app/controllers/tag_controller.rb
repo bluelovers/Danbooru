@@ -39,7 +39,7 @@ class TagController < ApplicationController
 			end
 
 			Post.find_by_sql(Post.generate_sql(params["start"])).each do |p|
-				p.tag!((p.cached_tags.split(" ") - Tag.to_aliased(Tag.scan_tags(params["start"])) + Tag.to_aliased(Tag.scan_tags(params["result"]))).join(" "))
+				p.tag!((p.cached_tags.split(" ") - Tag.to_aliased(Tag.scan_tags(params["start"])) + Tag.to_aliased(Tag.scan_tags(params["result"]))).join(" "), session[:user_id], request.remote_ip)
 			end
 
 			flash[:notice] = "Tag changes saved"
