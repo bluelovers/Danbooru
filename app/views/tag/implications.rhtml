@@ -1,4 +1,4 @@
-<%= form_tag "/tag/create_implication", :id => "create-implication" %>
+<% form_tag({:controller => "tag", :action => "create_implication"}, :id => "create-implication") do %>
 	<table>
 		<tr>
 			<th>Expand</th>
@@ -18,6 +18,6 @@
 			</tr>
 		<%- end -%>
 	</table>
-<%= end_form_tag %>
+<% end %>
 
 <%= render :partial => "footer" %>

@@ -1,4 +1,4 @@
-<%= form_tag "/tag/create_alias", :id => "create-alias" %>
+<% form_tag({:controller => "tag", :action => "create_alias"}, :id => "create-alias") do %>
 	<table>
 		<tr>
 			<th>Alias</th>
@@ -18,6 +18,6 @@
 			</tr>
 		<%- end -%>
 	</table>
-<%= end_form_tag %>
+<% end %>
 
 <%= render :partial => "footer" %>

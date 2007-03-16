@@ -5,7 +5,7 @@
 	<p style="margin-bottom: 1em;">Maybe you mistyped your user name or password.</p>
 <%- end -%>
 
-<%= start_form_tag({:controller => "account", :action => "login"}, :class => "simple-form") %>
+<% form_tag({:controller => "account", :action => "login"}, :class => "simple-form") do %>
 	<div class="option">
 		<label class="block" for="user_name">Name</label>
 		<%= text_field "user", "name" %>
@@ -19,5 +19,5 @@
 	<div class="option">
 		<%= submit_tag "Login" %>
 	</div>
-<%= end_form_tag %>
+<% end %>
 </div>

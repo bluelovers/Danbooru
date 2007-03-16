@@ -8,10 +8,10 @@
 		<%= link_to "More &raquo;", {:controller => "static", :action => "more"}, :title => "A site map" %>
 	</div>
 	<div class="space">
-		<%= form_tag({:controller => 'post', :action => 'list'}, :method => "get") %>
+		<% form_tag({:controller => 'post', :action => 'list'}, :method => "get") do %>
 			<%= text_field_tag "tags", "", :size => 30 %><br/>
 			<%= submit_tag 'Search', :name => 'searchDefault' %>
-		<%= end_form_tag %>
+		<% end %>
 	</div>
 	<div style="font-size: 80%; margin-bottom: 2em;">
 		<%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash; Serving <%= number_with_delimiter Post.fast_count %> posts<br/>

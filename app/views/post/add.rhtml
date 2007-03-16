@@ -1,5 +1,5 @@
 <div id="post-add">
-<%= form_tag "/post/add", :multipart => true %>
+<% form_tag({:controller => "post", :action => "add"}, :multipart => true) do %>
 <div id="posts">
 <table width="100%">
 <% if params["url"] %>
@@ -49,5 +49,5 @@
 </div>
 
 <%= submit_tag "Upload" %>
-<%= end_form_tag %>
+<% end %>
 </div>

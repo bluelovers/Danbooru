@@ -1,4 +1,4 @@
-<%= start_form_tag "/admin/settings" %>
+<% form_tag(:controller => "admin", :action => "settings") do %>
 
 <table width="80%">
 	<tr>
@@ -22,4 +22,4 @@
 	</tr>
 </table>
 
-<%= end_form_tag %>
+<% end %>
