@@ -71,4 +71,4 @@ require 'time'
 require 'uri'
 require 'arch'
 require 'acts_as_versioned'
-
+require 'net/http'
