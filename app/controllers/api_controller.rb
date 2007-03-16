@@ -159,7 +159,7 @@ class ApiController < ApplicationController
 				if tag_type.nil?
 					@tags += Tag.find_related(Tag.to_aliased(t)).map {|i| i[0]}
 				else
-					@tags += Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?)) AND post_id NOT IN (SELECT post_id FROM posts_tags WHERE tag_id IN (SELECT id FROM tags WHERE name IN ('crossover', 'parody')))) AND tag_type = ?", Tag.to_aliased(t), tag_type], :order => "name", :select => "name", :limit => 25).map {|i| i.name}
+					@tags += Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?))) AND tag_type = ?", Tag.to_aliased(t), tag_type], :order => "name", :select => "name", :limit => 25).map {|i| i.name}
 				end
 			end
 		else
