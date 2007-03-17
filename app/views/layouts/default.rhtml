@@ -21,6 +21,7 @@
 			<li><%= link_to "Comments", :controller => "comment", :action => "list" %></li>
 		<% end %>
 			<li><%= link_to "Tags", :controller => "tag", :action => "list" %></li>
+			<li><%= link_to "Artists", :controller => "artist", :action => "list" %></li>
 			<li><%= link_to "Notes", :controller => "note", :action => "list" %></li>
 			<li><%= link_to "Wiki", :controller => "wiki", :action => "view", :title => "Help:Home" %></li>
 			<% if (@current_user.role?(:admin) rescue false) %>
