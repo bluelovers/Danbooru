@@ -80,9 +80,10 @@ class AccountController < ApplicationController
 	end
 
 	def favorites
-		set_title "My Favorites"
-		@pages, @posts = paginate :posts, :per_page => 12, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
 		@user = User.find(params["id"])
+
+		set_title "#{@user.name}'s Favorites"
+		@pages, @posts = paginate :posts, :per_page => 12, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
 	end
 
 	def favorites_atom
