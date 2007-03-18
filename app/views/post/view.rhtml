@@ -114,7 +114,7 @@
 				</div>
 				<div class="option">
 					<label class="block" for="post_tags">Tags</label>
-					<%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <a href="#" onclick="$('related').innerHTML = '<em>Fetching...</em>'; new Ajax.Request('/api/find_related_tags', {parameters: 'tags='+$F('post_tags'), method:'get', onComplete: function(req) {injectTags(req.responseText)}}); return false">Find related</a>
+					<%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %>)
 				</div>
 				<div class="option">
 					<h6>My Tags</h6>

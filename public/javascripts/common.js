@@ -312,13 +312,13 @@ function toggleTag(link, tag_field) {
 }
 
 function markcom(id) {
-	notice("Marking comment #" + id + " as noise...")
+	notice("Marking comment #" + id + " as spam...")
 	new Ajax.Request("/api/mark_comment/" + id, {
 		asynchronous: true,
 		method: "post",
 		onComplete: function(req) {
 			if (req.status == 200) {
-				notice("Comment #" + id + " marked as noise");
+				notice("Comment #" + id + " marked as spam");
 			} else {
 				notice("Error: " + req.responseText);
 			}
@@ -445,4 +445,29 @@ function filterPosts(posts) {
 		cmd += "return false"
 		document.writeln('<div style="float: left; clear: both; text-align: center;"><a href="#" onclick="' + cmd + '">' + ignored.length + ' post' + (ignored.length == 1 ? '' : 's') + ' ignored</a></div>')
 	}
+}
+
+function findRelTags(tag_field, tag_type) {
+	$('related').innerHTML = '<em>Fetching...</em>'
+	var tag_field = $(tag_field)
+	var tags = tag_field.value
+	var tag_type_param = ""
+
+	if (tag_type != null) {
+		tag_type_param = "&" + tag_type + "=1"
+	}
+
+	if (tag_field.selectionEnd) {
+		if (tag_field.selectionStart != tag_field.selectionEnd) {
+			tags = tag_field.value.substr(tag_field.selectionStart, tag_field.selectionEnd - tag_field.selectionStart)
+		}
+	}
+
+	new Ajax.Request('/api/find_related_tags', {
+		method: 'get', 
+		onComplete:function(req) {
+			$('related').innerHTML = injectTagsHelper(req.responseText)
+		}, 
+		parameters:'tags=' + tags + tag_type_param
+	})
 }
