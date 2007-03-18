@@ -7,7 +7,7 @@ class CreateForumPost < ActiveRecord::Migration
 				updated_at TIMESTAMP NOT NULL,
 				title TEXT NOT NULL,
 				body TEXT NOT NULL,
-				creator_id INTEGER NOT NULL REFERENCES users ON DELETE CASACADE,
+				creator_id INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,
 				parent_id INTEGER REFERENCES forum_posts ON DELETE CASCADE
 			)
 		EOS
