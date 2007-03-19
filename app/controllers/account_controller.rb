@@ -1,6 +1,6 @@
 class AccountController < ApplicationController
 	layout "default"
-	before_filter :user_only, :only => [:change_password]
+	before_filter :user_only, :only => [:change_password, :favorites]
 
 	protected
 	def save_cookies(user)
