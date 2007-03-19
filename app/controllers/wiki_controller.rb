@@ -34,7 +34,7 @@ class WikiController < ApplicationController
 	end
 
 	def preview
-		render :inline => "<%= wikilize(@params['body']) %>"
+		render :inline => "<%= wikilize(params['body']) %>"
 	end
 
 	def save
@@ -119,7 +119,7 @@ h4. See also
 		set_title "Wiki Diff"
 
 		if params["redirect"]
-			redirect_to :action => "diff", :title => @params["title"], :from => params["from"], :to => params["to"]
+			redirect_to :action => "diff", :title => params["title"], :from => params["from"], :to => params["to"]
 			return
 		end
 

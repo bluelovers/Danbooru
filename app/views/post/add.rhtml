@@ -13,7 +13,7 @@
 	</tr>
 	<tr>
 		<td><%= content_tag "label", "Source", :for => "post_source" %></td>
-		<td><%= text_field "post", "source", :value => @params["url"], :size => 50 %> <%= link_to_function("Find artist", "$('related').innerHTML = '<em>Fetching...</em>'; new Ajax.Request('/api/find_related_tags', {method:'get', onComplete:function(req) {$('related').innerHTML = injectTagsHelper(req.responseText)}, parameters:'url='+$F('post_source')})") %></td>
+		<td><%= text_field "post", "source", :value => params["url"], :size => 50 %> <%= link_to_function("Find artist", "$('related').innerHTML = '<em>Fetching...</em>'; new Ajax.Request('/api/find_related_tags', {method:'get', onComplete:function(req) {$('related').innerHTML = injectTagsHelper(req.responseText)}, parameters:'url='+$F('post_source')})") %></td>
 	</tr>
 	<tr>
 		<td><%= content_tag "label", "Tags", :for => "post_tags" %></td>

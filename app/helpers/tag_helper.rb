@@ -25,10 +25,10 @@ module TagHelper
 			return ""
 		end
 
-		tag_join = @params['tags'] ? '%20' : ''
+		tag_join = params['tags'] ? '%20' : ''
 		html << link_to("?", :controller => "wiki", :action => "view", :title => name) << " "
-		html << link_to("+", :controller => "post", :action => "list", :tags => name + " " + @params["tags"].to_s) << " "
-		html << link_to("&ndash;", :controller => "post", :action => "list", :tags => "-" + name + " " + @params["tags"].to_s) << " "
+		html << link_to("+", :controller => "post", :action => "list", :tags => name + " " + params["tags"].to_s) << " "
+		html << link_to("&ndash;", :controller => "post", :action => "list", :tags => "-" + name + " " + params["tags"].to_s) << " "
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "list", :tags => name) << " "
 
 		case Tag.type(name)
