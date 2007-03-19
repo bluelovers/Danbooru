@@ -1,0 +1,5 @@
+<table>
+<% @forum_posts.each do |fp| %>
+	<tr><td><%= link_to fp.title, :action => "view", :id => fp.id %></td><td><%= fp.author %></td><td><%= fp.updated_at.strftime("%D") %></td></tr>
+<% end %>
+</table>

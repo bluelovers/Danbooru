@@ -1,0 +1,20 @@
+<div id="forum-post">
+<div class="post original-post">
+	<h4><%= @forum_post.title %></h4>
+	<h6>by <%= @forum_post.author %></h6>
+
+	<div><%= @forum_post.body %></div>
+</div>
+
+<% @forum_post.children.each do |c| %>
+	<div class="post">
+		<h6>by <%= @c.author %></h6>
+		<div><%= c.body %></div>
+	</div>
+<% end %>
+
+<% form_tag({:action => "create"}, :method => :get) do %>
+	<% hidden_field_tag "parent_id", @forum_post.id %>
+	<%= submit_tag "Respond" %>
+<% end %>
+</div>

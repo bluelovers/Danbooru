@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
 	def render_error(record)
 		@record = record
-		render :layout => false, :status => 500, :inline => "<%= error_messages_for('record') %>"
+		render :status => 500, :layout => "bare", :inline => "<%= error_messages_for('record') %>"
 	end
 
 	def set_title(title = CONFIG["app_name"])

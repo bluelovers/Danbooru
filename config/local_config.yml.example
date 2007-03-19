@@ -11,3 +11,5 @@ allow_anonymous_notes: true
 allow_anonymous_wiki_edits: true
 allow_signups: true
 enable_comments: true
+enable_forum: true
+forum_url: /forum_post/list

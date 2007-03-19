@@ -1,0 +1,2 @@
+module ForumPostHelper
+end

@@ -8,11 +8,11 @@ class ForumPostController < ApplicationController
 			if @forum_post.save
 				if params["forum_post"]["parent_id"] == "0"
 					flash[:notice] = "Forum thread created"
-					redirect_to :action => "view", :id => @forum_post.view_id
 				else
 					flash[:notice] = "Response posted"
-					redirect_to :action => "view", :id => @forum_post.view_id
 				end
+
+				redirect_to :action => "view", :id => @forum_post.view_id
 			else
 				render_error(@forum_post)
 			end
@@ -65,6 +65,6 @@ class ForumPostController < ApplicationController
 	end
 
 	def list
-		@forum_posts = ForumPost.find(:all, :limit => 20, :order => "updated_at DESC")
+		@pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 20
 	end
 end
