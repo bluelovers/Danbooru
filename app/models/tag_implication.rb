@@ -1,4 +1,7 @@
 class TagImplication < ActiveRecord::Base
+	attr_accessor :updater_user_id
+	attr_accessor :updater_ip_addr
+
 	def self.create(params)
 		p = Tag.find_or_create_by_name(params[:parent])
 		c = Tag.find_or_create_by_name(params[:child])
@@ -9,7 +12,7 @@ class TagImplication < ActiveRecord::Base
 
 		parents = Tag.with_parents(c.name).join(" ")
 		Post.find(:all, :joins => Tag.sanitize_sql(["JOIN posts_tags pt ON pt.post_id = posts.id WHERE pt.tag_id = ?", c.id])).each do |p|
-			p.tag!(p.cached_tags + " " + parents)
+			p.update_attributes(:tags => p.cached_tags + " " + parents, :updater_user_id => self.updater_user_id, :updater_ip_addr => self.updater_ip_addr)
 		end
 	end
 end

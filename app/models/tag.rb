@@ -116,6 +116,7 @@ class Tag < ActiveRecord::Base
 
 # Maps tag synonyms to their preferred names. Returns an array of strings.
 	def self.to_aliased(tags)
+		return [] if tags.blank?
 		aliased = []
 
 		[*tags].each do |t|
@@ -140,6 +141,7 @@ class Tag < ActiveRecord::Base
 	end
 
 	def self.with_parents(tags)
+		return [] if tags.blank?
 		all = []
 
 		tags.each do |tag|

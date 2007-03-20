@@ -39,7 +39,10 @@ class TagController < ApplicationController
 			end
 
 			Post.find_by_sql(Post.generate_sql(params["start"])).each do |p|
-				p.tag!((p.cached_tags.split(" ") - Tag.to_aliased(Tag.scan_tags(params["start"])) + Tag.to_aliased(Tag.scan_tags(params["result"]))).join(" "), session[:user_id], request.remote_ip)
+				start = Tag.to_aliased(Tag.scan_tags(params["start"]))
+				result = Tag.to_aliased(Tag.scan_tags(params["result"]))
+				tags = (p.cached_tags.scan(/\S+/) - start + result).join(" ")
+				p.update_attributes(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => tags)
 			end
 
 			flash[:notice] = "Tag changes saved"
@@ -73,7 +76,7 @@ class TagController < ApplicationController
 	end
 
 	def create_implication
-		TagImplication.create(:parent => params["parent"], :child => params["child"])
+		TagImplication.create(:parent => params["parent"], :child => params["child"], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 		flash[:notice] = "Tag implication created"
 		redirect_to :action => "implications"
 	end

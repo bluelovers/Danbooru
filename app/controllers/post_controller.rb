@@ -2,21 +2,55 @@ class PostController < ApplicationController
 	layout 'default'
 
 	before_filter :user_only, :except => [:atom] unless CONFIG["allow_anonymous_post_access"]
-	after_filter :save_tags_to_cookie, :only => [:change]
+	after_filter :save_tags_to_cookie, :only => [:change, :update]
 	helper :wiki, :tag, :comment
-	verify :method => :post, :only => [:change]
+	verify :method => :post, :only => [:change, :update]
+
+	def create
+		if request.post?
+			@post = Post.create(params["post"].merge(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :user_id => session[:user_id], :ip_addr => request.remote_ip))
+
+			if @post.errors.empty?
+				responds_to do |fmt|
+					fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "view", :id => @post.id)}
+					fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+					fmt.js {render :json => {:success => true}.to_json}
+				end
+			else
+				responds_to do |fmt|
+					fmt.html {render_error(@post)}
+					fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
+					fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
+				end
+			end
+		else
+			@post = Post.new
+		end
+	end
+
+	def update
+		@post = Post.find(params["id"])
+
+		if post.update_attributes(params["post"].merge(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip))
+			responds_to do |fmt|
+				fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "view", :id => @post.id)}
+				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+				fmt.js {render :json > {:success => true}.to_json}
+			end
+		else
+			responds_to do |fmt|
+				fmt.html {render_error(@post)}
+				fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
+				fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
+			end
+		end
+	end
 
 	def change
 		post = Post.find(params["id"])
 
-		post.rating = params["post"]["rating"] if params["post"]["rating"]
-		post.source = params["post"]["source"] if params["post"]["source"]
-		post.next_post_id = params["post"]["next_post_id"] if params["post"]["next_post_id"]
-		post.prev_post_id = params["post"]["prev_post_id"] if params["post"]["prev_post_id"]
-
-		if post.save
-			post.tag! params["post"]["tags"], session[:user_id], request.remote_ip
-			redirect_to :controller => "post", :action => "view", :id => post.id
+		if post.update_attributes(params["post"].merge(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip))
+			redirect_to :action => "view", :id => post.id
 		else
 			render_error(post)
 		end
@@ -61,19 +95,13 @@ class PostController < ApplicationController
 				return
 			end
 
-			@post = Post.new
-			@post.file = params["post"]["file"]
-			@post.source = params["post"]["source"]
-			@post.rating = params["post"]["rating"]
-			@post.ip_addr = request.remote_ip
-			@post.user_id = current_user().id rescue nil
+			@post = Post.create(params["post"].merge(:user_id => session[:user_id], :ip_addr => request.remote_ip, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip))
 
-			if @post.save
-				@post.tag! params["post"]["tags"], session[:user_id], request.remote_ip
+			if @post.errors.empty?
 				post_id = @post.id
 			elsif @post.errors.invalid?(:md5)
 				p = Post.find_by_md5(@post.md5)
-				p.tag!(p.cached_tags + " " + params["post"]["tags"], session[:user_id], request.remote_ip)
+				p.update_attributes(:tags => (p.cached_tags + " " + params["post"]["tags"]), :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 				post_id = p.id
 			else
 				render_error(@post)
@@ -162,7 +190,7 @@ class PostController < ApplicationController
 	def revert_tags
 		if request.post?
 			@post = Post.find(params["id"])
-			@post.tag! @post.tag_history.find(params["history"]).tags, session[:user_id], request.remote_ip
+			@post.update_attributes(:tags => @post.tag_history.find(params["history"]).tags, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 		end
 
 		redirect_to :action => "view", :id => @post.id

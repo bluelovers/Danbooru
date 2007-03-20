@@ -7,13 +7,16 @@ class Post < ActiveRecord::Base
 	before_destroy :delete_file
 	after_create :update_neighbor_links_on_create
 	before_destroy :update_neighbor_links_on_destroy
+	attr_accessor :updater_ip_addr
+	attr_accessor :updater_user_id
+	after_save :commit_tags
 
 	votable
 	uses_image_servers :servers => CONFIG["image_servers"] if CONFIG["image_servers"]
 	has_and_belongs_to_many :tags, :order => "name"
 	has_many :comments, :order => "id", :conditions => "signal_level <> 0"
 	has_many :notes, :order => "id desc"
-	has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories"
+	has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
 	belongs_to :user
 
 	def self.fast_count(tags = nil)
@@ -29,13 +32,26 @@ class Post < ActiveRecord::Base
 		end
 	end
 
+	def append_tags(t)
+		@tag_cache = self.cached_tags + " " + t
+	end
+
+	def tags=(t)
+		@tag_cache = t || ""
+	end
+
 	def rating=(r)
+		if r == nil && !self.new_record?
+			return
+		end
+
 		if self.is_rating_locked?
 			self.errors.add "rating", "rating is locked"
 			return
 		end
 
-		r = r.to_s.downcase[0,1]
+		r = r.to_s.downcase[0, 1]
+
 		if %w(q e s).include?(r)
 			write_attribute(:rating, r)
 		else
@@ -43,36 +59,39 @@ class Post < ActiveRecord::Base
 		end
 	end
 
-# Saves the tags to the join table.
-	def tag!(tags, user_id = nil, ip_addr = nil)
-		tags = "tagme" if tags.blank?
-		
-		canonical = Tag.scan_tags(tags)
-		canonical = Tag.to_aliased(canonical).uniq
-		canonical = Tag.with_parents(canonical).uniq
+	# commits the tag changes to the database
+	def commit_tags
+		return if @tag_cache == nil
+		raise "Updater ip_addr/user_id not set" if self.updater_ip_addr == nil || self.updater_user_id == nil
 
-		connection.execute("BEGIN")
-		connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
-		foo = []
-		canonical.each do |t|
-			if t =~ /^rating:(.+)/
-				self.rate!($1)
-			else
-				hoge = Tag.find_or_create_by_name(t)
-				unless foo.include?(hoge.name)
-					foo << hoge.name
-					connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{hoge.id})")
+		@tag_cache = "tagme" if @tag_cache == ""
+		@tag_cache = Tag.scan_tags(@tag_cache)
+		@tag_cache = Tag.to_aliased(@tag_cache).uniq
+		@tag_cache = Tag.with_parents(@tag_cache).uniq
+
+		transaction do
+			connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
+			tag_list = []
+
+			@tag_cache.each do |t|
+				if t =~ /^rating:(.+)/
+					self.rating = $1
+				else
+					record = Tag.find_or_create_by_name(t)
+					unless tag_list.include?(record.name)
+						tag_list << record.name
+						connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{record.id})")
+					end
 				end
 			end
-		end
-		
-		foo = foo.sort.uniq.join(" ")
+			
+			tag_string = tag_list.sort.uniq.join(" ")
 
-		unless connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == foo
-			connection.execute(Post.sanitize_sql(["INSERT INTO post_tag_histories (post_id, tags, user_id, ip_addr, created_at) VALUES (#{id}, ?, ?, ?, now())", foo, user_id, ip_addr]))
+			unless connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == tag_string
+				PostTagHistory.create(:post_id => self.id, :tags => tag_string, :user_id => self.updater_user_id, :ip_addr => self.updater_ip_addr)
+			end
+			connection.execute(Post.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = #{id}", tag_string]))
 		end
-		connection.execute(Post.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = #{id}", foo]))
-		connection.execute("COMMIT")
 	end
 
 	def tempfile_path
@@ -232,8 +251,8 @@ class Post < ActiveRecord::Base
 
 		if prev_post != nil
 			# should only be nil for very first post created
-			self.update_attribute(:prev_post_id, prev_post.id)
-			prev_post.update_attribute(:next_post_id, id)
+			connection.execute("UPDATE posts SET prev_post_id = #{prev_post.id} WHERE id = #{self.id}")
+			connection.execute("UPDATE posts SET next_post_id = #{self.id} WHERE id = #{prev_post.id}")
 		end
 	end
 
@@ -245,14 +264,14 @@ class Post < ActiveRecord::Base
 			# do nothing
 		elsif prev_post != nil && next_post != nil
 			# deleted post is in middle
-			prev_post.update_attribute(:next_post_id, next_post.id)
-			next_post.update_attribute(:prev_post_id, prev_post.id)
+			connection.execute("UPDATE posts SET next_post_id = #{next_post.id} WHERE id = #{prev_post.id}")
+			connection.execute("UPDATE posts SET prev_post_id = #{prev_post.id} WHERE id = #{next_post.id}")
 		elsif prev_post == nil
 			# no previous post, therefore deleted post is first post
-			next_post.update_attribute(:prev_post_id, nil)
+			connection.execute("UPDATE posts SET prev_post_id = NULL WHERE id = #{next_post.id}")
 		elsif next_post == nil
 			# no next post, therefore deleted post is last post
-			prev_post.update_attribute(:next_post_id, nil)
+			connection.execute("UPDATE posts SET next_post_id = NULL WHERE id = #{prev_post.id}")
 		end
 	end
 

@@ -35,16 +35,10 @@ class ApiController < ApplicationController
 			return
 		end
 
-		@post = Post.new
-		@post.file = params["file"]
-		@post.source = params["source"]
-		@post.ip_addr = request.remote_ip
-		@post.user_id = current_user().id rescue nil
-		@post.rating = params["rating"]
+		post_hash = {:file => params["file"], :source => params["source"], :rating => params["rating"], :tags => params["tags"]}
+		@post = Post.create(post_hash.merge(:user_id => session[:user_id], :ip_addr => request.remote_ip, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip))
 
-		if @post.save
-			@post.tag! params["tags"], session[:user_id], request.remote_ip
-
+		if @post.errors.empty?
 			if params["md5"] and params["md5"].downcase != @post.md5
 				response.headers["X-Danbooru-Errors"] = "mismatched md5"
 				render :text => "mismatched md5", :status => 409
@@ -55,9 +49,9 @@ class ApiController < ApplicationController
 			end
 		elsif @post.errors.invalid?(:md5)
 			p = Post.find_by_md5(@post.md5)
-			p.tag!(p.cached_tags.to_s + " " + params["tags"], session[:user_id], request.remote_ip)
+			p.update_attributes(:tags => (p.cached_tags.to_s + " " + params["tags"]), :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 			response.headers["X-Danbooru-Errors"] = "duplicate"
-			response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "view", :id => Post.find_by_md5(@post.md5).id)
+			response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "view", :id => p.id)
 			render :text => "duplicate", :status => 409
 		else
 			response.headers["X-Danbooru-Errors"] = "other"
@@ -82,10 +76,8 @@ class ApiController < ApplicationController
 # * 500: Internal server error. Response body contains a dump of the invalid post.
 	def change_post
 		@post = Post.find(params["id"])
-		@post.rating = params["rating"] if params["rating"]
 		
-		if @post.save
-			@post.tag!(params["tags"], session[:user_id], request.remote_ip) if params["tags"]
+		if @post.update_attributes(:tags => params["tags"], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :rating => params["rating"])
 			render :nothing => true
 		else
 			response.headers["X-Danbooru-Errors"] = "internal"

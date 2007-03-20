@@ -100,11 +100,7 @@ function tagScriptCheckFirstTime() {
 	if (readCookie("tag-script") == "") {
 		$("mode").value = "view"
 		createCookie("tag-script", $H({}).toJSON())
-		location.href = "/wiki/view?title=Help%3ATag_Scripts"
-		return true
 	}
-
-	return false
 }
 
 function tagScriptUpdate(name, script) {
@@ -139,10 +135,7 @@ function changeMode() {
 	} else if (s == "lock-note") {
 		document.body.style.background = "#3AA"
 	} else if (s == "new-tag-script") {
-		if (tagScriptCheckFirstTime()) {
-			return;
-		}
-
+		tagScriptCheckFirstTime()
 		var name = prompt("Enter a name for this tag script")
 
 		if (name == null) {
