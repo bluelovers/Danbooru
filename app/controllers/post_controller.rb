@@ -1,23 +1,36 @@
 class PostController < ApplicationController
 	layout 'default'
 
-	before_filter :user_only, :except => [:atom] unless CONFIG["allow_anonymous_post_access"]
+	if CONFIG["allow_anonymous_post_access"]
+		before_filter :user_only, :only => [:destroy]
+	else
+		before_filter :user_only
+	end
+
 	after_filter :save_tags_to_cookie, :only => [:change, :update]
 	helper :wiki, :tag, :comment
-	verify :method => :post, :only => [:change, :update]
+	verify :method => :post, :only => [:change, :update, :destroy]
 
 	def create
 		if request.post?
 			@post = Post.create(params["post"].merge(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :user_id => session[:user_id], :ip_addr => request.remote_ip))
 
 			if @post.errors.empty?
-				responds_to do |fmt|
+				respond_to do |fmt|
 					fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "view", :id => @post.id)}
-					fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-					fmt.js {render :json => {:success => true}.to_json}
+					fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => @post.id)}.to_xml(:root => "response")}
+					fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => @post.id)}.to_json}
+				end
+			elsif @post.errors.invalid?(:md5)
+				p = Post.find_by_md5(@post.md5)
+				p.update_attributes(:tags => (p.cached_tags + " " + params["post"]["tags"]), :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "view", :id => p.id)}
+					fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => p.id)}.to_xml(:root => "response")}
+					fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => p.id)}.to_json}
 				end
 			else
-				responds_to do |fmt|
+				respond_to do |fmt|
 					fmt.html {render_error(@post)}
 					fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
 					fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
@@ -31,18 +44,35 @@ class PostController < ApplicationController
 	def update
 		@post = Post.find(params["id"])
 
-		if post.update_attributes(params["post"].merge(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip))
-			responds_to do |fmt|
+		if @post.update_attributes(params["post"].merge(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip))
+			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "view", :id => @post.id)}
 				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 				fmt.js {render :json > {:success => true}.to_json}
 			end
 		else
-			responds_to do |fmt|
+			respond_to do |fmt|
 				fmt.html {render_error(@post)}
 				fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
 				fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
 			end
+		end
+	end
+
+	def destroy
+		@post = Post.find(params["id"])
+		if session[:user].has_permission?(@post)
+			@post.destroy
+
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Post successfully deleted"; redirect_to(:action => "list")}
+				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+				fmt.js {render :json => {:success => true}.to_json}
+			end
+		else
+			fmt.html {flash[:notice] = "Access denied"; redirect_to(:action => "view", :id => @post.id)}
+			fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
+			fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
 		end
 	end
 

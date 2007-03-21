@@ -36,7 +36,7 @@
 		</div>
 
 		<div id="footer">
-			<a href="/post/add" title="Upload new posts">Add</a> | <a href="/post/atom/tags/<%= params['tags'] %>" title="Atom feed">Atom</a> | <a href="/post/popular">Popular</a> <% unless CONFIG["allow_anonymous_post_access"] %> | <%= link_to "My Favorites", :controller => "account", :action => "favorites", :id => @user.id %><% end %>
+			<a href="/post/create" title="Upload new posts">Upload</a> | <a href="/post/atom/tags/<%= params['tags'] %>" title="Atom feed">Atom</a> | <a href="/post/popular">Popular</a> <% unless CONFIG["allow_anonymous_post_access"] %> | <%= link_to "My Favorites", :controller => "account", :action => "favorites", :id => @user.id %><% end %>
 		</div>
 	</div>
 </div>

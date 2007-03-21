@@ -17,14 +17,14 @@
 		<div>
 			<h5>Options</h5>
 			<ul>
-				<li><%= link_to "Remove", :controller => "post", :action => "remove", :id => @post.id %></li>
+				<li><%= link_to "Delete", {:action => "destroy", :id => @post.id}, :method => :post, :confirm => "Are you sure you want to delete this post?" %></li>
 				<%- if @post.image? -%>
 					<li><%= link_to_function "Add Translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
 				<%- end -%>
 				<li><%= link_to_function "Add to Favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
-				<li><%= link_to "Tag History", :controller => "post", :action => "tag_history", :id => @post.id %></li>
-				<li><%= link_to "Note History", :controller => "note", :action => "history_for_post", :id => @post.id %></li>
-				<li><%= link_to "Moderate", :controller => "post", :action => "moderate", :id => @post.id %></li>
+				<li><%= link_to "Tag History", :action => "tag_history", :id => @post.id %></li>
+				<li><%= link_to "Note History", :action => "history_for_post", :id => @post.id %></li>
+				<li><%= link_to "Moderate", :action => "moderate", :id => @post.id %></li>
 			</ul>
 		</div>
 	</div>
@@ -95,7 +95,7 @@
 		</div>
 
 		<div id="edit" class="space">
-			<% form_tag(:controller => "post", :action => "change", :id => @post.id) do %>
+			<% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
 				<div class="option">
 					<label class="block" for="post_rating_questionable">Rating</label>
 					<%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> <label for="post_rating_explicit">Explicit</label> <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %> <label for="post_rating_questionable">Questionable</label> <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> <label for="post_rating_safe">Safe</label>
