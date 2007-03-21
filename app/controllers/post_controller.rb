@@ -61,7 +61,7 @@ class PostController < ApplicationController
 
 	def destroy
 		@post = Post.find(params["id"])
-		if session[:user].has_permission?(@post)
+		if current_user.has_permission?(@post)
 			@post.destroy
 
 			respond_to do |fmt|
