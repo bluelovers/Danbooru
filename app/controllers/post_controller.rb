@@ -17,7 +17,7 @@ class PostController < ApplicationController
 
 			if @post.errors.empty?
 				respond_to do |fmt|
-					fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "view", :id => @post.id)}
+					fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "view", :id => @post.id); save_tags_to_cookie}
 					fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => @post.id)}.to_xml(:root => "response")}
 					fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => @post.id)}.to_json}
 				end
