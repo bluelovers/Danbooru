@@ -66,7 +66,7 @@ class AccountController < ApplicationController
 
 		if request.post?
 			if @user.update_attributes(params["user"])
-				save_cookies(user)
+				save_cookies(@user)
 				flash[:notice] = "Password changed"
 				redirect_to :action => "index"
 			else
