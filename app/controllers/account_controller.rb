@@ -62,10 +62,10 @@ class AccountController < ApplicationController
 
 	def change_password
 		set_title "Change Password"
-		user = current_user()
+		@user = current_user()
 
 		if request.post?
-			if user.update_attributes(params["user"])
+			if @user.update_attributes(params["user"])
 				save_cookies(user)
 				flash[:notice] = "Password changed"
 				redirect_to :action => "index"
