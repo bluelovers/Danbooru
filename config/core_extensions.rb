@@ -31,7 +31,7 @@ end
 
 class Array
 	def to_json(options = {})
-		map {|x| x.to_json(options)}.join(",")
+		"[" + map {|x| x.to_json(options)}.join(",") + "]"
 	end
 end
 
