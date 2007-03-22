@@ -44,14 +44,14 @@ class ApiController < ApplicationController
 				render :text => "mismatched md5", :status => 409
 				@post.destroy
 			else
-				response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "view", :id => @post.id)
+				response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "show", :id => @post.id)
 				render :nothing => true
 			end
 		elsif @post.errors.invalid?(:md5)
 			p = Post.find_by_md5(@post.md5)
 			p.update_attributes(:tags => (p.cached_tags.to_s + " " + params["tags"]), :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 			response.headers["X-Danbooru-Errors"] = "duplicate"
-			response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "view", :id => p.id)
+			response.headers["X-Danbooru-Location"] = url_for(:controller => "post", :action => "show", :id => p.id)
 			render :text => "duplicate", :status => 409
 		else
 			response.headers["X-Danbooru-Errors"] = "other"

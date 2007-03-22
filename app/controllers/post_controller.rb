@@ -28,17 +28,17 @@ class PostController < ApplicationController
 
 		if @post.errors.empty?
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "view", :id => @post.id)}
-				fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => @post.id)}.to_xml(:root => "response")}
-				fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => @post.id)}.to_json}
+				fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
+				fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
+				fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
 			end
 		elsif @post.errors.invalid?(:md5)
 			p = Post.find_by_md5(@post.md5)
 
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "view", :id => p.id)}
-				fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => p.id)}.to_xml(:root => "response")}
-				fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "view", :id => p.id)}.to_json}
+				fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id)}
+				fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
+				fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
 			end
 		else
 			respond_to do |fmt|
@@ -71,7 +71,7 @@ class PostController < ApplicationController
 
 		if @post.update_attributes(params["post"].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "view", :id => @post.id)}
+				fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id)}
 				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 				fmt.js {render :json > {:success => true}.to_json}
 			end
@@ -95,12 +95,12 @@ class PostController < ApplicationController
 			@post.destroy
 
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Post successfully deleted"; redirect_to(:action => "list")}
+				fmt.html {flash[:notice] = "Post successfully deleted"; redirect_to(:action => "index")}
 				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 				fmt.js {render :json => {:success => true}.to_json}
 			end
 		else
-			fmt.html {flash[:notice] = "Access denied"; redirect_to(:action => "view", :id => @post.id)}
+			fmt.html {flash[:notice] = "Access denied"; redirect_to(:action => "show", :id => @post.id)}
 			fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
 			fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
 		end
@@ -112,16 +112,21 @@ class PostController < ApplicationController
 # - tags: a space delimited string representing the tags to search for
 # - select: for API calls, a comma delimited list of specific fields to pull. can be: created_at, author, score, md5, preview, file, rating, tags, next, previous
 	def index
-		set_title params[:tags]
+		set_title "/#{params[:tags]}"
+
+		limit = params[:limit].to_i
+		if limit == 0 || limit > 100
+			limit = 16
+		end
 
 		@ambiguous = Tag.select_ambiguous(params[:tags])
-		@pages = Paginator.new(self, Post.fast_count(params[:tags]), params[:limit] || 16, params[:page])
+		@pages = Paginator.new(self, Post.fast_count(params[:tags]), limit, params[:page])
 		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
 
 		respond_to do |fmt|
 			fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
 			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params["select"].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => {:posts => @posts}.to_json}
 		end
 	end
 
@@ -159,7 +164,7 @@ class PostController < ApplicationController
 		respond_to do |fmt|
 			fmt.html
 			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params["select"].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => {:posts => @posts}.to_json}
 		end
 	end
 
@@ -224,9 +229,9 @@ class PostController < ApplicationController
 		@post.update_attributes(:tags => @post.tag_history.find(params[:history_id]).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
 		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "view", :id => @post.id)}
-			fmt.xml {{:success => true}.to_xml(:root => "response")}
-			fmt.xml {{:success => true}.to_json}
+			fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "show", :id => @post.id)}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
 
@@ -245,8 +250,8 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => 5, :conditions => conditions}
-			fmt.xml {PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
-			fmt.js {PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :condtions => conditions).to_json}
+			fmt.xml {render :xml => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
+			fmt.js {render :json => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :condtions => conditions).to_json}
 		end
 	end
 

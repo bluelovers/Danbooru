@@ -1,5 +1,0 @@
-<div id="post-remove">
-	<h4>Are you sure you want to remove this post?</h4>
-	<%= image_tag @post.preview_url %>
-	<%= button_to "Yes", "/post/remove/#{@post.id}" %> <%= link_to "No", "/post/view/#{@post.id}" %>
-</div>

@@ -5,7 +5,7 @@
 		<%= javascript_tag "posts = {}" %>
 
 		<%- for post in @posts -%>
-			<%= content_tag "span", link_to(image_tag(post.preview_url, :alt => "post", :class => "preview", :onclick => "return postClick(#{post.id})", :title => h(post.cached_tags)), {:controller => "post", :action => "show", :id => post.id}, :title => "#{h(post.cached_tags)} s:#{post.score} r:#{post.rating}"), :class => "thumb", :id => "p#{post.id}" %>
+			<%= content_tag "span", link_to(image_tag(post.preview_url, :alt => "post", :class => "preview", :onclick => "return postClick(#{post.id})", :title => "s:#{post.score} r:#{post.rating} #{h(post.cached_tags)}"), {:controller => "post", :action => "show", :id => post.id}), :class => "thumb", :id => "p#{post.id}" %>
 			<%= javascript_tag "posts[#{post.id}] = {'user': '#{escape_javascript(post.author)}', 'tags':'#{escape_javascript(post.cached_tags)}'.split(/ /g), 'rating':'#{post.pretty_rating}', 'score':#{post.score}}" %>
 		<%- end -%>
 

@@ -18,7 +18,7 @@ var cthreshold = parseInt(readCookie("comment_threshold")) || 0
 <div class="post" id="p<%= post.id %>">
 	<%= javascript_tag "posts[#{post.id}] = {'user':'#{post.author}', 'score':#{post.score}, 'rating':'#{post.pretty_rating}', 'tags':'#{escape_javascript(post.cached_tags)}'.split(/ /g)}" %>
 	<div class="col1">
-		<%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), "/post/view/#{post.id}") %>
+		<%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
 	</div>
 	<div class="col2" id="comments-for-p<%= post.id %>">
 		<%= render :partial => "comments_for_post", :locals => {:post => post, :comments => post.comments} %>
@@ -27,9 +27,9 @@ var cthreshold = parseInt(readCookie("comment_threshold")) || 0
 		<ul class="post-info">
 			<li><%= post.created_at.strftime("%D %I:%M") %></li>
 			<li>rating:<%= post.pretty_rating %></li>
-			<li><%= link_to "user:" + post.author, :controller => "post", :action => "list", :tags => "user:#{post.author}" %></li>
+			<li><%= link_to "user:" + post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></li>
 <% post.cached_tags.split(" ").each do |t| %>
-			<li><%= link_to h(t), :controller => "post", :action => "list", :tags => t %></li>
+			<li><%= link_to h(t), :controller => "post", :action => "index", :tags => t %></li>
 <% end %>
 		</ul>
 	</div>

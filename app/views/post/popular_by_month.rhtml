@@ -5,7 +5,7 @@
 </div>
 
 <div id="footer">
-	<%= link_to("Popular", :controller => "post", :action => "popular", :month => @start.month, :day => 1, :year => @start.year) %> | 
-	<%= link_to("Popular (by week)", :controller => "post", :action => "popular_week", :year => @start.year, :month => @start.month, :day => 1) %> | 
-	<%= link_to "Popular (by month)", :controller => "post", :action => "popular_month", :year => @start.year, :month => @start.month %>
+	<%= link_to("Popular", :controller => "post", :action => "popular_by_day", :month => @start.month, :day => 1, :year => @start.year) %> | 
+	<%= link_to("Popular (by week)", :controller => "post", :action => "popular_by_week", :year => @start.year, :month => @start.month, :day => 1) %> | 
+	<%= link_to "Popular (by month)", :controller => "post", :action => "popular_by_month", :year => @start.year, :month => @start.month %>
 </div>

@@ -58,7 +58,7 @@
 
 		<div class="space">
 			<p id="poster">
-				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "list", :tags => "user:#{@post.author}" %>
+				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "list", :tags => "user:#{@post.author}" %>
 				<%- unless @post.source.blank? -%>
 					<%- if @post.source[/^http/] -%>
 						(<a href="/static/redirect?url=<%= h(@post.source) %>">source</a>)
@@ -85,11 +85,11 @@
 				<%= link_to_function "Edit", "Element.toggle('edit')" %>
 				<% if @post.prev_post_id %>
 					<strong class="divider">|</strong>
-					<%= link_to "Previous", :controller => "post", :action => "view", :id => @post.prev_post_id %>
+					<%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %>
 				<% end %>
 				<% if @post.next_post_id %>
 					<strong class="divider">|</strong>
-					<%= link_to "Next", :controller => "post", :action => "view", :id => @post.next_post_id %>
+					<%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %>
 				<% end %>
 			</p>
 		</div>

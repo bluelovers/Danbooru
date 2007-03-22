@@ -9,7 +9,7 @@
 		<ul class="flat-list">
 			<li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params["title"] %></li>
 			<% unless params['title'][/^Danbooru:/] %>
-			<li><%= link_to "View posts", :controller => "post", :action => "list", :tags => params["title"] %></li>
+			<li><%= link_to "View posts", :controller => "post", :action => "index", :tags => params["title"] %></li>
 			<% end %>
 		</ul>
 
@@ -24,7 +24,7 @@
 		<ul class="flat-list">
 			<li><%= link_to_unless @page.first_version?, "&lt;&lt;", :controller => "wiki", :action => "view", :title => @page.title, :version => @page.version-1 %></li>
 <%- unless @page.title[/^Danbooru:/] -%>
-			<li><%= link_to "View posts", :controller => "post", :action => "list", :tags => @page.title %></li>
+			<li><%= link_to "View posts", :controller => "post", :action => "index", :tags => @page.title %></li>
 <%- end -%>
 			<li><%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %></li>
 <%- if @page.is_locked? %>

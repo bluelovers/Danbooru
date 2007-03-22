@@ -435,8 +435,8 @@ class Post < ActiveRecord::Base
 		end
 	end
 
-	def to_json(options = {})
-		return generate_attributes(options[:select]).to_json
+	def to_json
+		return generate_attributes.to_json
 	end
 
 	def to_xml(options = {})
@@ -447,7 +447,7 @@ class Post < ActiveRecord::Base
 	end
 
 	protected
-	def generate_attributes(select_attributes)
+	def generate_attributes(select_attributes = %w(source file tags author))
 		attribs = {}
 		attribs[:id] = self.id 
 
@@ -455,6 +455,9 @@ class Post < ActiveRecord::Base
 			case attr
 			when "created_at"
 			attribs[:created_at] = self.created_at.strftime("%D %T")
+
+			when "source"
+			attribs[:source] = CGI.escapeHTML(self.source)
 
 			when "author"
 			attribs[:author] = CGI.escapeHTML(self.author)

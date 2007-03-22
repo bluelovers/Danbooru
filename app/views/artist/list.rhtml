@@ -12,7 +12,7 @@
 		</tr>
 		<% @artists.each do |artist| %>
 			<tr class="<%= cycle 'even', 'odd' %>">
-				<td><%= link_to "Posts", :controller => "post", :action => "list", :tags => artist.name %> <%= link_to "Edit", :controller => "artist", :action => "edit", :id => artist.id %></td>
+				<td><%= link_to "Posts", :controller => "post", :action => "index", :tags => artist.name %> <%= link_to "Edit", :controller => "artist", :action => "edit", :id => artist.id %></td>
 				<td><%= artist.personal_name %></td>
 				<td><%= artist.handle_name %></td>
 				<td><%= artist.circle_name %></td>
