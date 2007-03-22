@@ -343,7 +343,7 @@ function injectTagsHelper(tags) {
 	var current = $F(tag_field).split(" ")
 
 	tags.cgiUnescape().split(" ").uniq().sort().each(function(tag) {
-		html += '<a href="/post/list?tags=' + encodeURIComponent(tag) + '" onclick="toggleTag(this, \'' + tag_field + '\'); return false"'
+		html += '<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="toggleTag(this, \'' + tag_field + '\'); return false"'
 
 		if (current.include(tag)) {
 			html += ' style="background: rgb(0, 111, 250); color: rgb(255, 255, 255)"'

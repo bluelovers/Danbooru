@@ -435,21 +435,22 @@ class Post < ActiveRecord::Base
 		end
 	end
 
-	def to_json
-		return generate_attributes.to_json
+	def to_json(options = {})
+		return generate_attributes(options[:select], :js).to_json
 	end
 
 	def to_xml(options = {})
 		options[:indent] ||= 2
 		xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
 		xml.instruct! unless options[:skip_instruct]
-		xml.post(generate_attributes(options[:select]))
+		xml.post(generate_attributes(options[:select], :xml))
 	end
 
 	protected
-	def generate_attributes(select_attributes = %w(source file tags author))
+	def generate_attributes(select_attributes, escape_method)
 		attribs = {}
-		attribs[:id] = self.id 
+		attribs[:id] = self.id
+		select_attributes ||= %w(tags author file)
 
 		select_attributes.each do |attr|
 			case attr
@@ -457,10 +458,22 @@ class Post < ActiveRecord::Base
 			attribs[:created_at] = self.created_at.strftime("%D %T")
 
 			when "source"
-			attribs[:source] = CGI.escapeHTML(self.source)
+			if escape_method == :xml
+				attribs[:source] = CGI.escapeHTML(self.source)
+			elsif escape_method == :js
+				attribs[:source] = escape_javascript(self.source)
+			else
+				attribs[:source] = source
+			end
 
 			when "author"
-			attribs[:author] = CGI.escapeHTML(self.author)
+			if escape_method == :xml
+				attribs[:author] = CGI.escapeHTML(self.author)
+			elsif escape_method == :js
+				attribs[:author] = escape_javascript(self.author)
+			else
+				attribs[:author] = self.author
+			end
 
 			when "score"
 			attribs[:score] = self.score
@@ -478,7 +491,11 @@ class Post < ActiveRecord::Base
 			attribs[:rating] = self.pretty_rating
 
 			when "tags"
-			attribs[:tags] = CGI.escapeHTML(self.cached_tags)
+			if escape_method == :xml
+				attribs[:tags] = CGI.escapeHTML(self.cached_tags)
+			elsif escape_method == :js
+				attribs[:tags] = escape_javascript(self.cached_tags)
+			end
 
 			when "next"
 			attribs[:next] = self.next_post_id
@@ -490,6 +507,10 @@ class Post < ActiveRecord::Base
 		end
 
 		return attribs
+	end
+
+	def escape_javascript(s)
+		s.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
 	end
 
 	def find_ext(file_path)

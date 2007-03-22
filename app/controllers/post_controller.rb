@@ -125,8 +125,8 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params["select"].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json}
+			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.splt(/,/))}
 		end
 	end
 
@@ -163,8 +163,8 @@ class PostController < ApplicationController
 		@posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ?", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
 		respond_to do |fmt|
 			fmt.html
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params["select"].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json}
+			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
 
@@ -188,7 +188,7 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params["select"].to_s.split(/,/))}
+			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
 			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
@@ -212,7 +212,7 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params["select"].to_s.split(/,/))}
+			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
 			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end

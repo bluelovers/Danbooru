@@ -48,19 +48,6 @@ end
 
 ActiveRecord::Base.allow_concurrency = false
 
-# Why the hell is sanitize_sql protected, I don't know.
-class ActiveRecord::Base
-	class << self
-		public :sanitize_sql
-	end
-end
-
-class NilClass
-	def id
-		raise NoMethodError
-	end
-end
-
 require 'base64'
 require 'diff/lcs/array'
 require 'image_size'
@@ -72,3 +59,4 @@ require 'uri'
 require 'arch'
 require 'acts_as_versioned'
 require 'net/http'
+require 'core_extensions'
