@@ -3,17 +3,27 @@
 require "rubygems"
 require "postgres"
 require "sqlite3"
+require "yaml"
 
-`rm /home/albert/danbooru/public/sqlite.db`
+`rm -f /home/albert/miezaru/public/sqlite.db`
 
 pg = PGconn.new("127.0.0.1", nil, nil, nil, "danbooru")
-sl = SQLite3::Database.new("/home/albert/danbooru/public/sqlite.db")
+sl = SQLite3::Database.new("/home/albert/miezaru/public/sqlite.db")
 
 sl.transaction do |db|
-	db.execute("CREATE TABLE posts_tags (post_id INTEGER, tag_id INTEGER)")
-	pg.exec("SELECT * FROM posts_tags").result.each do |row|
-		db.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (?, ?)", row[0], row[1])
+	db.execute("CREATE TABLE cached_tags (tag_id INTEGER, related_tag_id INTEGER, post_count INTEGER)")
+	pg.exec("SELECT id, cached_related FROM tags").result.each do |row|
+		cached = YAML::load(row[1])
+		cached.each do |foo|
+			tag_id = row[0]
+			related_tag_id = pg.exec("SELECT id FROM tags WHERE name = '%s'" % foo[0].gsub(/'/, "''"))[0][0]
+			post_count = foo[1]
+
+			puts "#{tag_id} #{related_tag_id} #{post_count}"
+		end
+
+		db.execute("INSERT INTO cached_related (tag_id, related_tag_id, post_count) VALUES (?, ?, ?)", row[0], row[1])
 	end
 end
 
-`gzip /home/albert/danbooru/public/sqlite.db`
+`gzip /home/albert/miezaru/public/sqlite.db`
