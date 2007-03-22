@@ -16,7 +16,7 @@
 				<td><%= history.created_at.strftime("%D") %></td>
 				<td><%= history.author %></td>
 				<td><%= history.ip_addr %></td>
-				<td width="5%"><input type="radio" name="history" value="<%= history.id %>"/></td>
+				<td width="5%"><input type="radio" name="history_id" value="<%= history.id %>"/></td>
 			</tr>
 <% end %>
 			<tr><td colspan="2"><%= submit_tag "Revert!" %></td></tr>

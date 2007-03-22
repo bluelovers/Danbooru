@@ -27,9 +27,9 @@ module TagHelper
 
 		tag_join = params['tags'] ? '%20' : ''
 		html << link_to("?", :controller => "wiki", :action => "view", :title => name) << " "
-		html << link_to("+", :controller => "post", :action => "list", :tags => name + " " + params["tags"].to_s) << " "
-		html << link_to("&ndash;", :controller => "post", :action => "list", :tags => "-" + name + " " + params["tags"].to_s) << " "
-		html << link_to(name.tr("_", " "), :controller => "post", :action => "list", :tags => name) << " "
+		html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params["tags"].to_s) << " "
+		html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params["tags"].to_s) << " "
+		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
 		case Tag.type(name)
 		when Tag::TYPE_ARTIST
@@ -52,7 +52,7 @@ module TagHelper
 
 		tags.each do |tag|
 			size = Math.log(tag.post_count) / 6
-			html << link_to(tag.name.tr("_", " "), {:controller => "post", :action => "list", :tags => tag.name}, :style => "font-size:#{size}em", :title => "#{tag.post_count} posts") << " "
+			html << link_to(tag.name.tr("_", " "), {:controller => "post", :action => "index", :tags => tag.name}, :style => "font-size:#{size}em", :title => "#{tag.post_count} posts") << " "
 		end
 
 		return html

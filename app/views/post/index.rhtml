@@ -19,24 +19,24 @@
 
 			<%= javascript_tag "loadMode()" %>
 		</div>
-		<a href="/static/honeypot" style="display: none;">honeypot</a>
+
 		<%= render :partial => 'tags' %>
 	</div>
 	<div class="content">
-		<% if @amb_tags.any? %>
+		<% if @ambiguous.any? %>
 			<div id="amb-content">
-				<%= link_to_amb_tags(@amb_tags) %>
+				<%= link_to_amb_tags(@ambiguous) %>
 			</div>
 		<% end %>
 
 		<%= render :partial => 'posts' %>
 
 		<div id="paginator">
-			<%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params["tags"]}) %>
+			<%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>
 		</div>
 
 		<div id="footer">
-			<a href="/post/create" title="Upload new posts">Upload</a> | <a href="/post/atom/tags/<%= params['tags'] %>" title="Atom feed">Atom</a> | <a href="/post/popular">Popular</a> <% unless CONFIG["allow_anonymous_post_access"] %> | <%= link_to "My Favorites", :controller => "account", :action => "favorites", :id => @user.id %><% end %>
+			<%= link_to "Upload", :controller => "post", :action => "upload" %> | <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> | <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> <% unless CONFIG["allow_anonymous_post_access"] %> | <%= link_to "My Favorites", :controller => "account", :action => "favorites", :id => @current_user.id %><% end %>
 		</div>
 	</div>
 </div>

@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 	include LoginSystem
 
 	before_filter :set_title
+	before_filter :current_user
 
 	protected
 	def api_request?

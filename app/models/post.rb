@@ -10,6 +10,7 @@ class Post < ActiveRecord::Base
 	attr_accessor :updater_ip_addr
 	attr_accessor :updater_user_id
 	after_save :commit_tags
+	attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr
 
 	votable
 	uses_image_servers :servers => CONFIG["image_servers"] if CONFIG["image_servers"]
@@ -62,7 +63,7 @@ class Post < ActiveRecord::Base
 	# commits the tag changes to the database
 	def commit_tags
 		return if @tag_cache == nil
-		raise "Updater ip_addr/user_id not set" if self.updater_ip_addr == nil || self.updater_user_id == nil
+		raise "IP address not set" if self.updater_ip_addr == nil
 
 		@tag_cache = "tagme" if @tag_cache == ""
 		@tag_cache = Tag.scan_tags(@tag_cache)
@@ -434,7 +435,60 @@ class Post < ActiveRecord::Base
 		end
 	end
 
+	def to_json(options = {})
+		return generate_attributes(options[:select]).to_json
+	end
+
+	def to_xml(options = {})
+		options[:indent] ||= 2
+		xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+		xml.instruct! unless options[:skip_instruct]
+		xml.post(generate_attributes(options[:select]))
+	end
+
 	protected
+	def generate_attributes(select_attributes)
+		attribs = {}
+		attribs[:id] = self.id 
+
+		select_attributes.each do |attr|
+			case attr
+			when "created_at"
+			attribs[:created_at] = self.created_at.strftime("%D %T")
+
+			when "author"
+			attribs[:author] = CGI.escapeHTML(self.author)
+
+			when "score"
+			attribs[:score] = self.score
+
+			when "md5"
+			attribs[:md5] = self.md5
+
+			when "preview"
+			attribs[:preview] = self.preview_url
+
+			when "file"
+			attribs[:file] = self.file_url
+
+			when "rating"
+			attribs[:rating] = self.pretty_rating
+
+			when "tags"
+			attribs[:tags] = CGI.escapeHTML(self.cached_tags)
+
+			when "next"
+			attribs[:next] = self.next_post_id
+
+			when "previous"
+			attribs[:previous] = self.prev_post_id
+
+			end
+		end
+
+		return attribs
+	end
+
 	def find_ext(file_path)
 		ext = File.extname(file_path)
 		if ext.blank?

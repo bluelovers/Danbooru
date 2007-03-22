@@ -73,6 +73,8 @@ class Tag < ActiveRecord::Base
 	end
 
 	def self.select_ambiguous(tags)
+		return [] if tags.blank?
+
 		tags = Tag.scan_tags(tags)
 		return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND tag_type = 2 ORDER BY name", tags]))
 	end
