@@ -1,4 +1,4 @@
-class ForumPostController < ApplicationController
+class ForumController < ApplicationController
 	layout "default"
 	before_filter :user_only
 
@@ -61,11 +61,11 @@ class ForumPostController < ApplicationController
 		end
 	end
 
-	def view
+	def show
 		@forum_post = ForumPost.find(params["id"])
 	end
 
-	def list
+	def index
 		@pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 20
 	end
 end

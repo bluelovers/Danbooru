@@ -1,0 +1,5 @@
+<% form_tag(:action => "rename") do %>
+	<%= hidden_field_tag "title", params[:title] %>
+	<label for="wiki_page_title">Title</label> <%= text_field "wiki_page", "title" %><br/>
+	<%= submit_tag "Save" %>
+<% end %>

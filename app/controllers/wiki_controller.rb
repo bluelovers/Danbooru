@@ -10,7 +10,7 @@ class WikiController < ApplicationController
 	end
 
 	before_filter :mod_only, :only => [:lock, :unlock, :destroy, :rename]
-	verify :method => :post, :only => [:lock, :unlock, :destroy, :rename, :update, :create, :revert]
+	verify :method => :post, :only => [:lock, :unlock, :destroy, :update, :create, :revert]
 
 	def destroy
 		page = WikiPage.find_page(params[:title])
@@ -63,7 +63,7 @@ class WikiController < ApplicationController
 	end
 
 	def create
-		page = WikiPage.create(params[:wiki].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
+		page = WikiPage.create(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
 		if page.errors.empty?
 			respond_to do |fmt|
 				location = url_for(:action => "show", :title => page.title)
@@ -182,14 +182,16 @@ h4. See also
 	end
 
 	def rename
-		@page = WikiPage.find_page(params[:title])
+		@wiki_page = WikiPage.find_page(params[:title])
 
-		@page.rename!(params[:new_title])
+		if request.post?
+			@wiki_page.rename!(params[:wiki_page][:title])
 
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Wiki page renamed"; redirect_to(:action => "show", :title => params[:new_title])}
-			fmt.xml {render :xml => {:success => true}.to_xml}
-			fmt.js {render :json => {:success => true}.to_json}
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Wiki page renamed"; redirect_to(:action => "show", :title => params[:wiki_page][:title])}
+				fmt.xml {render :xml => {:success => true}.to_xml}
+				fmt.js {render :json => {:success => true}.to_json}
+			end
 		end
 	end
 end
