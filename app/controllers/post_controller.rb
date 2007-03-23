@@ -1,15 +1,19 @@
 class PostController < ApplicationController
 	layout 'default'
 
-	if CONFIG["allow_anonymous_post_access"]
-		before_filter :user_only, :only => [:destroy]
+	if CONFIG["enable_anonymous_post_access"]
+		if CONFIG["enable_anonymous_post_uploads"]
+			before_filter :user_only, :only => [:destroy]
+		else
+			before_filter :user_only, :only => [:destroy, :create, :upload]
+		end
 	else
 		before_filter :user_only
 	end
 
 	after_filter :save_tags_to_cookie, :only => [:update, :create]
 	helper :wiki, :tag, :comment
-	verify :method => :post, :only => [:update, :destroy, :create, :revert_tags]
+	verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
 
 # Parameters
 # - post[source]: alternative to post[file], source url to download from
@@ -25,36 +29,36 @@ class PostController < ApplicationController
 # - md5: OPTIONAL, used to verify the upload's integrity
 	def create
 		user_id = @current_user.id rescue nil
+
 		@post = Post.create(params["post"].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
 
-		if params[:md5] && @post.md5 != params[:md5].downcase
-			@post.destroy
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "MD5 mismatch"; redirect_to(:controller => "post", :action => "list")}
-				fmt.xml {render :xml => {:success => false, :reason => "md5 mismatch"}.to_xml(:root => "response")}
-				fmt.js {render :json => {:success => false, :reason => "md5 mismatch"}.to_json}
-			end
-			return
-		end
-
 		if @post.errors.empty?
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
-				fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
-				fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
+			if params[:md5] && @post.md5 != params[:md5].downcase
+				@post.destroy
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "MD5 mismatch"; redirect_to(:controller => "post", :action => "list")}
+					fmt.xml {render :xml => {:success => false, :reason => "md5 mismatch"}.to_xml}
+					fmt.js {render :json => {:success => false, :reason => "md5 mismatch"}.to_json}
+				end
+			else
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
+					fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml}
+					fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
+				end
 			end
 		elsif @post.errors.invalid?(:md5)
 			p = Post.find_by_md5(@post.md5)
 
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id)}
-				fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
+				fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml}
 				fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
 			end
 		else
 			respond_to do |fmt|
 				fmt.html {render_error(@post)}
-				fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
+				fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml, :status => 500}
 				fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
 			end
 		end
@@ -83,13 +87,13 @@ class PostController < ApplicationController
 		if @post.update_attributes(params["post"].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id)}
-				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+				fmt.xml {render :xml => {:success => true}.to_xml}
 				fmt.js {render :json > {:success => true}.to_json}
 			end
 		else
 			respond_to do |fmt|
 				fmt.html {render_error(@post)}
-				fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
+				fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml, :status => 500}
 				fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
 			end
 		end
@@ -107,13 +111,11 @@ class PostController < ApplicationController
 
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Post successfully deleted"; redirect_to(:action => "index")}
-				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+				fmt.xml {render :xml => {:success => true}.to_xml}
 				fmt.js {render :json => {:success => true}.to_json}
 			end
 		else
-			fmt.html {flash[:notice] = "Access denied"; redirect_to(:action => "show", :id => @post.id)}
-			fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
-			fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
+			access_denied()
 		end
 	end
 
@@ -136,7 +138,7 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
+			fmt.xml {render :xml => @posts.to_xml(:select => params[:select].to_s.split(/,/))}
 			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
@@ -174,7 +176,7 @@ class PostController < ApplicationController
 		@posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ?", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
 		respond_to do |fmt|
 			fmt.html
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
+			fmt.xml {render :xml => @posts.to_xml(:select => params[:select].to_s.split(/,/))}
 			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
@@ -199,7 +201,7 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
+			fmt.xml {render :xml => @posts.to_xml(:select => params[:select].to_s.split(/,/))}
 			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
@@ -223,7 +225,7 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html
-			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
+			fmt.xml {render :xml => @posts.to_xml(:select => params[:select].to_s.split(/,/))}
 			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
@@ -241,7 +243,7 @@ class PostController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "show", :id => @post.id)}
-			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -251,6 +253,8 @@ class PostController < ApplicationController
 # - offset: OPTIONAL
 # - post_id: OPTIONAL, ID of the post to query
 	def tag_changes
+		set_title "Tag changes"
+
 		if params[:post_id]
 			conditions = ["post_id = ?", params[:post_id]]
 		else
@@ -266,7 +270,10 @@ class PostController < ApplicationController
 		end
 	end
 
+# Parameters
+# - id: post ID number
 	def favorites
+		set_title "Users who favorited this post"
 		@post = Post.find(params["id"])
 		@users = User.find_people_who_favorited(params["id"])
 
@@ -274,6 +281,37 @@ class PostController < ApplicationController
 			fmt.html
 			fmt.xml {render :xml => @users.to_xml}
 			fmt.js {render :json => @users.to_json}
+		end
+	end
+
+# Parameters
+# - id: post ID number
+# - score: the score (must be either 1 or -1)
+	def vote
+		p = Post.find(params[:id])
+		score = params[:score].to_i
+
+		unless score == 1 || score == -1
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id])}
+				fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml, :status => 409}
+				fmt.js {render :json => {:success => false, :reason => "invalid score"}.to_json, :status => 409}
+			end
+			return
+		end
+
+		if p.vote!(score, @request.remote_ip)
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Vote saved"; redirect_to(:action => "show", :id => params[:id])}
+				fmt.xml {render :xml => {:success => true}.to_xml}
+				fmt.js {render :json => {:success => true}.to_json}
+			end
+		else
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:action => "show", :id => params[:id])}
+				fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml, :status => 409}
+				fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
+			end
 		end
 	end
 end

@@ -61,7 +61,7 @@
 				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "list", :tags => "user:#{@post.author}" %>
 				<%- unless @post.source.blank? -%>
 					<%- if @post.source[/^http/] -%>
-						(<a href="/static/redirect?url=<%= h(@post.source) %>">source</a>)
+						(<%= link_to "source", @post.source %>)
 					<%- else -%>
 						(source: <%= @post.source %>)
 					<%- end -%>

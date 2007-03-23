@@ -3,11 +3,10 @@ require_dependency "user"
 module LoginSystem
 	protected
 	def access_denied
-		if api_request?
-			render :text => "Access denied", :status => 403
-		else
-			flash[:notice] = "Access denied"
-			redirect_to :controller => "account", :action => "login"
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "account", :action => "login")}
+			fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml, :status => 403}
+			fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
 		end
 	end
 
@@ -36,7 +35,7 @@ module LoginSystem
 	end
 
 	def mod_only
-		if (current_user.role?(:mod) rescue false)
+		if @current_user && @current_user.role?(:mod)
 			return true
 		else
 			access_denied
@@ -45,7 +44,7 @@ module LoginSystem
 	end
 
 	def admin_only
-		if (current_user.role?(:admin) rescue false)
+		if @current_user && @current_user.role?(:admin)
 			return true
 		else
 			access_denied
@@ -54,7 +53,7 @@ module LoginSystem
 	end
 
 	def user_only
-		if (current_user.role?(:member) rescue false)
+		if @current_user && @current_user.role?(:member)
 			return true
 		else
 			access_denied

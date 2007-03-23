@@ -15,14 +15,14 @@ sl.transaction do |db|
 	pg.exec("SELECT id, cached_related FROM tags").result.each do |row|
 		cached = YAML::load(row[1])
 		cached.each do |foo|
-			tag_id = row[0]
-			related_tag_id = pg.exec("SELECT id FROM tags WHERE name = '%s'" % foo[0].gsub(/'/, "''"))[0][0]
-			post_count = foo[1]
-
-			puts "#{tag_id} #{related_tag_id} #{post_count}"
+			begin
+				tag_id = row[0]
+				related_tag_id = pg.exec("SELECT id FROM tags WHERE name = '%s'" % foo[0].gsub(/'/, "''"))[0][0]
+				post_count = foo[1]
+				db.execute("INSERT INTO cached_tags (tag_id, related_tag_id, post_count) VALUES (?, ?, ?)", tag_id, related_tag_id, post_count)
+			rescue NoMethodError
+			end
 		end
-
-		db.execute("INSERT INTO cached_related (tag_id, related_tag_id, post_count) VALUES (?, ?, ?)", row[0], row[1])
 	end
 end
 

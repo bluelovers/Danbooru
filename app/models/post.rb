@@ -15,7 +15,7 @@ class Post < ActiveRecord::Base
 	votable
 	uses_image_servers :servers => CONFIG["image_servers"] if CONFIG["image_servers"]
 	has_and_belongs_to_many :tags, :order => "name"
-	has_many :comments, :order => "id", :conditions => "signal_level <> 0"
+	has_many :comments, :order => "id", :conditions => "is_spam = FALSE"
 	has_many :notes, :order => "id desc"
 	has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
 	belongs_to :user

@@ -306,32 +306,33 @@ function toggleTag(link, tag_field) {
 
 function markcom(id) {
 	notice("Marking comment #" + id + " as spam...")
-	new Ajax.Request("/api/mark_comment/" + id, {
+	new Ajax.Request("/comment/mark_as_spam/" + id + ".js", {
 		asynchronous: true,
 		method: "post",
 		onComplete: function(req) {
-			if (req.status == 200) {
+			var resp = eval("(" + req.responseText + ")")
+			if (resp["success"]) {
 				notice("Comment #" + id + " marked as spam");
 			} else {
-				notice("Error: " + req.responseText);
+				notice("Error: " + resp["reason"]);
 			}
 		}
 	})
 }
 
-function vote(method, id) {
+function vote(score, id) {
 	notice('Voting for post #' + id + '...');
-	var action = ""
 
-	new Ajax.Request("/api/score_post", {
+	new Ajax.Request("/post/vote.js", {
 		asynchronous: true,
 		method: "post",
-		parameters: "id=" + id + "&score=" + method,
+		parameters: "id=" + id + "&score=" + score,
 		onComplete: function(req) {
-			if (req.status == 200) {
+			resp = eval("(" + req.responseText + ")")
+			if (resp["success"]) {
 				notice("Vote saved for post #" + id);
 			} else {
-				notice("Error: " + req.responseText);
+				notice("Error: " + resp["reason"]);
 			}
 		}
 	})

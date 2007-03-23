@@ -23,7 +23,7 @@
 			<li><%= link_to "Tags", :controller => "tag", :action => "list" %></li>
 			<li><%= link_to "Wiki", :controller => "wiki", :action => "view", :title => "Help:Home" %></li>
 			<% if CONFIG["enable_forum"] %>
-				<li><%= link_to "Forum", CONFIG["forum_url"] %></li>
+				<li><%= link_to "Forum", :controller => "forum_post", :action => "list" %></li>
 			<% end %>
 			<% if (@current_user.role?(:admin) rescue false) %>
 				<li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
