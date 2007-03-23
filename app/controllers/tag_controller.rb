@@ -143,8 +143,8 @@ class TagController < ApplicationController
 		end
 	end
 
-	def list_all_by_creation
-		set_title "Tags by Creation Date"
+	def list_all_by_date
+		set_title "Tags by Date"
 		@pages, @tags = paginate :tags, :order => "id desc", :per_page => 50
 	end
 
