@@ -38,7 +38,7 @@ class PostController < ApplicationController
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id)}
 				fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
-				fmt.js {render :json => {:success => false, :reason => "duplicate", location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
+				fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
 			end
 		else
 			respond_to do |fmt|
