@@ -1,5 +1,5 @@
 <div id="post-popular">
-	<h1><%= link_to '&laquo;', :controller => "post", :action => "popular_month", :year => @start.last_month.year, :month => @start.last_month.month %> <%= @start.strftime("%B %Y") %> <%= link_to '&raquo;', :controller => "post", :action => "popular_month", :year => @end.year, :month => @end.month %></h1>
+	<h1><%= link_to '&laquo;', :controller => "post", :action => "popular_by_month", :year => @start.last_month.year, :month => @start.last_month.month %> <%= @start.strftime("%B %Y") %> <%= link_to '&raquo;', :controller => "post", :action => "popular_by_month", :year => @end.year, :month => @end.month %></h1>
 
 	<%= render :partial => "posts" %>
 </div>
