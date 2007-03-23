@@ -2,10 +2,9 @@
 
 <div class="content">
 	<% if params[:title] %>
-		<% form_tag({:action => "diff"}, :method => "get") do %>
+		<form method="get" action="/wiki/diff">
+			<%= hidden_field_tag "title", params[:title] %>
 	<% end %>
-	
-	<%= hidden_field_tag "title", params[:title] %>
 
 	<table width="100%">
 		<tr>
@@ -33,7 +32,7 @@
 
 	<% if params[:title] %>
 		<input type="submit" value="Compare selected versions"/>
-		<% end %>
+		</form>
 
 		<script type="text/javascript">
 		//<![CDATA[
