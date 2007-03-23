@@ -22,9 +22,20 @@ class PostController < ApplicationController
 # - login: OPTIONAL, login name
 # - password: alternative to password_hash, your plaintext password
 # - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
+# - md5: OPTIONAL, used to verify the upload's integrity
 	def create
 		user_id = @current_user.id rescue nil
 		@post = Post.create(params["post"].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
+
+		if params[:md5] && @post.md5 != params[:md5].downcase
+			@post.destroy
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "MD5 mismatch"; redirect_to(:controller => "post", :action => "list")}
+				fmt.xml {render :xml => {:success => false, :reason => "md5 mismatch"}.to_xml(:root => "response")}
+				fmt.js {render :json => {:success => false, :reason => "md5 mismatch"}.to_json}
+			end
+			return
+		end
 
 		if @post.errors.empty?
 			respond_to do |fmt|
