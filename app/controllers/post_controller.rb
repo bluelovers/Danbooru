@@ -129,7 +129,7 @@ class PostController < ApplicationController
 
 		limit = params[:limit].to_i
 		if limit == 0 || limit > 100
-			limit = 16
+			limit = 15
 		end
 
 		@ambiguous = Tag.select_ambiguous(params[:tags])

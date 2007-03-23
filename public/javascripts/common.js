@@ -451,9 +451,20 @@ function findRelTags(tag_field, tag_type) {
 		tag_type_param = "&" + tag_type + "=1"
 	}
 
-	if (tag_field.selectionEnd) {
-		if (tag_field.selectionStart != tag_field.selectionEnd) {
-			tags = tag_field.value.substr(tag_field.selectionStart, tag_field.selectionEnd - tag_field.selectionStart)
+	if (tag_field.selectionStart) {
+		if (tag_field.selectionStart < tag_field.textLength) {
+			var start = tag_field.selectionStart
+			var stop = tag_field.selectionStart
+
+			while (tag_field.value[start] != " " && start >= 0) {
+				start -= 1
+			}
+
+			while (tag_field.value[stop] != " " && stop <= tag_field.textLength) {
+				stop += 1
+			}
+
+			tags = tag_field.value.substr(start, stop)
 		}
 	}
 
