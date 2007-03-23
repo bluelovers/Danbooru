@@ -37,8 +37,8 @@ class PostController < ApplicationController
 
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id)}
-				fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
-				fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
+				fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
+				fmt.js {render :json => {:success => false, :reason => "duplicate", location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
 			end
 		else
 			respond_to do |fmt|
@@ -126,7 +126,7 @@ class PostController < ApplicationController
 		respond_to do |fmt|
 			fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
 			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
 
@@ -164,7 +164,7 @@ class PostController < ApplicationController
 		respond_to do |fmt|
 			fmt.html
 			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
 
@@ -189,7 +189,7 @@ class PostController < ApplicationController
 		respond_to do |fmt|
 			fmt.html
 			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
 
@@ -213,7 +213,7 @@ class PostController < ApplicationController
 		respond_to do |fmt|
 			fmt.html
 			fmt.xml {render :xml => @posts.to_xml(:root => "posts", :select => params[:select].to_s.split(/,/))}
-			fmt.js {render :json => {:posts => @posts}.to_json(:select => params[:select].to_s.split(/,/))}
+			fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
 		end
 	end
 
@@ -251,12 +251,18 @@ class PostController < ApplicationController
 		respond_to do |fmt|
 			fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => 5, :conditions => conditions}
 			fmt.xml {render :xml => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
-			fmt.js {render :json => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :condtions => conditions).to_json}
+			fmt.js {render :json => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_json}
 		end
 	end
 
 	def favorites
 		@post = Post.find(params["id"])
 		@users = User.find_people_who_favorited(params["id"])
+
+		respond_to do |fmt|
+			fmt.html
+			fmt.xml {render :xml => @users.to_xml}
+			fmt.js {render :json => @users.to_json}
+		end
 	end
 end
