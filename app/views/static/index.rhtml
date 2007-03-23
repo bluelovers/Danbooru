@@ -8,7 +8,7 @@
 		<%= link_to "More &raquo;", {:controller => "static", :action => "more"}, :title => "A site map" %>
 	</div>
 	<div class="space">
-		<% form_tag({:controller => 'post', :action => 'list'}, :method => "get") do %>
+		<% form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
 			<%= text_field_tag "tags", "", :size => 30 %><br/>
 			<%= submit_tag 'Search', :name => 'searchDefault' %>
 		<% end %>
