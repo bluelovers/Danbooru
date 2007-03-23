@@ -464,7 +464,7 @@ function findRelTags(tag_field, tag_type) {
 				stop += 1
 			}
 
-			tags = tag_field.value.substr(start, stop)
+			tags = tag_field.value.substr(start, (stop - start))
 		}
 	}
 
