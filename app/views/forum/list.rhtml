@@ -1,0 +1,6 @@
+<table>
+<% @forum_posts.each do |fp| %>
+	<tr class="<%= cycle 'even', 'odd' %>"><td width="80%"><%= link_to fp.title, :action => "view", :id => fp.id %></td><td width="10%"><%= fp.author %></td><td width="10%"><%= fp.updated_at.strftime("%D") %></td></tr>
+<% end %>
+	<tr class="footer"><td colspan="3"><%= link_to "New Topic", :action => "add" %></th></td>
+</table>
