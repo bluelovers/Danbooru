@@ -4,7 +4,7 @@ class TagController < ApplicationController
 	before_filter :admin_only, :only => [:rename, :create_alias, :remove_alias, :create_implication, :remove_implication]
 	before_filter :mod_only, :only => [:mass_edit]
 
-	def list
+	def list_cloud
 		set_title "Tags"
 
 		@tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}

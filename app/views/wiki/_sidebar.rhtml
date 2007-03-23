@@ -1,7 +1,7 @@
 <div class="sidebar">
 	<div class="space">
 		<h6>View Page</h6>
-		<% form_tag({:controller => "wiki", :action => "view"}, :method => "get") do %>
+		<% form_tag({:action => "show"}, :method => "get") do %>
 			<input name="title" size="20" type="text" id="search-box" />
 		<% end %>
 	</div>

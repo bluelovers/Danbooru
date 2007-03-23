@@ -8,7 +8,7 @@
 <% @comments.each do |c| %>
 	<tr>
 		<td><input type="checkbox" class="c" name="c[<%= c.id %>]"/></td>
-		<td><%= link_to c.author, :controller => "post", :action => "view", :id => c.post_id %></td>
+		<td><%= link_to c.author, :controller => "post", :action => "show", :id => c.post_id %></td>
 		<td><%= h(c.body) %></td>
 	</tr>
 <% end %>

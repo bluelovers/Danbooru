@@ -49,7 +49,7 @@ class CommentController < ApplicationController
 		comment = Comment.create(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
 		if comment.errors.empty?
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Comment added"; redirect_to(:action => "list")}
+				fmt.html {flash[:notice] = "Comment added"; redirect_to(:action => "index")}
 				fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 				fmt.js {render :json => {:success => true}.to_json}
 			end
@@ -129,7 +129,7 @@ class CommentController < ApplicationController
 		elsif comment.is_spam == nil
 			comment.update_attribute(:is_spam, true)
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Comment marked as spam"; redirect_to(:action => "list")}
+				fmt.html {flash[:notice] = "Comment marked as spam"; redirect_to(:action => "index")}
 				fmt.xml {render :xml => {:success => true}.to_xml}
 				fmt.js {render :json => {:success => true}.to_json}
 			end

@@ -14,7 +14,7 @@ Alternatively, you can enter a URL to an image and (as long as the image is from
 <% if @tags %>
 <ul>
 <% @tags.each do |tag| %>
-	<li><%= link_to tag.name, :controller => "post", :action => "list", :tags => tag.name %> (<%= tag.post_count %>)</li>
+	<li><%= link_to tag.name, :controller => "post", :action => "index", :tags => tag.name %> (<%= tag.post_count %>)</li>
 <% end %>
 </ul>
 <% end %>

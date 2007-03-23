@@ -4,11 +4,9 @@
 	<h2 class="wiki-title"><%= @page.pretty_title %> (Editing)</h2>
 	<div id="wiki-view">
 	</div>
-	<% form_tag(:controller => "wiki", :action => "save", :title => @page.title) do %>
-		<%= text_area_tag("wiki-text", @page.body, :rows => 25, :cols => 40) %><br />
-		<%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "location.pathname = '/wiki/view?title=#{@page.title}'") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki-text').value)})") %>
-		<%- if @page.new_record? -%>
-			<%= hidden_field_tag "create", "1" %>
-		<%- end -%>
+	<% form_tag(:action => (@page.new_record? ? "create" : "update"), :title => @page.title) do %>
+		<%= hidden_field "wiki", "title", :value => @page.title %>
+		<%= text_area("wiki", "body", @page.body, :rows => 25, :cols => 40) %><br />
+		<%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "location.pathname = '/wiki/show?title=#{@page.title}'") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki-text').value)})") %>
 	<% end %>
 </div>

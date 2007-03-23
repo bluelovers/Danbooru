@@ -1,8 +1,8 @@
 <div class="space">
-	<h6>Recent Changes (<%= link_to "all", "/wiki/history" %>)</h6>
+	<h6>Recent Changes (<%= link_to "all", :action => "history" %>)</h6>
 	<ul>
 		<%- WikiPage.find(:all, :limit => 25, :order => "updated_at desc").each do |page| -%>
-			<li><%= link_to page.pretty_title, :controller => "wiki", :action => "view", :title => page.title %></li>
+			<li><%= link_to page.pretty_title, :controller => "wiki", :action => "show", :title => page.title %></li>
 		<%- end -%>
 	</ul>
 </div>

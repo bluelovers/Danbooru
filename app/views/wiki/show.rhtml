@@ -1,0 +1,41 @@
+<%= render :partial => "sidebar" %>
+
+<div class="content">
+	<%- if @page.nil? -%>
+		<h2 class="wiki-title"><%= params[:title].tr("_", " ") %></h2>
+
+		<p>No page currently exists.</p>
+
+		<ul class="flat-list">
+			<li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params[:title] %></li>
+			<% unless params['title'][/^Help:/] %>
+				<li><%= link_to "View posts", :controller => "post", :action => "index", :tags => params[:title] %></li>
+			<% end %>
+		</ul>
+	<%- else -%>
+		<h2 class="wiki-title"><%= @page.pretty_title %> <%- unless @page.last_version? -%><span class="old-version">(Version <%= @page.version %>)</span><%- end -%></h2>
+
+		<div id="wiki-view">
+			<%= wikilize(@page.body) %>
+		</div>
+
+		<ul class="flat-list">
+			<li><%= link_to_unless @page.first_version?, "&lt;&lt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1 %></li>
+<%- unless @page.title[/^Danbooru:/] -%>
+			<li><%= link_to "View posts", :controller => "post", :action => "index", :tags => @page.title %></li>
+<%- end -%>
+			<li><%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %></li>
+<%- if @page.is_locked? %>
+			<li><%= link_to "Unlock", {:controller => "wiki", :action => "unlock", :title => @page.title}, :method => "post" %></li>
+<%- else %>
+			<li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => @page.title, :version => @page.version %></li>
+			<li><%= link_to "Revert", {:controller => "wiki", :action => "revert", :title => @page.title, :version => @page.version}, :confirm => "Are you sure you want to revert to this page?", :method => :post %></li>
+			<li><%= link_to "Delete", {:controller => "wiki", :action => "delete", :title => @page.title}, :confirm => "Are you sure you want to delete this page (and all versions)?", :method => :post %></li>
+			<li><%= link_to "Lock", {:controller => "wiki", :action => "lock", :title => @page.title}, :method => :post %></li>
+			<li><%= link_to "Rename", :controller => "wiki", :action => "rename", :title => @page.title %></li>
+<%- end %>
+			<li><%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %></li>
+		</ul>
+		<p class="linked-from"><strong>Edited by: </strong><%= @page.author %></p>
+	<%- end -%>
+</div>

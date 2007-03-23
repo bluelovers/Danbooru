@@ -3,7 +3,7 @@
 	<% form_tag(:controller => "post", :action => "revert_tags", :id => change.post_id) do %>
 		<table>
 			<tr>
-				<th colspan="5"><%= link_to "Post ##{change.post_id}", :controller => "post", :action => "view", :id => change.post_id %></th>
+				<th colspan="5"><%= link_to "Post ##{change.post_id}", :controller => "post", :action => "show", :id => change.post_id %></th>
 			</tr>
 <% PostTagHistory.find(:all, :conditions => ["post_id = ?", change.post_id], :order => "id DESC").each do |history| %>
 			<tr class="<%= cycle 'even', 'odd', :name => "changes" %>">

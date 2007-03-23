@@ -58,7 +58,7 @@
 
 		<div class="space">
 			<p id="poster">
-				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "list", :tags => "user:#{@post.author}" %>
+				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "index", :tags => "user:#{@post.author}" %>
 				<%- unless @post.source.blank? -%>
 					<%- if @post.source[/^http/] -%>
 						(<%= link_to "source", @post.source %>)
@@ -133,11 +133,11 @@
 				</div>
 			<% end %>
 		</div>
-	<%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
-	<% if CONFIG["enable_comments"] %>
-		<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
-		<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
-	<% end %>
+		<%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
+		<% if CONFIG["enable_comments"] %>
+			<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
+			<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
+		<% end %>
 	</div>
 <%- end -%>
 </div>
