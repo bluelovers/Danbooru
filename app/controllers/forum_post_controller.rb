@@ -3,22 +3,23 @@ class ForumPostController < ApplicationController
 	before_filter :user_only
 
 	def create
-		if request.post?
-			@forum_post = ForumPost.build(params["forum_post"])
-			if @forum_post.save
-				if params["forum_post"]["parent_id"] == "0"
-					flash[:notice] = "Forum thread created"
-				else
-					flash[:notice] = "Response posted"
-				end
+		@forum_post = ForumPost.create(params["forum_post"].merge(:user_id => session[:user_id]))
 
-				redirect_to :action => "view", :id => @forum_post.view_id
+		if @forum_post.errors.empty?
+			if params["forum_post"]["parent_id"] == "0"
+				flash[:notice] = "Forum thread created"
 			else
-				render_error(@forum_post)
+				flash[:notice] = "Response posted"
 			end
+
+			redirect_to :action => "view", :id => @forum_post.view_id
 		else
-			@forum_post = ForumPost.new
+			render_error(@forum_post)
 		end
+	end
+
+	def add
+		@forum_post = ForumPost.new
 	end
 
 	def destroy

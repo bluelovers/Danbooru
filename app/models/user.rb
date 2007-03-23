@@ -115,6 +115,14 @@ class User < ActiveRecord::Base
 		return pass
 	end
 
+	def to_xml(options = {})
+		{:name => CGI.escapeHTML(self.name), :id => self.id}.to_xml(options)
+	end
+
+	def to_json(options = {})
+		{:name => escape_javascript(self.name), :id => self.id}.to_json(options)
+	end
+
 	protected
 	# Apply SHA1 encryption to the supplied password. We will additionally surround the password with a salt for additional security.
 	def self.sha1(pass)
@@ -136,5 +144,9 @@ class User < ActiveRecord::Base
 			self.password_confirmation = self.class.sha1(password_confirmation)
 			self.password = self.class.sha1(password)
 		end
+	end
+
+	def escape_javascript(s)
+		s.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
 	end
 end

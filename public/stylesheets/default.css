@@ -710,3 +710,11 @@ span.character-tag {
 span.copyright-tag {
 	color: #a0a;
 }
+
+tr.footer > td {
+	padding-top: 1em;
+}
+
+div#forum-post > div.post {
+	margin-bottom: 2em;
+}
