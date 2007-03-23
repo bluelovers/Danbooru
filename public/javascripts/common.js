@@ -456,11 +456,11 @@ function findRelTags(tag_field, tag_type) {
 			var start = tag_field.selectionStart
 			var stop = tag_field.selectionStart
 
-			while (tag_field.value[start] != " " && start >= 0) {
+			while (tag_field.value[start] != " " && start > 0) {
 				start -= 1
 			}
 
-			while (tag_field.value[stop] != " " && stop <= tag_field.textLength) {
+			while (tag_field.value[stop] != " " && stop < tag_field.textLength) {
 				stop += 1
 			}
 
