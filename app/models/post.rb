@@ -62,7 +62,14 @@ class Post < ActiveRecord::Base
 
 	# commits the tag changes to the database
 	def commit_tags
-		return if @tag_cache == nil
+		if @tag_cache == nil
+			if self.new_record?
+				@tag_cache = "tagme"
+			else
+				return
+			end
+		end
+
 		raise "IP address not set" if self.updater_ip_addr == nil
 
 		@tag_cache = "tagme" if @tag_cache == ""
