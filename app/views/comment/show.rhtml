@@ -3,4 +3,4 @@
 	<%= print_comment(@comment) %>
 </div>
 
-<p><%= link_to "Return to post", :controller => "post", :action => "view", :id => @comment.post_id %></p>
+<p><%= link_to "Return to post", :controller => "post", :action => "show", :id => @comment.post_id %></p>

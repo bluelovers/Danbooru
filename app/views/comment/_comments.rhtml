@@ -1,9 +1,8 @@
 <% comments.each do |c| %>
 <div class="comment" id="c<%= c.id %>">
-	<h4><%= link_to(c.author.tr("_", " "), "/comment/view/#{c.id}", :onclick => "Element.show('r#{post_id}'); $('rtxt#{post_id}').value += '>>#{c.id}\\n'; return false") %></h4>
+	<h4><%= link_to(c.author.tr("_", " "), {:controller => "comment", :action => "show", :id => c.id}, :onclick => "Element.show('r#{post_id}'); $('rtxt#{post_id}').value += '>>#{c.id}\\n'; return false") %></h4>
 	<h6 class="comment-header">Posted on <%= c.created_at.strftime("%D %I:%M") %> (<%= link_to_function("Mark as spam", "markcom(#{c.id}); return false") %>)</h6>
 	<div id="cbody<%= c.id %>"><%= print_comment(c) %></div>
-	<%= javascript_tag "posts[#{post_id}].comments[#{c.id}] = {'user':'#{escape_javascript(c.author)}'}" %>
 </div>
 <% end %>
 
@@ -11,11 +10,11 @@
 
 <p><%= link_to_function "&raquo; Respond", "Element.toggle('r#{post_id}')", :class => "resp-link" %></p>
 <div id="r<%= post_id %>" style="display: none;">
-	<form action="/comment/add" method="post">
+	<% form_tag(:action => "create") do %>
 		<span style="display:none;"><input type="text" name="email" /></span>
 		<%= text_area "comment", "body", :rows => 4, :id => "rtxt#{post_id}" %>
 		<input name="comment[post_id]" type="hidden" value="<%= post_id %>"/>
 		<%= submit_tag "Post comment" %>
 		<input value="1" name="comment[anonymous]" type="checkbox" id="anon<%= post_id %>"/> <label for="anon<%= post_id %>">Post as <%= CONFIG["default_guest_name"] %></label>
-	</form>
+	<% end %>
 </div>

@@ -4,9 +4,6 @@
 // <![CDATA[
 var posts = {}
 var tags = readCookie("tag_blacklist").split(/[, ]+/g)
-var users = readCookie("user_blacklist").split(/[, ]+/g)
-var pthreshold = parseInt(readCookie("post_threshold")) || 0
-var cthreshold = parseInt(readCookie("comment_threshold")) || 0
 // ]]>
 </script>
 
@@ -28,9 +25,9 @@ var cthreshold = parseInt(readCookie("comment_threshold")) || 0
 			<li><%= post.created_at.strftime("%D %I:%M") %></li>
 			<li>rating:<%= post.pretty_rating %></li>
 			<li><%= link_to "user:" + post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></li>
-<% post.cached_tags.split(" ").each do |t| %>
-			<li><%= link_to h(t), :controller => "post", :action => "index", :tags => t %></li>
-<% end %>
+			<% post.cached_tags.split(" ").each do |t| %>
+				<li><%= link_to h(t), :controller => "post", :action => "index", :tags => t %></li>
+			<% end %>
 		</ul>
 	</div>
 </div>
@@ -43,27 +40,11 @@ var pignored = []
 for (i in posts)  {
 	var hidden = false
 
-	if (posts[i].score < pthreshold) {
-		hidden = true
-	}
-
-	if (!hidden && users.include(posts[i].user)) {
-		hidden = true
-	}
-
-	if (!hidden) {
-		if (tags.include(posts[i].rating.toLowerCase())) {
+	tags.each(function(j) {
+		if (posts[i].tags.include(j)) {
 			hidden = true
 		}
-	}
-
-	if (!hidden) {
-		tags.each(function(j) {
-			if (posts[i].tags.include(j)) {
-				hidden = true
-			}
-		})
-	}
+	})
 
 	if (hidden) {
 		Element.addClassName('p' + i, 'ignored-post')
@@ -89,7 +70,7 @@ if (pignored.length > 0) {
 </div>
 
 <div id="footer">
-	<a href="/comment/moderate">Moderate comments</a>
+	<%= link_to "Moderate comments", :action => "moderate" %>
 </div>
 
 </div>
