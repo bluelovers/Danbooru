@@ -35,6 +35,18 @@ class Array
 	end
 end
 
+class FalseClass
+	def to_json(options = {})
+		"false"
+	end
+end
+
+class TrueClass
+	def to_json(options = {})
+		"true"
+	end
+end
+
 class Hash
 	def to_json(options = {})
 		arr = []

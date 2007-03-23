@@ -1,4 +1,4 @@
 <div id="footer">
-	<p><a href="/tag/list_all">List (by name)</a> | <a href="/tag/list_all_by_date">List (by date) | <a href="/tag/list_all_by_count">List (by count)</a> | <a href="/tag/list_artists">List Artists</a> | <a href="/tag/list_ambiguous">List Ambiguous</a> | <a href="/tag/search">Search</a></p>
-	<p>Admin: <a href="/tag/mass_edit">Mass Edit</a> | <a href="/tag/aliases">Aliases</a> | <a href="/tag/implications">Implications</a> | <a href="/tag/set_type">Set Type</a></p>
+	<p><%= link_to "List (by name)", :action => "list_all_by_name" %> | <%= link_to "List (by date)", :action => "list_all_by_date" %> | <%= link_to "List (by count)", :action => "list_all_by_count" %> | <%= link_to "List Artists", :action => "list_artists" %> | <%= link_to "List Ambiguous", :action => "list_ambiguous" %> | <%= link_to "List Characters", :action => "list_characters" %> | <%= link_to "List Copyrights", :action => "list_copyrights" %> | <%= link_to "Search", :action => "search" %></p>
+	<p>Admin: <%= link_to "Mass Edit", :action => "mass_edit" %> | <%= link_to "Aliases", :action => "aliases" %> | <%= link_to "Implications", :action => "implications" %> | <%= link_to "Set Type", :action => "set_type" %></p>
 </div>

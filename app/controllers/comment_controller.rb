@@ -19,7 +19,7 @@ class CommentController < ApplicationController
 	verify :method => :post, :only => [:create, :destroy, :mark_as_spam]
 
 	def spam_filter
-		return false if params[:email].blank?
+		return false unless params[:email].blank?
 		return false if params[:comment][:body].scan(/http/).size > 2
 		return true
 	end
@@ -113,7 +113,7 @@ class CommentController < ApplicationController
 
 			redirect_to :action => "moderate"
 		else
-			@comments = Comment.find(:all, :conditions => "signal_level = 0", :order => "id DESC")
+			@comments = Comment.find(:all, :conditions => "is_spam = TRUE", :order => "id DESC")
 		end
 	end
 

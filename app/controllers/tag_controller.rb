@@ -13,19 +13,44 @@ class TagController < ApplicationController
 	def list_artists
 		set_title "Artist Tags"
 
-		@tags = Tag.find(:all, :conditions => "tag_type = 1", :order => "name")
+		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_ARTIST], :order => "name")
+	end
+
+	def list_characters
+		set_title "Artist Tags"
+
+		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_CHARACTER], :order => "name")
+		render :action => "list_artists"
 	end
 
 	def list_ambiguous
 		set_title "Ambiguous Tags"
 
-		@tags = Tag.find(:all, :conditions => "tag_type = 2", :order => "name")
+		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_AMBIGUOUS], :order => "name")
+		render :action => "list_artists"
 	end
 
-	def list_all
-		set_title "Tags"
+	def list_copyrights
+		set_title "Copyright Tags"
+		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_COPYRIGHT], :order => "name")
+		render :action => "list_artists"
+	end
 
+	def list_all_by_name
+		set_title "Tags"
 		@pages, @tags = paginate :tags, :order => "name", :per_page => 50
+	end
+
+	def list_all_by_date
+		set_title "Tags by Date"
+		@pages, @tags = paginate :tags, :order => "id desc", :per_page => 50
+		render :action => "list_all_by_name"
+	end
+
+	def list_all_by_count
+		set_title "Tags by Post Count"
+		@pages, @tags = paginate :tags, :order => "post_count desc", :per_page => 50
+		render :action => "list_all_by_name"
 	end
 
 	def mass_edit
@@ -141,15 +166,5 @@ class TagController < ApplicationController
 				end
 			end
 		end
-	end
-
-	def list_all_by_date
-		set_title "Tags by Date"
-		@pages, @tags = paginate :tags, :order => "id desc", :per_page => 50
-	end
-
-	def list_all_by_count
-		set_title "Tags by Post Count"
-		@pages, @tags = paginate :tags, :order => "post_count desc", :per_page => 50
 	end
 end
