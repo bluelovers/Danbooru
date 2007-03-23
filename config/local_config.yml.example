@@ -4,17 +4,18 @@ app_name: danbooru
 admin_contact: danbooru@moetry.org
 server_host: danbooru.donmai.us
 default_guest_name: Anonymous
-enable_anonymous_post_access: false
-enable_anonymous_post_uploads: false
-enable_comments: true
-enable_comment_spam_filter: true
-enable_anonymous_comment_access: false
-enable_anonymous_comment_responses: false
-enable_anonymous_note_edits: false
-enable_anonymous_note_deletes: false
-enable_anonymous_wiki_access: true
-enable_anonymous_wiki_edits: true
-enable_signups: true
-enable_forum: true
-enable_anonymous_forum_access: false
-enable_anonymous_forum_posts: false
+enable_anonymous_post_access: false			# Allow Anonymous to access anything under /post/
+enable_anonymous_post_uploads: false		# Allow Anonymous to upload new posts
+enable_comments: true						# Enable comments
+enable_comment_spam_filter: true			# Enable spam filter for new comments
+enable_anonymous_comment_access: false		# Allow Anonymous to access anything under /comment/
+enable_anonymous_comment_responses: false	# Allow Anonymous to post comments (does not affect users deliberately posting as Anonymous)
+enable_anonymous_note_edits: false			# Allow Anonymous to edit notes
+enable_anonymous_note_deletes: false		# Allow Anonymous to delete notes
+enable_user_note_deletes: true				# Allow users to delete notes
+enable_anonymous_wiki_access: true			# Allow Anonymous to access anything under /wiki/
+enable_anonymous_wiki_edits: true			# Allow Anonymous to edit the wiki
+enable_signups: true						# Allow new account signups
+enable_forum: true							# Enable the forum
+enable_anonymous_forum_access: false		# Allow Anonymous to access anything under /forum_post/
+enable_anonymous_forum_posts: false			# Allow Anonymous to post to the forum
