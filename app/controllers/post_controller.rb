@@ -64,7 +64,7 @@ class PostController < ApplicationController
 		end
 	end
 
-	def upload
+	def upload #:nodoc:
 		@post = Post.new
 	end
 
@@ -143,12 +143,12 @@ class PostController < ApplicationController
 		end
 	end
 
-	def atom
+	def atom #:nodoc:
 		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
 		render :layout => false
 	end
 
-	def show
+	def show #:nodoc:
 		begin
 			@post = Post.find(params[:id])
 			@tags = {:include => @post.cached_tags.split(/ /)}
