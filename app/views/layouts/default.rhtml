@@ -22,6 +22,7 @@
 			<% end %>
 			<li><%= link_to "Tags", :controller => "tag", :action => "list_cloud" %></li>
 			<li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
+			<li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
 			<% if CONFIG["enable_forum"] %>
 				<li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
 			<% end %>

@@ -476,3 +476,15 @@ function findRelTags(tag_field, tag_type) {
 		parameters:'tags=' + tags + tag_type_param
 	})
 }
+
+function findArtist() {
+	$('related').innerHTML = '<em>Fetching...</em>'
+	new Ajax.Request('/artist/index.js', {
+		method: 'get', 
+		onComplete: function(req) {
+			var resp = eval("(" + req.responseText + ")")
+			$('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["personal_name"] || x["handle_name"] || x["circle_name"]}).join(" "))
+		}, 
+		parameters:'name=site:'+$F('post_source')
+	})
+}
