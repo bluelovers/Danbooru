@@ -9,6 +9,10 @@ class NilClass
 	def id
 		raise NoMethodError
 	end
+
+	def to_json(options = {})
+		"null"
+	end
 end
 
 class String
@@ -27,6 +31,9 @@ class Integer
 	def to_json(options = {})
 		return self
 	end
+end
+
+class Time
 end
 
 class Array
