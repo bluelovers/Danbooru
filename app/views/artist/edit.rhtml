@@ -1,32 +1,32 @@
 <div id="artist-edit">
-	<form method="post" action="/artist/edit/<%= @artist.id %>">
+	<form metdod="post" action="/artist/edit/<%= @artist.id %>">
 	<table>
 		<tr>
-			<th>Personal Name</th>
+			<td><label for="artist_personal_name">Personal Name</label></td>
 			<td><%= text_field "artist", "personal_name" %></td>
 		</tr>
 		<tr>
-			<th>Handle Name</th>
+			<td><label for="artist_handle_name">Handle Name</label></td>
 			<td><%= text_field "artist", "handle_name" %></td>
 		</tr>
 		<tr>
-			<th>Circle Name</th>
+			<td><label for="artist_circle_name">Circle Name</label></td>
 			<td><%= text_field "artist", "circle_name" %></td>
 		</tr>
 		<tr>
-			<th>Japanese Name</th>
+			<td><label for="artist_japanese_name">Japanese Name</label></td>
 			<td><%= text_field "artist", "japanese_name" %></td>
 		</tr>
 		<tr>
-			<th>Site Name</th>
+			<td><label for="artist_site_name">Site Name</label></td>
 			<td><%= text_field "artist", "site_name" %></td>
 		</tr>
 		<tr>
-			<th>Site URL</th>
+			<td><label for="artist_site_url">Site URL</label></td>
 			<td><%= text_field "artist", "site_url" %></td>
 		</tr>
 		<tr>
-			<th>Image URL</th>
+			<td><label for="artist_image_url">Image URL</label></td>
 			<td><%= text_field "artist", "image_url" %></td>
 		</tr>
 		<tr>

@@ -1,0 +1,17 @@
+<div id="artist">
+	<div id="search-form">
+		<% form_tag({:action => "index"}, :method => :get) do %>
+			<%= text_field_tag "name", params[:name], :size => 40 %> <%= submit_tag "Search" %>
+		<% end %>
+	</div>
+
+	<%= render :partial => "listing", :locals => {:artists => @artists} %>
+
+	<div id="paginator">
+		<%= custom_pagination_links(@pages, :params => {:controller => "artist", :action => "index"}) %>
+	</div>
+
+	<div id="footer">
+		<%= link_to "Add", :action => "add" %>
+	</div>
+</div>

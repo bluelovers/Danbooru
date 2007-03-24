@@ -718,3 +718,7 @@ tr.footer > td {
 div#forum-post > div.post {
 	margin-bottom: 2em;
 }
+
+div#artist > div#search-form {
+	margin-bottom: 2em;
+}
