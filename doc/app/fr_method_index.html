@@ -1,0 +1,255 @@
+
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+    Methods
+
+  -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Methods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="rdoc-style.css" type="text/css" />
+  <base target="docwin" />
+</head>
+<body>
+<div id="index">
+  <h1 class="section-bar">Methods</h1>
+  <div id="index-entries">
+    <a href="classes/Tag.html#M000065"><=> (Tag)</a><br />
+    <a href="classes/LoginSystem.html#M000216">access_denied (LoginSystem)</a><br />
+    <a href="classes/Note.html#M000190">active (Note)</a><br />
+    <a href="classes/ForumController.html#M000006">add (ForumController)</a><br />
+    <a href="classes/ArtistController.html#M000028">add (ArtistController)</a><br />
+    <a href="classes/ApiController.html#M000113">add_comment (ApiController)</a><br />
+    <a href="classes/User.html#M000040">add_favorite (User)</a><br />
+    <a href="classes/ApiController.html#M000118">add_favorite (ApiController)</a><br />
+    <a href="classes/ApiController.html#M000105">add_post (ApiController)</a><br />
+    <a href="classes/LoginSystem.html#M000219">admin_only (LoginSystem)</a><br />
+    <a href="classes/TagController.html#M000135">aliases (TagController)</a><br />
+    <a href="classes/ApplicationController.html#M000151">api_request? (ApplicationController)</a><br />
+    <a href="classes/Post.html#M000074">append_tags (Post)</a><br />
+    <a href="classes/PostController.html#M000175">atom (PostController)</a><br />
+    <a href="classes/User.html#M000046">authenticate (User)</a><br />
+    <a href="classes/LoginSystem.html#M000222">authenticate (LoginSystem)</a><br />
+    <a href="classes/User.html#M000047">authenticate_hash (User)</a><br />
+    <a href="classes/Note.html#M000193">author (Note)</a><br />
+    <a href="classes/WikiPageVersion.html#M000188">author (WikiPageVersion)</a><br />
+    <a href="classes/Post.html#M000094">author (Post)</a><br />
+    <a href="classes/ForumPost.html#M000143">author (ForumPost)</a><br />
+    <a href="classes/Comment.html#M000012">author (Comment)</a><br />
+    <a href="classes/PostTagHistory.html#M000196">author (PostTagHistory)</a><br />
+    <a href="classes/Note.html#M000194">author (Note)</a><br />
+    <a href="classes/WikiPage.html#M000202">author (WikiPage)</a><br />
+    <a href="classes/Post.html#M000083">auto_download (Post)</a><br />
+    <a href="classes/Tag.html#M000056">before_create (Tag)</a><br />
+    <a href="classes/Note.html#M000191">blank_body (Note)</a><br />
+    <a href="classes/Tag.html#M000059">calculate_related (Tag)</a><br />
+    <a href="classes/NoteController.html#M000035">change (NoteController)</a><br />
+    <a href="classes/AccountController.html#M000019">change_password (AccountController)</a><br />
+    <a href="classes/ApiController.html#M000106">change_post (ApiController)</a><br />
+    <a href="classes/TagHelper.html#M000228">cloud_view (TagHelper)</a><br />
+    <a href="classes/Post.html#M000077">commit_tags (Post)</a><br />
+    <a href="classes/ArtistController.html#M000026">create (ArtistController)</a><br />
+    <a href="classes/ForumController.html#M000005">create (ForumController)</a><br />
+    <a href="classes/CommentController.html#M000146">create (CommentController)</a><br />
+    <a href="classes/WikiController.html#M000162">create (WikiController)</a><br />
+    <a href="classes/PostController.html#M000170">create (PostController)</a><br />
+    <a href="classes/TagAlias.html#M000072">create (TagAlias)</a><br />
+    <a href="classes/TagImplication.html#M000139">create (TagImplication)</a><br />
+    <a href="classes/TagController.html#M000132">create_alias (TagController)</a><br />
+    <a href="classes/TagController.html#M000134">create_implication (TagController)</a><br />
+    <a href="classes/User.html#M000053">crypt_password (User)</a><br />
+    <a href="classes/User.html#M000054">crypt_unless_empty (User)</a><br />
+    <a href="classes/LoginSystem.html#M000217">current_user (LoginSystem)</a><br />
+    <a href="classes/ApplicationHelper.html#M000226">custom_pagination_links (ApplicationHelper)</a><br />
+    <a href="classes/ApiController.html#M000119">del_favorite (ApiController)</a><br />
+    <a href="classes/User.html#M000041">del_favorite (User)</a><br />
+    <a href="classes/Post.html#M000082">delete_file (Post)</a><br />
+    <a href="classes/CommentController.html#M000145">destroy (CommentController)</a><br />
+    <a href="classes/ForumController.html#M000007">destroy (ForumController)</a><br />
+    <a href="classes/WikiController.html#M000157">destroy (WikiController)</a><br />
+    <a href="classes/PostController.html#M000173">destroy (PostController)</a><br />
+    <a href="classes/WikiController.html#M000168">diff (WikiController)</a><br />
+    <a href="classes/WikiPage.html#M000204">diff (WikiPage)</a><br />
+    <a href="classes/WikiController.html#M000165">edit (WikiController)</a><br />
+    <a href="classes/ArtistController.html#M000027">edit (ArtistController)</a><br />
+    <a href="classes/AdminController.html#M000003">edit_account (AdminController)</a><br />
+    <a href="classes/TagController.html#M000130">edit_preview (TagController)</a><br />
+    <a href="classes/User.html#M000055">escape_javascript (User)</a><br />
+    <a href="classes/Post.html#M000103">escape_javascript (Post)</a><br />
+    <a href="classes/Post.html#M000073">fast_count (Post)</a><br />
+    <a href="classes/User.html#M000037">fast_count (User)</a><br />
+    <a href="classes/User.html#M000042">favorites (User)</a><br />
+    <a href="classes/PostController.html#M000182">favorites (PostController)</a><br />
+    <a href="classes/AccountController.html#M000021">favorites (AccountController)</a><br />
+    <a href="classes/AccountController.html#M000022">favorites_atom (AccountController)</a><br />
+    <a href="classes/User.html#M000043">favorites_count (User)</a><br />
+    <a href="classes/Post.html#M000084">file= (Post)</a><br />
+    <a href="classes/Post.html#M000085">file_name (Post)</a><br />
+    <a href="classes/Post.html#M000086">file_path (Post)</a><br />
+    <a href="classes/Post.html#M000087">file_url (Post)</a><br />
+    <a href="classes/Artist.html#M000187">find_by_name (Artist)</a><br />
+    <a href="classes/ApiController.html#M000112">find_comments (ApiController)</a><br />
+    <a href="classes/Post.html#M000104">find_ext (Post)</a><br />
+    <a href="classes/Tag.html#M000058">find_or_create_by_name (Tag)</a><br />
+    <a href="classes/WikiPage.html#M000205">find_page (WikiPage)</a><br />
+    <a href="classes/User.html#M000048">find_people_who_favorited (User)</a><br />
+    <a href="classes/ApiController.html#M000107">find_posts (ApiController)</a><br />
+    <a href="classes/Tag.html#M000060">find_related (Tag)</a><br />
+    <a href="classes/ApiController.html#M000109">find_related_tags (ApiController)</a><br />
+    <a href="classes/ApiController.html#M000117">find_tag_history (ApiController)</a><br />
+    <a href="classes/ApiController.html#M000110">find_tags (ApiController)</a><br />
+    <a href="classes/ApiController.html#M000116">find_user (ApiController)</a><br />
+    <a href="classes/ApiController.html#M000111">find_wiki (ApiController)</a><br />
+    <a href="classes/WikiPage.html#M000201">first_version? (WikiPage)</a><br />
+    <a href="classes/Post.html#M000092">flash? (Post)</a><br />
+    <a href="classes/Post.html#M000102">generate_attributes (Post)</a><br />
+    <a href="classes/Post.html#M000079">generate_hash (Post)</a><br />
+    <a href="classes/Post.html#M000081">generate_preview (Post)</a><br />
+    <a href="classes/Post.html#M000098">generate_sql (Post)</a><br />
+    <a href="classes/Post.html#M000097">generate_sql__range_helper (Post)</a><br />
+    <a href="classes/Post.html#M000090">get_image_dimensions (Post)</a><br />
+    <a href="classes/User.html#M000045">has_permission? (User)</a><br />
+    <a href="classes/NoteController.html#M000032">history (NoteController)</a><br />
+    <a href="classes/WikiController.html#M000167">history (WikiController)</a><br />
+    <a href="classes/NoteController.html#M000033">history_for_post (NoteController)</a><br />
+    <a href="classes/WikiPage.html#M000199">identify_artist (WikiPage)</a><br />
+    <a href="classes/Post.html#M000091">image? (Post)</a><br />
+    <a href="classes/TagController.html#M000136">implications (TagController)</a><br />
+    <a href="classes/WikiController.html#M000160">index (WikiController)</a><br />
+    <a href="classes/PostController.html#M000174">index (PostController)</a><br />
+    <a href="classes/CommentController.html#M000148">index (CommentController)</a><br />
+    <a href="classes/AccountController.html#M000014">index (AccountController)</a><br />
+    <a href="classes/ForumController.html#M000010">index (ForumController)</a><br />
+    <a href="classes/AdminController.html#M000001">index (AdminController)</a><br />
+    <a href="classes/ArtistController.html#M000029">index (ArtistController)</a><br />
+    <a href="classes/Arch.html#M000211">interpreter_path (Arch)</a><br />
+    <a href="classes/WikiPage.html#M000200">last_version? (WikiPage)</a><br />
+    <a href="classes/PostHelper.html#M000215">link_to_amb_tags (PostHelper)</a><br />
+    <a href="classes/WikiHelper.html#M000214">linked_from (WikiHelper)</a><br />
+    <a href="classes/Arch.html#M000210">linux? (Arch)</a><br />
+    <a href="classes/NoteController.html#M000031">list (NoteController)</a><br />
+    <a href="classes/AccountController.html#M000018">list (AccountController)</a><br />
+    <a href="classes/TagController.html#M000128">list_all_by_count (TagController)</a><br />
+    <a href="classes/TagController.html#M000127">list_all_by_date (TagController)</a><br />
+    <a href="classes/TagController.html#M000126">list_all_by_name (TagController)</a><br />
+    <a href="classes/TagController.html#M000124">list_ambiguous (TagController)</a><br />
+    <a href="classes/TagController.html#M000122">list_artists (TagController)</a><br />
+    <a href="classes/TagController.html#M000123">list_characters (TagController)</a><br />
+    <a href="classes/TagController.html#M000121">list_cloud (TagController)</a><br />
+    <a href="classes/TagController.html#M000125">list_copyrights (TagController)</a><br />
+    <a href="classes/ApplicationController.html#M000155">local_request? (ApplicationController)</a><br />
+    <a href="classes/WikiController.html#M000158">lock (WikiController)</a><br />
+    <a href="classes/WikiPage.html#M000206">lock! (WikiPage)</a><br />
+    <a href="classes/ApiController.html#M000108">lock_post (ApiController)</a><br />
+    <a href="classes/Note.html#M000195">locked? (Note)</a><br />
+    <a href="classes/AccountController.html#M000015">login (AccountController)</a><br />
+    <a href="classes/AccountController.html#M000017">logout (AccountController)</a><br />
+    <a href="classes/WikiPage.html#M000198">make_title_canonical (WikiPage)</a><br />
+    <a href="classes/CommentController.html#M000150">mark_as_spam (CommentController)</a><br />
+    <a href="classes/ApiController.html#M000114">mark_comment (ApiController)</a><br />
+    <a href="classes/TagController.html#M000129">mass_edit (TagController)</a><br />
+    <a href="classes/Enumerable.html#M000224">method_missing (Enumerable)</a><br />
+    <a href="classes/LoginSystem.html#M000218">mod_only (LoginSystem)</a><br />
+    <a href="classes/CommentController.html#M000149">moderate (CommentController)</a><br />
+    <a href="classes/Artist.html#M000185">name (Artist)</a><br />
+    <a href="classes/Artist.html#M000184">normalize (Artist)</a><br />
+    <a href="classes/StaticController.html#M000024">notfound (StaticController)</a><br />
+    <a href="classes/AccountController.html#M000020">options (AccountController)</a><br />
+    <a href="classes/ForumPost.html#M000141">parent? (ForumPost)</a><br />
+    <a href="classes/Tag.html#M000070">parse_helper (Tag)</a><br />
+    <a href="classes/Tag.html#M000071">parse_query (Tag)</a><br />
+    <a href="classes/PostController.html#M000177">popular_by_day (PostController)</a><br />
+    <a href="classes/PostController.html#M000179">popular_by_month (PostController)</a><br />
+    <a href="classes/PostController.html#M000178">popular_by_week (PostController)</a><br />
+    <a href="classes/Post.html#M000099">pretty_rating (Post)</a><br />
+    <a href="classes/WikiPage.html#M000203">pretty_title (WikiPage)</a><br />
+    <a href="classes/WikiPageVersion.html#M000189">pretty_title (WikiPageVersion)</a><br />
+    <a href="classes/WikiController.html#M000161">preview (WikiController)</a><br />
+    <a href="classes/Post.html#M000088">preview_path (Post)</a><br />
+    <a href="classes/Post.html#M000089">preview_url (Post)</a><br />
+    <a href="classes/CommentHelper.html#M000223">print_comment (CommentHelper)</a><br />
+    <a href="classes/Post.html#M000076">rating= (Post)</a><br />
+    <a href="classes/StaticController.html#M000023">redirect (StaticController)</a><br />
+    <a href="classes/Tag.html#M000063">related (Tag)</a><br />
+    <a href="classes/TagHelper.html#M000229">related_tags (TagHelper)</a><br />
+    <a href="classes/NoteController.html#M000036">remove (NoteController)</a><br />
+    <a href="classes/TagController.html#M000131">remove_alias (TagController)</a><br />
+    <a href="classes/TagController.html#M000133">remove_implication (TagController)</a><br />
+    <a href="classes/WikiController.html#M000169">rename (WikiController)</a><br />
+    <a href="classes/WikiPage.html#M000208">rename! (WikiPage)</a><br />
+    <a href="classes/Post.html#M000080">rename_file (Post)</a><br />
+    <a href="classes/ApplicationController.html#M000152">render_error (ApplicationController)</a><br />
+    <a href="classes/ApplicationController.html#M000156">rescue_action_in_public (ApplicationController)</a><br />
+    <a href="classes/AdminController.html#M000004">reset_pass (AdminController)</a><br />
+    <a href="classes/User.html#M000049">reset_pass! (User)</a><br />
+    <a href="classes/WikiController.html#M000166">revert (WikiController)</a><br />
+    <a href="classes/NoteController.html#M000034">revert (NoteController)</a><br />
+    <a href="classes/PostController.html#M000180">revert_tags (PostController)</a><br />
+    <a href="classes/Arch.html#M000212">rm_rf (Arch)</a><br />
+    <a href="classes/User.html#M000044">role? (User)</a><br />
+    <a href="classes/AccountController.html#M000013">save_cookies (AccountController)</a><br />
+    <a href="classes/ApplicationController.html#M000154">save_tags_to_cookie (ApplicationController)</a><br />
+    <a href="classes/Tag.html#M000066">scan_query (Tag)</a><br />
+    <a href="classes/Tag.html#M000067">scan_tags (Tag)</a><br />
+    <a href="classes/ApiController.html#M000115">score_post (ApiController)</a><br />
+    <a href="classes/TagController.html#M000138">search (TagController)</a><br />
+    <a href="classes/Tag.html#M000061">select_ambiguous (Tag)</a><br />
+    <a href="classes/ApiController.html#M000120">set_api_flag (ApiController)</a><br />
+    <a href="classes/User.html#M000038">set_role (User)</a><br />
+    <a href="classes/ApplicationController.html#M000153">set_title (ApplicationController)</a><br />
+    <a href="classes/TagController.html#M000137">set_type (TagController)</a><br />
+    <a href="classes/AdminController.html#M000002">settings (AdminController)</a><br />
+    <a href="classes/User.html#M000052">sha1 (User)</a><br />
+    <a href="classes/ForumController.html#M000009">show (ForumController)</a><br />
+    <a href="classes/CommentController.html#M000147">show (CommentController)</a><br />
+    <a href="classes/PostController.html#M000176">show (PostController)</a><br />
+    <a href="classes/ArtistController.html#M000030">show (ArtistController)</a><br />
+    <a href="classes/WikiController.html#M000164">show (WikiController)</a><br />
+    <a href="classes/AccountController.html#M000016">signup (AccountController)</a><br />
+    <a href="classes/Post.html#M000093">size (Post)</a><br />
+    <a href="classes/CommentController.html#M000144">spam_filter (CommentController)</a><br />
+    <a href="classes/PostController.html#M000181">tag_changes (PostController)</a><br />
+    <a href="classes/TagHelper.html#M000227">tag_link (TagHelper)</a><br />
+    <a href="classes/ApplicationHelper.html#M000225">tag_links (ApplicationHelper)</a><br />
+    <a href="classes/Post.html#M000075">tags= (Post)</a><br />
+    <a href="classes/Post.html#M000078">tempfile_path (Post)</a><br />
+    <a href="classes/Tag.html#M000068">to_aliased (Tag)</a><br />
+    <a href="classes/PostTagHistory.html#M000197">to_json (PostTagHistory)</a><br />
+    <a href="classes/User.html#M000051">to_json (User)</a><br />
+    <a href="classes/Artist.html#M000186">to_json (Artist)</a><br />
+    <a href="classes/Post.html#M000100">to_json (Post)</a><br />
+    <a href="classes/Tag.html#M000064">to_s (Tag)</a><br />
+    <a href="classes/Post.html#M000101">to_xml (Post)</a><br />
+    <a href="classes/User.html#M000050">to_xml (User)</a><br />
+    <a href="classes/Tag.html#M000057">type (Tag)</a><br />
+    <a href="classes/WikiController.html#M000159">unlock (WikiController)</a><br />
+    <a href="classes/WikiPage.html#M000207">unlock! (WikiPage)</a><br />
+    <a href="classes/PostController.html#M000172">update (PostController)</a><br />
+    <a href="classes/ArtistController.html#M000025">update (ArtistController)</a><br />
+    <a href="classes/WikiController.html#M000163">update (WikiController)</a><br />
+    <a href="classes/ForumController.html#M000008">update (ForumController)</a><br />
+    <a href="classes/Tag.html#M000062">update_cached_tags (Tag)</a><br />
+    <a href="classes/Comment.html#M000011">update_last_commented_at (Comment)</a><br />
+    <a href="classes/Post.html#M000095">update_neighbor_links_on_create (Post)</a><br />
+    <a href="classes/Post.html#M000096">update_neighbor_links_on_destroy (Post)</a><br />
+    <a href="classes/ForumPost.html#M000140">update_parent (ForumPost)</a><br />
+    <a href="classes/Note.html#M000192">update_post (Note)</a><br />
+    <a href="classes/PostController.html#M000171">upload (PostController)</a><br />
+    <a href="classes/LoginSystem.html#M000220">user_only (LoginSystem)</a><br />
+    <a href="classes/LoginSystem.html#M000221">user_only_api (LoginSystem)</a><br />
+    <a href="classes/User.html#M000039">validate_on_create (User)</a><br />
+    <a href="classes/ForumPost.html#M000142">view_id (ForumPost)</a><br />
+    <a href="classes/PostController.html#M000183">vote (PostController)</a><br />
+    <a href="classes/WikiHelper.html#M000213">wikilize (WikiHelper)</a><br />
+    <a href="classes/Arch.html#M000209">windows? (Arch)</a><br />
+    <a href="classes/Tag.html#M000069">with_parents (Tag)</a><br />
+  </div>
+</div>
+</body>
+</html>

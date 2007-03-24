@@ -1,6 +1,15 @@
 class ArtistController < ApplicationController
 	layout "default"
 
+# Parameters
+# - id: the ID number of the artist to update
+# - artist[personal_name]: the artist's personal name (in romanji)
+# - artist[handle_name]: the artist's handle or nickname
+# - artist[circle_name]: the artist's circle name
+# - artist[japanese_name]: the artist's japanese name (in kanji or kana)
+# - artist[site_name]: the artist's site's name
+# - artist[site_url]: base URL of the artist's home page
+# - artist[image_url]: base URL of the site storing the artist's images
 	def update
 		artist = Artist.find(params[:id])
 		artist.update_attributes(params[:artist])
@@ -12,6 +21,14 @@ class ArtistController < ApplicationController
 		end
 	end
 
+# Parameters
+# - artist[personal_name]: the artist's personal name (in romanji)
+# - artist[handle_name]: the artist's handle or nickname
+# - artist[circle_name]: the artist's circle name
+# - artist[japanese_name]: the artist's japanese name (in kanji or kana)
+# - artist[site_name]: the artist's site's name
+# - artist[site_url]: base URL of the artist's home page
+# - artist[image_url]: base URL of the site storing the artist's images
 	def create
 		artist = Artist.create(params[:artist])
 		respond_to do |fmt|
@@ -29,6 +46,8 @@ class ArtistController < ApplicationController
 		@artist = Artist.new
 	end
 
+# Parameters
+# - name: the artist's name. Danbooru will automatically search in the following order: personal name, handle name, circle name, japanese name. If you prefix with "site:", Danbooru will search against the URL database, both site URLs and image URLs. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
 	def index
 		if params[:name]
 			name = params[:name]

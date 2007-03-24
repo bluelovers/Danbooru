@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: TagAlias</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">TagAlias</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/app/models/tag_alias_rb.html">
+                app/models/tag_alias.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                ActiveRecord::Base
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000072">create</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000072" class="method-detail">
+        <a name="M000072"></a>
+
+        <div class="method-heading">
+          <a href="#M000072" class="method-signature">
+          <span class="method-name">create</span><span class="method-args">(params)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000072-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000072-source">
+<pre>
+    <span class="ruby-comment cmt"># File app/models/tag_alias.rb, line 2</span>
+ 2:         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">create</span>(<span class="ruby-identifier">params</span>)
+ 3:                 <span class="ruby-identifier">id</span>, <span class="ruby-identifier">n</span>, <span class="ruby-identifier">a</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>
+ 4: 
+ 5:                 <span class="ruby-identifier">transaction</span> <span class="ruby-keyword kw">do</span>
+ 6:                         <span class="ruby-identifier">n</span> = <span class="ruby-constant">Tag</span>.<span class="ruby-identifier">find_or_create_by_name</span>(<span class="ruby-identifier">params</span>[<span class="ruby-identifier">:name</span>])
+ 7:                         <span class="ruby-identifier">a</span> = <span class="ruby-constant">Tag</span>.<span class="ruby-identifier">find_or_create_by_name</span>(<span class="ruby-identifier">params</span>[<span class="ruby-identifier">:alias</span>])
+ 8: 
+ 9:                         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">:first</span>, <span class="ruby-identifier">:conditions</span> =<span class="ruby-operator">&gt;</span> [<span class="ruby-value str">&quot;name = ? AND alias_id = ?&quot;</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>]) <span class="ruby-operator">||</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">:first</span>, <span class="ruby-identifier">:conditions</span> =<span class="ruby-operator">&gt;</span> [<span class="ruby-value str">&quot;name = ? AND alias_id = ?&quot;</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">id</span>])
+10:                                 <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Tag alias already exists&quot;</span>
+11:                         <span class="ruby-keyword kw">end</span>
+12: 
+13:                         <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;DELETE FROM tag_aliases WHERE name = ? AND alias_id = ?&quot;</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>]))
+14: 
+15:                         <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;DELETE FROM posts_tags WHERE tag_id = ? AND post_id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)&quot;</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>]))
+16:                         <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;UPDATE posts_tags SET tag_id = ? WHERE tag_id = ?&quot;</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">id</span>]))
+17:                         <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags WHERE tag_id = tags.id) WHERE tags.name IN (?, ?)&quot;</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">name</span>]))
+18:                 
+19:                         <span class="ruby-identifier">id</span> = <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">insert</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;INSERT INTO tag_aliases (name, alias_id) VALUES (?, ?)&quot;</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>]))
+20: 
+21:                         <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">select_values</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;SELECT p.id FROM posts p, posts_tags pt WHERE (pt.tag_id = ? OR pt.tag_id = ?) AND pt.post_id = p.id&quot;</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">n</span>.<span class="ruby-identifier">id</span>])).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+22:                                 <span class="ruby-identifier">t</span> = <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">select_values</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;SELECT t.name FROM tags t, posts_tags pt WHERE pt.tag_id = t.id AND pt.post_id = ? ORDER BY t.name&quot;</span>, <span class="ruby-identifier">i</span>]))
+23:                                 <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>(<span class="ruby-constant">Tag</span>.<span class="ruby-identifier">sanitize_sql</span>([<span class="ruby-value str">&quot;UPDATE posts SET cached_tags = ? WHERE id = ?&quot;</span>, <span class="ruby-identifier">t</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot; &quot;</span>), <span class="ruby-identifier">i</span>]))
+24:                         <span class="ruby-keyword kw">end</span>
+25:                 <span class="ruby-keyword kw">end</span>
+26: 
+27:                 <span class="ruby-keyword kw">return</span> <span class="ruby-constant">TagAlias</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">id</span>, <span class="ruby-identifier">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">n</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">:alias_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>)
+28:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
