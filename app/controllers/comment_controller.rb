@@ -42,6 +42,7 @@ class CommentController < ApplicationController
 	def create
 		if params[:comment][:anonymous] == "1"
 			user_id = nil
+			params[:comment].delete(:anonymous)
 		else
 			user_id = session[:user_id]
 		end
