@@ -1,5 +1,5 @@
 <div id="artist-edit">
-	<% form_tag(:action => "create") do %>
+	<% form_tag(:action => (@artist.new_record? ? "create" : "update")) do %>
 		<%= hidden_field_tag "id", @artist.id %>
 		<table>
 			<tr>

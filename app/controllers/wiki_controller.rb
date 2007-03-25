@@ -82,7 +82,7 @@ class WikiController < ApplicationController
 	end
 
 	def update
-		@page = WikiPage.find_page(params[:title])
+		@page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 
 		if @page.is_locked?
 			respond_to do |fmt|
@@ -91,7 +91,7 @@ class WikiController < ApplicationController
 				fmt.js {render :json => {:success => false, :reason => "page locked"}.to_json}
 			end
 		else
-			if @page.update_attributes(params[:wiki].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
+			if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
 				respond_to do |fmt|
 					fmt.html {flash[:notice] = "Wiki page updated"; redirect_to(:action => "show", :title => @page.title)}
 					fmt.xml {render :xml => {:success => true}.to_xml}

@@ -4,9 +4,9 @@
 	<h2 class="wiki-title"><%= @wiki_page.pretty_title %> (Editing)</h2>
 	<div id="wiki-view">
 	</div>
-	<% form_tag(:action => (@wiki_page.new_record? ? "create" : "update"), :title => @wiki_page.title) do %>
+	<% form_tag(:action => (@wiki_page.new_record? ? "create" : "update")) do %>
 		<%= hidden_field "wiki_page", "title", :value => @wiki_page.title %>
 		<%= text_area("wiki_page", "body", :rows => 25, :cols => 40) %><br />
-		<%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "location.pathname = '/wiki/show?title=#{@wiki_page.title}'") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki-text').value)})") %>
+		<%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "location.pathname = '/wiki/show?title=#{@wiki_page.title}'") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
 	<% end %>
 </div>
