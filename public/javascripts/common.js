@@ -326,7 +326,7 @@ function vote(score, id) {
 	new Ajax.Request("/post/vote.js", {
 		asynchronous: true,
 		method: "post",
-		parameters: "id=" + id + "&score=" + score,
+		postBody: "id=" + id + "&score=" + score,
 		onComplete: function(req) {
 			resp = eval("(" + req.responseText + ")")
 			if (resp["success"]) {

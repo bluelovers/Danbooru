@@ -17,7 +17,7 @@ module Votable
 			if self.last_voter_ip == ip_addr
 				return false
 			else
-				self.update_attributes(:score => self.score + score, :last_voter_ip => ip_addr)
+				connection.execute("UPDATE posts SET score = %s, last_voter_ip = '%s' WHERE id = %s" % [self.score + score, ip_addr, self.id])
 			end
 
 			return true

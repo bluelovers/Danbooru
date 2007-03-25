@@ -301,7 +301,7 @@ class PostController < ApplicationController
 			return
 		end
 
-		if p.vote!(score, @request.remote_ip)
+		if p.vote!(score, request.remote_ip)
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Vote saved"; redirect_to(:action => "show", :id => params[:id])}
 				fmt.xml {render :xml => {:success => true}.to_xml}
