@@ -52,6 +52,7 @@ module TagHelper
 
 		tags.each do |tag|
 			size = Math.log(tag.post_count) / 6
+			size = 0.8 if size < 0.8
 			html << link_to(tag.name.tr("_", " "), {:controller => "post", :action => "index", :tags => tag.name}, :style => "font-size:#{size}em", :title => "#{tag.post_count} posts") << " "
 		end
 
