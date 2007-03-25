@@ -715,10 +715,6 @@ tr.footer > td {
 	padding-top: 1em;
 }
 
-div#forum-post > div.post {
-	margin-bottom: 2em;
-}
-
 div#artist > div#search-form {
 	margin-bottom: 2em;
 }
@@ -739,3 +735,34 @@ div#forum > table th:first-child {
 	width: 80%;
 }
 
+div#forum > div.post {
+	margin-bottom: 2em;
+	float: left;
+	clear: both;
+}
+
+div#forum > div.post div.author {
+	float: left;
+	width: 10em;
+	padding-right: 2em;
+}
+
+div#forum > div.post div.author h6.author {
+	font-size: 1.3em;
+}
+
+div#forum > div.post div.post-content {
+	border-left: 2px solid #666;
+	padding-left: 2em;
+	float: left;
+	min-height: 4em;
+}
+
+div#forum > div.post div.footer {
+	margin-top: 1em;
+	color: #CCC;
+}
+
+div#forum > div.post div.footer a {
+	color: #666;
+}

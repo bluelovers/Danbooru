@@ -1,6 +1,7 @@
 class ForumController < ApplicationController
 	layout "default"
 	before_filter :user_only
+	verify :method => :post, :only => [:create, :destroy, :update]
 
 	def create
 		@forum_post = ForumPost.create(params[:forum_post].merge(:user_id => session[:user_id]))
@@ -23,50 +24,57 @@ class ForumController < ApplicationController
 	end
 
 	def destroy
-		if request.post?
-			@forum_post = ForumPost.find(params[:id])
+		@forum_post = ForumPost.find(params[:id])
 
-			if @current_user.has_permission?(@forum_post, :creator_id)
-				@forum_post.destroy
-				flash[:notice] = "Post destroyed"
+		if @current_user.has_permission?(@forum_post, :creator_id)
+			@forum_post.destroy
+			flash[:notice] = "Post destroyed"
 
-				if @forum_post.parent?
-					redirect_to :action => "list"
-				else
-					redirect_to :action => "show", :id => @forum_post.root_id
-				end
+			if @forum_post.parent?
+				redirect_to :action => "index"
 			else
-				flash[:notice] = "Access denied"
 				redirect_to :action => "show", :id => @forum_post.root_id
 			end
+		else
+			flash[:notice] = "Access denied"
+			redirect_to :action => "show", :id => @forum_post.root_id
 		end
 	end
 
 	def update
 		@forum_post = ForumPost.find(params[:id])
 
-		if !session[:user].has_permission?(@forum_post, :creator_id)
-			flash[:notice] = "Access denied"
-			redirect_to :action => "show", :id => @forum_post.root_id
+		if !(@current_user && @current_user.has_permission?(@forum_post, :creator_id))
+			access_denied()
 			return
 		end
 
-		if request.post?
-			@forum_post.attributes = params[:forum_post]
-			if @forum_post.save
-				flash[:notice] = "Post updated"
-				redirect_to :action => "show", :id => @forum_post.root_id
-			else
-				render_error(@forum_post)
-			end
+		@forum_post.attributes = params[:forum_post]
+		if @forum_post.save
+			flash[:notice] = "Post updated"
+			redirect_to :action => "show", :id => @forum_post.root_id
+		else
+			render_error(@forum_post)
+		end
+	end
+
+	def edit
+		@forum_post = ForumPost.find(params[:id])
+
+		if !(@current_user && @current_user.has_permission?(@forum_post, :creator_id))
+			access_denied()
 		end
 	end
 
 	def show
 		@forum_post = ForumPost.find(params[:id])
+
+		if @current_user != nil
+			@current_user.update_attribute(:last_seen_forum_post_date, @forum_post.updated_at)
+		end
 	end
 
 	def index
-		@pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 20
+		@pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 20, :conditions => "parent_id IS NULL"
 	end
 end

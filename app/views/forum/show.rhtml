@@ -1,17 +1,14 @@
-<div id="forum-post">
-<div class="post original-post">
-	<h4>&raquo; <%= @forum_post.title %></h4>
-	<h6>by <%= @forum_post.author %></h6>
+<div id="forum">
+	<%= render :partial => "post", :locals => {:post => @forum_post} %>
 
-	<div><%= @forum_post.body %></div>
-</div>
+	<% @forum_post.children.each do |c| %>
+		<%= render :partial => "post", :locals => {:post => c} %>
+	<% end %>
 
-<% @forum_post.children.each do |c| %>
-	<div class="post">
-		<h6>by <%= c.author %></h6>
-		<div><%= c.body %></div>
+	<div id="footer">
+		<%= link_to "Respond", :action => "add", :parent_id => @forum_post.id %> | <%= link_to "List", :action => "index" %>
+		<% if @current_user && @current_user.role?(:mod) %>
+			| <%= link_to "Moderate", :action => "moderate" %>
+		<% end %>
 	</div>
-<% end %>
-
-<%= link_to "Respond", :action => "add", :parent_id => @forum_post.id %> | <%= link_to "List", :action => "list" %>
 </div>
