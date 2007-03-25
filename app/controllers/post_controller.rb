@@ -49,6 +49,7 @@ class PostController < ApplicationController
 			end
 		elsif @post.errors.invalid?(:md5)
 			p = Post.find_by_md5(@post.md5)
+			p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id)}
