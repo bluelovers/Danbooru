@@ -47,13 +47,12 @@ class ArtistController < ApplicationController
 	end
 
 # Parameters
-# - name: the artist's name. Danbooru will automatically search in the following order: personal name, handle name, circle name, japanese name. If you prefix with "site:", Danbooru will search against the URL database, both site URLs and image URLs. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
+# - name: the artist's name. Danbooru will automatically search in the following order: personal name, handle name, circle name, japanese name. If you supply a URL beginning with http, Danbooru will search against the URL database, both site URLs and image URLs. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
 	def index
 		if params[:name]
 			name = params[:name]
 
-			if name =~ /^site:/
-				name = name[5..-1]
+			if name =~ /^http/
 				@artists = []
 
 				while @artists.empty? && name.size > 7

@@ -18,8 +18,8 @@
 			<td><%= artist.circle_name %></td>
 			<td><%= artist.japanese_name %></td>
 			<td><%= artist.site_name %></td>
-			<td><% unless artist.site_url.blank? %><%= link_to "Link", artist.site_url %><% end %></td>
-			<td><% unless artist.image_url.blank? %><%= link_to "Link", artist.image_url %><% end %></td>
+			<td><% unless artist.site_url.blank? %><%= link_to artist.site_url, artist.site_url %><% end %></td>
+			<td><% unless artist.image_url.blank? %><%= link_to artist.image_url, artist.image_url %><% end %></td>
 		</tr>
 	<% end %>
 </table>
