@@ -3,16 +3,16 @@ class ForumController < ApplicationController
 	before_filter :user_only
 
 	def create
-		@forum_post = ForumPost.create(params["forum_post"].merge(:user_id => session[:user_id]))
+		@forum_post = ForumPost.create(params[:forum_post].merge(:user_id => session[:user_id]))
 
 		if @forum_post.errors.empty?
-			if params["forum_post"]["parent_id"] == "0"
+			if params[:forum_post][:parent_id] == "0"
 				flash[:notice] = "Forum thread created"
 			else
 				flash[:notice] = "Response posted"
 			end
 
-			redirect_to :action => "view", :id => @forum_post.view_id
+			redirect_to :action => "show", :id => @forum_post.root_id
 		else
 			render_error(@forum_post)
 		end
@@ -24,37 +24,38 @@ class ForumController < ApplicationController
 
 	def destroy
 		if request.post?
-			@forum_post = ForumPost.find(params["id"])
-			if session[:user].has_permission?(@forum_post, :creator_id)
+			@forum_post = ForumPost.find(params[:id])
+
+			if @current_user.has_permission?(@forum_post, :creator_id)
 				@forum_post.destroy
 				flash[:notice] = "Post destroyed"
 
 				if @forum_post.parent?
 					redirect_to :action => "list"
 				else
-					redirect_to :action => "view", :id => @forum_post.view_id
+					redirect_to :action => "show", :id => @forum_post.root_id
 				end
 			else
 				flash[:notice] = "Access denied"
-				redirect_to :action => "view", :id => @forum_post.view_id
+				redirect_to :action => "show", :id => @forum_post.root_id
 			end
 		end
 	end
 
 	def update
-		@forum_post = ForumPost.find(params["id"])
+		@forum_post = ForumPost.find(params[:id])
 
 		if !session[:user].has_permission?(@forum_post, :creator_id)
 			flash[:notice] = "Access denied"
-			redirect_to :action => "view", :id => @forum_post.view_id
+			redirect_to :action => "show", :id => @forum_post.root_id
 			return
 		end
 
 		if request.post?
-			@forum_post.attributes = params["forum_post"]
+			@forum_post.attributes = params[:forum_post]
 			if @forum_post.save
 				flash[:notice] = "Post updated"
-				redirect_to :action => "view", :id => @forum_post.view_id
+				redirect_to :action => "show", :id => @forum_post.root_id
 			else
 				render_error(@forum_post)
 			end
@@ -62,7 +63,7 @@ class ForumController < ApplicationController
 	end
 
 	def show
-		@forum_post = ForumPost.find(params["id"])
+		@forum_post = ForumPost.find(params[:id])
 	end
 
 	def index

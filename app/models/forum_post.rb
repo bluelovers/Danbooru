@@ -18,7 +18,7 @@ class ForumPost < ActiveRecord::Base
 		return self.parent_id == nil
 	end
 
-	def view_id
+	def root_id
 		if self.parent?
 			return self.id
 		else
