@@ -108,7 +108,7 @@ class CommentController < ApplicationController
 				end
 			elsif params["commit"] == "Accept"
 				coms.each do |c|
-					c.accept!
+					c.update_attribute(:is_spam, false)
 				end
 			end
 
@@ -129,6 +129,9 @@ class CommentController < ApplicationController
 			end
 		elsif comment.is_spam == nil
 			comment.update_attribute(:is_spam, true)
+			if comment.post.comments.size == 0
+				comment.post.update_attribute(:last_commented_at, nil)
+			end
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Comment marked as spam"; redirect_to(:action => "index")}
 				fmt.xml {render :xml => {:success => true}.to_xml}
