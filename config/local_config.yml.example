@@ -3,6 +3,7 @@
 app_name: danbooru
 admin_contact: danbooru@moetry.org
 server_host: danbooru.donmai.us
+mail_host: mail.donmai.us
 default_guest_name: Anonymous
 enable_anonymous_post_access: false			# Allow Anonymous to access anything under /post/
 enable_anonymous_post_uploads: false		# Allow Anonymous to upload new posts

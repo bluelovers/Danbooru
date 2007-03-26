@@ -11,7 +11,7 @@ require 'local_config'
 
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
-  config.frameworks -= [ :action_web_service, :action_mailer ]
+  config.frameworks -= [ :action_web_service ]
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/app/services )
@@ -48,6 +48,8 @@ end
 
 ActiveRecord::Base.allow_concurrency = false
 
+ActionMailer::Base.delivery_method = :smtp
+
 require 'base64'
 require 'diff/lcs/array'
 require 'image_size'
@@ -60,3 +62,4 @@ require 'arch'
 require 'acts_as_versioned'
 require 'net/http'
 require 'core_extensions'
+

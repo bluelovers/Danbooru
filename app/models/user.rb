@@ -101,7 +101,7 @@ class User < ActiveRecord::Base
 		User.find(:all, :joins => User.sanitize_sql(["JOIN favorites f ON f.user_id = users.id WHERE f.post_id = ?", post_id]), :order => "lower(name) ASC", :select => "users.*")
 	end
 
-	def reset_pass!
+	def reset_password!
 		consonants = "bcdfghjklmnpqrstvqxyz"
 		vowels = "aeiou"
 		pass = ""

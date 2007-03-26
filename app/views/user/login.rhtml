@@ -1,11 +1,6 @@
 <div id="user-login">
 
-<%- if @login -%>
-	<h4>Your login failed!</h4>
-	<p style="margin-bottom: 1em;">Maybe you mistyped your user name or password.</p>
-<%- end -%>
-
-<% form_tag({:controller => "user", :action => "authenticate"}, :class => "simple-form") do %>
+<% form_tag({:action => "authenticate"}, :class => "simple-form") do %>
 	<div class="option">
 		<label class="block" for="user_name">Name</label>
 		<%= text_field "user", "name" %>
@@ -20,4 +15,6 @@
 		<%= submit_tag "Login" %>
 	</div>
 <% end %>
+
+<p>If you forgot your password, you can <%= link_to "reset it", :action => "reset_password" %> (provided you gave an email address).</p>
 </div>

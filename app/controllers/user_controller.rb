@@ -1,7 +1,7 @@
 class UserController < ApplicationController
 	layout "default"
-	before_filter :user_only, :only => [:favorites, :authenticate, :update]
-	verify :method => :post, :only => [:authenticate, :update]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update, :create]
+	verify :method => :post, :only => [:authenticate, :update, :create]
 
 	protected
 	def save_cookies(user)
@@ -118,5 +118,40 @@ class UserController < ApplicationController
 		@user = User.find(params["id"])
 
 		render :layout => false
+	end
+
+	def reset_password
+		set_title "Reset Password"
+
+		if request.post?
+			@user = User.find_by_name(params[:user][:name])
+			
+			if @user
+				if @user.email.blank?
+					respond_to do |fmt|
+						fmt.html {flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"; redirect_to(:action => "login")}
+						fmt.xml {render :xml => {:success => false, :reason => "user has no email address"}.to_xml, :status => 500}
+						fmt.js {render :json => {:success => false, :reason => "user has no email address"}.to_json, :status => 500}
+					end
+				else
+					new_password = @user.reset_password!
+					UserMailer.deliver_new_password(@user, new_password)
+
+					respond_to do |fmt|
+						fmt.html {flash[:notice] = "Password reset. Check your email in a few minutes"; redirect_to(:action => "login")}
+						fmt.xml {render :xml => {:success => true}.to_xml}
+						fmt.js {render :json => {:success => true}.to_json}
+					end
+				end
+			else
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "That account does not exist"; redirect_to(:action => "reset_password")}
+					fmt.xml {render :xml => {:success => false, :reason => "user not found"}.to_xml, :status => 500}
+					fmt.js {render :json => {:success => false, :reason => "user not found"}.to_json, :status => 500}
+				end
+			end
+		else
+			@user = User.new
+		end
 	end
 end
