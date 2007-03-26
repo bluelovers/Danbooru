@@ -80,6 +80,11 @@ class UserController < ApplicationController
 	def update
 		user = User.find(params[:id])
 
+		unless user.id == session[:user_id]
+			access_denied()
+			return
+		end
+
 		if user.update_attributes(params[:user])
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Account options saved"; redirect_to(:action => "home")}
