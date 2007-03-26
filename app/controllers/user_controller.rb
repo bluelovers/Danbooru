@@ -1,4 +1,4 @@
-class AccountController < ApplicationController
+class UserController < ApplicationController
 	layout "default"
 	before_filter :user_only, :only => [:change_password, :favorites]
 
