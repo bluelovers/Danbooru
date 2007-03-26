@@ -1,7 +1,7 @@
-<div id="account-options">
-	<% form_tag(:controller => "account", :action => "options") do %>
+<div id="user-options">
+	<% form_tag(:controller => "user", :action => "options") do %>
 		<p class="short"><strong>Separate individual tags and users with spaces.</strong></p>
-		<p class="short">The following settings are saved in a cookie and are not saved to your account. You will have to reenter these settings if you access <%= CONFIG["app_name"] %> from another computer.</p>
+		<p class="short">The following settings are saved in a cookie and are not saved to your user. You will have to reenter these settings if you access <%= CONFIG["app_name"] %> from another computer.</p>
 		<p class="short">You must have cookies and JavaScript enabled in order for filtering to work. Note that the user blacklist is case sensitive.</p>
 
 		<div class="option">

@@ -375,7 +375,7 @@ div#paginator a.arrow:hover {
 	color: #33CFFF;
 }
 
-div#account-options p.short {
+div#user-options p.short {
 	width: 40em;
 }
 
@@ -401,17 +401,17 @@ div#static-more ul {
 	margin-top: 2em;
 }
 
-div#account-stats li {
+div#user-stats li {
 	list-style-type: none;
 	margin: 0;
 }
 
-div#account-stats div {
+div#user-stats div {
 	float: left;
 	width: 30%;
 }
 
-div#account-stats ul {
+div#user-stats ul {
 	margin-top: 2em;
 }
 
@@ -626,7 +626,7 @@ ins {
 	background-color: #8f8;
 }
 
-div#admin-edit-account option {
+div#admin-edit-user option {
 	width: 15em;
 }
 
@@ -634,15 +634,15 @@ div#upload-list td {
 	padding: 0 1em;
 }
 
-div#account-index {
+div#user-index {
 	width: 40em;
 }
 
-div#account-list {
+div#user-list {
 	width: 40em;
 }
 
-div#account-list table {
+div#user-list table {
 	width: 100%;
 }
 

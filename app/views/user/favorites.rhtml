@@ -1,4 +1,4 @@
-<div id="account-favorites">
+<div id="user-favorites">
 	<h3><%= @user.name %>'s Favorites</h3>
 	<div>
 		<%- for post in @posts -%>
@@ -12,5 +12,5 @@
 </div>
 
 <div id="footer">
-	<%= link_to "Atom Feed", :controller => "account", :action => "favorites_atom", :id => @user.id %> | <%= link_to "Everyone's Favorites", :controller => "account", :action => "favorites_list", :page => 1 %>
+	<%= link_to "Atom Feed", :action => "favorites_atom", :id => @user.id %> | <%= link_to "Everyone's Favorites", :action => "favorites_list", :page => 1 %>
 </div>

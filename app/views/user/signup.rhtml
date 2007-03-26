@@ -1,7 +1,7 @@
 <% if !CONFIG["enable_signups"] %>
 <h4>Signups are currently disabled.</h4>
 <% else %>
-<% form_tag(:controller => "account", :action => "signup") do %>
+<% form_tag(:controller => "user", :action => "signup") do %>
 	<div class="option">
 		<label class="block" for="user_name">Desired name</label>
 		<%= text_field "user", "name", :size => 30 %>

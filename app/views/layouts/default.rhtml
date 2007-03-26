@@ -15,7 +15,7 @@
 	<div id="header">
 		<h2><%= link_to(CONFIG["app_name"], "/") %><%= tag_links(params['tags']) %></h2>
 		<ul class="flat-list" id="navbar">
-			<li><%= link_to "My Account", :controller => "account", :action => "index" %></li>
+			<li><%= link_to "My Account", :controller => "user", :action => "index" %></li>
 			<li><%= link_to "Posts", :controller => "post", :action => "index" %></li>
 			<% if CONFIG["enable_comments"] %>
 				<li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
