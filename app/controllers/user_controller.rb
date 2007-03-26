@@ -77,11 +77,6 @@ class UserController < ApplicationController
 		end
 	end
 
-	def index
-		set_title "Users"
-		@pages, @users = paginate :users, :order => "lower(name)", :per_page => 25
-	end
-
 	def update
 		user = User.find(params[:id])
 

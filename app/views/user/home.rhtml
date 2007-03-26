@@ -9,8 +9,8 @@
 		<h4><%= link_to "&raquo; My Favorites", :action => "favorites", :id => @current_user.id %></h4>
 		<p>View and manage your favorite posts.</p>
 
-		<h4><%= link_to "&raquo; Options", :action => "options" %></h4>
-		<p>Manage account options.</p>
+		<h4><%= link_to "&raquo; Settings", :action => "edit" %></h4>
+		<p>Manage account settings.</p>
 	<%- else -%>
 		<h2>You are not logged in.</h2>
 
