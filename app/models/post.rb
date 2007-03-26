@@ -35,7 +35,7 @@ class Post < ActiveRecord::Base
 	end
 
 	def blank_image_board_sources
-		if self.source.to_s =~ /4chan|2chan|moeboard/
+		if self.source.to_s =~ /moeboard|\/src\/[1-9]{12,}/
 			connection.execute("UPDATE posts SET source = '' WHERE id = #{self.id}")
 		end
 	end
