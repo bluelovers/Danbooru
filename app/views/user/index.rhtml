@@ -1,31 +1,28 @@
 <div id="user-index">
-	<%- if @user -%>
-		<h2>Namasté <%= @user.name %>!</h2>
-		<p>From here you can access user-specific options and features.</p>
+	<%- if @current_user -%>
+		<h2>Namasté <%= @current_user.name %>!</h2>
+		<p>From here you can access account-specific options and features.</p>
 
-		<h4><a href="/user/logout">&raquo; Logout</a></h4>
+		<h4><%= link_to "&raquo; Logout", :action => "logout" %></h4>
 		<p>Had enough? You can log out at any time.</p>
 
-		<h4><a href="/user/change_password">&raquo; Change Password</a></h4>
-		<p>Change your password.</p>
-
-		<h4><%= link_to "&raquo; My Favorites", :controller => "user", :action => "favorites", :id => @user.id %></h4>
+		<h4><%= link_to "&raquo; My Favorites", :action => "favorites", :id => @current_user.id %></h4>
 		<p>View and manage your favorite posts.</p>
+
+		<h4><%= link_to "&raquo; Options", :action => "options" %></h4>
+		<p>Manage account options.</p>
 	<%- else -%>
 		<h2>You are not logged in.</h2>
 
-		<h4><a href="/user/login">&raquo; Login</a></h4>
+		<h4><%= link_to "&raquo; Login", :action => "login" %></h4>
 		<p>If you already have an user you can login here. Alternatively, accessing features that require an user will automatically log you in if you've enabled cookies.</p>
 
 		<% if CONFIG["enable_signups"] %>
-			<h4><a href="/user/signup">&raquo; Sign Up</a></h4>
-			<p>Registration is simple. Just a login and password, no email required!</p>
+			<h4><%= link_to "&raquo; Sign Up", :action => "signup" %></h4>
+			<p>Registration is simple. Just a login and password, no email required.</p>
 		<% else %>
 			<h4>&raquo; Sign Up</h4>
 			<p>Sorry, registration is currently disabled.</p>
 		<% end %>
 	<%- end -%>
-
-	<h4><a href="/user/options">&raquo; Options</a></h4>
-	<p>Manage account options.</p>
 </div>

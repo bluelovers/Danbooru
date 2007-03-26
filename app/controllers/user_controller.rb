@@ -1,6 +1,7 @@
 class UserController < ApplicationController
 	layout "default"
-	before_filter :user_only, :only => [:change_password, :favorites]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update]
+	verify :method => :post, :only => [:authenticate, :update]
 
 	protected
 	def save_cookies(user)
@@ -10,41 +11,57 @@ class UserController < ApplicationController
 	end
 
 	public
-	def index
+	def home
 		set_title "My Account"
+	end
 
-		@user = current_user()
+	def authenticate
+		save_cookies(@current_user)
+		@current_user.increment! :login_count
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "You are now logged in"; redirect_to(:action => "home")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
+		end
 	end
 
 	def login
 		set_title "Login"
+	end
 
-		if request.post?
-			if user = User.authenticate(params["user"]["name"], params["user"]["password"])
+	def create
+		if CONFIG["enable_signups"]
+			user = User.create(params[:user])
+			if user.errors.empty?
 				save_cookies(user)
-				user.increment!(:login_count)
-				flash[:notice] = "Successfully logged in"
-				redirect_to :action => "index"
+
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "New account created"; redirect_to(:action => "home")}
+					fmt.xml {render :xml => {:success => true}.to_xml}
+					fmt.js {render :js => {:success => true}.to_json}
+				end
+			else
+				error = user.errors.full_messages.join(", ")
+
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "Error: " + error; redirect_to(:action => "home")}
+					fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml, :status => 500}
+					fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
+				end
+			end
+		else
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Signups are disabled"; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => false, :reason => "signups are disabled"}.to_xml, :status => 500}
+				fmt.js {render :json => {:success => false, :reason => "signups are disabled"}.to_json, :status => 500}
 			end
 		end
 	end
 
 	def signup
 		set_title "Signup"
-
-		if request.post?
-			if CONFIG["enable_signups"]
-				if user = User.create(params[:user])
-					save_cookies(user)
-					flash[:notice] = "New account created"
-					redirect_to :action => "index"
-				else
-					render_error(user)
-				end
-			else
-				render :nothing => true
-			end
-		end
+		@user = User.new
 	end
 
 	def logout
@@ -52,31 +69,41 @@ class UserController < ApplicationController
 		session[:user_id] = nil
 		cookies[:login] = nil
 		cookies[:pass_hash] = nil
-		redirect_to :action => "index"
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "You are now logged out"; redirect_to(:action => "home")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
+		end
 	end
 
-	def list
+	def index
 		set_title "Users"
 		@pages, @users = paginate :users, :order => "lower(name)", :per_page => 25
 	end
 
-	def change_password
-		set_title "Change Password"
-		@user = current_user()
+	def update
+		user = User.find(params[:id])
 
-		if request.post?
-			if @user.update_attributes(params["user"])
-				save_cookies(@user)
-				flash[:notice] = "Password changed"
-				redirect_to :action => "index"
-			else
-				render_error(@user)
+		if user.update_attributes(params[:user])
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Account options saved"; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => true}.to_xml}
+				fmt.js {render :json => {:success => true}.to_json}
+			end
+		else
+			error = user.errors.full_messages.join(", ")
+
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Error: " + h(error); redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml, :status => 500}
+				fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
 			end
 		end
 	end
 
-	def options
-		set_title "Account Options"
+	def edit
+		set_title "Edit Account"
 	end
 
 	def favorites

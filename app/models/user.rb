@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
 
 	# If the record is updated we will check if the password is empty. If its empty we assume that the user didn't want to change his password and just reset it to the old value.
 	def crypt_unless_empty
-		if password.empty?
+		if self.password.empty?
 			user = self.class.find(self.id)
 			self.password_confirmation = nil
 			self.password = user.password

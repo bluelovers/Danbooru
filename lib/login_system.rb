@@ -15,16 +15,20 @@ module LoginSystem
 			@current_user = User.find(session[:user_id])
 		end
 
-		if @current_user == nil && params["login"] && params["password_hash"]
-			@curent_user = User.authenticate_hash(params["login"], params["password_hash"])
+		if @current_user == nil && params[:login] && params[:password_hash]
+			@curent_user = User.authenticate_hash(params[:login], params["password_hash"])
 		end
 
-		if @current_user == nil && params["login"] && params["password"]
-			@current_user = User.authenticate(params["login"], params["password"])
+		if @current_user == nil && params[:login] && params["password"]
+			@current_user = User.authenticate(params[:login], params["password"])
 		end
 
-		if @current_user == nil && cookies["login"] && cookies["pass_hash"]
-			@current_user = User.authenticate_hash(cookies["login"], cookies["pass_hash"])
+		if @current_user == nil && cookies[:login] && cookies["pass_hash"]
+			@current_user = User.authenticate_hash(cookies[:login], cookies["pass_hash"])
+		end
+
+		if @current_user == nil && params[:user]
+			@current_user = User.authenticate(params[:user][:name], params[:user][:password])
 		end
 
 		if @current_user
@@ -68,13 +72,5 @@ module LoginSystem
 			render :text => "Only registered users can use this feature", :status => 403
 			return false
 		end
-	end
-
-# Automates authentication of users
-	def authenticate
-		user = session[:user]
-		user = User.authenticate_hash(cookies["login"], cookies["pass_hash"]) if user.nil? && cookies["pass_hash"]
-		user = User.authenticate(params["login"], params["password"]) if user.nil? && params["password"]
-		user
 	end
 end

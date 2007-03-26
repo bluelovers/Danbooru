@@ -1,43 +1,39 @@
-<div id="user-options">
-	<% form_tag(:controller => "user", :action => "options") do %>
-		<p class="short"><strong>Separate individual tags and users with spaces.</strong></p>
-		<p class="short">The following settings are saved in a cookie and are not saved to your user. You will have to reenter these settings if you access <%= CONFIG["app_name"] %> from another computer.</p>
-		<p class="short">You must have cookies and JavaScript enabled in order for filtering to work. Note that the user blacklist is case sensitive.</p>
+<div id="user-edit">
+	<% form_tag(:action => "update") do %>
+		<p><strong>Separate individual tags and users with spaces.</strong></p>
 
 		<div class="option">
-			<label class="block" for="tag_blacklist">Tag Blacklist</label>
-			<input type="text" name="tag_blacklist" id="tag_blacklist"/>
-			<p>Any post containing a blacklisted tag will be ignored. Note that you can also blacklist ratings.</p>
+			<label class="block" for="user_tag_blacklist">Tag Blacklist</label>
+			<%= text_field "user", "tag_blacklist", :size => 40 %>
+			<p>Any post containing a blacklisted tag will be hidden.</p>
 		</div>
 
 		<div class="option">
-			<label class="block" for="user_blacklist">User Blacklist</label>
-			<input type="text" name="user_blacklist" id="user_blacklist"/>
-			<p>Any post or comment from a blacklisted user will be ignored.</p>
+			<label class="block" for="user_user_blacklist">User Blacklist</label>
+			<%= text_field "user", "user_blacklist", :size => 40 %>
+			<p>Any post or comment from a blacklisted user will be hidden.</p>
 		</div>
 
 		<div class="option">
 			<label class="block" for="post_threshold">Post Threshold</label>
-			<input type="text" name="post_threshold" id="post_threshold"/>
-			<p>Any post with a score below this will be ignored.</p>
+			<%= text_field "user", "post_threshold", :size => 10 %>
+			<p>Any post with a score below this will be hidden.</p>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_email">Email</label>
+			<%= text_field "user", "email", :size => 40 %>
+			<p>This field is optional. It is useful if you ever forget your password and want to reset it.</p>
 		</div>
 
 		<div class="option">
 			<label class="block" for="user_tags">My Tags</label>
-			<input type="text" name="my_tags" id="my_tags"/>
-			<p>These will be accessible when you <a href="/post/add">add</a> or edit a post.</p>
+			<%= text_field "user", "my_tags", :size => 40 %>
+			<p>These will be accessible when you <a href="/post/upload">upload</a> or edit a post.</p>
 		</div>
 
 		<div class="option">
-			<%= submit_tag "Save", :onclick => "['tag_blacklist', 'user_blacklist', 'post_threshold', 'my_tags'].each(function(i) {createCookie(i, $F(i), 365);}); notice('Options saved'); return false" %>
+			<%= submit_tag "Save" %>
 		</div>
-
-		<script type="text/javascript">
-// <![CDATA[
-			["tag_blacklist", "user_blacklist", "post_threshold", "my_tags"].each(function(i) {
-				$(i).value = readCookie(i)
-			})
-// ]]>
-		</script>
 	<% end %>
 </div>
