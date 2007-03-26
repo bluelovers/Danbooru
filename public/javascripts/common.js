@@ -485,6 +485,6 @@ function findArtist() {
 			var resp = eval("(" + req.responseText + ")")
 			$('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["personal_name"] || x["handle_name"] || x["circle_name"]}).join(" "))
 		}, 
-		parameters:'name=site:'+$F('post_source')
+		parameters:'name='+$F('post_source')
 	})
 }
