@@ -111,6 +111,12 @@ class UserController < ApplicationController
 
 		set_title "#{@user.name}'s Favorites"
 		@pages, @posts = paginate :posts, :per_page => 12, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
+
+		respond_to do |fmt|
+			fmt.html
+			fmt.xml {render :xml => @posts.to_xml}
+			fmt.js {render :json => @posts.to_json}
+		end
 	end
 
 	def favorites_atom
