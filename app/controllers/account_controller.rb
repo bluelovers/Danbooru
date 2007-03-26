@@ -32,17 +32,17 @@ class AccountController < ApplicationController
 	def signup
 		set_title "Signup"
 
-		if CONFIG["allow_signups"] == false
-			return
-		end
-
 		if request.post?
-			if user = User.create(params[:user])
-				save_cookies(user)
-				flash[:notice] = "New account created"
-				redirect_to :action => "index"
+			if CONFIG["enable_signups"]
+				if user = User.create(params[:user])
+					save_cookies(user)
+					flash[:notice] = "New account created"
+					redirect_to :action => "index"
+				else
+					render_error(user)
+				end
 			else
-				render_error(user)
+				render :nothing => true
 			end
 		end
 	end

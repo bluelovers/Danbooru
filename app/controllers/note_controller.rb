@@ -1,7 +1,10 @@
 class NoteController < ApplicationController
 	layout 'default', :only => [:list, :history, :history_for_post]
 	verify :method => :post, :only => [:change, :revert, :remove]
-	before_filter :user_only_api, :only => [:remove, :change, :revert] unless CONFIG[:allow_anonymous_notes]
+
+	if !CONFIG["enable_anonymous_note_edits"]
+		before_filter :user_only, :only => [:remove, :change, :revert]
+	end
 
 # Show a paginated list of every note.
 	def list

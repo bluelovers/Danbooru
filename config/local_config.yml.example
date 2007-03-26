@@ -11,7 +11,6 @@ enable_comment_spam_filter: true			# Enable spam filter for new comments
 enable_anonymous_comment_access: false		# Allow Anonymous to access anything under /comment/
 enable_anonymous_comment_responses: false	# Allow Anonymous to post comments (does not affect users deliberately posting as Anonymous)
 enable_anonymous_note_edits: false			# Allow Anonymous to edit notes
-enable_anonymous_note_deletes: false		# Allow Anonymous to delete notes
 enable_user_note_deletes: true				# Allow users to delete notes
 enable_anonymous_wiki_access: true			# Allow Anonymous to access anything under /wiki/
 enable_anonymous_wiki_edits: true			# Allow Anonymous to edit the wiki

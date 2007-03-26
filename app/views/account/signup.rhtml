@@ -1,4 +1,4 @@
-<% if !CONFIG["allow_signups"] %>
+<% if !CONFIG["enable_signups"] %>
 <h4>Signups are currently disabled.</h4>
 <% else %>
 <% form_tag(:controller => "account", :action => "signup") do %>

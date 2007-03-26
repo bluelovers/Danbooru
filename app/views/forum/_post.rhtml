@@ -1,0 +1,22 @@
+<div class="post">
+	<div class="author">
+		<h6 class="author"><%= post.author %></h6>
+		<span class="date">Posted <%= time_ago_in_words post.created_at %> ago</span>
+	</div>
+	<div class="post-content">
+		<% if post.parent? %>
+			<h6><%= post.title %></h6>
+		<% else %>
+			<h6 class="response-title"><%= post.title %></h6>
+		<% end %>
+		<div class="body">
+			<%= post.body %>
+		</div>
+		<div class="footer">
+			<%= link_to "Edit", :action => "edit", :id => post.id %>
+			<% if @current_user && @current_user.has_permission?(post) %>
+				| <%= link_to "Delete", {:action => "destroy", :id => post.id}, :confirm => "Are you sure you want to delete this post?", :method => :post %>
+			<% end %>
+		</div>
+	</div>
+</div>
