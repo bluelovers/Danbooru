@@ -10,6 +10,7 @@ class Post < ActiveRecord::Base
 	attr_accessor :updater_ip_addr
 	attr_accessor :updater_user_id
 	after_save :commit_tags
+	after_save :blank_image_board_sources
 	attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr
 
 	votable
@@ -30,6 +31,12 @@ class Post < ActiveRecord::Base
 			else
 				return c
 			end
+		end
+	end
+
+	def blank_image_board_sources
+		if self.source.to_s =~ /4chan|2chan|moeboard/
+			connection.execute("UPDATE posts SET source = NULL WHERE id = #{self.id}")
 		end
 	end
 
