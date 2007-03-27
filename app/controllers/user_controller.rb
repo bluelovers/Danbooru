@@ -1,6 +1,8 @@
+require 'digest/sha2'
+
 class UserController < ApplicationController
 	layout "default"
-	before_filter :user_only, :only => [:favorites, :authenticate, :update, :create, :invites]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites]
 	verify :method => :post, :only => [:authenticate, :update, :create]
 
 	protected
@@ -8,6 +10,10 @@ class UserController < ApplicationController
 		cookies[:login] = {:value => user.name, :expires => 1.year.from_now}
 		cookies[:pass_hash] = {:value => user.password, :expires => 1.year.from_now}
 		session[:user_id] = user.id
+	end
+
+	def confirmation_hash(name)
+		Digest::SHA256.hexdigest("~-#{name}-~#{User.salt}")
 	end
 
 	public
@@ -33,7 +39,7 @@ class UserController < ApplicationController
 	def create
 		if !CONFIG["enable_signups"]
 			if params[:activation_key]
-				invite = Invite.find(:first, :conditions => ["id = ? AND email = ? AND activation_key = ?", params[:invite_id], params[:user][:email], params[:activation_key]])
+				invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:activation_key]])
 				if invite
 					invite.destroy
 				else
@@ -54,8 +60,15 @@ class UserController < ApplicationController
 		if user.errors.empty?
 			save_cookies(user)
 
+			if CONFIG["enable_account_email_activation"]
+				UserMailer::deliver_confirmation_email(user, confirmation_hash(user.name))
+				notice = "New account created. Confirmation email sent to #{user.email}"
+			else
+				notice = "New account created"
+			end
+
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "New account created"; redirect_to(:action => "home")}
+				fmt.html {flash[:notice] = notice; redirect_to(:action => "home")}
 				fmt.xml {render :xml => {:success => true}.to_xml}
 				fmt.js {render :js => {:success => true}.to_json}
 			end
@@ -168,4 +181,52 @@ class UserController < ApplicationController
 
 	def invites
 	end
+
+if CONFIG["enable_account_email_activation"]
+	def resend_confirmation
+		user = @current_user
+		if false and user.activated?
+			flash[:notice] = "Account already activated"
+			redirect_to :action => "index"
+			return
+		end
+
+		UserMailer::deliver_confirmation_email(user, confirmation_hash(user.name))
+		flash[:notice] = "Confirmation email sent to #{user.email}"
+		redirect_to :action => "home"
+	end
+
+	def activate_user
+		if not params["id"] =~ /\A[0-9a-f]{64}\Z/
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Invalid confirmation code"; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => false}.to_xml}
+				fmt.js {render :json => {:success => false}.to_json}
+			end
+			return
+		end
+
+		users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
+
+		users.each do |user|
+			if confirmation_hash(user.name) == params["hash"]
+				user.update_attribute(:level, User::LEVEL_MEMBER)
+
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "Account has been activated"; redirect_to(:action => "home")}
+					fmt.xml {render :xml => {:success => true}.to_xml}
+					fmt.js {render :json => {:success => true}.to_json}
+				end
+				break
+			end
+		end
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Invalid confirmation code"; redirect_to(:action => "home")}
+			fmt.xml {render :xml => {:success => false}.to_xml}
+			fmt.js {render :json => {:success => false}.to_json}
+		end
+	end
+end
+
 end

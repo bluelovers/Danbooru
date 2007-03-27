@@ -5,11 +5,13 @@ class User < ActiveRecord::Base
 	before_create :crypt_password
 	before_validation_on_update :crypt_unless_empty
 	validates_confirmation_of :password
+	validates_format_of :email, :with => /\A[^@\s]+@[^\s]+\.[^\s]+\Z/, :message => 'Invalid e-mail address'
 	has_many :invites
 
 	class AlreadyFavoritedError < Exception; end
 	
-	# Users are in one of six possible roles:
+	# Users are in one of seven possible roles:
+	LEVEL_UNACTIVATED 	= -1
 	LEVEL_BLOCKED 	= 1
 	LEVEL_MEMBER	= 2
 	LEVEL_SPECIAL	= 3
@@ -27,6 +29,8 @@ class User < ActiveRecord::Base
 	def set_role
 		if User.fast_count == 0
 			self.level = LEVEL_ADMIN
+		elsif CONFIG["enable_account_email_activation"]
+			self.level = LEVEL_UNACTIVATED
 		else
 			self.level = LEVEL_MEMBER
 		end
@@ -62,6 +66,10 @@ class User < ActiveRecord::Base
 		Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id}")
 	end
 
+	def activated?
+		self.level > LEVEL_UNACTIVATED
+	end
+
 	def role?(role)
 		case role
 		when :admin
@@ -95,7 +103,7 @@ class User < ActiveRecord::Base
 
 	# Authenticate a user against a hashed password. Note that the password must be salted!
 	def self.authenticate_hash(name, pass)
-		find_first(["lower(name) = lower(?) AND password = ?", name, pass])
+		find(:first, :conditions => ["lower(name) = lower(?) AND password = ?", name, pass])
 	end
 
 	def self.find_people_who_favorited(post_id)
