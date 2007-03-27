@@ -9,8 +9,10 @@
 		<h4><%= link_to "&raquo; My Favorites", :action => "favorites", :id => @current_user.id %></h4>
 		<p>View and manage your favorite posts.</p>
 
-		<h4><%= link_to "&raquo; Invites", :action => "invites" %></h4>
-		<p>You have <%= @current_user.invite_count %> invites.</p>
+		<% if CONFIG["enable_invites"] %>
+			<h4><%= link_to "&raquo; Invites", :action => "invites" %></h4>
+			<p>You have <%= @current_user.invite_count %> invites.</p>
+		<% end %>
 
 		<h4><%= link_to "&raquo; Settings", :action => "edit" %></h4>
 		<p>Manage account settings.</p>

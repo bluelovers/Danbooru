@@ -1,0 +1,28 @@
+<h4>Welcome to <%= CONFIG["app_name"] %></h4>
+
+<p>Create your new account.</p>
+
+<% form_tag(:controller => "user", :action => "create") do %>
+	<%= hidden_field "user", "email", :value => @invite.email %>
+	<%= hidden_field_tag "invite_id", @invite.id %>
+	<%= hidden_field_tag "activation_key", @invite.activation_key %>
+
+	<div class="option">
+		<label class="block" for="user_name">Desired name</label>
+		<%= text_field "user", "name", :size => 30 %>
+	</div>
+
+	<div class="option">
+		<label class="block" for="user_password">Choose password</label>
+		<%= password_field "user", "password", :size => 30 %>
+	</div>
+
+	<div class="option">
+		<label class="block" for="user_password_confirmation">Confirm password</label>
+		<%= password_field "user", "password_confirmation", :size => 30 %>
+	</div>
+
+	<div class="option">
+		<input type="submit" value="Signup" />
+	</div>
+<% end %>

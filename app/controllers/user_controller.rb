@@ -1,6 +1,6 @@
 class UserController < ApplicationController
 	layout "default"
-	before_filter :user_only, :only => [:favorites, :authenticate, :update, :create]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update, :create, :invites]
 	verify :method => :post, :only => [:authenticate, :update, :create]
 
 	protected
@@ -31,30 +31,40 @@ class UserController < ApplicationController
 	end
 
 	def create
-		if CONFIG["enable_signups"]
-			user = User.create(params[:user])
-			if user.errors.empty?
-				save_cookies(user)
-
-				respond_to do |fmt|
-					fmt.html {flash[:notice] = "New account created"; redirect_to(:action => "home")}
-					fmt.xml {render :xml => {:success => true}.to_xml}
-					fmt.js {render :js => {:success => true}.to_json}
+		if !CONFIG["enable_signups"]
+			if params[:activation_key]
+				invite = Invite.find(:first, :conditions => ["id = ? AND email = ? AND activation_key = ?", params[:invite_id], params[:user][:email], params[:activation_key]])
+				if invite
+					invite.destroy
+				else
+					access_denied()
+					return
 				end
 			else
-				error = user.errors.full_messages.join(", ")
-
 				respond_to do |fmt|
-					fmt.html {flash[:notice] = "Error: " + error; redirect_to(:action => "home")}
-					fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml, :status => 500}
-					fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
+					fmt.html {flash[:notice] = "Signups are disabled"; redirect_to(:action => "home")}
+					fmt.xml {render :xml => {:success => false, :reason => "signups are disabled"}.to_xml, :status => 500}
+					fmt.js {render :json => {:success => false, :reason => "signups are disabled"}.to_json, :status => 500}
 				end
+				return
+			end
+		end
+
+		user = User.create(params[:user].merge(:last_seen_forum_post_date => Time.now))
+		if user.errors.empty?
+			save_cookies(user)
+
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "New account created"; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => true}.to_xml}
+				fmt.js {render :js => {:success => true}.to_json}
 			end
 		else
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Signups are disabled"; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => false, :reason => "signups are disabled"}.to_xml, :status => 500}
-				fmt.js {render :json => {:success => false, :reason => "signups are disabled"}.to_json, :status => 500}
+			error = user.errors.full_messages.join(", ")
+				respond_to do |fmt|
+				fmt.html {flash[:notice] = "Error: " + error; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml, :status => 500}
+				fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
 			end
 		end
 	end
@@ -154,5 +164,8 @@ class UserController < ApplicationController
 		else
 			@user = User.new
 		end
+	end
+
+	def invites
 	end
 end

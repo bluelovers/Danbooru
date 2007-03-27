@@ -762,3 +762,10 @@ div#forum > div.post div.footer {
 div#forum > div.post div.footer a {
 	color: #666;
 }
+
+div#invite > div#new {
+}
+
+div#invite > div#current {
+	margin-top: 2em;
+}

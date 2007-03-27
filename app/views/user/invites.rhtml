@@ -1,0 +1,23 @@
+<% if CONFIG["enable_invites"] %>
+
+<div id="invite">
+<div id="new">
+<h4>New Invite</h4>
+<p>You can invite up to <%= pluralize @current_user.invite_count, "friend" %> to <%= CONFIG["app_name"] %>. Enter their email address here:</p>
+
+<% form_tag(:controller => "invite", :action => "create") do %>
+	<%= text_field_tag "email", "", :size => 60 %> <%= submit_tag "Invite" %>
+<% end %>
+</div>
+
+<div id="current">
+	<h4>Current Invites</h4>
+	<ul>
+		<% @current_user.invites.each do |invite| %>
+			<li><%= invite.email %></li>
+		<% end %>
+	</ul>
+</div>
+</div>
+
+<% end %>

@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
 	before_create :crypt_password
 	before_validation_on_update :crypt_unless_empty
 	validates_confirmation_of :password
+	has_many :invites
 
 	class AlreadyFavoritedError < Exception; end
 	

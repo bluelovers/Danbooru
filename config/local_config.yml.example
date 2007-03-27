@@ -2,6 +2,7 @@
 --- 
 app_name: danbooru
 admin_contact: danbooru@moetry.org
+invite_contact: danbooru@moetry.org
 server_host: danbooru.donmai.us
 mail_host: mail.donmai.us
 default_guest_name: Anonymous
@@ -16,6 +17,7 @@ enable_user_note_deletes: true				# Allow users to delete notes
 enable_anonymous_wiki_access: true			# Allow Anonymous to access anything under /wiki/
 enable_anonymous_wiki_edits: true			# Allow Anonymous to edit the wiki
 enable_signups: true						# Allow new account signups
+enable_invites: true						# Allow invites (this overrides signups)
 enable_forum: true							# Enable the forum
 enable_anonymous_forum_access: false		# Allow Anonymous to access anything under /forum_post/
 enable_anonymous_forum_posts: false			# Allow Anonymous to post to the forum
