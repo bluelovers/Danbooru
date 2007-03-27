@@ -126,6 +126,11 @@
 					<h6>Related Tags</h6>
 					<div class="space" id="related"><em>None</em></div>
 
+					<% if @current_user %>
+						<%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
+					<% else %>
+						<%= javascript_tag "injecTags()" %>
+					<% end %>
 					<%= javascript_tag "injectTags()" %>
 				</div>
 				<div class="option">

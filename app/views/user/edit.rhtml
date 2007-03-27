@@ -15,8 +15,8 @@
 		</div>
 
 		<div class="option">
-			<label class="block" for="post_threshold">Post Threshold</label>
-			<%= text_field "user", "post_threshold", :size => 10 %>
+			<label class="block" for="user_post_threshold">Post Threshold</label>
+			<%= text_field "user", "post_threshold", :size => 5 %>
 			<p>Any post with a score below this will be hidden.</p>
 		</div>
 
@@ -34,13 +34,13 @@
 
 		<div class="option">
 			<label class="block" for="user_password">Change Password</label>
-			<%= text_field "user", "password", :size => 40, :value => "" %>
+			<%= password_field "user", "password", :size => 40, :value => "" %>
 			<p>Leave blank to keep your old password.</p>
 		</div>
 
 		<div class="option">
 			<label class="block" for="user_password_confirmation">Confirm Password</label>
-			<%= text_field "user", "password_confirmation", :size => 40, :value => "" %>
+			<%= password_field "user", "password_confirmation", :size => 40, :value => "" %>
 		</div>
 
 		<div class="option">

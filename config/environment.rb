@@ -49,6 +49,11 @@ end
 ActiveRecord::Base.allow_concurrency = false
 
 ActionMailer::Base.delivery_method = :smtp
+ActionMailer::Base.smtp_settings = {
+	:address => "localhost",
+	:port => 25,
+	:domain => "localhost"
+}
 
 require 'base64'
 require 'diff/lcs/array'

@@ -78,21 +78,15 @@ class UserController < ApplicationController
 	end
 
 	def update
-		user = User.find(params[:id])
-
-		unless user.id == session[:user_id]
-			access_denied()
-			return
-		end
-
-		if user.update_attributes(params[:user])
+		if @current_user.update_attributes(params[:user])
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Account options saved"; redirect_to(:action => "home")}
 				fmt.xml {render :xml => {:success => true}.to_xml}
 				fmt.js {render :json => {:success => true}.to_json}
 			end
 		else
-			error = user.errors.full_messages.join(", ")
+			error = @current_user.errors.full_messages.join(", ")
+			@current_user.errors.clear
 
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Error: " + h(error); redirect_to(:action => "home")}
@@ -104,6 +98,7 @@ class UserController < ApplicationController
 
 	def edit
 		set_title "Edit Account"
+		@user = @current_user
 	end
 
 	def favorites

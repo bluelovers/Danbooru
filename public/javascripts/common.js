@@ -356,13 +356,11 @@ function injectTagsHelper(tags) {
 	return html
 }
 
-function injectTags(related) {
-	if (related) {
+function injectTags(related, dest) {
+	if (dest != null) {
+		$(dest).innerHTML = injectTagsHelper(related)
+	} else if (related) {
 		$('related').innerHTML = injectTagsHelper(related)
-	}
-
-	if (readCookie("my_tags").length > 0) {
-		$('mytags').innerHTML = injectTagsHelper(readCookie("my_tags"))
 	}
 
 	if (readCookie("recent_tags").length > 0) {

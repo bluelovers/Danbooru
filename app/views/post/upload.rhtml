@@ -45,7 +45,11 @@
 	</tr>
 </table>
 
-<%= javascript_tag "injectTags()" %>
+<% if @current_user %>
+	<%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
+<% else %>
+	<%= javascript_tag "injectTags()" %>
+<% end %>
 </div>
 
 <%= submit_tag "Upload" %>
