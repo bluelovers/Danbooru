@@ -20,7 +20,7 @@
 			<% if CONFIG["enable_comments"] %>
 				<li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
 			<% end %>
-			<li><%= link_to "Tags", :controller => "tag", :action => "list_cloud" %></li>
+			<li><%= link_to "Tags", :controller => "tag", :action => "cloud" %></li>
 			<li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
 			<li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
 			<% if CONFIG["enable_forum"] %>
