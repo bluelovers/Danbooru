@@ -2,17 +2,21 @@
 	<% form_tag(:action => "update") do %>
 		<p><strong>Separate individual tags and users with spaces.</strong></p>
 
-		<div class="option">
-			<label class="block" for="user_tag_blacklist">Tag Blacklist</label>
-			<%= text_field "user", "tag_blacklist", :size => 40 %>
-			<p>Any post containing a blacklisted tag will be hidden.</p>
-		</div>
+		<% if CONFIG["enable_tag_blacklists"] %>
+			<div class="option">
+				<label class="block" for="user_tag_blacklist">Tag Blacklist</label>
+				<%= text_field "user", "tag_blacklist", :size => 40 %>
+				<p>Any post containing a blacklisted tag will be hidden.</p>
+			</div>
+		<% end %>
 
-		<div class="option">
-			<label class="block" for="user_user_blacklist">User Blacklist</label>
-			<%= text_field "user", "user_blacklist", :size => 40 %>
-			<p>Any post or comment from a blacklisted user will be hidden.</p>
-		</div>
+		<% if CONFIG["enable_user_blacklists"] %>
+			<div class="option">
+				<label class="block" for="user_user_blacklist">User Blacklist</label>
+				<%= text_field "user", "user_blacklist", :size => 40 %>
+				<p>Any post or comment from a blacklisted user will be hidden.</p>
+			</div>
+		<% end %>
 
 		<div class="option">
 			<label class="block" for="user_post_threshold">Post Threshold</label>
