@@ -4,7 +4,6 @@ app_name: danbooru
 admin_contact: danbooru@moetry.org
 invite_contact: danbooru@moetry.org
 server_host: danbooru.donmai.us
-mail_host: mail.donmai.us
 default_guest_name: Anonymous
 enable_account_email_validation: false			# Requires e-mail address to register
 enable_anonymous_post_access: false			# Allow Anonymous to access anything under /post/

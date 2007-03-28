@@ -1,0 +1,3 @@
+<h2>You have been invited to <%= CONFIG["app_name"] %>.</h2>
+
+<p>Simply go <%= link_to "here", :controller => "invite", :action => "activate", :key => @invite.activation_key, :id => @invite.id, :host => CONFIG["server_host"], :only_path => false %> and activate your account.</p>

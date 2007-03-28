@@ -2,9 +2,12 @@ class Artist < ActiveRecord::Base
 	before_save :normalize
 
 	def normalize
-		self.personal_name = self.personal_name.downcase.gsub(/ /, '_') rescue nil
-		self.handle_name = self.handle_name.downcase.gsub(/ /, '_') rescue nil
-		self.site_name = self.site_name.downcase.gsub(/ /, '_') rescue nil
+		self.personal_name = self.personal_name.downcase.gsub(/ /, '_') if self.personal_name
+		self.handle_name = self.handle_name.downcase.gsub(/ /, '_') if self.handle_name
+		self.site_name = self.site_name.downcase.gsub(/ /, '_') if self.site_name
+
+		self.site_url.gsub!(/\/$/, "") if self.site_url
+		self.image_url.gsub!(/\/$/, "") if self.image_url
 	end
 
 	def name

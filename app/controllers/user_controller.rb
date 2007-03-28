@@ -187,7 +187,7 @@ if CONFIG["enable_account_email_activation"]
 		user = @current_user
 		if false and user.activated?
 			flash[:notice] = "Account already activated"
-			redirect_to :action => "index"
+			redirect_to :action => "home"
 			return
 		end
 

@@ -20,6 +20,41 @@ function notice(msg) {
 	$('notice').innerHTML = msg
 }
 
+function createCookie(name, value, days) {
+	if (days) {
+		var date = new Date()
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
+		var expires = "; expires=" + date.toGMTString()
+	} else {
+		var expires = ""
+	}
+
+	document.cookie = name + "=" + value + expires + "; path=/"
+}
+
+function readCookie(name) {
+	var nameEq = name + "="
+	var ca = document.cookie.split(";")
+
+	for (var i = 0; i < ca.length; ++i) {
+		var c = ca[i]
+
+		while (c.charAt(0) == " ") {
+			c = c.substring(1, c.length)
+		}
+
+		if (c.indexOf(nameEq) == 0) {
+			return c.substring(nameEq.length, c.length)
+		}
+	}
+
+	return ""
+}
+
+function eraseCookie(name) {
+	createCookie(name, "", -1)
+}
+
 function loadMode() {
 	if (readCookie("tag-script") != "") {
 		var hash = eval("(" + readCookie("tag-script") + ")")
@@ -136,23 +171,21 @@ function changeMode() {
 		document.body.style.background = "#3AA"
 	} else if (s == "new-tag-script") {
 		tagScriptCheckFirstTime()
+
 		var name = prompt("Enter a name for this tag script")
 
 		if (name == null) {
-			$("mode").value = "view"
 			return
 		}
 
 		var script = prompt("Enter the tag script")
-
 		tagScriptUpdate(name, script)
-
 		var c = document.createElement("option")
 		c.value = "tag-script-" + name
 		c.innerHTML = "Script: " + name
 		$("mode").appendChild(c)
 		$("mode").value = "view"
-		createCookie("mode", "view")
+		createCookie("mode", "view", 7)
 		document.body.style.background = "#FFF"
 	} else if (s == "delete-tag-script") {
 		var name = prompt("Enter the script's name")
@@ -163,41 +196,6 @@ function changeMode() {
 	} else {
 		document.body.style.background = "#AFA"
 	}
-}
-
-function createCookie(name, value, days) {
-	if (days) {
-		var date = new Date()
-		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
-		var expires = "; expires=" + date.toGMTString()
-	} else {
-		var expires = ""
-	}
-
-	document.cookie = name + "=" + value + expires + "; path=/"
-}
-
-function readCookie(name) {
-	var nameEq = name + "="
-	var ca = document.cookie.split(";")
-
-	for (var i = 0; i < ca.length; ++i) {
-		var c = ca[i]
-
-		while (c.charAt(0) == " ") {
-			c = c.substring(1, c.length)
-		}
-
-		if (c.indexOf(nameEq) == 0) {
-			return c.substring(nameEq.length, c.length)
-		}
-	}
-
-	return ""
-}
-
-function eraseCookie(name) {
-	createCookie(name, "", -1)
 }
 
 function postClick(post_id) {
