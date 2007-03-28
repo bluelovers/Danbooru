@@ -241,7 +241,7 @@ class Tag < ActiveRecord::Base
 		return q
 	end
 
-	def type=(s)
+	def tag_type=(s)
 		case s
 		when "ambiguous"
 			self.tag_type = TYPE_AMBIGUOUS

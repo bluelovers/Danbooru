@@ -1,13 +1,7 @@
-<form method="post" action="/tag/set_type">
-	<input type="text" name="tags" size="25" id="tag"/>
-	<select name="type">
-		<option value="general">General</option>
-		<option value="ambiguous">Ambiguous</option>
-		<option value="artist">Artist</option>
-		<option value="character">Character</option>
-		<option value="copyright">Copyright</option>
-	</select>
-	<input type="submit" name="commit" value="Set"/>
-</form>
+<% form_tag(:action => "update") do %>
+	<label>Tag to Update:</label> <%= text_field "tag", "name" %>
+	<%= select_tag "tag", "tag_type", [%w(General general), %w(Ambiguous ambiguous), %w(Artist artist), %w(Character character), %w(Copyright copyright)] %>
+	<%= submit_tag "Save" %>
+<% end %>
 
 <%= render :partial => "footer" %>
