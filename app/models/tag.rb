@@ -240,4 +240,23 @@ class Tag < ActiveRecord::Base
 
 		return q
 	end
+
+	def type=(s)
+		case s
+		when "ambiguous"
+			self.tag_type = TYPE_AMBIGUOUS
+
+		when "character"
+			self.tag_type = TYPE_CHARACTER
+
+		when "artist"
+			self.tag_type = TYPE_ARTIST
+
+		when "copyright"
+			self.tag_type = TYPE_COPYRIGHT
+
+		when "general"
+			self.tag_type = TYPE_GENERAL
+		end
+	end
 end

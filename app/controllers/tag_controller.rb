@@ -1,109 +1,131 @@
 class TagController < ApplicationController
 	layout 'default'
 
-	before_filter :admin_only, :only => [:rename, :create_alias, :remove_alias, :create_implication, :remove_implication]
+	before_filter :admin_only, :only => [:rename, :create_alias, :destroy_alias, :create_implication, :destroy_implication]
 	before_filter :mod_only, :only => [:mass_edit]
 
-	def list_cloud
+	def cloud
 		set_title "Tags"
 
 		@tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
 	end
 
-	def list_artists
-		set_title "Artist Tags"
-
-		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_ARTIST], :order => "name")
-	end
-
-	def list_characters
-		set_title "Artist Tags"
-
-		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_CHARACTER], :order => "name")
-		render :action => "list_artists"
-	end
-
-	def list_ambiguous
-		set_title "Ambiguous Tags"
-
-		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_AMBIGUOUS], :order => "name")
-		render :action => "list_artists"
-	end
-
-	def list_copyrights
-		set_title "Copyright Tags"
-		@tags = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_COPYRIGHT], :order => "name")
-		render :action => "list_artists"
-	end
-
-	def list_all_by_name
+	def index
 		set_title "Tags"
-		@pages, @tags = paginate :tags, :order => "name", :per_page => 50
-	end
 
-	def list_all_by_date
-		set_title "Tags by Date"
-		@pages, @tags = paginate :tags, :order => "id desc", :per_page => 50
-		render :action => "list_all_by_name"
-	end
+		case params[:order]
+		when "date"
+			order = "id DESC"
 
-	def list_all_by_count
-		set_title "Tags by Post Count"
-		@pages, @tags = paginate :tags, :order => "post_count desc", :per_page => 50
-		render :action => "list_all_by_name"
+		when "count"
+			order = "post_count DESC"
+
+		else
+			order = "name"
+		end
+
+		case params[:type]
+		when "artist"
+			tag_type = Tag::TYPE_ARTIST
+
+		when "character"
+			tag_type = Tag::TYPE_CHARACTER
+
+		when "copyright"
+			tag_type = Tag::TYPE_COPYRIGHT
+
+		when "general"
+			tag_type = Tag::TYPE_GENERAL
+
+		when "ambiguous"
+			tag_type = Tag::TYPE_AMBIGUOUS
+
+		else
+			tag_type = nil
+		end
+
+		@pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => (tag_type ? nil : ["tag_type = ?", tag_type])
+
+		respond_to do |fmt|
+			fmt.html
+			fmt.xml {render :xml => @tags.to_xml}
+			fmt.js {render :json => @tags.to_json}
+		end
 	end
 
 	def mass_edit
 		set_title "Mass Edit Tags"
 
 		if request.post?
-			if params["start"].blank?
-				flash[:notice] = "You must fill the start tag field"
-				redirect_to :action => "mass_edit"
+			if params[:start].blank?
+				respond_to do |fmt|
+					fmt.html {flash[:notice] = "You must fill the start tag field"; redirect_to(:action => "mass_edit")}
+					fmt.xml {render :xml => {:success => false, :reason => "start tag missing"}, :status => 500}
+					fmt.js {render :json => {:success => false, :reason => "start tag missing"}, :status => 500}
+				end
 				return
 			end
 
-			Post.find_by_sql(Post.generate_sql(params["start"])).each do |p|
-				start = Tag.to_aliased(Tag.scan_tags(params["start"]))
-				result = Tag.to_aliased(Tag.scan_tags(params["result"]))
+			Post.find_by_sql(Post.generate_sql(params[:start])).each do |p|
+				start = Tag.to_aliased(Tag.scan_tags(params[:start]))
+				result = Tag.to_aliased(Tag.scan_tags(params[:result]))
 				tags = (p.cached_tags.scan(/\S+/) - start + result).join(" ")
 				p.update_attributes(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => tags)
 			end
 
-			flash[:notice] = "Tag changes saved"
-			redirect_to :action => "mass_edit"
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Tags updated"; redirect_to(:action => "mass_edit")}
+				fmt.xml {render :xml => {:success => true}.to_xml}
+				fmt.js {render :json => {:success => true}.to_json}
+			end
 		end
 	end
 
 	def edit_preview
-		@posts = Post.find_by_sql(Post.generate_sql(params["tags"], :order => "p.id DESC"))
+		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC"))
 		render :layout => false
 	end
 
-	def remove_alias
-		TagAlias.destroy_all(["name = ?", params["name"]])
-		Tag.update_cached_tags([params["name"]])
-		flash[:notice] = "Tag alias removed"
-		redirect_to :action => "aliases"
+	def destroy_alias
+		TagAlias.destroy_all(["name = ?", params[:name]])
+		Tag.update_cached_tags([params[:name]])
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Tag alias removed"; redirect_to(:action => "aliases")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
+		end
 	end
 
 	def create_alias
-		TagAlias.create(:name => params["name"], :alias => params["alias"])
-		Tag.update_cached_tags([params["name"]])
-		flash[:notice] = "Tag alias created"
-		redirect_to :action => "aliases"
+		TagAlias.create(:name => params[:name], :alias => params[:alias])
+		Tag.update_cached_tags([params[:name]])
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Tag alias created"; redirect_to(:action => "aliases")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
+		end
 	end
 
-	def remove_implication
-		TagImplication.destroy_all(["parent_id = ? and child_id = ?", params["parent_id"], params["child_id"]])
-		flash[:notice] = "Tag implication removed"
-		redirect_to :action => "implications"
+	def destroy_implication
+		TagImplication.destroy_all(["parent_id = ? and child_id = ?", params[:parent_id], params[:child_id]])
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Tag implication removed"; redirect_to(:action => "implications")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
+		end
 	end
 
 	def create_implication
-		TagImplication.create(:parent => params["parent"], :child => params["child"], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
-		flash[:notice] = "Tag implication created"
-		redirect_to :action => "implications"
+		TagImplication.create(:parent => params[:parent], :child => params[:child], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Tag implication created"; redirect_to(:action => "implications")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
+		end
 	end
 
 	def aliases
@@ -116,43 +138,27 @@ class TagController < ApplicationController
 		@implications = TagImplication.find(:all, :order => "(SELECT name FROM tags WHERE id = tag_implications.child_id)")
 	end
 
-	def set_type
-		if request.post?
-			params["tags"].split(/,\s*/).each do |tag|
-				t = Tag.find_or_create_by_name(tag)
+	def update
+		tag = Tag.find_by_name(params[:tag][:name])
+		tag.update_attributes(:type => params[:tag][:type])
 
-				case params["type"]
-				when "general"
-					t.tag_type = 0
-
-				when "artist"
-					t.tag_type = Tag::TYPE_ARTIST
-
-				when "ambiguous"
-					t.tag_type = Tag::TYPE_AMBIGUOUS
-
-				when "character"
-					t.tag_type = Tag::TYPE_CHARACTER
-
-				when "copyright"
-					t.tag_type = Tag::TYPE_COPYRIGHT
-				end
-
-				t.save
-			end
-
-			flash[:notice] = "Tag type changed"
-			redirect_to :action => "set_type"
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Tag updated"; redirect_to(:action => "index")}
+			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.js {render :json => {:success => true}.to_json}
 		end
+	end
+
+	def edit
 	end
 
 	def search
 		set_title "Search Tags"
 
-		if request.post?
-			name = params["name"]
+		if params[:name] && params[:type]
+			name = params[:name]
 
-			case params["type"]
+			case params[:type]
 			when "search"
 				escaped_name = name.gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_')
 				@tags = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", escaped_name.gsub(/^/, '%').gsub(/$/, '%').gsub(/ +/, '%')], :order => "name")

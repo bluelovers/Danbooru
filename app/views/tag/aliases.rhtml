@@ -14,7 +14,7 @@
 			<tr class="<%= cycle 'even', 'odd' %>">
 				<td><%= s.name %></td>
 				<td><%= Tag.find(s.alias_id).name %></td>
-				<td><%= link_to_function "Remove", "notice('Removing...'); new Ajax.Request('/tag/remove_alias', {parameters: 'name=#{s.name}', asynchronous: true, method: 'post', onComplete: function(req) {window.location.reload(true)}})" %></td>
+				<td><%= link_to_function "Remove", "notice('Removing...'); new Ajax.Request('/tag/destroy_alias', {parameters: 'name=#{s.name}', asynchronous: true, method: 'post', onComplete: function(req) {window.location.reload(true)}})" %></td>
 			</tr>
 		<%- end -%>
 	</table>

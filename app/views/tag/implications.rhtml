@@ -14,7 +14,7 @@
 			<tr class="<%= cycle 'even', 'odd' %>">
 				<td><%= Tag.find(r.child_id).name %></td>
 				<td><%= Tag.find(r.parent_id).name %></td>
-				<td><%= link_to_function "Remove", "notice('Removing...'); new Ajax.Request('/tag/remove_implication', {parameters: 'child_id=#{r.child_id}&parent_id=#{r.parent_id}', asynchronous: true, method: 'post', onComplete: function(req) {window.location.reload(true)}})" %></td>
+				<td><%= link_to_function "Remove", "notice('Removing...'); new Ajax.Request('/tag/destroy_implication', {parameters: 'child_id=#{r.child_id}&parent_id=#{r.parent_id}', asynchronous: true, method: 'post', onComplete: function(req) {window.location.reload(true)}})" %></td>
 			</tr>
 		<%- end -%>
 	</table>
