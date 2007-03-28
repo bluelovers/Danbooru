@@ -8,7 +8,7 @@ class PostController < ApplicationController
 			before_filter :user_only, :only => [:destroy, :create, :upload]
 		end
 	else
-		before_filter :user_only
+		before_filter :user_only, :except => [:atom]
 	end
 
 	after_filter :save_tags_to_cookie, :only => [:update, :create]
