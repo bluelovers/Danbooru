@@ -8,4 +8,8 @@
 	<%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type]}) %>
 </div>
 
+<div id="alpha-paginator">
+	<%= render :partial => "alpha_paginator" %>
+</div>
+
 <%= render :partial => "footer" %>

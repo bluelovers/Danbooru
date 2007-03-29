@@ -18,6 +18,27 @@ class Tag < ActiveRecord::Base
 		return connection.select_value(sanitize_sql(["SELECT tag_type FROM tags WHERE name = ?", name])).to_i
 	end
 
+	def self.type_string_to_integer(name)
+		case name
+		when "general"
+			return TYPE_GENERAL
+
+		when "artist"
+			return TYPE_ARTIST
+
+		when "character"
+			return TYPE_CHARACTER
+
+		when "copyright"
+			return TYPE_COPYRIGHT
+
+		when "ambiguous"
+			return TYPE_AMBIGUOUS
+		end
+
+		return nil
+	end
+
 	def self.find_or_create_by_name(name)
 		tag_type = TYPE_GENERAL
 

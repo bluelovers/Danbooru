@@ -13,6 +13,20 @@ class TagController < ApplicationController
 	def index
 		set_title "Tags"
 
+		if params[:letter]
+			sql = "SELECT count(*) FROM tags WHERE substring(name FROM 1 FOR 1) < ?"
+			cond_params = [params[:letter]]
+
+			if params[:type]
+				sql << " AND tag_type = ?"
+				cond_params << Tag.type_string_to_integer(params[:type])
+			end
+
+			page = (Tag.count_by_sql([sql, *cond_params]) / 50) + 1
+			redirect_to :action => "index", :order => params[:order], :type => params[:type], :page => page, :letter => nil
+			return
+		end
+
 		case params[:order]
 		when "date"
 			order = "id DESC"

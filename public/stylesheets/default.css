@@ -585,6 +585,15 @@ div#tag-list div.space a {
 	padding-right: 5px;
 }
 
+
+div#alpha-paginator {
+	text-align: center;
+}
+
+div#alpha-paginator a {
+	margin: 0.2em;
+}
+
 div#wiki-view {
 	line-height: 2em;
 	width: 50em;
