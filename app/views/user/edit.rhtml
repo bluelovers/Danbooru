@@ -27,7 +27,11 @@
 		<div class="option">
 			<label class="block" for="user_email">Email</label>
 			<%= text_field "user", "email", :size => 40 %>
-			<p>This field is optional. It is useful if you ever forget your password and want to reset it.</p>
+			<% if CONFIG["enable_account_email_activation"] %>
+				<p>An email address is required to activate your account.</p>
+			<% else %>
+				<p>This field is optional. It is useful if you ever forget your password and want to reset it.</p>
+			<% end %>
 		</div>
 
 		<div class="option">
