@@ -259,4 +259,44 @@ class Tag < ActiveRecord::Base
 			self.tag_type = TYPE_GENERAL
 		end
 	end
+
+	def to_xml(options = {})
+		attribs = {:id => self.id}
+
+		options[:select].each do |x|
+			case x
+			when "name"
+				attribs[:name] = self.name
+
+			when "count"
+				attribs[:count] = self.post_count
+
+			when "type"
+				attribs[:type] = self.tag_type
+
+			end
+		end
+
+		return attribs.to_xml(options)
+	end
+
+	def to_json(options = {})
+		attribs = {:id => self.id}
+
+		options[:select].each do |x|
+			case x
+			when "name"
+				attribs[:name] = self.name
+
+			when "count"
+				attribs[:count] = self.post_count
+	
+			when "type"
+				attribs[:type] = self.tag_type
+
+			end
+		end
+
+		return attribs.to_json(options)
+	end
 end
