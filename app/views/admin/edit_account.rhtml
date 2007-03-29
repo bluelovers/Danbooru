@@ -2,22 +2,12 @@
 	<% form_tag(:controller => "admin", :action => "edit_account") do %>
 		<div class="option">
 			<label class="block" for="user_id">User</label>
-			<%= collection_select "user", "id", User.find(:all, :order => "lower(name)"), "id", "name" %>
+			<%= text_field "user", "name" %>
 		</div>
 
 		<div class="option">
 			<label class="block" for="user_level">Level</label>
 			<%= select "user", "level", [["Admin", User::LEVEL_ADMIN], ["Mod", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["Blocked", User::LEVEL_BLOCKED]] %>
-		</div>
-
-		<div class="option">
-			<label class="block" for="user_password">Password</label>
-			<%= password_field("user", "password", :value => "") %>
-		</div>
-
-		<div class="option">
-			<label class="block" for="user_password_confirmation">Password Confirmation</label>
-			<%= password_field("user", "password_confirmation", :value => "") %>
 		</div>
 
 		<div class="option">
