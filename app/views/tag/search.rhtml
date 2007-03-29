@@ -1,6 +1,6 @@
 <% form_tag({:action => "search"}, :method => :get) do %>
 	<%= text_field_tag "name", "", :size => 30 %>
-	<%= select_field_tag "type", [%w(Artist artist), %w(Tags search)] %>
+	<%= select_tag "type", options_for_select([%w(Artist artist), %w(Tags search)]) %>
 	<%= submit_tag "Search" %>
 <% end %>
 

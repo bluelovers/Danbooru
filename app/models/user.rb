@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
 	def has_permission?(record, foreign_key = :user_id)
 		if self.role?(:mod)
 			true
-		elsif record.responds_to?(foreign_key)
+		elsif record.respond_to?(foreign_key)
 			record.user_id == self.id
 		else
 			false
