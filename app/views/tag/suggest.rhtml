@@ -1,1 +1,0 @@
-<%= @tags.map {|i| link_to i.name, {:controller => "post", :action => "list", :tags => i.name}, :onclick => "return toggleTag('#{i.name}', this)", :style => (@params["tags"] =~ /\b#{i.name}\b/) ? "text-decoration: underline;" : nil}.join(" ") %>

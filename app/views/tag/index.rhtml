@@ -4,4 +4,8 @@
 	<% end %>
 </ul>
 
+<div id="paginator">
+	<%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type]}) %>
+</div>
+
 <%= render :partial => "footer" %>

@@ -236,7 +236,7 @@ class PostController < ApplicationController
 
 # Parameters
 # - id: post ID to change
-# - history_id: the ID of the post tag histor record
+# - history_id: the ID of the post tag history record
 # - login: login name
 # - password: alternative to password_hash, your plaintext password
 # - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)

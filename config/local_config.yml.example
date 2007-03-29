@@ -23,3 +23,4 @@ enable_anonymous_forum_access: false		# Allow Anonymous to access anything under
 enable_anonymous_forum_posts: false			# Allow Anonymous to post to the forum
 enable_tag_blacklists: false				# Enable server-side tag blacklists
 enable_user_blacklists: false				# Enable server-side user blacklists
+enable_openid: false						# Allow users to register using OpenID (compatible with regular signups and invites)

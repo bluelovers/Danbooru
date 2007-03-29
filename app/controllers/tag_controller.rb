@@ -44,7 +44,11 @@ class TagController < ApplicationController
 			tag_type = nil
 		end
 
-		@pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => (tag_type ? nil : ["tag_type = ?", tag_type])
+		if tag_type
+			@pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => ["tag_type = ?", tag_type]
+		else
+			@pages, @tags = paginate :tags, :order => order, :per_page => 50
+		end
 
 		respond_to do |fmt|
 			fmt.html

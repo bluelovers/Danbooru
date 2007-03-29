@@ -68,4 +68,4 @@ require 'arch'
 require 'acts_as_versioned'
 require 'net/http'
 require 'core_extensions'
-
+require 'ruby-openid' if CONFIG["enable_openid"]
