@@ -134,7 +134,7 @@ class PostController < ApplicationController
 		end
 
 		tag_blacklist = (@current_user ? @current_user.tag_blacklist.scan(/\S+/) : nil)
-		user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/ : nil)
+		user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/) : nil)
 
 		@ambiguous = Tag.select_ambiguous(params[:tags])
 		@pages = Paginator.new(self, Post.fast_count(params[:tags]), limit, params[:page])

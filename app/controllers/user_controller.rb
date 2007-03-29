@@ -112,8 +112,8 @@ class UserController < ApplicationController
 			@current_user.errors.clear
 
 			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Error: " + h(error); redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml, :status => 500}
+				fmt.html {flash[:notice] = "Error: " + error; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => false, :reason => error}.to_xml, :status => 500}
 				fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
 			end
 		end
