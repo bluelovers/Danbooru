@@ -31,15 +31,17 @@ module TagHelper
 		html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params["tags"].to_s) << " "
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
-		case Tag.type(name)
-		when Tag::TYPE_ARTIST
-			html << '<span class="artist-tag">(artist)</span> '
+		if CONFIG["enable_tag_type_lookups"]
+			case Tag.type(name)
+			when Tag::TYPE_ARTIST
+				html << '<span class="artist-tag">(artist)</span> '
 
-		when Tag::TYPE_CHARACTER
-			html << '<span class="character-tag">(character)</span> '
+			when Tag::TYPE_CHARACTER
+				html << '<span class="character-tag">(character)</span> '
 
-		when Tag::TYPE_COPYRIGHT
-			html << '<span class="copyright-tag">(copyright)</span> '
+			when Tag::TYPE_COPYRIGHT
+				html << '<span class="copyright-tag">(copyright)</span> '
+			end
 		end
 
 		html << content_tag("span", count.to_s, :class => "post-count")

@@ -5,7 +5,7 @@ end
 
 class UserMailer < ActionMailer::Base
 	include ActionController::UrlWriter
-	default_url_options[:host] = CONFIG['server_host']
+	default_url_options["host] = CONFIG["server_host"]
 
 	def confirmation_email(user,hash)
 		recipients UserMailer.normalize_address(user.email)
@@ -26,7 +26,7 @@ class UserMailer < ActionMailer::Base
 	def new_invite(user, email, invite)
 		recipients UserMailer.normalize_address(email)
 		subject "You have been invited to #{CONFIG["app_name"]}"
-		from CONFIG["invite_contact"]
+		from CONFIG["admin_contact"]
 		body :user => user, :invite => invite
 		content_type "text/html"
 	end

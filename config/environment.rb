@@ -6,7 +6,6 @@
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
-
 require 'local_config'
 
 Rails::Initializer.run do |config|
@@ -68,4 +67,5 @@ require 'arch'
 require 'acts_as_versioned'
 require 'net/http'
 require 'core_extensions'
-require 'ruby-openid' if CONFIG["enable_openid"]
+require 'ruby-openid' if CONFIG[:enable_openid]
+
