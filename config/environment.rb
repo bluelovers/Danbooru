@@ -8,6 +8,9 @@
 require File.join(File.dirname(__FILE__), 'boot')
 require 'local_config'
 
+# The version of this Danbooru.
+CONFIG["version"]							= "1.5.0"
+
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]

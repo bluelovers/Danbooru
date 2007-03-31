@@ -86,6 +86,3 @@ CONFIG["enable_openid"]						= false
 # when displaying tag lists. This is informative but adds strain to
 # the database.
 CONFIG["enable_tag_type_lookups"]			= true
-
-# The version of this Danbooru.
-CONFIG["version"]							= "1.4.0"
