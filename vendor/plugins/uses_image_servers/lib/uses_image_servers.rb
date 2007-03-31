@@ -7,7 +7,8 @@ module UsesImageServers
 	module ClassMethods
 		def uses_image_servers(options = {})
 			class_eval do
-				$image_servers = options[:servers] || []
+				cattr_accessor :image_servers
+				self.image_servers = options[:servers] || []
 				include UsesImageServers::InstanceMethods
 			end
 		end
@@ -15,13 +16,13 @@ module UsesImageServers
 
 	module InstanceMethods
 		def select_random_server
-			count = $image_servers.size
+			count = image_servers.size
 			i = (count * rand()).to_i
 
-			return $image_servers[i] || ("http://" + CONFIG["server_host"])
+			return image_servers[i] || ("http://" + CONFIG["server_host"])
 		end
 
-		def file_url_alt
+		def file_url
 			if is_warehoused?
 				prefix = select_random_server()
 			else
@@ -31,7 +32,7 @@ module UsesImageServers
 			prefix + "/data/%s/%s/%s" % [md5[0,2], md5[2,2], file_name]
 		end
 
-		def preview_url_alt
+		def preview_url
 			if is_warehoused?
 				prefix = select_random_server()
 			else
