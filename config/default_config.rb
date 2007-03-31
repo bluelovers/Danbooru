@@ -18,6 +18,9 @@ CONFIG["server_host"]							= "danbooru.donmai.us"
 # The following settings allow you to customize your Danbooru, enabling
 # and disabling specific features as well as access privileges.
 
+# The version of this Danbooru.
+CONFIG["version"]								= "1.5.0"
+
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"]					= "Anonymous"
 

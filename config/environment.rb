@@ -6,10 +6,8 @@
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
+require 'default_config'
 require 'local_config'
-
-# The version of this Danbooru.
-CONFIG["version"]							= "1.5.0"
 
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
