@@ -1,23 +1,5 @@
 CONFIG = {}
 
-##### MANDATORY SETTINGS #####
-# You MUST fill out the following three settings in order for Danbooru to
-# function correctly. The other settings can be left at their default 
-# values.
-
-# The name of your site.
-CONFIG["app_name"]								= "Site Name"
-
-# The default contact email address.
-CONFIG["admin_contact"]							= "webmaster@site.com"
-
-# The hostname of the server.
-CONFIG["server_host"]							= "danbooru.donmai.us"
-
-##### OPTIONAL SETTINGS #####
-# The following settings allow you to customize your Danbooru, enabling
-# and disabling specific features as well as access privileges.
-
 # The version of this Danbooru.
 CONFIG["version"]								= "1.5.0"
 

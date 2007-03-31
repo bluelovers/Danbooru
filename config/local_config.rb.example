@@ -1,0 +1,7 @@
+# This is the file you use to overwrite the default config values.
+# Look at default_config.rb and copy over any settings you want to change.
+
+# You MUST configure these settings for your own server!
+CONFIG["app_name"] = "Danbooru"
+CONFIG["server_host"] = "danbooru.donami.us"
+CONFIG["admin_contact"] "admin@" + CONFIG["server_host"]
