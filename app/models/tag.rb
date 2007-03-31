@@ -134,7 +134,7 @@ class Tag < ActiveRecord::Base
 	end
 
 	def self.scan_tags(tags)
-		tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).uniq
+		tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).map {|x| x.gsub(/^(?:-|~)+/, "")}.uniq
 	end
 
 # Maps tag synonyms to their preferred names. Returns an array of strings.
