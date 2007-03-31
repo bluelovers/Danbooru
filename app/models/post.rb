@@ -389,6 +389,11 @@ class Post < ActiveRecord::Base
 			params << options[:tag_blacklist]
 		end
 
+		if CONFIG["enable_post_thresholds"] && options[:post_threshold].is_a?(Integer)
+			conditions << "p.score >= ?"
+			params << options[:post_threshold]
+		end
+
 		if CONFIG["enable_user_blacklists"] && options[:user_blacklist].any?
 			conditions << "p.user_id NOT IN (SELECT id FROM users WHERE name IN (?))"
 			params << options[:user_blacklist]

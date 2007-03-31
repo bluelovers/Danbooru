@@ -18,11 +18,13 @@
 			</div>
 		<% end %>
 
-		<div class="option">
-			<label class="block" for="user_post_threshold">Post Threshold</label>
-			<%= text_field "user", "post_threshold", :size => 5 %>
-			<p>Any post with a score below this will be hidden.</p>
-		</div>
+		<% if CONFIG["enable_post_thresholds"] %>
+			<div class="option">
+				<label class="block" for="user_post_threshold">Post Threshold</label>
+				<%= text_field "user", "post_threshold", :size => 5 %>
+				<p>Any post with a score below this will be hidden.</p>
+			</div>
+		<% end %>
 
 		<div class="option">
 			<label class="block" for="user_email">Email</label>

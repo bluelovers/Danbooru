@@ -135,10 +135,11 @@ class PostController < ApplicationController
 
 		tag_blacklist = (@current_user ? @current_user.tag_blacklist.scan(/\S+/) : nil)
 		user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/) : nil)
+		post_threshold = (@curent_user ? @current_user.post_threshold : nil)
 
 		@ambiguous = Tag.select_ambiguous(params[:tags])
 		@pages = Paginator.new(self, Post.fast_count(params[:tags]), limit, params[:page])
-		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist))
+		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold))
 
 		respond_to do |fmt|
 			fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
