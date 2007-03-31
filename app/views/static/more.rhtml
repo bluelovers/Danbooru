@@ -26,18 +26,12 @@
 <div>
 	<ul>
 		<li><h4>Tags</h4></li>
-		<li><a href="/tag/list_cloud">List (cloud view)</a></li>
-		<li><a href="/tag/list_all_by_name">List (by name)</a></li>
-		<li><a href="/tag/list_all_by_date">List (by date)</a></li>
-		<li><a href="/tag/list_all_by_count">List (by count)</a></li>
-		<li><a href="/tag/list_artists">List Artists</a></li>
-		<li><a href="/tag/list_ambiguous">List Ambiguous</a></li>
-		<li><a href="/tag/list_copyrights">List Copyrights</a></li>
-		<li><a href="/tag/list_characters">List Characters</a></li>
+		<li><a href="/tag/cloud">List (cloud view)</a></li>
+		<li><a href="/tag/index">List (all)</a></li>
 		<li><a href="/tag/aliases">Aliases</a></li>
 		<li><a href="/tag/implications">Implications</a></li>
 		<li><a href="/tag/mass_edit">Mass Edit</a></li>
-		<li><a href="/tag/set_type">Set Type</a></li>
+		<li><a href="/tag/edit">Edit</a></li>
 	</ul>
 	<ul>
 		<li><h4>Wiki</h4></li>
@@ -52,6 +46,9 @@
 		<li><h4>Community</h4></li>
 		<li><a href="/comment/index">Comments</a></li>
 		<li><a href="/comment/moderate">Moderate Comments</a></li>
+		<% if CONFIG["enable_forum"] %>
+			<li><a href="/forum/index">Forum</a></li>
+		<% end %>
 		<li><a href="/wiki/show?title=Help:Guide">Guide</a></li>
 		<li><a href="/wiki/show?title=Help:Source">Source Code</a></li>
 	</ul>
@@ -72,8 +69,10 @@
 		<li><a href="/user/index">Home</a></li>
 		<li><a href="/user/signup">Signup</a></li>
 		<li><a href="/user/login">Login</a></li>
-		<li><a href="/user/change_password">Change Password</a></li>
-		<li><a href="/user/options">Options</a></li>
+		<li><a href="/user/settings">Settings</a></li>
+		<% if CONFIG["enable_invites"] %>
+			<li><a href="/user/invites">Invites</a></li>
+		<% end %>
 	</ul>
 </div>
 
