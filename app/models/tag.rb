@@ -278,6 +278,9 @@ class Tag < ActiveRecord::Base
 
 		when "general"
 			self.tag_type = TYPE_GENERAL
+
+		when /^\d+$/
+			self.tag_type = s.to_i
 		end
 	end
 

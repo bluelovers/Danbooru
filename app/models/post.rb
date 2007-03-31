@@ -197,12 +197,8 @@ class Post < ActiveRecord::Base
 
 # Returns the URL for the post
 	def file_url
-		if self.class.method_defined? :file_url_alt
-			return file_url_alt()
-		end
-
 		"http://" + CONFIG["server_host"] + "/data/%s/%s/%s" % [md5[0,2], md5[2,2], file_name]
-	end
+	end unless method_defined?(:file_url)
 
 # Returns the absolute path to the preview file.
 	def preview_path
@@ -215,16 +211,12 @@ class Post < ActiveRecord::Base
 
 # Returns the URL for the preview
 	def preview_url
-		if self.class.method_defined?(:preview_url_alt)
-			return preview_url_alt()
-		end
-
 		if image?
 			"http://" + CONFIG["server_host"] + "/data/preview/%s/%s/%s" % [md5[0,2], md5[2,2], md5 + ".jpg"]
 		else
 			"http://" + CONFIG["server_host"] + "/data/preview/default.png"
 		end
-	end
+	end unless method_defined?(:preview_url)
 
 	def get_image_dimensions
 		if image? or flash?
