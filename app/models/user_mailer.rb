@@ -5,7 +5,7 @@ end
 
 class UserMailer < ActionMailer::Base
 	include ActionController::UrlWriter
-	default_url_options["host] = CONFIG["server_host"]
+	default_url_options["host"] = CONFIG["server_host"]
 
 	def confirmation_email(user,hash)
 		recipients UserMailer.normalize_address(user.email)
