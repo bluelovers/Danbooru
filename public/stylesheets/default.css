@@ -757,7 +757,6 @@ div#forum > div.post div.author h6.author {
 }
 
 div#forum > div.post div.post-content {
-	border-left: 2px solid #666;
 	padding-left: 2em;
 	float: left;
 	min-height: 4em;
@@ -770,6 +769,10 @@ div#forum > div.post div.footer {
 
 div#forum > div.post div.footer a {
 	color: #666;
+}
+
+div#forum > div.post div.body {
+	width: 40em;
 }
 
 div#invite > div#new {
