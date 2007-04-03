@@ -4,7 +4,7 @@
 
 <% form_tag(:controller => "user", :action => "create") do %>
 	<%= hidden_field "user", "email", :value => @invite.email %>
-	<%= hidden_field_tag "activation_key", @invite.activation_key %>
+	<%= hidden_field_tag "key", @invite.activation_key %>
 
 	<div class="option">
 		<label class="block" for="user_name">Desired name</label>

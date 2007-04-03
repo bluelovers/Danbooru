@@ -37,9 +37,9 @@ class UserController < ApplicationController
 	end
 
 	def create
-		if !CONFIG["enable_signups"]
-			if params[:activation_key]
-				invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:activation_key]])
+		if CONFIG["enable_signups"]
+			if params[:key]
+				invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:key]])
 				if invite
 					invite.destroy
 				else
