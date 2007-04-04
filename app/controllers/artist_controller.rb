@@ -56,11 +56,11 @@ class ArtistController < ApplicationController
 				@artists = []
 				name = File.dirname(name)
 
-				while @artists.empty? && name.size > 10
+#				while @artists.empty? && name.size > 10
 					escaped_name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
 					@pages, @artists = paginate :artists, :conditions => "site_url LIKE '#{escaped_name}%' ESCAPE '\\\\' OR image_url LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => "personal_name, handle_name, circle_name, japanese_name", :per_page => 25
-					name = File.dirname(name)
-				end
+#					name = File.dirname(name)
+#				end
 			else
 				name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
 				@pages, @artists = paginate :artists, :conditions => "personal_name LIKE '%#{name}%' ESCAPE '\\\\' OR handle_name LIKE '%#{name}%' ESCAPE '\\\\' OR circle_name LIKE '%#{name}%' ESCAPE '\\\\' OR japanese_name LIKE '%#{name}%' ESCAPE '\\\\'", :order => "personal_name, handle_name, circle_name, japanese_name", :per_page => 25

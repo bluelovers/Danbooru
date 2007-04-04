@@ -13,7 +13,7 @@ class TagImplication < ActiveRecord::Base
 			end
 
 			parents = Tag.with_parents(c.name).join(" ")
-			Post.find(:all, :joins => Tag.sanitize_sql(["JOIN posts_tags pt ON pt.post_id = posts.id WHERE pt.tag_id = ?", c.id])).each do |p|
+			Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", c.id])).each do |p|
 				p.update_attributes(:tags => p.cached_tags + " " + parents, :updater_user_id => params[:updater_user_id], :updater_ip_addr => params[:updater_ip_addr])
 			end
 		end
