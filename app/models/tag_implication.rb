@@ -1,21 +1,65 @@
 class TagImplication < ActiveRecord::Base
-	def self.create(params)
-		transaction do
-			p = Tag.find_or_create_by_name(params[:parent])
-			c = Tag.find_or_create_by_name(params[:child])
+	def predicate
+		return Tag.find(self.predicate_id)
+	end
 
-			if find(:first, :conditions => ["parent_id = ? AND child_id = ?", p.id, c.id]) || find(:first, :conditions => ["parent_id = ? AND child_id = ?", c.id, p.id])
+	def consequent
+		return Tag.find(self.consequent_id)
+	end
+
+	def predicate=(name)
+		t = Tag.find_or_create_by_name(name)
+		self.predicate_id = t.id
+	end
+
+	def consequent=(name)
+		t = Tag.find_or_create_by_name(name)
+		self.consequent_id = t.id
+	end
+
+	def approve!(user_id, ip_addr)
+		transaction do
+			p = Tag.find(self.predicate_id)
+			c = Tag.find(self.consequent_id)
+
+			if self.class.find(:first, :conditions => ["(predicate_id = ? AND consequent_id = ?) OR (predicate_id = ? AND consequent_id = ?)", p.id, c.id, c.id, p.id])
 				raise "Tag implication already exists"
 			end
 
-			unless connection.select_value(Tag.sanitize_sql(["SELECT 1 FROM tag_implications WHERE parent_id = ? AND child_id = ?", p.id, c.id]))
-				connection.execute(Tag.sanitize_sql(["INSERT INTO tag_implications (parent_id, child_id) VALUES (?, ?)", p.id, c.id]))
+			implied_tags = self.class.with_implied(p.name).join(" ")
+			Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", p.id])).each do |tag|
+				tag.update_attributes(:tags => tag.cached_tags + " " + implied_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
 			end
 
-			parents = Tag.with_parents(c.name).join(" ")
-			Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", c.id])).each do |p|
-				p.update_attributes(:tags => p.cached_tags + " " + parents, :updater_user_id => params[:updater_user_id], :updater_ip_addr => params[:updater_ip_addr])
+			connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{self.id}")
+		end
+	end
+
+	def self.with_implied(tags)
+		return [] if tags.blank?
+		all = []
+
+		tags.each do |tag|
+			all << tag
+			results = [tag]
+
+			10.times do
+				results = connection.select_values(sanitize_sql([<<-SQL, results]))
+					SELECT t1.name 
+					FROM tags t1, tags t2, tag_implications ti 
+					WHERE ti.predicate_id = t2.id 
+					AND ti.consequent_id = t1.id 
+					AND t2.name IN (?)
+				SQL
+
+				if results.any?
+					all += results
+				else
+					break
+				end
 			end
 		end
+
+		return all
 	end
 end

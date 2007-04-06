@@ -2,6 +2,14 @@ class Tag < ActiveRecord::Base
 	serialize :cached_related
 	after_create :related
 
+	TYPES = {
+		0 => "general",
+		1 => "artist",
+		2 => "ambiguous",
+		3 => "copyright",
+		4 => "character"
+	}
+
 	TYPE_GENERAL	= 0
 	TYPE_ARTIST 	= 1
 	TYPE_AMBIGUOUS	= 2
@@ -134,61 +142,7 @@ class Tag < ActiveRecord::Base
 	end
 
 	def self.scan_tags(tags)
-		tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).map {|x| x.gsub(/^(?:-|~)+/, "")}.uniq
-	end
-
-# Maps tag synonyms to their preferred names. Returns an array of strings.
-	def self.to_aliased(tags)
-		return [] if tags.blank?
-		aliased = []
-
-		[*tags].each do |t|
-			aliased << connection.select_value(sanitize_sql([<<-SQL, t, t]))
-				SELECT coalesce(
-					(
-						SELECT t.name 
-						FROM tags t, tag_aliases ta 
-						WHERE ta.name = ? 
-						AND ta.alias_id = t.id
-					), 
-					?
-				)
-			SQL
-		end
-
-		if tags.is_a?(String)
-			return aliased[0]
-		else
-			return aliased
-		end
-	end
-
-	def self.with_parents(tags)
-		return [] if tags.blank?
-		all = []
-
-		tags.each do |tag|
-			all << tag
-			results = [tag]
-
-			10.times do
-				results = connection.select_values(sanitize_sql([<<-SQL, results]))
-					SELECT t1.name 
-					FROM tags t1, tags t2, tag_implications ti 
-					WHERE ti.child_id = t2.id 
-					AND ti.parent_id = t1.id 
-					AND t2.name IN (?)
-				SQL
-
-				if results.any?
-					all += results
-				else
-					break
-				end
-			end
-		end
-
-		return all
+		tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).map {|x| x.gsub(/^[-~]+/, "")}.uniq
 	end
 
 	def self.parse_helper(range)
@@ -255,9 +209,9 @@ class Tag < ActiveRecord::Base
 			end
 		end
 
-		q[:exclude] = to_aliased(q[:exclude])
-		q[:include] = to_aliased(q[:include])
-		q[:related] = to_aliased(q[:related])
+		q[:exclude] = TagAlias.to_aliased(q[:exclude])
+		q[:include] = TagAlias.to_aliased(q[:include])
+		q[:related] = TagAlias.to_aliased(q[:related])
 
 		return q
 	end

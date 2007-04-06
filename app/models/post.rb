@@ -81,8 +81,8 @@ class Post < ActiveRecord::Base
 
 		@tag_cache = "tagme" if @tag_cache == ""
 		@tag_cache = Tag.scan_tags(@tag_cache)
-		@tag_cache = Tag.to_aliased(@tag_cache).uniq
-		@tag_cache = Tag.with_parents(@tag_cache).uniq
+		@tag_cache = TagAlias.to_aliased(@tag_cache).uniq
+		@tag_cache = TagImplication.with_implied(@tag_cache).uniq
 
 		transaction do
 			connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")

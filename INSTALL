@@ -5,7 +5,7 @@ Danbooru has the following general dependencies:
 
 Danbooru also has the following Ruby dependencies:
 - rubygems
-- rails (gem install rails)
+- rails 1.2 (gem install rails)
 - postgres (gem install postgres)
 - diff-lcs (gem install diff-lcs)
 - redcloth (gem install redcloth)

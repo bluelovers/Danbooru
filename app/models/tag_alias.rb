@@ -11,21 +11,46 @@ class TagAlias < ActiveRecord::Base
 	end
 
 	def approve!
-		id, n, a = nil, nil, nil
-
 		transaction do
 			n = Tag.find_or_create_by_name(self.name)
 			a = Tag.find(self.alias_id)
 
-			if self.class.find(:first, :conditions => ["(name = ? AND alias_id = ?) OR (name = ? AND alias_id = ?)", n.name, a.id, a.name, n.id])
+			if self.class.find(:first, :conditions => ["name = ? OR name = ?", n.name, a.name])
 				raise "Tag alias already exists"
 			end
 
 			connection.execute(Tag.sanitize_sql(["DELETE FROM posts_tags WHERE tag_id = ? AND post_id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", n.id, a.id]))
 			connection.execute(Tag.sanitize_sql(["UPDATE posts_tags SET tag_id = ? WHERE tag_id = ?", a.id, n.id]))
 			connection.execute(Tag.sanitize_sql(["UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags WHERE tag_id = tags.id) WHERE tags.name IN (?, ?)", n.name, a.name]))
+			connection.execute("UPDATE tag_aliases SET is_pending = FALSE WHERE id = #{self.id}")
 
 			Tag.update_cached_tags([a.name, p.name])
+		end
+	end
+
+# Maps tag synonyms to their preferred names. Returns an array of strings.
+	def self.to_aliased(tags)
+		return [] if tags.blank?
+		aliased = []
+
+		[*tags].each do |t|
+			aliased << connection.select_value(sanitize_sql([<<-SQL, t, t]))
+				SELECT coalesce(
+					(
+						SELECT t.name 
+						FROM tags t, tag_aliases ta 
+						WHERE ta.name = ? 
+						AND ta.alias_id = t.id
+					), 
+					?
+				)
+			SQL
+		end
+
+		if tags.is_a?(String)
+			return aliased[0]
+		else
+			return aliased
 		end
 	end
 end
