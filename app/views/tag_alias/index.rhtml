@@ -1,0 +1,25 @@
+<% form_tag(:action => "update") do %>
+	<table>
+		<tr>
+			<th></th>
+			<th>Alias</th>
+			<th>To</th>
+		</tr>
+		<% @aliases.each do |alias| %>
+			<tr class="<%= cycle 'even', 'odd' %> <%= alias.is_pending? ? 'pending-tag' : nil %>">
+				<td><%= check_box_tag "aliases[#{alias.id}]" %></td>
+				<td><%= alias.name %></td>
+				<td><%= Tag.find(alias.alias_id).name %></td>
+			</tr>
+		<% end %>
+		<tr>
+			<td colspan="3"><%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> <%= submit_tag "Approve" %> <%= submit_tag "Delete" %></td>
+		</tr>
+	</table>
+<% end %>
+
+<div id="paginator">
+	<%= render :partial => "paginator" %>
+</div>
+
+<%= render :partial => "footer" %>

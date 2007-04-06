@@ -102,12 +102,12 @@ class Tag < ActiveRecord::Base
 
 	def self.update_cached_tags(tags)
 		post_ids = connection.select_values(Tag.sanitize_sql(["SELECT pt.post_id FROM posts_tags pt, tags t WHERE pt.tag_id = t.id AND t.name IN (?)", tags]))
-		connection.execute("BEGIN TRANSACTION")
-		post_ids.each do |i|
-			tags = connection.select_values("SELECT t.name FROM tags t, posts_tags pt WHERE t.id = pt.tag_id ORDER BY t.name").join(" ")
-			connection.execute(Tag.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = ?", tags, i]))
+		Tag.transaction do
+			post_ids.each do |i|
+				tags = connection.select_values("SELECT t.name FROM tags t, posts_tags pt WHERE t.id = pt.tag_id ORDER BY t.name").join(" ")
+				connection.execute(Tag.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = ?", tags, i]))
+			end
 		end
-		connection.execute("COMMIT")
 	end
 	
 	def related
