@@ -129,6 +129,10 @@ tr.odd {
 	background: rgb(240, 240, 255);
 }
 
+tr.pending-tag {
+	background: rgb(240, 255, 240);
+}
+
 td {
 	padding: 1px 4px; vertical-align: top;
 }

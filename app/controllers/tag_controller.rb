@@ -1,7 +1,7 @@
 class TagController < ApplicationController
 	layout 'default'
 
-	before_filter :admin_only, :only => [:rename, :create_alias, :destroy_alias, :create_implication, :destroy_implication]
+	before_filter :admin_only, :only => [:rename]
 	before_filter :mod_only, :only => [:mass_edit]
 
 	def cloud
@@ -102,58 +102,6 @@ class TagController < ApplicationController
 	def edit_preview
 		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC"))
 		render :layout => false
-	end
-
-	def destroy_alias
-		TagAlias.destroy_all(["name = ?", params[:name]])
-		Tag.update_cached_tags([params[:name]])
-
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Tag alias removed"; redirect_to(:action => "aliases")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
-			fmt.js {render :json => {:success => true}.to_json}
-		end
-	end
-
-	def create_alias
-		TagAlias.create(:name => params[:name], :alias => params[:alias])
-		Tag.update_cached_tags([params[:name]])
-
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Tag alias created"; redirect_to(:action => "aliases")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
-			fmt.js {render :json => {:success => true}.to_json}
-		end
-	end
-
-	def destroy_implication
-		TagImplication.destroy_all(["parent_id = ? and child_id = ?", params[:parent_id], params[:child_id]])
-
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Tag implication removed"; redirect_to(:action => "implications")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
-			fmt.js {render :json => {:success => true}.to_json}
-		end
-	end
-
-	def create_implication
-		TagImplication.create(:parent => params[:parent], :child => params[:child], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
-
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Tag implication created"; redirect_to(:action => "implications")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
-			fmt.js {render :json => {:success => true}.to_json}
-		end
-	end
-
-	def aliases
-		set_title "Tag Aliases"
-		@aliases = TagAlias.find(:all, :order => "name")
-	end
-
-	def implications
-		set_title "Tag Implications"
-		@implications = TagImplication.find(:all, :order => "(SELECT name FROM tags WHERE id = tag_implications.child_id)")
 	end
 
 	def update
