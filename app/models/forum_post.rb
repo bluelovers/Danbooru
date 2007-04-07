@@ -44,4 +44,9 @@ class ForumPost < ActiveRecord::Base
 	def author
 		self.creator.name
 	end
+
+	def self.updated_since?(date)
+		fp = ForumPost.find(:first, :order => "created_at DESC")
+		return fp != nil && fp.created_at > date
+	end
 end

@@ -24,7 +24,11 @@
 			<li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
 			<li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
 			<% if CONFIG["enable_forum"] %>
-				<li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
+				<% if @current_user && ForumPost.updated_since?(@current_user.last_seen_forum_post_date) %>
+					<li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :class => "forum-update" %></li>
+				<% else %>
+					<li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
+				<% end %>
 			<% end %>
 			<% if @current_user && @current_user.role?(:admin) %>
 				<li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>

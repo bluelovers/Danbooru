@@ -322,6 +322,11 @@ ul.flat-list li a {
 	font-weight: normal;
 }
 
+ul.flat-list li a.forum-update {
+	font-weight: bold;
+	color: #33F;
+}
+
 li#notice {
 	color: red;
 	font-weight: bold;
@@ -785,3 +790,4 @@ div#invite > div#new {
 div#invite > div#current {
 	margin-top: 2em;
 }
+
