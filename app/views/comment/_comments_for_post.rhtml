@@ -1,2 +1,2 @@
-<h5 class="post-header"><%= pluralize(post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= post.id %>">0 hidden</a>). Score: <%= post.score %> (vote <%= link_to_function("up", "vote(1, #{post.id})") %>/<%= link_to_function("down", "vote(-1, #{post.id})") %>)</h5>
+<h5 class="post-header">Score: <%= post.score %> (vote <%= link_to_function("up", "vote(1, #{post.id})") %>/<%= link_to_function("down", "vote(-1, #{post.id})") %>)</h5>
 <%= render :partial => "comments", :locals => {:comments => comments, :post_id => post.id} %>

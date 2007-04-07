@@ -1,69 +1,29 @@
 <div id="comment-list2">
 
-<script type="text/javascript">
-// <![CDATA[
-var posts = {}
-var tags = readCookie("tag_blacklist").split(/[, ]+/g)
-// ]]>
-</script>
+<% if @posts.empty? %>
+	<h4>There are no comments</h4>
+<% end %>
 
-<%- if @posts.empty? -%>
-<h4>There are no comments</h4>
-<%- end -%>
-
-<%- @posts.each do |post| -%>
-<div class="post" id="p<%= post.id %>">
-	<%= javascript_tag "posts[#{post.id}] = {'user':'#{post.author}', 'score':#{post.score}, 'rating':'#{post.pretty_rating}', 'tags':'#{escape_javascript(post.cached_tags)}'.split(/ /g)}" %>
-	<div class="col1">
-		<%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
+<% @posts.each do |post| %>
+	<div class="post" id="p<%= post.id %>">
+		<div class="col1">
+			<%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
+		</div>
+		<div class="col2" id="comments-for-p<%= post.id %>">
+			<%= render :partial => "comments_for_post", :locals => {:post => post, :comments => post.comments} %>
+		</div>
+		<div class="col3">
+			<ul class="post-info">
+				<li><%= post.created_at.strftime("%D %I:%M") %></li>
+				<li>rating:<%= post.pretty_rating %></li>
+				<li><%= link_to "user:" + post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></li>
+				<% post.cached_tags.split(" ").each do |t| %>
+					<li><%= link_to h(t), :controller => "post", :action => "index", :tags => t %></li>
+				<% end %>
+			</ul>
+		</div>
 	</div>
-	<div class="col2" id="comments-for-p<%= post.id %>">
-		<%= render :partial => "comments_for_post", :locals => {:post => post, :comments => post.comments} %>
-	</div>
-	<div class="col3">
-		<ul class="post-info">
-			<li><%= post.created_at.strftime("%D %I:%M") %></li>
-			<li>rating:<%= post.pretty_rating %></li>
-			<li><%= link_to "user:" + post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></li>
-			<% post.cached_tags.split(" ").each do |t| %>
-				<li><%= link_to h(t), :controller => "post", :action => "index", :tags => t %></li>
-			<% end %>
-		</ul>
-	</div>
-</div>
-<%- end -%>
-
-<script type="text/javascript">
-//<![CDATA[
-var pignored = []
-
-for (i in posts)  {
-	var hidden = false
-
-	tags.each(function(j) {
-		if (posts[i].tags.include(j)) {
-			hidden = true
-		}
-	})
-
-	if (hidden) {
-		Element.addClassName('p' + i, 'ignored-post')
-		Element.hide('p' + i)
-		pignored.push('p' + i)
-	}
-}
-
-if (pignored.length > 0) {
-	var cmd = ""
-	pignored.each(function(x) {
-		cmd += "Element.toggle('" + x + "');"
-	})
-	cmd += "return false"
-
-	document.writeln('<a href="#" onclick="' + cmd + '">' + pignored.length + ' post' + (pignored.length == 1 ? '' : 's') + ' ignored</a>')
-}
-//]]>
-</script>
+<% end %>
 
 <div id="paginator">
 	<%= custom_pagination_links(@pages)  %>

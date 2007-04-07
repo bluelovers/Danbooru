@@ -169,6 +169,8 @@ function changeMode() {
 		document.body.style.background = "#AA3"
 	} else if (s == "lock-note") {
 		document.body.style.background = "#3AA"
+	} else if (s == "delete") {
+		document.body.style.background = "#F00"
 	} else if (s == "new-tag-script") {
 		tagScriptCheckFirstTime()
 
@@ -255,6 +257,9 @@ function postClick(post_id) {
 				notice("Post #" + post_id + " locked")
 			}
 		})
+		return false
+	} else if (s.value == 'delete') {
+		deletePost(post_id)
 		return false
 	} else if (s.value.match(/^tag-script-/)) {
 		var script = eval("(" + readCookie("tag-script") + ")")[s.value.substr(11,100)]
@@ -366,77 +371,6 @@ function injectTags(related, dest) {
 	}
 }
 
-function filterComments(post_id, comment_size) {
-	var cignored = []
-	var j = comment_size - 5
-
-	for (i in posts[post_id].comments) {
-		if (j-- > 0) {
-			Element.hide('c' + i)
-			Element.addClassName('c' + i, 'hidden-comment')
-			cignored.push('c' + i)
-		}
-	}	
-
-	if (cignored.length > 0) {
-		$('ci' + post_id).innerHTML = cignored.length + ' hidden'
-		var cmd = "(function() {"
-		cignored.each(function(x) {
-			cmd += "Element.toggle('" + x + "'); "
-		})
-		cmd += "return false})"
-		$('ci' + post_id).onclick = eval(cmd)
-	}
-}
-
-function filterPosts(posts) {
-	var tags = readCookie("tag_blacklist").split(/[, ]+/g)
-	var users = readCookie("user_blacklist").split(/[, ]+/g)
-	var threshold = parseInt(readCookie("post_threshold")) || 0
-	var ignored = []
-
-	for (i in posts)  {
-		var hidden = false
-
-		if (posts[i].score < threshold) {
-			hidden = true
-		}
-
-		if (!hidden && users.include(posts[i].user)) {
-			hidden = true
-		}
-
-		if (!hidden) {
-			if (tags.include(posts[i].rating.toLowerCase())) {
-				hidden = true
-			}
-		}
-
-		if (!hidden) {
-			tags.each(function(j) {
-				if (posts[i].tags.include(j)) {
-					hidden = true
-				}
-			})
-		}
-
-		if (hidden) {
-			Element.addClassName('p' + i, 'ignored-post')
-			Element.hide('p' + i)
-			ignored.push('p' + i)
-		}
-	}
-
-	if (ignored.length > 0) {
-		var cmd = ""
-		ignored.each(function(x) {
-			cmd += "Element.toggle('" + x + "'); "
-		})
-		cmd += "return false"
-		document.writeln('<div style="float: left; clear: both; text-align: center;"><a href="#" onclick="' + cmd + '">' + ignored.length + ' post' + (ignored.length == 1 ? '' : 's') + ' ignored</a></div>')
-	}
-}
-
 function findRelTags(tag_field, tag_type) {
 	$('related').innerHTML = '<em>Fetching...</em>'
 	var tag_field = $(tag_field)
@@ -482,5 +416,20 @@ function findArtist() {
 			$('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["personal_name"] || x["handle_name"] || x["circle_name"]}).join(" "))
 		}, 
 		parameters:'name='+$F('post_source')
+	})
+}
+
+function deletePost(post_id) {
+	new Ajax.Request('/post/destroy', {
+		method: 'post',
+		postBody: 'id=' + post_id,
+		onComplete: function(res) {
+			var resp = eval('(' + res.responseText + ')')
+			if (resp['success'] == true) {
+				notice('Post #' + post_id + ' deleted')
+			} else {
+				notice('Error: ' + resp['reason'])
+			}
+		}
 	})
 }

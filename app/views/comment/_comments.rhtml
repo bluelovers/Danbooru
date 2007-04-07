@@ -1,12 +1,10 @@
 <% comments.each do |c| %>
-<div class="comment" id="c<%= c.id %>">
-	<h4><%= link_to(c.author.tr("_", " "), {:controller => "comment", :action => "show", :id => c.id}, :onclick => "Element.show('r#{post_id}'); $('rtxt#{post_id}').value += '>>#{c.id}\\n'; return false") %></h4>
-	<h6 class="comment-header">Posted on <%= c.created_at.strftime("%D %I:%M") %> (<%= link_to_function("Mark as spam", "markcom(#{c.id}); return false") %>)</h6>
-	<div id="cbody<%= c.id %>"><%= print_comment(c) %></div>
-</div>
+	<div class="comment" id="c<%= c.id %>">
+		<h4><%= link_to(c.author.tr("_", " "), {:controller => "comment", :action => "show", :id => c.id}, :onclick => "Element.show('r#{post_id}'); $('rtxt#{post_id}').value += '>>#{c.id}\\n'; return false") %></h4>
+		<h6 class="comment-header">Posted on <%= c.created_at.strftime("%D %I:%M") %> (<%= link_to_function("Mark as spam", "markcom(#{c.id}); return false") %>)</h6>
+		<div id="cbody<%= c.id %>"><%= print_comment(c) %></div>
+	</div>
 <% end %>
-
-<%= javascript_tag "filterComments(#{post_id}, #{comments.size})" %>
 
 <p><%= link_to_function "&raquo; Respond", "Element.toggle('r#{post_id}')", :class => "resp-link" %></p>
 <div id="r<%= post_id %>" style="display: none;">
