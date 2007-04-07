@@ -22,7 +22,7 @@ class TagImplication < ActiveRecord::Base
 			p = Tag.find(self.predicate_id)
 			c = Tag.find(self.consequent_id)
 
-			if self.class.find(:first, :conditions => ["(predicate_id = ? AND consequent_id = ?) OR (predicate_id = ? AND consequent_id = ?)", p.id, c.id, c.id, p.id])
+			if self.class.find(:first, :conditions => ["is_pending = FALSE AND ((predicate_id = ? AND consequent_id = ?) OR (predicate_id = ? AND consequent_id = ?))", p.id, c.id, c.id, p.id])
 				raise "Tag implication already exists"
 			end
 

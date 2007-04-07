@@ -740,13 +740,13 @@ div#forum > table {
 div#forum > table td,
 div#forum > table th {
 	text-align: center;
-	width: 10%;
+	width: 15%;
 }
 
 div#forum > table td:first-child,
 div#forum > table th:first-child {
 	text-align: left;
-	width: 80%;
+	width: 70%;
 }
 
 div#forum > div.post {

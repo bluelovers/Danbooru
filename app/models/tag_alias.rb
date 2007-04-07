@@ -11,11 +11,11 @@ class TagAlias < ActiveRecord::Base
 	end
 
 	def approve!
-		transaction do
-			n = Tag.find_or_create_by_name(self.name)
-			a = Tag.find(self.alias_id)
+		n = Tag.find_or_create_by_name(self.name)
+		a = Tag.find(self.alias_id)
 
-			if self.class.find(:first, :conditions => ["name = ? OR name = ?", n.name, a.name])
+		transaction do
+			if self.class.find(:first, :conditions => ["is_pending = FALSE AND (name = ? OR name = ?)", n.name, a.name])
 				raise "Tag alias already exists"
 			end
 
@@ -23,9 +23,9 @@ class TagAlias < ActiveRecord::Base
 			connection.execute(Tag.sanitize_sql(["UPDATE posts_tags SET tag_id = ? WHERE tag_id = ?", a.id, n.id]))
 			connection.execute(Tag.sanitize_sql(["UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags WHERE tag_id = tags.id) WHERE tags.name IN (?, ?)", n.name, a.name]))
 			connection.execute("UPDATE tag_aliases SET is_pending = FALSE WHERE id = #{self.id}")
-
-			Tag.update_cached_tags([a.name, p.name])
 		end
+
+		Tag.update_cached_tags([a.name, n.name])
 	end
 
 # Maps tag synonyms to their preferred names. Returns an array of strings.
