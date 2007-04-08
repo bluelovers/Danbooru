@@ -37,23 +37,23 @@ class UserController < ApplicationController
 	end
 
 	def create
-		if CONFIG["enable_signups"]
-			if params[:key]
-				invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:key]])
-				if invite
-					invite.destroy
-				else
-					access_denied()
-					return
-				end
+		if CONFIG["enable_invites"] && params[:key]
+			invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:key]])
+			if invite
+				invite.destroy
 			else
-				respond_to do |fmt|
-					fmt.html {flash[:notice] = "Signups are disabled"; redirect_to(:action => "home")}
-					fmt.xml {render :xml => {:success => false, :reason => "signups are disabled"}.to_xml, :status => 500}
-					fmt.js {render :json => {:success => false, :reason => "signups are disabled"}.to_json, :status => 500}
-				end
+				access_denied()
 				return
 			end
+		end
+
+		if !CONFIG["enable_signups"] && !CONFIG["enable_invites"]
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Signups are disabled"; redirect_to(:action => "home")}
+				fmt.xml {render :xml => {:success => false, :reason => "signups are disabled"}.to_xml, :status => 500}
+				fmt.js {render :json => {:success => false, :reason => "signups are disabled"}.to_json, :status => 500}
+			end
+			return
 		end
 
 		user = User.create(params[:user].merge(:last_seen_forum_post_date => Time.now))
