@@ -21,7 +21,7 @@ class TagImplicationController < ApplicationController
 			redirect_to :action => "index"
 
 		when "Approve"
-			ids.each {|x| TagImplication.find(x).approve!}
+			ids.each {|x| TagImplication.find(x).approve!(@current_user.id, request.remote_ip)}
 
 			flash[:notice] = "Tag implications approved"
 			redirect_to :action => "index"
