@@ -1,13 +1,7 @@
 class TagAlias < ActiveRecord::Base
-	after_destroy :update_cached_tags
-
 	def alias=(name)
 		tag = Tag.find_or_create_by_name(name)
 		self.alias_id = tag.id
-	end
-
-	def update_cached_tags
-		Tag.update_cached_tags([self.name, Tag.find(self.alias_id).name])
 	end
 
 	def approve!
