@@ -1,31 +1,36 @@
 <div id="post-recent-tag-changes">
-<%- @changes.each do |change| -%>
+<% @changes.each do |change| %>
 	<% form_tag(:controller => "post", :action => "revert_tags", :id => change.post_id) do %>
 		<table>
 			<tr>
 				<th colspan="5"><%= link_to "Post ##{change.post_id}", :controller => "post", :action => "show", :id => change.post_id %></th>
 			</tr>
-<% PostTagHistory.find(:all, :conditions => ["post_id = ?", change.post_id], :order => "id DESC").each do |history| %>
-			<tr class="<%= cycle 'even', 'odd', :name => "changes" %>">
-				<td width="95%">
-<% if history.id == change.id %>
-					&raquo;
-<% end %>
-					<%= history.tags %>
-				</td>
-				<td><%= history.created_at.strftime("%D") %></td>
-				<td><%= history.author %></td>
-				<td><%= history.ip_addr %></td>
-				<td width="5%"><input type="radio" name="history_id" value="<%= history.id %>"/></td>
-			</tr>
-<% end %>
+			<% PostTagHistory.find(:all, :conditions => ["post_id = ?", change.post_id], :order => "id DESC").each do |history| %>
+				<tr class="<%= cycle 'even', 'odd', :name => "changes" %>">
+					<td width="95%">
+						<% if history.id == change.id %>
+							&raquo;
+						<% end %>
+						<%= history.tags %>
+					</td>
+					<td><%= history.created_at.strftime("%D") %></td>
+					<td><%= history.author %></td>
+					<% if @current_user && @current_user.role?(:mod) %>
+						<td><%= history.ip_addr %></td>
+					<% else %>
+						<td></td>
+					<% end %>
+					<td width="5%"><input type="radio" name="history_id" value="<%= history.id %>"/></td>
+				</tr>
+			<% end %>
 			<tr><td colspan="2"><%= submit_tag "Revert!" %></td></tr>
-<% reset_cycle "changes" %>
+			<% reset_cycle "changes" %>
 		</table>
 	<% end %>
-<%- end -%>
+<% end %>
 
 <div id="paginator">
 	<%= custom_pagination_links(@pages) %>
 </div>
+
 </div>
