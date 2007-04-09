@@ -50,6 +50,7 @@ class TagImplication < ActiveRecord::Base
 					WHERE ti.predicate_id = t2.id 
 					AND ti.consequent_id = t1.id 
 					AND t2.name IN (?)
+					AND ti.is_pending = FALSE
 				SQL
 
 				if results.any?

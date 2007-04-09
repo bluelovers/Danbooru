@@ -41,6 +41,7 @@ class TagAlias < ActiveRecord::Base
 						FROM tags t, tag_aliases ta 
 						WHERE ta.name = ? 
 						AND ta.alias_id = t.id
+						AND ta.is_pending = FALSE
 					), 
 					?
 				)
