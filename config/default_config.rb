@@ -74,3 +74,8 @@ CONFIG["enable_openid"]							= false
 # when displaying tag lists. This is informative but adds strain to
 # the database.
 CONFIG["enable_tag_type_lookups"]				= true
+
+# Set to true to show only the related tags of the intersection
+# when searching for multiple tags. This adds strain to the
+# database.
+CONFIG["enable_related_tag_intersection"]		= true

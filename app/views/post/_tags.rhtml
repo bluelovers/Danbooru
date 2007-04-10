@@ -10,10 +10,8 @@
 			<li><%= tag_link(tt) %></li>
 		<% end %>
 
-		<% [*@tags[:related]].each do |tt| %>
-			<% Tag.find_related(tt).each do |ttt| %>
-				<li><%= tag_link(ttt) %></li>
-			<% end %>
+		<% Tag.find_related([*@tags[:related]]).each do |tt| %>
+			<li><%= tag_link(tt) %></li>
 		<% end %>
 	</ul>
 </div>

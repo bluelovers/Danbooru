@@ -74,30 +74,35 @@ class Tag < ActiveRecord::Base
 		return Tag.find_by_name(name)
 	end
 
-	def calculate_related
-		return connection.select_all(Tag.sanitize_sql([<<-SQL, self.name])).map {|i| [i["tag"], i["tag_count"]]}
-			SELECT (
-				SELECT name 
-				FROM tags 
-				WHERE id = pt1.tag_id
-			) AS tag, 
-			COUNT(pt1.tag_id) AS tag_count 
-			FROM posts_tags pt1, posts_tags pt2, tags t
-			WHERE pt1.post_id = pt2.post_id
-			AND pt2.tag_id = t.id
-			AND t.name = ?
-			GROUP BY pt1.tag_id 
-            ORDER BY tag_count DESC
-            LIMIT 25
-		SQL
-	end
+	def self.find_related(tags)
+		if tags.is_a?(Array) && tags.size > 1
+			return [] if tags.empty?
 
-	def self.find_related(name)
-		t = Tag.find_by_name(name)
-		if t
-			t.related
+			if CONFIG["enable_related_tag_intersection"] == true
+				from = ["posts_tags pt0"]
+				cond = ["pt0.post_id = pt1.post_id"]
+				sql = ""
+
+				(1..tags.size).each {|i| from << "posts_tags pt#{i}"}
+				(2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
+				(1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
+
+				sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.tag_id) AS tag_count"
+				sql << " FROM " << from.join(", ")
+				sql << " WHERE " << cond.join(" AND ")
+				sql << " GROUP BY pt0.tag_id"
+				sql << " ORDER BY tag_count DESC LIMIT 25"
+				return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
+			else
+				return tags.inject([]) {|all, x| all += Tag.find_related(x)}
+			end
 		else
-			[]
+			t = Tag.find_by_name(tags.to_s)
+			if t
+				t.related
+			else
+				[]
+			end
 		end
 	end
 
@@ -122,7 +127,8 @@ class Tag < ActiveRecord::Base
 		if Time.now > self.cached_related_expires_on
 			length = (self.post_count / 20).to_i
 			length = 8 if length < 8
-			connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", self.calculate_related.to_yaml, length.hours.from_now]))
+
+			connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.find_related(self.name).to_yaml, length.hours.from_now]))
 			self.reload
 		end
 
