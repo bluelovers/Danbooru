@@ -17,11 +17,13 @@ class WikiPage < ActiveRecord::Base
 
 	def identify_artist
 		tag = Tag.find_by_name(self.title)
-		if tag != nil && tag.tag_type == Tag::TYPE_ARTIST
+		if tag != nil && tag.tag_type == Tag.types[:artist]
 			attribs = {}
 			attribs[:personal_name] = self.title
 			attribs[:handle_name] = self.title
-			attribs[:japanese_name] = self.body[/Japanese name:\s*(\S+)/, 1] rescue nil
+			attribs[:circle_name] = self.body[/Circle name:\s*(.+?)$/, 1] rescue nil
+			attribs[:site_name] = self.body[/Site name:\s*(.+?)$/, 1] rescue nil
+			attribs[:japanese_name] = self.body[/Japanese name:\s*(.+?)$/, 1] rescue nil
 			attribs[:site_url] = self.body[/"Home page":(\S+)/, 1] rescue nil
 			attribs[:image_url] = Post.find(:first, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id IN (SELECT t.id FROM tags t WHERE t.name = ?)) AND source LIKE 'http%'", self.title]).source rescue attribs[:site_url]
 

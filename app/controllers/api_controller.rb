@@ -126,14 +126,14 @@ class ApiController < ApplicationController
 	def find_related_tags
 		if params["url"]
 			escaped_url = File.dirname(params["url"]).gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_') + "%"
-			@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = ?", escaped_url, Tag::TYPE_ARTIST], :order => "name", :limit => 1, :select => "name").map {|i| i.name}
+			@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = ?", escaped_url, Tag.types[:artist]], :order => "name", :limit => 1, :select => "name").map {|i| i.name}
 		elsif params["tags"]
 			if params["artist"]
-				tag_type = Tag::TYPE_ARTIST
+				tag_type = Tag.types[:artist]
 			elsif params["char"]
-				tag_type = Tag::TYPE_CHARACTER
+				tag_type = Tag.types[:character]
 			elsif params["copyright"]
-				tag_type = Tag::TYPE_COPYRIGHT
+				tag_type = Tag.types[:copyright]
 			else
 				tag_type = nil
 			end

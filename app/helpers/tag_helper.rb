@@ -1,4 +1,3 @@
-# test
 module TagHelper
 	def tag_link(t, prefix = "")
 		html = ""
@@ -26,19 +25,19 @@ module TagHelper
 		end
 
 		html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
-		html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params["tags"].to_s) << " "
-		html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params["tags"].to_s) << " "
+		html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
+		html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
 		if CONFIG["enable_tag_type_lookups"]
-			case Tag.type(name)
-			when Tag::TYPE_ARTIST
+			case Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type").tag_type
+			when Tag.types[:artist]
 				html << '<span class="artist-tag">(artist)</span> '
 
-			when Tag::TYPE_CHARACTER
+			when Tag.types[:character]
 				html << '<span class="character-tag">(character)</span> '
 
-			when Tag::TYPE_COPYRIGHT
+			when Tag.types[:copyright]
 				html << '<span class="copyright-tag">(copyright)</span> '
 			end
 		end

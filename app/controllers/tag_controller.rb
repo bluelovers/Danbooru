@@ -19,7 +19,7 @@ class TagController < ApplicationController
 
 			if params[:type]
 				sql << " AND tag_type = ?"
-				cond_params << Tag.type_string_to_integer(params[:type])
+				cond_params << Tag.types[params[:type]]
 			end
 
 			page = (Tag.count_by_sql([sql, *cond_params]) / 50) + 1
@@ -38,25 +38,7 @@ class TagController < ApplicationController
 			order = "name"
 		end
 
-		case params[:type]
-		when "artist"
-			tag_type = Tag::TYPE_ARTIST
-
-		when "character"
-			tag_type = Tag::TYPE_CHARACTER
-
-		when "copyright"
-			tag_type = Tag::TYPE_COPYRIGHT
-
-		when "general"
-			tag_type = Tag::TYPE_GENERAL
-
-		when "ambiguous"
-			tag_type = Tag::TYPE_AMBIGUOUS
-
-		else
-			tag_type = nil
-		end
+		tag_type = Tag.types[params[:type]]
 
 		if tag_type
 			@pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => ["tag_type = ?", tag_type]
@@ -133,9 +115,9 @@ class TagController < ApplicationController
 			when "artist"
 				if name[/^http/]
 					escaped_name = File.dirname(name).gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_') + "%"
-					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = 1", escaped_name], :order => "name", :limit => 25)
+					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = ?", escaped_name, Tag.types[:artist]], :order => "name", :limit => 25)
 				else
-					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?))) AND tag_type = 1", name], :order => "name", :limit => 25)
+					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?))) AND tag_type = ?", name, Tag.types[:artist]], :order => "name", :limit => 25)
 				end
 			end
 		end

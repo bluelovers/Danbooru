@@ -116,11 +116,13 @@ class WikiController < ApplicationController
 	def edit
 		@wiki_page = WikiPage.find_page(params[:title], params[:version]) || WikiPage.new(:title => params[:title])
 
-		if @wiki_page.new_record? && (Tag.find_by_name(@wiki_page.title).tag_type == Tag::TYPE_ARTIST rescue false)
+		if @wiki_page.new_record? && (Tag.find_by_name(@wiki_page.title).tag_type == Tag.types[:artist] rescue false)
 			@wiki_page.body =<<-EOL
 Artist.
 
+Circle name: 
 Japanese name: 
+Site name: 
 
 h4. See also
 

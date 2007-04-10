@@ -1,6 +1,6 @@
 <% form_tag(:action => "update") do %>
 	<label>Tag to Update:</label> <%= text_field "tag", "name" %>
-	<%= select "tag", "tag_type", [["General", Tag::TYPE_GENERAL], ["Ambiguous", Tag::TYPE_AMBIGUOUS], ["Artist", Tag::TYPE_ARTIST], ["Character", Tag::TYPE_CHARACTER], ["Copyright", Tag::TYPE_COPYRIGHT]] %>
+	<%= select "tag", "tag_type", Tag.types.select {|k, v| k.is_a?(Symbol)}.map {|(name, val)| [name.to_s.capitalize, val]}.sort {|a, b| a[1] <=> b[1]} %>
 	<%= submit_tag "Save" %>
 <% end %>
 
