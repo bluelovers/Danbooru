@@ -52,10 +52,10 @@ CONFIG["enable_invites"]						= true
 CONFIG["enable_forum"]							= true
 
 # Set to true to allow Anonymous to access anything under /forum/.
-CONFIG["enable_anonymous_forum_access"]			= true
+CONFIG["enable_anonymous_forum_access"]			= false
 
-# Set to true to Allow Anonymous to post to the forum.
-CONFIG["enable_anonymous_forum_posts"]			= true
+# Set to true to allow Anonymous to post to the forum.
+CONFIG["enable_anonymous_forum_posts"]			= false
 
 # Set to true to enable server-side tag blacklists.
 CONFIG["enable_tag_blacklists"]					= false
@@ -80,5 +80,5 @@ CONFIG["enable_tag_type_lookups"]				= false
 # database.
 CONFIG["enable_related_tag_intersection"]		= false
 
-# Set to true to link to the Danbooru Trac on navigation bar.
+# Set to true to link to the Danbooru Trac on the navigation bar.
 CONFIG["enable_trac_link"]						= false

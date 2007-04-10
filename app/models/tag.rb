@@ -74,8 +74,9 @@ class Tag < ActiveRecord::Base
 		return Tag.find_by_name(name)
 	end
 
-	def self.find_related(tags)
-		if tags.is_a?(Array) && tags.size > 1
+	def self.find_related(tags, force_new = false)
+		if force_new || (tags.is_a?(Array) && tags.size > 1)
+			tags = [*tags]
 			return [] if tags.empty?
 
 			if CONFIG["enable_related_tag_intersection"] == true
@@ -94,7 +95,7 @@ class Tag < ActiveRecord::Base
 				sql << " ORDER BY tag_count DESC LIMIT 25"
 				return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
 			else
-				return tags.inject([]) {|all, x| all += Tag.find_related(x)}
+				return tags.inject([]) {|all, x| all += Tag.find_related(x, force_new)}
 			end
 		else
 			t = Tag.find_by_name(tags.to_s)
@@ -128,7 +129,7 @@ class Tag < ActiveRecord::Base
 			length = (self.post_count / 20).to_i
 			length = 8 if length < 8
 
-			connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.find_related(self.name).to_yaml, length.hours.from_now]))
+			connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.find_related(self.name, true).to_yaml, length.hours.from_now]))
 			self.reload
 		end
 
