@@ -52,10 +52,10 @@ CONFIG["enable_invites"]						= true
 CONFIG["enable_forum"]							= true
 
 # Set to true to allow Anonymous to access anything under /forum/.
-CONFIG["enable_anonymous_forum_access"]			= false
+CONFIG["enable_anonymous_forum_access"]			= true
 
 # Set to true to Allow Anonymous to post to the forum.
-CONFIG["enable_anonymous_forum_posts"]			= false
+CONFIG["enable_anonymous_forum_posts"]			= true
 
 # Set to true to enable server-side tag blacklists.
 CONFIG["enable_tag_blacklists"]					= false
@@ -73,9 +73,12 @@ CONFIG["enable_openid"]							= false
 # Set to true to enable the artist/character/copyright descriptors
 # when displaying tag lists. This is informative but adds strain to
 # the database.
-CONFIG["enable_tag_type_lookups"]				= true
+CONFIG["enable_tag_type_lookups"]				= false
 
 # Set to true to show only the related tags of the intersection
 # when searching for multiple tags. This adds strain to the
 # database.
-CONFIG["enable_related_tag_intersection"]		= true
+CONFIG["enable_related_tag_intersection"]		= false
+
+# Set to true to link to the Danbooru Trac on navigation bar.
+CONFIG["enable_trac_link"]						= false
