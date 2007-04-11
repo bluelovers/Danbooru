@@ -32,17 +32,25 @@ class Tag < ActiveRecord::Base
 		end
 
 		def find_or_create_by_name(name)
-			tag_type = @@tag_types[name[/^(.+?):/, 1]] || @@tag_types[:general]
+			tag_type = @@tag_types[name[/^(.+?):/, 1]]
+
+			if tag_type != nil
+				name.gsub!(/^.+?:/, "")
+			else
+				tag_type = Tag.types[:general]
+			end
+
+			puts tag_type
 
 			t = Tag.find_by_name(name)
-			if t
+			if t != nil
 				if t.tag_type == Tag.types[:general] && t.tag_type != tag_type
 					t.update_attribute(:tag_type => tag_type)
 				end
 				return t
 			end
 
-			Tag.create(:name => name, :tag_type => tag_type)
+			Tag.create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday)
 		end
 
 		def find_related(tags, force_new = false)
@@ -175,12 +183,6 @@ class Tag < ActiveRecord::Base
 		end
 	end
 
-	def before_create
-		if self.cached_related_expires_on == nil
-			self.cached_related_expires_on = Time.now
-		end
-	end
-
 	def related
 		if Time.now > self.cached_related_expires_on
 			length = (self.post_count / 20).to_i
@@ -199,14 +201,6 @@ class Tag < ActiveRecord::Base
 
 	def <=>(rhs)
 		name <=> rhs.name
-	end
-
-	def tag_type=(s)
-		if s =~ /^\d+$/
-			self.tag_type = s.to_i
-		else
-			self.tag_type = self.class.types[s]
-		end
 	end
 
 	def to_xml(options = {})
