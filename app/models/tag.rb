@@ -45,7 +45,7 @@ class Tag < ActiveRecord::Base
 			t = Tag.find_by_name(name)
 			if t != nil
 				if t.tag_type == Tag.types[:general] && t.tag_type != tag_type
-					t.update_attribute(:tag_type => tag_type)
+					t.update_attributes(:tag_type => tag_type)
 				end
 				return t
 			end

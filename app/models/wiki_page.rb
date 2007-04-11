@@ -21,8 +21,6 @@ class WikiPage < ActiveRecord::Base
 			attribs = {}
 			attribs[:personal_name] = self.title
 			attribs[:handle_name] = self.title
-			attribs[:circle_name] = self.body[/Circle name:\s*(.+?)$/, 1] rescue nil
-			attribs[:site_name] = self.body[/Site name:\s*(.+?)$/, 1] rescue nil
 			attribs[:japanese_name] = self.body[/Japanese name:\s*(.+?)$/, 1] rescue nil
 			attribs[:site_url] = self.body[/"Home page":(\S+)/, 1] rescue nil
 			attribs[:image_url] = Post.find(:first, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id IN (SELECT t.id FROM tags t WHERE t.name = ?)) AND source LIKE 'http%'", self.title]).source rescue attribs[:site_url]

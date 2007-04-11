@@ -120,9 +120,7 @@ class WikiController < ApplicationController
 			@wiki_page.body =<<-EOL
 Artist.
 
-Circle name: 
 Japanese name: 
-Site name: 
 
 h4. See also
 
