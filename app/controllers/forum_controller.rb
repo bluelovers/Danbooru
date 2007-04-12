@@ -1,9 +1,19 @@
 class ForumController < ApplicationController
 	layout "default"
-	before_filter :user_only
 	verify :method => :post, :only => [:create, :destroy, :update]
 
+	if CONFIG["enable_anonymous_forum_access"]
+		before_filter :user_only, :only => [:destroy]
+	else
+		before_filter :user_only, :only => [:create, :destroy, :update, :edit, :add, :show, :index]
+	end
+
 	def create
+		if CONFIG["enable_anonymous_forum_posts"] == false && @current_user == nil
+			access_denied()
+			return
+		end
+
 		@forum_post = ForumPost.create(params[:forum_post].merge(:user_id => session[:user_id]))
 
 		if @forum_post.errors.empty?
@@ -70,7 +80,7 @@ class ForumController < ApplicationController
 		@forum_post = ForumPost.find(params[:id])
 
 		if @current_user != nil
-			@current_user.update_attribute(:last_seen_forum_post_date, @forum_post.updated_at)
+			@current_user.update_forum_view!(@forum_post.id)
 		end
 	end
 

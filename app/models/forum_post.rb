@@ -29,6 +29,11 @@ class ForumPost < ActiveRecord::Base
 		end
 	end
 
+	def updated?(user_id)
+		fpv = ForumPostView.find(:first, :conditions => ["user_id = ? AND forum_post_id = ?", user_id, self.id])
+		return fpv == nil || fpv.last_viewed_at < self.updated_at
+	end
+
 	def parent?
 		return self.parent_id == nil
 	end
@@ -45,8 +50,10 @@ class ForumPost < ActiveRecord::Base
 		self.creator.name
 	end
 
-	def self.updated_since?(date)
-		fp = ForumPost.find(:first, :order => "created_at DESC")
-		return fp != nil && fp.created_at > date
+	def self.updated_since?(user_id)
+		return false
+
+		fp = ForumPostView.find(:first, :conditions => ["forum_posts_user_views.user_id = ? AND forum_posts_user_views.last_viewed_at < forum_posts.updated_at AND forum"])
+		return fp != nil
 	end
 end

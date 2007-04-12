@@ -24,7 +24,7 @@
 			<li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
 			<li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
 			<% if CONFIG["enable_forum"] %>
-				<% if @current_user && ForumPost.updated_since?(@current_user.last_seen_forum_post_date) %>
+				<% if @current_user && ForumPostView.updated?(@current_user.id) %>
 					<li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :class => "forum-update" %></li>
 				<% else %>
 					<li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>

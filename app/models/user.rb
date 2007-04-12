@@ -96,6 +96,15 @@ class User < ActiveRecord::Base
 		end
 	end
 
+	def update_forum_view!(forum_post_id)
+		view = ForumPostView.find(:first, :conditions => ["user_id = ? AND forum_post_id = ?", self.id, forum_post_id])
+		if view == nil
+			ForumPostView.create(:user_id => self.id, :forum_post_id => forum_post_id, :last_viewed_at => Time.now)
+		else
+			view.update_attribute(:last_viewed_at, Time.now)
+		end
+	end
+
 	# Authenticate a user.
 	def self.authenticate(name, pass)
 		authenticate_hash(name, sha1(pass))
