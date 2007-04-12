@@ -30,6 +30,10 @@ class ForumPost < ActiveRecord::Base
 	end
 
 	def updated?(user_id)
+		if CONFIG["enable_forum_update_notices"] == false
+			return false
+		end
+
 		fpv = ForumPostView.find(:first, :conditions => ["user_id = ? AND forum_post_id = ?", user_id, self.id])
 		return fpv == nil || fpv.last_viewed_at < self.updated_at
 	end

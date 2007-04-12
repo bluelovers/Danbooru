@@ -76,9 +76,19 @@ CONFIG["enable_openid"]							= false
 CONFIG["enable_tag_type_lookups"]				= false
 
 # Set to true to show only the related tags of the intersection
-# when searching for multiple tags. This adds strain to the
-# database.
+# when searching for multiple tags. This relies on an expensive
+# database query and probably shouldn't be enabled if you're
+# expecting more than a dozen concurrent connections.
 CONFIG["enable_related_tag_intersection"]		= false
 
 # Set to true to link to the Danbooru Trac on the navigation bar.
 CONFIG["enable_trac_link"]						= false
+
+# If this is enabled, whenever a forum topic is posted or
+# updated and the user hasn't seen it yet, that topic's title
+# will be displayed in bold, and the Forum link on the main
+# navigation bar will also be bold. This relies on a nontrivial
+# database call, however. For forums with less than 10,000
+# posts it shouldn't really be an issue, but to squeeze out
+# every ounce of performance you can disable it.
+CONFIG["enable_forum_update_notices"]			= true

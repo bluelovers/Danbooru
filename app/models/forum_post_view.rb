@@ -3,6 +3,10 @@ class ForumPostView < ActiveRecord::Base
 
 	class << self
 		def updated?(user_id)
+			if CONFIG["enable_forum_update_notices"] == false
+				return false
+			end
+
 			sql = <<-EOS
 				SELECT COALESCE((
 					SELECT 1
