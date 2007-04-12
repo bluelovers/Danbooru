@@ -11,7 +11,7 @@
 	<% form_tag(:controller => "comment", :action => "create") do %>
 		<span style="display:none;"><input type="text" name="email" /></span>
 		<%= text_area "comment", "body", :rows => 4, :id => "rtxt#{post_id}" %>
-		<%= hidden_field "comment", "post_id", :value => post_id %>
+		<input type="hidden" value="<%= post_id %>"/>
 		<%= submit_tag "Post comment" %>
 		<input value="1" name="comment[anonymous]" type="checkbox" id="anon<%= post_id %>"/> <label for="anon<%= post_id %>">Post as <%= CONFIG["default_guest_name"] %></label>
 	<% end %>
