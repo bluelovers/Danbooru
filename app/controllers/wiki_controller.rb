@@ -2,7 +2,7 @@ class WikiController < ApplicationController
 	layout 'default'
 
 	if CONFIG["enable_anonymous_wiki_access"]
-		unless CONFIG["enable_anonymous_wiki_edits"]
+		if CONFIG["enable_anonymous_wiki_edits"] == false
 			before_filter :user_only, :only => [:update, :create, :edit, :revert]
 		end
 	else
@@ -12,6 +12,8 @@ class WikiController < ApplicationController
 	before_filter :mod_only, :only => [:lock, :unlock, :destroy, :rename]
 	verify :method => :post, :only => [:lock, :unlock, :destroy, :update, :create, :revert]
 
+# Parameters
+# * title: title of the wiki page (and all its versions) to destroy
 	def destroy
 		page = WikiPage.find_page(params[:title])
 		WikiPageVersion.destroy_all("wiki_page_id = #{page.id}")
@@ -24,6 +26,8 @@ class WikiController < ApplicationController
 		end
 	end
 
+# Parameters
+# * title: title of the wiki page to lock
 	def lock
 		page = WikiPage.find_page(params[:title])
 		page.lock!
@@ -35,6 +39,8 @@ class WikiController < ApplicationController
 		end
 	end
 
+# Parameters
+# * title: title of the wiki page to unlock
 	def unlock
 		page = WikiPage.find_page(params["title"])
 		page.unlock!
@@ -46,10 +52,13 @@ class WikiController < ApplicationController
 		end
 	end
 
+# Parameters
+# * page: the page number
+# * per_page: how many wiki pages per page
 	def index
 		set_title "Wiki"
 
-		@pages, @wiki_pages = paginate :wiki_pages, :order => "lower(title)", :per_page => 25
+		@pages, @wiki_pages = paginate :wiki_pages, :order => "lower(title)", :per_page => (params[:per_page] || 25)
 
 		respond_to do |fmt|
 			fmt.html
@@ -58,10 +67,13 @@ class WikiController < ApplicationController
 		end
 	end
 
-	def preview
+	def preview #:nodoc:
 		render :inline => "<%= wikilize(params[:body]) %>"
 	end
 
+# Parameters
+# * wiki_page[title]: title of the new wiki page
+# * wiki_page[body]: content of the new wiki page
 	def create
 		page = WikiPage.create(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
 		if page.errors.empty?
@@ -81,6 +93,10 @@ class WikiController < ApplicationController
 		end
 	end
 
+# Parameters
+# * wiki_page[title]: title of the wiki page to update
+# * wiki_page[body]: the new content of the wiki page
+# * wiki_page[is_locked]: set to 1 or 0, determines whether or not the page is locked
 	def update
 		@page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 
@@ -108,11 +124,13 @@ class WikiController < ApplicationController
 		end
 	end
 
+# For API calls, see the index method
 	def show
 		@page = WikiPage.find_page(params[:title], params[:version])
 		set_title params[:title].tr("_", " ")
 	end
 
+# For API calls, see the update method
 	def edit
 		@wiki_page = WikiPage.find_page(params[:title], params[:version]) || WikiPage.new(:title => params[:title])
 
@@ -130,6 +148,9 @@ h4. See also
 		set_title @wiki_page.pretty_title + " (Editing)"
 	end
 
+# Parameters
+# * title: title of the wiki page to revert
+# * version: version to revert to
 	def revert
 		@page = WikiPage.find_page(params[:title])
 
@@ -159,16 +180,26 @@ h4. See also
 		end
 	end
 
+# Parameters
+# * title
+# * per_page
 	def history
 		set_title "Wiki History"
 
-		if params["title"]
-			@wiki_pages = WikiPageVersion.find(:all, :conditions => ["title = ?", params["title"]], :order => "updated_at DESC")
+		if params[:title]
+			@wiki_pages = WikiPageVersion.find(:all, :conditions => ["title = ?", params[:title]], :order => "updated_at DESC")
 		else
-			@pages, @wiki_pages = paginate :wiki_page_versions, :order => "updated_at DESC", :per_page => 25
+			@pages, @wiki_pages = paginate :wiki_page_versions, :order => "updated_at DESC", :per_page => (params[:per_page] || 25)
+		end
+
+		respond_to do |fmt|
+			fmt.html
+			fmt.xml {render :xml => @wiki_pages.to_xml}
+			fmt.js {render :json => @wiki_pages.to_json}
 		end
 	end
 
+# This method is not supported by the API.
 	def diff
 		set_title "Wiki Diff"
 
@@ -181,6 +212,9 @@ h4. See also
 		@difference = @oldpage.diff(params[:to])
 	end
 
+# Parameters
+# * title: title of the wiki page to update
+# * wiki_page[title]: new title
 	def rename
 		@wiki_page = WikiPage.find_page(params[:title])
 
