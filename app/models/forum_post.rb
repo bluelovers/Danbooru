@@ -2,7 +2,7 @@ class ForumPost < ActiveRecord::Base
 	has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id
 	belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
 	belongs_to :creator, :class_name => "User", :foreign_key => :user_id
-	before_create :update_parent
+	after_create :update_parent
 	before_validation :validate_title
 	validates_length_of :body, :minimum => 1, :message => "You need to enter a message"
 
@@ -25,7 +25,7 @@ class ForumPost < ActiveRecord::Base
 	def update_parent
 		unless self.parent?
 			p = self.parent
-			p.update_attribute(:updated_at, Time.now)
+			p.update_attribute(:updated_at, self.updated_at)
 		end
 	end
 

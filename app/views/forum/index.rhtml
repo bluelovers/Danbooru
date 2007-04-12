@@ -7,7 +7,7 @@
 	</tr>
 <% @forum_posts.each do |fp| %>
 	<tr class="<%= cycle 'even', 'odd' %>">
-		<% if @current_user && fp.updated?(@curent_user) %>
+		<% if @current_user && fp.updated?(@current_user.id) %>
 			<td><strong><%= link_to fp.title, :action => "show", :id => fp.id %></strong></td>
 		<% else %>
 			<td><%= link_to fp.title, :action => "show", :id => fp.id %></td>
