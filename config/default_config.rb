@@ -66,10 +66,6 @@ CONFIG["enable_user_blacklists"]				= false
 # Set to true to enable server-side post thresholds
 CONFIG["enable_post_thresholds"]				= false
 
-# Set to true to allow users to register using OpenID (compatible 
-# with regular signups and invites).
-CONFIG["enable_openid"]							= false
-
 # Set to true to enable the artist/character/copyright descriptors
 # when displaying tag lists. This is informative but adds strain to
 # the database.
@@ -92,3 +88,6 @@ CONFIG["enable_trac_link"]						= false
 # posts it shouldn't really be an issue, but to squeeze out
 # every ounce of performance you can disable it.
 CONFIG["enable_forum_update_notices"]			= true
+
+# Newly created users start out with this many invites.
+CONFIG["starting_invite_count"]					= 0

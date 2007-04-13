@@ -2,6 +2,7 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
 	before_create :set_role
+	before_create :set_invite_count
 	before_create :crypt_password
 	before_validation_on_update :crypt_unless_empty
 	validates_confirmation_of :password
@@ -24,6 +25,12 @@ class User < ActiveRecord::Base
 
 	def self.fast_count
 		return connection.select_value("SELECT row_count FROM table_data WHERE name = 'users'").to_i
+	end
+
+	def set_invite_count
+		if CONFIG["enable_invites"]
+			self.invite_count = CONFIG["starting_invite_count"]
+		end
 	end
 
 	def set_role
