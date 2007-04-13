@@ -133,8 +133,8 @@ class PostController < ApplicationController
 			limit = 15
 		end
 
-		tag_blacklist = (@current_user ? @current_user.tag_blacklist.scan(/\S+/) : nil)
-		user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/) : nil)
+		tag_blacklist = (@current_user ? @current_user.tag_blacklist.scan(/\S+/) : [])
+		user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/) : [])
 		post_threshold = (@curent_user ? @current_user.post_threshold : nil)
 
 		@ambiguous = Tag.select_ambiguous(params[:tags])
