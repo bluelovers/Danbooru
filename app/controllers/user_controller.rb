@@ -37,27 +37,26 @@ class UserController < ApplicationController
 	end
 
 	def create
+		if !CONFIG["enable_signups"] && (!CONFIG["enable_invites"] || (CONFIG["enable_invites"] && !params[:key]))
+			flash[:notice] = "Signups disabled"
+			redirect_to :action => "login"
+			return
+		end
+
 		if CONFIG["enable_invites"] && params[:key]
-			invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:key]])
-			if invite
-				invite.destroy
-			else
-				access_denied()
+			@invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:key]])
+
+			if @invite == nil
+				flash[:notice] = "Either the activation key was incorrect or the invite was not found"
+				redirect_to :action => "login"
 				return
 			end
 		end
 
-		if !CONFIG["enable_signups"] && !CONFIG["enable_invites"]
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Signups are disabled"; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => false, :reason => "signups are disabled"}.to_xml, :status => 500}
-				fmt.js {render :json => {:success => false, :reason => "signups are disabled"}.to_json, :status => 500}
-			end
-			return
-		end
+		user = User.create(params[:user])
 
-		user = User.create(params[:user].merge(:last_seen_forum_post_date => Time.now))
 		if user.errors.empty?
+			@invite.destroy if @invite
 			save_cookies(user)
 
 			if CONFIG["enable_account_email_activation"]
@@ -67,18 +66,12 @@ class UserController < ApplicationController
 				notice = "New account created"
 			end
 
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = notice; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => true}.to_xml}
-				fmt.js {render :js => {:success => true}.to_json}
-			end
+			flash[:notice] = notice
+			redirect_to :action => "home"
 		else
 			error = user.errors.full_messages.join(", ")
-				respond_to do |fmt|
-				fmt.html {flash[:notice] = "Error: " + error; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml, :status => 500}
-				fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
-			end
+			flash[:notice] = "Error: " + error
+			redirect_to :action => "login"
 		end
 	end
 
@@ -102,20 +95,12 @@ class UserController < ApplicationController
 
 	def update
 		if @current_user.update_attributes(params[:user])
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Account options saved"; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => true}.to_xml}
-				fmt.js {render :json => {:success => true}.to_json}
-			end
+			flash[:notice] = "Account settings saved"
+			redirect_to :action => "home"
 		else
 			error = @current_user.errors.full_messages.join(", ")
-			@current_user.errors.clear
-
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Error: " + error; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => false, :reason => error}.to_xml, :status => 500}
-				fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
-			end
+			flash[:notice] = "Error: " + error
+			redirect_to :action => "home"
 		end
 	end
 
@@ -152,27 +137,18 @@ class UserController < ApplicationController
 			
 			if @user
 				if @user.email.blank?
-					respond_to do |fmt|
-						fmt.html {flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"; redirect_to(:action => "login")}
-						fmt.xml {render :xml => {:success => false, :reason => "user has no email address"}.to_xml, :status => 500}
-						fmt.js {render :json => {:success => false, :reason => "user has no email address"}.to_json, :status => 500}
-					end
+					flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"
+					redirect_to :action => "login"
 				else
 					new_password = @user.reset_password!
 					UserMailer.deliver_new_password(@user, new_password)
 
-					respond_to do |fmt|
-						fmt.html {flash[:notice] = "Password reset. Check your email in a few minutes"; redirect_to(:action => "login")}
-						fmt.xml {render :xml => {:success => true}.to_xml}
-						fmt.js {render :json => {:success => true}.to_json}
-					end
+					flash[:notice] = "Password reset. Check your email in a few minutes"
+					redirect_to :action => "login"
 				end
 			else
-				respond_to do |fmt|
-					fmt.html {flash[:notice] = "That account does not exist"; redirect_to(:action => "reset_password")}
-					fmt.xml {render :xml => {:success => false, :reason => "user not found"}.to_xml, :status => 500}
-					fmt.js {render :json => {:success => false, :reason => "user not found"}.to_json, :status => 500}
-				end
+				flash[:notice] = "That account does not exist"
+				redirect_to :action => "reset_password"
 			end
 		else
 			@user = User.new
@@ -182,51 +158,41 @@ class UserController < ApplicationController
 	def invites
 	end
 
-if CONFIG["enable_account_email_activation"]
-	def resend_confirmation
-		user = @current_user
-		if false and user.activated?
-			flash[:notice] = "Account already activated"
+	if CONFIG["enable_account_email_activation"]
+		def resend_confirmation
+			user = @current_user
+			if user.activated?
+				flash[:notice] = "Account already activated"
+				redirect_to :action => "home"
+				return
+			end
+
+			UserMailer::deliver_confirmation_email(user, confirmation_hash(user.name))
+			flash[:notice] = "Confirmation email sent to #{user.email}"
 			redirect_to :action => "home"
-			return
 		end
 
-		UserMailer::deliver_confirmation_email(user, confirmation_hash(user.name))
-		flash[:notice] = "Confirmation email sent to #{user.email}"
-		redirect_to :action => "home"
-	end
-
-	def activate_user
-		if not params["id"] =~ /\A[0-9a-f]{64}\Z/
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Invalid confirmation code"; redirect_to(:action => "home")}
-				fmt.xml {render :xml => {:success => false}.to_xml}
-				fmt.js {render :json => {:success => false}.to_json}
+		def activate_user
+			if params["id"] !~ /\A[0-9a-f]{64}\Z/
+				flash[:notice] = "Invalid confirmation code"
+				redirect_to :action => "home"
+				return
 			end
-			return
-		end
 
-		users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
+			users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
 
-		users.each do |user|
-			if confirmation_hash(user.name) == params["hash"]
-				user.update_attribute(:level, User::LEVEL_MEMBER)
-
-				respond_to do |fmt|
-					fmt.html {flash[:notice] = "Account has been activated"; redirect_to(:action => "home")}
-					fmt.xml {render :xml => {:success => true}.to_xml}
-					fmt.js {render :json => {:success => true}.to_json}
+			users.each do |user|
+				if confirmation_hash(user.name) == params["hash"]
+					user.update_attribute(:level, User::LEVEL_MEMBER)
+	
+					flash[:notice] = "Account has been activated"
+					redirect_to :action => "home"
+					break
 				end
-				break
 			end
-		end
 
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Invalid confirmation code"; redirect_to(:action => "home")}
-			fmt.xml {render :xml => {:success => false}.to_xml}
-			fmt.js {render :json => {:success => false}.to_json}
+			flash[:notice] = "Invalid confirmation code"
+			redirect_to :action => "home"
 		end
 	end
-end
-
 end
