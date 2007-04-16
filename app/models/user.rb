@@ -145,7 +145,7 @@ class User < ActiveRecord::Base
 	end
 
 	def to_json(options = {})
-		{:name => escape_javascript(self.name), :id => self.id}.to_json(options)
+		{:name => self.name.to_escaped_js, :id => self.id}.to_json(options)
 	end
 
 	protected
@@ -169,9 +169,5 @@ class User < ActiveRecord::Base
 			self.password_confirmation = self.class.sha1(password_confirmation)
 			self.password = self.class.sha1(password)
 		end
-	end
-
-	def escape_javascript(s)
-		s.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
 	end
 end

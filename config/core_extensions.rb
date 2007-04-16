@@ -19,6 +19,10 @@ class String
 	def to_json(options = {})
 		return "'%s'" % self
 	end
+
+	def to_escaped_js
+		return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
+	end
 end
 
 class Symbol

@@ -482,7 +482,7 @@ class Post < ActiveRecord::Base
 			if escape_method == :xml
 				attribs[:source] = CGI.escapeHTML(self.source)
 			elsif escape_method == :js
-				attribs[:source] = escape_javascript(self.source)
+				attribs[:source] = self.source.to_escaped_js
 			else
 				attribs[:source] = source
 			end
@@ -491,7 +491,7 @@ class Post < ActiveRecord::Base
 			if escape_method == :xml
 				attribs[:author] = CGI.escapeHTML(self.author)
 			elsif escape_method == :js
-				attribs[:author] = escape_javascript(self.author)
+				attribs[:author] = self.author.to_escaped_js
 			else
 				attribs[:author] = self.author
 			end
@@ -515,7 +515,7 @@ class Post < ActiveRecord::Base
 			if escape_method == :xml
 				attribs[:tags] = CGI.escapeHTML(self.cached_tags)
 			elsif escape_method == :js
-				attribs[:tags] = escape_javascript(self.cached_tags)
+				attribs[:tags] = self.cached_tags.to_escaped_js
 			end
 
 			when "next"
@@ -528,10 +528,6 @@ class Post < ActiveRecord::Base
 		end
 
 		return attribs
-	end
-
-	def escape_javascript(s)
-		s.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
 	end
 
 	def find_ext(file_path)
