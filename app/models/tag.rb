@@ -1,6 +1,6 @@
 class Tag < ActiveRecord::Base
 	serialize :cached_related
-	after_create :related
+	after_create :update_related_tags!
 
 	@@tag_types = {
 		:general		=> 0,
@@ -34,13 +34,11 @@ class Tag < ActiveRecord::Base
 		def find_or_create_by_name(name)
 			tag_type = @@tag_types[name[/^(.+?):/, 1]]
 
-			if tag_type != nil
-				name.gsub!(/^.+?:/, "")
-			else
+			if tag_type == nil
 				tag_type = Tag.types[:general]
+			else
+				name.gsub!(/^.+?:/, "")
 			end
-
-			puts tag_type
 
 			t = Tag.find_by_name(name)
 			if t != nil
@@ -53,35 +51,39 @@ class Tag < ActiveRecord::Base
 			Tag.create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday)
 		end
 
-		def find_related(tags, force_new = false)
-			if force_new || (tags.is_a?(Array) && tags.size > 1)
-				tags = [*tags]
-				return [] if tags.empty?
+		def calculate_related(tags)
+			tags = [*tags]
+			return [] if tags.empty?
 
-				if CONFIG["enable_related_tag_intersection"] == true
-					from = ["posts_tags pt0"]
-					cond = ["pt0.post_id = pt1.post_id"]
-					sql = ""
+			if CONFIG["enable_related_tag_intersection"] == true
+				from = ["posts_tags pt0"]
+				cond = ["pt0.post_id = pt1.post_id"]
+				sql = ""
 
-					(1..tags.size).each {|i| from << "posts_tags pt#{i}"}
-					(2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
-					(1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
+				(1..tags.size).each {|i| from << "posts_tags pt#{i}"}
+				(2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
+				(1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
 
-					sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.tag_id) AS tag_count"
-					sql << " FROM " << from.join(", ")
-					sql << " WHERE " << cond.join(" AND ")
-					sql << " GROUP BY pt0.tag_id"
-					sql << " ORDER BY tag_count DESC LIMIT 25"
-					return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
-				else
-					return tags.inject([]) {|all, x| all += Tag.find_related(x, force_new)}
-				end
+				sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.tag_id) AS tag_count"
+				sql << " FROM " << from.join(", ")
+				sql << " WHERE " << cond.join(" AND ")
+				sql << " GROUP BY pt0.tag_id"
+				sql << " ORDER BY tag_count DESC LIMIT 25"
+				return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
+			else
+				return tags.inject([]) {|all, x| all += Tag.find_related(x, force_new)}
+			end
+		end
+
+		def find_related(tags)
+			if tags.is_a?(Array) && tags.size > 1
+				return calculate_related(tags)
 			else
 				t = Tag.find_by_name(tags.to_s)
 				if t
-					t.related
+					return t.related
 				else
-					[]
+					return []
 				end
 			end
 		end
@@ -140,11 +142,9 @@ class Tag < ActiveRecord::Base
 			q = Hash.new {|h, k| h[k] = []}
 
 			scan_query(query).each do |token|
-				if token =~ /^(after_id|user|fav|md5|rating|width|height|score|source|unlocked|id):(.+)$/
+				if token =~ /^(user|fav|md5|rating|width|height|score|source|id):(.+)$/
 					if $1 == "user"
 						q[:user] = $2
-					elsif $1 == "after_id"
-						q[:after_id] = $2.to_i
 					elsif $1 == "fav"
 						q[:fav] = $2
 					elsif $1 == "md5"
@@ -183,16 +183,20 @@ class Tag < ActiveRecord::Base
 		end
 	end
 
-	def related
-		if self.new_record? || Time.now > self.cached_related_expires_on
-			length = (self.post_count / 20).to_i
-			length = 8 if length < 8
+	def update_related_tags!(length = CONFIG["min_related_tags_cache_duration"])
+		connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).to_yaml, length.hours.from_now]))
+	end
 
-			connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.find_related(self.name, true).to_yaml, length.hours.from_now]))
+	def related
+		if Time.now > self.cached_related_expires_on
+			length = (self.post_count / 20).to_i
+			length = CONFIG["min_related_tags_cache_duration"] if length < CONFIG["min_related_tags_cache_duration"]
+
+			self.update_related_tags!(length)
 			self.reload
 		end
 
-		return cached_related
+		return self.cached_related
 	end
 
 	def to_s

@@ -91,3 +91,6 @@ CONFIG["enable_forum_update_notices"]			= true
 
 # Newly created users start out with this many invites.
 CONFIG["starting_invite_count"]					= 0
+
+# Minimum number of hours to cache related tags
+CONFIG["min_related_tags_cache_duration"]		= 8
