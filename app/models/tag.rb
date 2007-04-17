@@ -184,7 +184,7 @@ class Tag < ActiveRecord::Base
 	end
 
 	def related
-		if Time.now > self.cached_related_expires_on
+		if self.new_record? || Time.now > self.cached_related_expires_on
 			length = (self.post_count / 20).to_i
 			length = 8 if length < 8
 

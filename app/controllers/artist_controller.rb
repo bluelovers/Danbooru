@@ -54,7 +54,6 @@ class ArtistController < ApplicationController
 
 			if name =~ /^http/
 				@artists = []
-				name = File.dirname(name)
 
 				while @artists.empty? && name.size > 10
 					escaped_name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
