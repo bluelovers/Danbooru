@@ -79,8 +79,8 @@ class Post < ActiveRecord::Base
 
 		raise "IP address not set" if self.updater_ip_addr == nil
 
-		@tag_cache = "tagme" if @tag_cache == ""
 		@tag_cache = Tag.scan_tags(@tag_cache)
+		@tag_cache = ["tagme"] if @tag_cache.empty?
 		@tag_cache = TagAlias.to_aliased(@tag_cache).uniq
 		@tag_cache = TagImplication.with_implied(@tag_cache).uniq
 
