@@ -1,6 +1,20 @@
 class ArtistController < ApplicationController
 	layout "default"
 
+	before_filter :mod_only, :only => [:destroy]
+	verify :method => :post, :only => [:destroy, :update, :create]
+
+# Parameters
+# - id: the ID number of the artist to delete
+	def destroy
+		artist = Artist.find(params[:id])
+		artist.destroy
+
+		respond_to do |fmt|
+			fmt.html {flash[:notice] = "Artist deleted"; redirect_to(:action => "index")}
+		end
+	end
+
 # Parameters
 # - id: the ID number of the artist to update
 # - artist[personal_name]: the artist's personal name (in romanji)

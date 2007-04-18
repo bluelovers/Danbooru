@@ -728,6 +728,10 @@ tr.footer > td {
 	padding-top: 1em;
 }
 
+div#artist td {
+	white-space: nowrap;
+}
+
 div#artist > div#search-form {
 	margin-bottom: 2em;
 }
