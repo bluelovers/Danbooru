@@ -2,24 +2,33 @@
 <table>
 	<tr>
 		<th></th>
-		<th>Personal Name</th>
-		<th>Handle Name</th>
-		<th>Circle Name</th>
-		<th>Japanese Name</th>
-		<th>Site Name</th>
-		<th>Site URL</th>
-		<th>Image URL</th>
+		<th>Name</th>
+		<th>Alias</th>
+		<th>Group</th>
+		<th>Site</th>
+		<th>URL #2</th>
+		<th>URL #3</th>
 	</tr>
 	<% artists.each do |artist| %>
 		<tr class="<%= cycle 'even', 'odd' %>">
-			<td><%= link_to "Posts", :controller => "post", :action => "index", :tags => artist.name %> <%= link_to "Edit", :controller => "artist", :action => "edit", :id => artist.id %> <%= link_to "Delete", {:controller => "artist", :action => "destroy", :id => artist.id}, :method => :post %></td>
-			<td><%= artist.personal_name %></td>
-			<td><%= artist.handle_name %></td>
-			<td><%= artist.circle_name %></td>
-			<td><%= artist.japanese_name %></td>
-			<td><%= artist.site_name %></td>
-			<td><% unless artist.site_url.blank? %><%= link_to artist.site_url, artist.site_url %><% end %></td>
-			<td><% unless artist.image_url.blank? %><%= link_to artist.image_url, artist.image_url %><% end %></td>
+			<td>
+				<%= link_to "Edit", :controller => "artist", :action => "edit", :id => artist.id %> 
+				<%= link_to "Delete", {:controller => "artist", :action => "destroy", :id => artist.id}, :method => :post %>
+			</td>
+			<td><%= link_to_unless artist.alias_id, artist.name, :controller => "post", :action => "index", :tags => artist.name %></td>
+			<% if artist.alias_id %>
+				<td><%= link_to artist.alias, :controller => "post", :action => "index", :tags => artist.alias %></td>
+			<% else %>
+				<td></td>
+			<% end %>
+			<% if artist.group_id %>
+				<td><%= Artist.find(artist.group_id).name %></td>
+			<% else %>
+				<td></td>
+			<% end %>
+			<td><%= artist.url_a %></td>
+			<td><%= artist.url_b %></td>
+			<td><%= artist.url_c %></td>
 		</tr>
 	<% end %>
 </table>

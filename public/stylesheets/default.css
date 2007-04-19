@@ -110,6 +110,7 @@ th {
 	background-color: #66C;
 	color: white;
 	padding: 0.2em 0.5em;
+	white-space: nowrap;
 }
 
 th a, th a:link, th a:visited {
@@ -118,7 +119,6 @@ th a, th a:link, th a:visited {
 
 tr.padded th {
 	padding: 0 1em;
-	white-space: nowrap;
 }
 
 tr.even {

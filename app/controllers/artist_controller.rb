@@ -71,15 +71,15 @@ class ArtistController < ApplicationController
 
 				while @artists.empty? && name.size > 10
 					escaped_name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
-					@pages, @artists = paginate :artists, :conditions => "site_url LIKE '#{escaped_name}%' ESCAPE '\\\\' OR image_url LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => "personal_name, handle_name, circle_name, japanese_name", :per_page => 25
+					@pages, @artists = paginate :artists, :conditions => "url_a LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_b LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_c LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
 					name = File.dirname(name)
 				end
 			else
 				name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
-				@pages, @artists = paginate :artists, :conditions => "personal_name LIKE '%#{name}%' ESCAPE '\\\\' OR handle_name LIKE '%#{name}%' ESCAPE '\\\\' OR circle_name LIKE '%#{name}%' ESCAPE '\\\\' OR japanese_name LIKE '%#{name}%' ESCAPE '\\\\'", :order => "personal_name, handle_name, circle_name, japanese_name", :per_page => 25
+				@pages, @artists = paginate :artists, :conditions => "name LIKE '%#{name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
 			end
 		else
-			@pages, @artists = paginate :artists, :order => "personal_name, handle_name, circle_name, japanese_name", :per_page => 25
+			@pages, @artists = paginate :artists, :conditions => "name <> ''", :order => "name", :per_page => 25
 		end
 
 		respond_to do |fmt|

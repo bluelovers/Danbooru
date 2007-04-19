@@ -1,37 +1,33 @@
 <div id="artist-add">
 	<form method="post" action="/artist/create">
-	<table>
-		<tr>
-			<th>Personal Name</th>
-			<td><%= text_field "artist", "personal_name" %></td>
-		</tr>
-		<tr>
-			<th>Handle Name</th>
-			<td><%= text_field "artist", "handle_name" %></td>
-		</tr>
-		<tr>
-			<th>Circle Name</th>
-			<td><%= text_field "artist", "circle_name" %></td>
-		</tr>
-		<tr>
-			<th>Japanese Name</th>
-			<td><%= text_field "artist", "japanese_name" %></td>
-		</tr>
-		<tr>
-			<th>Site Name</th>
-			<td><%= text_field "artist", "site_name" %></td>
-		</tr>
-		<tr>
-			<th>Site URL</th>
-			<td><%= text_field "artist", "site_url" %></td>
-		</tr>
-		<tr>
-			<th>Image URL</th>
-			<td><%= text_field "artist", "image_url" %></td>
-		</tr>
-		<tr>
-			<td colspan="2"><%= submit_tag "Save" %></td>
-		</tr>
-	</table>
+		<table>
+			<tr>
+				<td><label for="artist_name">Name</label></td>
+				<td><%= text_field "artist", "name", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for="artist_alias">Alias</label></td>
+				<td><%= text_field "artist", "alias", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for="artist_group">Group</label></td>
+				<td><%= text_field "artist", "group", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for="artist_url_a">Site URL</label></td>
+				<td><%= text_field "artist", "url_a", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for="artist_url_b">URL #2</label></td>
+				<td><%= text_field "artist", "url_b", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for="artist_url_c">URL #3</label></td>
+				<td><%= text_field "artist", "url_c", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td colspan="2"><%= submit_tag "Save" %></td>
+			</tr>
+		</table>
 	</form>
 </div>

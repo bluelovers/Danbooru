@@ -3,32 +3,28 @@
 		<%= hidden_field_tag "id", @artist.id %>
 		<table>
 			<tr>
-				<td><label for="artist_personal_name">Personal Name</label></td>
-				<td><%= text_field "artist", "personal_name", :size => 80 %></td>
+				<td><label for="artist_name">Name</label></td>
+				<td><%= text_field "artist", "name", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_handle_name">Handle Name</label></td>
-				<td><%= text_field "artist", "handle_name", :size => 80 %></td>
+				<td><label for="artist_alias">Alias</label></td>
+				<td><%= text_field "artist", "alias", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_circle_name">Circle Name</label></td>
-				<td><%= text_field "artist", "circle_name", :size => 80 %></td>
+				<td><label for="artist_group">Group</label></td>
+				<td><%= text_field "artist", "group", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_japanese_name">Japanese Name</label></td>
-				<td><%= text_field "artist", "japanese_name", :size => 80 %></td>
+				<td><label for="artist_url_a">Site URL</label></td>
+				<td><%= text_field "artist", "url_a", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_site_name">Site Name</label></td>
-				<td><%= text_field "artist", "site_name", :size => 80 %></td>
+				<td><label for="artist_url_b">URL #2</label></td>
+				<td><%= text_field "artist", "url_b", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_site_url">Site URL</label></td>
-				<td><%= text_field "artist", "site_url", :size => 80 %></td>
-			</tr>
-			<tr>
-				<td><label for="artist_image_url">Image URL</label></td>
-				<td><%= text_field "artist", "image_url", :size => 80 %></td>
+				<td><label for="artist_url_c">URL #3</label></td>
+				<td><%= text_field "artist", "url_c", :size => 80 %></td>
 			</tr>
 			<tr>
 				<td colspan="2"><%= submit_tag "Save" %></td>
