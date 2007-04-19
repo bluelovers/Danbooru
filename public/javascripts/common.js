@@ -413,7 +413,7 @@ function findArtist() {
 		method: 'get', 
 		onComplete: function(req) {
 			var resp = eval("(" + req.responseText + ")")
-			$('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["personal_name"] || x["handle_name"] || x["circle_name"]}).join(" "))
+			$('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["name"]}).join(" "))
 		}, 
 		parameters:'name='+$F('post_source')
 	})
