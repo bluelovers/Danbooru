@@ -1,5 +1,5 @@
 class ForumPost < ActiveRecord::Base
-	has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id
+	has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id, :order => "id"
 	belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
 	belongs_to :creator, :class_name => "User", :foreign_key => :user_id
 	after_create :update_parent
