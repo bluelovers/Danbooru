@@ -11,44 +11,60 @@ class ArtistController < ApplicationController
 		artist.destroy
 
 		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Artist deleted"; redirect_to(:action => "index")}
+			fmt.html {flash[:notice] = "Artist deleted"; redirect_to(:action => "index", :page => params[:page])}
 		end
 	end
 
 # Parameters
 # - id: the ID number of the artist to update
-# - artist[personal_name]: the artist's personal name (in romanji)
-# - artist[handle_name]: the artist's handle or nickname
-# - artist[circle_name]: the artist's circle name
-# - artist[japanese_name]: the artist's japanese name (in kanji or kana)
-# - artist[site_name]: the artist's site's name
-# - artist[site_url]: base URL of the artist's home page
-# - artist[image_url]: base URL of the site storing the artist's images
+# - artist[name]: the artist's name
+# - artist[url_a]: base URL of the artist's home page
+# - artist[url_b]: base URL of the site storing the artist's images
+# - artist[url_c]: extra base URL
+# - artist[alias]: artist this artist is an alias for
+# - artist[group]: artist group this artist belongs to
 	def update
 		artist = Artist.find(params[:id])
 		artist.update_attributes(params[:artist])
 
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Artist entry updated"; redirect_to(:action => "index")}
-			fmt.xml {render :xml => {:sucess => true}.to_xml}
-			fmt.js {render :json => {:success => true}.to_json}
+		if artist.errors.empty?
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Artist entry updated"; redirect_to(:action => "show", :id => artist.id)}
+				fmt.xml {render :xml => {:sucess => true}.to_xml}
+				fmt.js {render :json => {:success => true}.to_json}
+			end
+		else
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Error: " + errors; redirect_to(:action => "edit", :id => artist.id)}
+				fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml}
+				fmt.js {render :json => {:success => false, :reason => errors}.to_json}
+			end
 		end
 	end
 
 # Parameters
-# - artist[personal_name]: the artist's personal name (in romanji)
-# - artist[handle_name]: the artist's handle or nickname
-# - artist[circle_name]: the artist's circle name
-# - artist[japanese_name]: the artist's japanese name (in kanji or kana)
-# - artist[site_name]: the artist's site's name
-# - artist[site_url]: base URL of the artist's home page
-# - artist[image_url]: base URL of the site storing the artist's images
+# - artist[name]: the artist's name
+# - artist[url_a]: base URL of the artist's home page
+# - artist[url_b]: base URL of the site storing the artist's images
+# - artist[url_c]: extra base URL
+# - artist[alias]: artist this artist is an alias for
+# - artist[group]: artist group this artist belongs to
 	def create
 		artist = Artist.create(params[:artist])
-		respond_to do |fmt|
-			fmt.html {flash[:notice] = "Artist created"; redirect_to(:action => "index")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
-			fmt.js {render :json > {:success => true}.to_json}
+
+		if artist.errors.empty?
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Artist created"; redirect_to(:action => "show", :id => artist.id)}
+				fmt.xml {render :xml => {:success => true}.to_xml}
+				fmt.js {render :json > {:success => true}.to_json}
+			end
+		else
+			errors = artist.errors.full_messages.join(", ")
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Error: " + errors; redirect_to(:action => "add", :alias_id => params[:alias_id])}
+				fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml}
+				fmt.js {render :json => {:success => false, :reason => errors}.to_json}
+			end
 		end
 	end
 
@@ -58,10 +74,14 @@ class ArtistController < ApplicationController
 
 	def add
 		@artist = Artist.new
+
+		if params[:alias_id]
+			@artist.alias_id = params[:alias_id]
+		end
 	end
 
 # Parameters
-# - name: the artist's name. Danbooru will automatically search in the following order: personal name, handle name, circle name, japanese name. If you supply a URL beginning with http, Danbooru will search against the URL database, both site URLs and image URLs. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
+# - name: the artist's name. If you supply a URL beginning with http, Danbooru will search against the URL database. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
 	def index
 		if params[:name]
 			name = params[:name]
@@ -90,5 +110,6 @@ class ArtistController < ApplicationController
 	end
 
 	def show
+		@artist = Artist.find(params[:id])
 	end
 end

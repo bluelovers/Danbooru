@@ -5,7 +5,42 @@
 		<% end %>
 	</div>
 
-	<%= render :partial => "listing", :locals => {:artists => @artists} %>
+	<% if @artists.any? %>
+		<table>
+			<tr>
+				<th></th>
+				<th>Name</th>
+				<th>Alias</th>
+				<th>Group</th>
+				<th>Site</th>
+				<th>URL #2</th>
+				<th>URL #3</th>
+			</tr>
+			<% @artists.each do |artist| %>
+				<tr class="<%= cycle 'even', 'odd' %>">
+					<td>
+						<%= link_to_unless artist.alias_id, "Posts", :controller => "post", :action => "index", :tags => artist.name %>
+						<%= link_to "Edit", :action => "edit", :id => artist.id %> 
+						<%= link_to "Delete", {:action => "destroy", :id => artist.id, :page => params[:page]}, :method => :post %>
+					</td>
+					<td><%= link_to artist.name, :action => "show", :id => artist.id %></td>
+					<% if artist.alias_id %>
+						<td><%= link_to artist.alias, :action => "show", :id => artist.alias_id %></td>
+					<% else %>
+						<td></td>
+					<% end %>
+					<% if artist.group_id %>
+						<td><%= link_to artist.group, :action => "show", :id => artist.group_id %></td>
+					<% else %>
+						<td></td>
+					<% end %>
+					<td><%= artist.url_a %></td>
+					<td><%= artist.url_b %></td>
+					<td><%= artist.url_c %></td>
+				</tr>
+			<% end %>
+		</table>
+	<% end %>
 
 	<div id="paginator">
 		<%= custom_pagination_links(@pages, :params => {:controller => "artist", :action => "index", :name => params[:name]}) %>

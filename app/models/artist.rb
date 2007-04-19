@@ -1,5 +1,6 @@
 class Artist < ActiveRecord::Base
 	before_save :normalize
+	validates_uniqueness_of :name
 
 	def normalize
 		self.name = self.name.downcase.gsub(/ /, '_')
@@ -7,6 +8,10 @@ class Artist < ActiveRecord::Base
 		self.url_a.gsub!(/\/$/, "") if self.url_a
 		self.url_b.gsub!(/\/$/, "") if self.url_b
 		self.url_c.gsub!(/\/$/, "") if self.url_c
+	end
+
+	def aliases
+		return Artist.find(:all, :conditions => "alias_id = #{self.id}", :order => "name")
 	end
 
 	def alias
@@ -29,6 +34,10 @@ class Artist < ActiveRecord::Base
 		else
 			nil
 		end
+	end
+
+	def members
+		Artist.find(:all, :conditions => "group_id = #{self.id}", :order => "name")
 	end
 
 	def group=(n)
