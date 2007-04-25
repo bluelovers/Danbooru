@@ -30,7 +30,10 @@ module TagHelper
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
 		if CONFIG["enable_tag_type_lookups"]
-			case Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type").tag_type
+			tag_type = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
+			tag_type = tag_type.tag_type if tag_type
+
+			case tag_type
 			when Tag.types[:artist]
 				html << '<span class="artist-tag">(artist)</span> '
 
