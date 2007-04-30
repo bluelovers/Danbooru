@@ -24,6 +24,11 @@ class ArtistController < ApplicationController
 # - artist[alias]: artist this artist is an alias for
 # - artist[group]: artist group this artist belongs to
 	def update
+		if params[:commit] == "Cancel"
+			redirect_to :action => "show", :id => params[:id]
+			return
+		end
+
 		artist = Artist.find(params[:id])
 		artist.update_attributes(params[:artist])
 
