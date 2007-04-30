@@ -1,7 +1,7 @@
 class WikiPage < ActiveRecord::Base
 	acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
 	before_save :make_title_canonical
-	before_save :identify_artist
+#	before_save :identify_artist
 	belongs_to :user
 
 	TAG_DEL = '<del>'

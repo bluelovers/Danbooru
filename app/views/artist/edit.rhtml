@@ -27,6 +27,10 @@
 				<td><%= text_field "artist", "url_c", :size => 80 %></td>
 			</tr>
 			<tr>
+				<td><label for="artist_notes">Notes</label></td>
+				<td><%= text_area "artist", "notes" %></td>
+			</tr>
+			<tr>
 				<td colspan="2"><%= submit_tag "Save" %></td>
 			</tr>
 		</table>

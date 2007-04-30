@@ -126,6 +126,18 @@ class WikiController < ApplicationController
 
 # For API calls, see the index method
 	def show
+		tag_type = Tag.find_by_name(params[:title]).tag_type rescue nil
+
+		if tag_type == Tag.types[:artist]
+			artist = Artist.find_by_name(params[:title])
+
+			if artist == nil
+				redirect_to :controller => "artist", :action => "add", :name => params[:title]
+			else
+				redirect_to :controller => "artist", :action => "edit", :id => artist.id
+			end
+		end
+
 		@page = WikiPage.find_page(params[:title], params[:version])
 		set_title params[:title].tr("_", " ")
 	end
@@ -133,19 +145,6 @@ class WikiController < ApplicationController
 # For API calls, see the update method
 	def edit
 		@wiki_page = WikiPage.find_page(params[:title], params[:version]) || WikiPage.new(:title => params[:title])
-
-		if @wiki_page.new_record? && (Tag.find_by_name(@wiki_page.title).tag_type == Tag.types[:artist] rescue false)
-			@wiki_page.body =<<-EOL
-Artist.
-
-Japanese name: 
-
-h4. See also
-
-* "Home page":
-			EOL
-		end
-		set_title @wiki_page.pretty_title + " (Editing)"
 	end
 
 # Parameters

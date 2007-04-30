@@ -34,7 +34,7 @@
 					<% else %>
 						<td></td>
 					<% end %>
-					<td><%= artist.url_a %></td>
+					<td><%= link_to artist.url_a, artist.url_a %></td>
 					<td><%= artist.url_b %></td>
 					<td><%= artist.url_c %></td>
 				</tr>
@@ -43,10 +43,12 @@
 	<% end %>
 
 	<div id="paginator">
-		<%= custom_pagination_links(@pages, :params => {:controller => "artist", :action => "index", :name => params[:name]}) %>
+		<%= custom_pagination_links(@pages, :params => {:controller => "artist", :action => "index", :name => params[:name], :order => params[:order]}) %>
 	</div>
 
 	<div id="footer">
-		<%= link_to "Add", :action => "add" %>
+		<%= link_to "Add", :action => "add" %> |
+		<%= link_to "Order by Name", :order => "name" %> | 
+		<%= link_to "Order by Date", :order => "date" %>
 	</div>
 </div>

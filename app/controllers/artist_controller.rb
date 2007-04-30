@@ -75,6 +75,15 @@ class ArtistController < ApplicationController
 	def add
 		@artist = Artist.new
 
+		if params[:name]
+			@artist.name = params[:name]
+
+			post = Post.find(:first, :conditions => ["id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?)) AND source LIKE 'http%'", params[:name]])
+			unless post == nil || post.source.blank?
+				@artist.url_b = post.source
+			end
+		end
+
 		if params[:alias_id]
 			@artist.alias_id = params[:alias_id]
 		end
@@ -86,12 +95,18 @@ class ArtistController < ApplicationController
 		if params[:name]
 			name = params[:name]
 
+			if params[:order] == "date"
+				order = "updated_at DESC"
+			else
+				order = "name"
+			end
+
 			if name =~ /^http/
 				@artists = []
 
 				while @artists.empty? && name.size > 10
 					escaped_name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
-					@pages, @artists = paginate :artists, :conditions => "url_a LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_b LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_c LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
+					@pages, @artists = paginate :artists, :conditions => "url_a LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_b LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_c LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => order, :per_page => 25
 					name = File.dirname(name)
 				end
 			else

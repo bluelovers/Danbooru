@@ -1,5 +1,6 @@
 class Artist < ActiveRecord::Base
 	before_save :normalize
+	after_save :commit_relations
 	validates_uniqueness_of :name
 
 	def normalize
@@ -10,8 +11,34 @@ class Artist < ActiveRecord::Base
 		self.url_c.gsub!(/\/$/, "") if self.url_c
 	end
 
+	def commit_relations
+		if @cached_aliases && @cached_aliases.any?
+			@cached_aliases.each do |name|
+				Artist.create(:name => name, :alias_id => self.id)
+			end
+		end
+
+		if @cached_members && @cached_members.any?
+			@cached_members.each do |name|
+				Artist.create(:name => name, :group_id => self.id)
+			end
+		end
+	end
+
+	def aliases=(names)
+		@cached_aliases = names.split(/\s*,\s*/)
+	end
+
+	def members=(names)
+		@cached_members = names.split(/\s*,\s*/)
+	end
+
 	def aliases
-		return Artist.find(:all, :conditions => "alias_id = #{self.id}", :order => "name")
+		if self.new_record?
+			return []
+		else
+			return Artist.find(:all, :conditions => "alias_id = #{self.id}", :order => "name")
+		end
 	end
 
 	def alias
@@ -37,7 +64,11 @@ class Artist < ActiveRecord::Base
 	end
 
 	def members
-		Artist.find(:all, :conditions => "group_id = #{self.id}", :order => "name")
+		if self.new_record?
+			return []
+		else
+			Artist.find(:all, :conditions => "group_id = #{self.id}", :order => "name")
+		end
 	end
 
 	def group=(n)
@@ -48,5 +79,9 @@ class Artist < ActiveRecord::Base
 
 	def to_json(options = {})
 		{:id => self.id, :name => self.name, :alias_id => self.alias_id, :group_id => self.group_id, :url_a => self.url_a, :url_b => self.url_b, :url_c => self.url_c}.to_json(options)
+	end
+
+	def to_s
+		return self.name
 	end
 end

@@ -1,4 +1,6 @@
 <div id="artist-add">
+	<p>Separate multiple aliases and group members with commas.</p>
+
 	<form method="post" action="/artist/create">
 		<table>
 			<tr>
@@ -14,6 +16,14 @@
 				<td><%= text_field "artist", "group", :size => 80 %></td>
 			</tr>
 			<tr>
+				<td><label for"artist_aliases">Aliases</label</td>
+				<td><%= text_field "artist", "aliases", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for"artist_aliases">Members</label</td>
+				<td><%= text_field "artist", "members", :size => 80 %></td>
+			</tr>
+			<tr>
 				<td><label for="artist_url_a">Site URL</label></td>
 				<td><%= text_field "artist", "url_a", :size => 80 %></td>
 			</tr>
@@ -24,6 +34,10 @@
 			<tr>
 				<td><label for="artist_url_c">URL #3</label></td>
 				<td><%= text_field "artist", "url_c", :size => 80 %></td>
+			</tr>
+			<tr>
+				<td><label for="artist_notes">Notes</label></td>
+				<td><%= text_area "artist", "notes" %></td>
 			</tr>
 			<tr>
 				<td colspan="2"><%= submit_tag "Save" %></td>
