@@ -100,12 +100,6 @@ class ArtistController < ApplicationController
 		if params[:name]
 			name = params[:name]
 
-			if params[:order] == "date"
-				order = "updated_at DESC"
-			else
-				order = "name"
-			end
-
 			if name =~ /^http/
 				@artists = []
 
@@ -119,7 +113,13 @@ class ArtistController < ApplicationController
 				@pages, @artists = paginate :artists, :conditions => "name LIKE '%#{name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
 			end
 		else
-			@pages, @artists = paginate :artists, :conditions => "name <> ''", :order => "name", :per_page => 25
+			if params[:order] == "date"
+				order = "updated_at DESC"
+			else
+				order = "name"
+			end
+
+			@pages, @artists = paginate :artists, :conditions => "name <> ''", :order => order, :per_page => 25
 		end
 
 		respond_to do |fmt|
