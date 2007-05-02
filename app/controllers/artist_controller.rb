@@ -105,7 +105,7 @@ class ArtistController < ApplicationController
 
 				while @artists.empty? && name.size > 10
 					escaped_name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
-					@pages, @artists = paginate :artists, :conditions => "url_a LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_b LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_c LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => order, :per_page => 25
+					@pages, @artists = paginate :artists, :conditions => "url_a LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_b LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_c LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
 					name = File.dirname(name)
 				end
 			else
