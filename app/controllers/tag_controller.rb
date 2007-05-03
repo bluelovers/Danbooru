@@ -115,9 +115,9 @@ class TagController < ApplicationController
 			when "artist"
 				if name[/^http/]
 					escaped_name = File.dirname(name).gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_') + "%"
-					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = ?", escaped_name, Tag.types[:artist]], :order => "name", :limit => 25)
+					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = ?", escaped_name, Tag.types[:artist]], :order => "name")
 				else
-					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?))) AND tag_type = ?", name, Tag.types[:artist]], :order => "name", :limit => 25)
+					@tags = Tag.calculate_related_by_type(name, Tag.types[:artist])
 				end
 			end
 		end

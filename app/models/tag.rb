@@ -51,6 +51,22 @@ class Tag < ActiveRecord::Base
 			Tag.create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday)
 		end
 
+		def calculate_related_by_type(tag, type)
+			sql = <<-EOS
+				SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name, 
+				COUNT(pt0.tag_id) AS post_count
+				FROM posts_tags pt0, posts_tags pt1
+				WHERE pt0.post_id = pt1.post_id
+				AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)
+				AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?)
+				GROUP BY pt0.tag_id
+				ORDER BY post_count DESC
+				LIMIT 50
+			EOS
+
+			return connection.select_all(Tag.sanitize_sql([sql, tag, type]))
+		end
+
 		def calculate_related(tags)
 			tags = [*tags]
 			return [] if tags.empty?
