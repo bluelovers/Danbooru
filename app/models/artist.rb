@@ -12,15 +12,25 @@ class Artist < ActiveRecord::Base
 	end
 
 	def commit_relations
+		self.aliases.each do |a|
+			a.update_attribute(:alias_id, nil)
+		end
+
+		self.members.each do |m|
+			m.update_attribute(:group_id, nil)
+		end
+
 		if @cached_aliases && @cached_aliases.any?
 			@cached_aliases.each do |name|
-				Artist.create(:name => name, :alias_id => self.id)
+				a = Artist.find_or_create_by_name(name.downcase.gsub(/ /, '_'))
+				a.update_attribute(:alias_id, self.id)
 			end
 		end
 
 		if @cached_members && @cached_members.any?
 			@cached_members.each do |name|
-				Artist.create(:name => name, :group_id => self.id)
+				a = Artist.find_or_create_by_name(name.downcase.gsub(/ /, '_'))
+				a.update_attribute(:group_id, self.id)
 			end
 		end
 	end
