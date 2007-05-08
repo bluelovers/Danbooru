@@ -2,6 +2,7 @@ class Artist < ActiveRecord::Base
 	before_save :normalize
 	after_save :commit_relations
 	validates_uniqueness_of :name
+	belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
 
 	def normalize
 		self.name = self.name.downcase.gsub(/ /, '_')

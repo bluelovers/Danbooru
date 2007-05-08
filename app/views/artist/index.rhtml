@@ -12,6 +12,7 @@
 				<th>Name</th>
 				<th>Alias</th>
 				<th>Group</th>
+				<th>Updated By</th>
 				<th>Site</th>
 				<th>URL #2</th>
 				<th>URL #3</th>
@@ -31,6 +32,11 @@
 					<% end %>
 					<% if artist.group_id %>
 						<td><%= link_to artist.group, :action => "show", :id => artist.group_id %></td>
+					<% else %>
+						<td></td>
+					<% end %>
+					<% if artist.updater %>
+						<td><%= artist.updater.name %></td>
 					<% else %>
 						<td></td>
 					<% end %>

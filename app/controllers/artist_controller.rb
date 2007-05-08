@@ -30,7 +30,7 @@ class ArtistController < ApplicationController
 		end
 
 		artist = Artist.find(params[:id])
-		artist.update_attributes(params[:artist])
+		artist.update_attributes(params[:artist].merge(:updater_id => (@current_user ? @current_user.id : nil)))
 
 		if artist.errors.empty?
 			respond_to do |fmt|
@@ -55,7 +55,7 @@ class ArtistController < ApplicationController
 # - artist[alias]: artist this artist is an alias for
 # - artist[group]: artist group this artist belongs to
 	def create
-		artist = Artist.create(params[:artist])
+		artist = Artist.create(params[:artist].merge(:updater_id => (@current_user ? @current_user.id : nil)))
 
 		if artist.errors.empty?
 			respond_to do |fmt|
