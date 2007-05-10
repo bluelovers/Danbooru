@@ -1,9 +1,9 @@
 class Post < ActiveRecord::Base
 	before_validation_on_create :auto_download
 	before_validation_on_create :generate_hash
-	before_validation_on_create :rename_file
-	before_validation_on_create :get_image_dimensions
 	before_validation_on_create :generate_preview
+	before_validation_on_create :get_image_dimensions
+	before_validation_on_create :move_file
 	before_destroy :delete_file
 	after_create :update_neighbor_links_on_create
 	before_destroy :update_neighbor_links_on_destroy
@@ -14,7 +14,7 @@ class Post < ActiveRecord::Base
 	attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr
 
 	votable
-	uses_image_servers :servers => CONFIG["image_servers"] if CONFIG["image_servers"]
+	image_store
 	has_and_belongs_to_many :tags, :order => "name"
 	has_many :comments, :order => "id", :conditions => "(is_spam IS NULL OR is_spam = FALSE)"
 	has_many :notes, :order => "id desc"
@@ -109,8 +109,21 @@ class Post < ActiveRecord::Base
 		end
 	end
 
+	def file_name
+		md5 + "." + file_ext
+	end
+
+	def delete_tempfile
+		FileUtils.rm_f(tempfile_path)
+		FileUtils.rm_f(tempfile_preview_path)
+	end
+
 	def tempfile_path
 		"#{RAILS_ROOT}/public/data/#{$$}.upload"
+	end
+
+	def tempfile_preview_path
+		"#{RAILS_ROOT}/public/data/#{$$}-preview.jpg"
 	end
 
 # Generates a MD5 hash for the file
@@ -118,26 +131,17 @@ class Post < ActiveRecord::Base
 		self.md5 = File.open(tempfile_path, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}
 
 		if connection.select_value("SELECT 1 FROM posts WHERE md5 = '#{md5}'")
-			FileUtils.rm_f(tempfile_path)
+			delete_tempfile
 			errors.add "md5", "already exists"
 			return false
 		end
-	end
-
-	def rename_file
-		FileUtils.mkdir_p(File.dirname(file_path), :mode => 0775)
-		FileUtils.mv(tempfile_path, file_path)
-		FileUtils.chmod(0775, file_path)
-		FileUtils.rm_f(tempfile_path)
 	end
 
 	def generate_preview
 		return unless image?
 
 		begin
-			FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
-
-			unless system("#{RAILS_ROOT}/lib/resizer/resizer #{file_path} #{preview_path}")
+			unless system("#{RAILS_ROOT}/lib/resizer/resizer #{tempfile_path} #{tempfile_preview_path}")
 				errors.add 'preview', "couldn't be generated"
 				return false
 			end
@@ -147,15 +151,9 @@ class Post < ActiveRecord::Base
 		end
 	end
 
-# delete_file removes the post and its preview from the file system.
-	def delete_file
-		FileUtils.rm_f(file_path)
-		FileUtils.rm_f(preview_path) if image?
-	end
-
 # auto_download automatically downloads from the source url if it's a URL
 	def auto_download
-		return if !(source =~ /^http/ and file_ext.blank?)
+		return if !(source =~ /^http/ && file_ext.blank?)
 
 		begin
 			img = Net::HTTP.get(URI.parse(source))
@@ -164,7 +162,7 @@ class Post < ActiveRecord::Base
 				out.write(img)
 			end
 		rescue Exception => x
-			FileUtils.rm_f(tempfile_path)
+			delete_tempfile
 			errors.add "source", "couldn't be opened: #{x}"
 			return false
 		end
@@ -186,41 +184,9 @@ class Post < ActiveRecord::Base
 		end
 	end
 
-	def file_name
-		md5 + "." + file_ext
-	end
-
-# Returns the absolute path to the post.
-	def file_path
-		"#{RAILS_ROOT}/public/data/%s/%s/%s" % [md5[0,2], md5[2,2], file_name]
-	end
-
-# Returns the URL for the post
-	def file_url
-		"http://" + CONFIG["server_host"] + "/data/%s/%s/%s" % [md5[0,2], md5[2,2], file_name]
-	end unless method_defined?(:file_url)
-
-# Returns the absolute path to the preview file.
-	def preview_path
-		if image?
-			"#{RAILS_ROOT}/public/data/preview/%s/%s/%s" % [md5[0,2], md5[2,2], md5 + ".jpg"]
-		else
-			"#{RAILS_ROOT}/public/data/preview/default.png"
-		end
-	end
-
-# Returns the URL for the preview
-	def preview_url
-		if image?
-			"http://" + CONFIG["server_host"] + "/data/preview/%s/%s/%s" % [md5[0,2], md5[2,2], md5 + ".jpg"]
-		else
-			"http://" + CONFIG["server_host"] + "/data/preview/default.png"
-		end
-	end unless method_defined?(:preview_url)
-
 	def get_image_dimensions
 		if image? or flash?
-			imgsize = ImageSize.new(File.open(file_path, "rb"))
+			imgsize = ImageSize.new(File.open(tempfile_path, "rb"))
 			self.width = imgsize.get_width
 			self.height = imgsize.get_height
 		end
@@ -234,11 +200,6 @@ class Post < ActiveRecord::Base
 # Returns true if the post is a Flash movie.
 	def flash?
 		file_ext == "swf"
-	end
-
-# Returns the size of the file in bytes (may not be precise)
-	def size
-		return File.size(file_path)
 	end
 
 # Returns either the author's name or the default guest name.

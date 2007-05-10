@@ -97,3 +97,14 @@ CONFIG["starting_invite_count"]					= 0
 # with few posts will have their related tags instantly
 # updated.
 CONFIG["min_related_tags_cache_duration"]		= 8
+
+# What method to use to store images.
+# local_flat: Store every image in one directory.
+# local_hierarchy: Store every image in a hierarchical directory, based on the post's MD5 hash. On some file systems this may be faster.
+# amazon_s3: Save files to an Amazon S3 account.
+CONFIG["image_store"]							= :local_flat
+
+# These three configs are only relevant if you're using the Amazon S3 image store.
+CONFIG["amazon_s3_access_key_id"]				= ""
+CONFIG["amazon_s3_secret_access_key"]			= ""
+CONFIG["amazon_s3_bucket_name"]					= ""

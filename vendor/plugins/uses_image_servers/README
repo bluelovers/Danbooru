@@ -1,7 +1,0 @@
-This is a custom plugin, mainly intended for the donmai.us server. If for whatever reason you want to use it also, call uses_image_servers in the Post model. YOU MUST CALL IT AT THE END OF THE MODEL SO IT OVERWRITES THE FILE AND PREVIEW METHODS.
-
-It accepts one option: servers. This should be set to an array of URLs where the images will be stored. For example:
-
-uses_image_servers :servers => ["http://server1.com/path/to/dir"]
-
-Don't include the "/data/" in the URL, and make sure you don't include a trailing slash.
