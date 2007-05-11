@@ -66,8 +66,10 @@ module ImageStore
 				FileUtils.mv(tempfile_path, file_path)
 				FileUtils.chmod(0775, file_path)
 
-				FileUtils.mv(tempfile_preview_path, preview_path)
-				FileUtils.chmod(0775, preview_path)
+				if image?
+					FileUtils.mv(tempfile_preview_path, preview_path)
+					FileUtils.chmod(0775, preview_path)
+				end
 
 				delete_tempfile
 			end
@@ -114,9 +116,11 @@ module ImageStore
 				FileUtils.mv(tempfile_path, file_path)
 				FileUtils.chmod(0775, file_path)
 
-				FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
-				FileUtils.mv(tempfile_preview_path, preview_path)
-				FileUtils.chmod(0775, preview_path)
+				if image?
+					FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
+					FileUtils.mv(tempfile_preview_path, preview_path)
+					FileUtils.chmod(0775, preview_path)
+				end
 
 				delete_tempfile
 			end
@@ -126,8 +130,10 @@ module ImageStore
 	module AmazonS3
 		module InstanceMethods
 			def move_file
-				AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path), CONFIG["amazon_s3_bucket_name"], :access => :public_read) if self.image?
-				AWS::S3::S3Object.store(file_name, open(self.tempfile_path), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+				if image?
+					AWS::S3::S3Object.store("preview/#{md5}.jpg", self.tempfile_preview_path, CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+				end
+				AWS::S3::S3Object.store(file_name, self.tempfile_path, CONFIG["amazon_s3_bucket_name"], :access => :public_read)
 				delete_tempfile
 			end
 
