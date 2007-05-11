@@ -141,7 +141,7 @@ class Post < ActiveRecord::Base
 		return unless image?
 
 		begin
-			unless system("#{RAILS_ROOT}/lib/resizer/resizer #{tempfile_path} #{tempfile_preview_path}")
+			unless system("#{RAILS_ROOT}/lib/resizer/resizer #{tempfile_path} #{tempfile_preview_path} #{file_ext}")
 				errors.add 'preview', "couldn't be generated"
 				return false
 			end

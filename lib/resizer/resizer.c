@@ -4,7 +4,7 @@
 
 /*
  * Usage:
- * resizer /path/to/input /path/to/output
+ * resizer /path/to/input /path/to/output input_extension
  *
  * Supported Image Types:
  * - JPEG
@@ -31,7 +31,14 @@
 int main(int argc, char * argv[]) {
 	const char * in = argv[1];
 	const char * out = argv[2];
-	const char * ext = strrchr(in, '.');
+	const char * ext = NULL;
+
+	if (argc > 2) {
+	  ext = argv[3];
+	} else {
+	  ext = strrchr(in, '.') + 1;
+	}
+
 	FILE * in_file = fopen(in, "rb");
 	FILE * out_file = fopen(out, "wb");
 
@@ -46,13 +53,13 @@ int main(int argc, char * argv[]) {
 
 	gdImagePtr img = NULL;
 
-	if (!strcmp(ext, ".jpg") || !strcmp(ext, ".jpeg")) {
+	if (!strcmp(ext, "jpg") || !strcmp(ext, "jpeg")) {
 		img = gdImageCreateFromJpeg(in_file);
-	} else if (!strcmp(ext, ".gif")) {
+	} else if (!strcmp(ext, "gif")) {
 		img = gdImageCreateFromGif(in_file);
-	} else if (!strcmp(ext, ".png")) {
+	} else if (!strcmp(ext, "png")) {
 		img = gdImageCreateFromPng(in_file);
-	} else if (!strcmp(ext, ".bmp")) {
+	} else if (!strcmp(ext, "bmp")) {
 		img = gdImageCreateFromWBMP(in_file);
 	} else {
 		return 1;

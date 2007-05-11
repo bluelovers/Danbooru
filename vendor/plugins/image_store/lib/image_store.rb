@@ -118,7 +118,7 @@ module ImageStore
 				FileUtils.mv(tempfile_preview_path, preview_path)
 				FileUtils.chmod(0775, preview_path)
 
-				delete_temp_file
+				delete_tempfile
 			end
 		end
 	end
@@ -128,7 +128,7 @@ module ImageStore
 			def move_file
 				AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path), CONFIG["amazon_s3_bucket_name"], :access => :public_read) if self.image?
 				AWS::S3::S3Object.store(file_name, open(self.tempfile_path), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
-				delete_temp_file
+				delete_tempfile
 			end
 
 			def file_url

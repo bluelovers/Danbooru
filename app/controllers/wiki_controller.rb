@@ -134,7 +134,7 @@ class WikiController < ApplicationController
 			if artist == nil
 				redirect_to :controller => "artist", :action => "add", :name => params[:title]
 			else
-				redirect_to :controller => "artist", :action => "edit", :id => artist.id
+				redirect_to :controller => "artist", :action => "show", :id => artist.id
 			end
 		end
 
