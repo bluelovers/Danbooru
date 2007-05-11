@@ -24,7 +24,6 @@ module ImageStore
 			
 			when :amazon_s3
 				class_eval do
-					AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
 					include ImageStore::AmazonS3::InstanceMethods
 				end
 			end
@@ -130,11 +129,21 @@ module ImageStore
 	module AmazonS3
 		module InstanceMethods
 			def move_file
-				if image?
-					AWS::S3::S3Object.store("preview/#{md5}.jpg", self.tempfile_preview_path, CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+				begin
+					Timeout::timeout(5) do
+						AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
+						AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+						if image?
+							AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+						end
+						delete_tempfile
+					end
+					return true
+				rescue Exception => e
+					self.errors.add('source', e.to_s)
+					delete_tempfile
+					return false
 				end
-				AWS::S3::S3Object.store(file_name, self.tempfile_path, CONFIG["amazon_s3_bucket_name"], :access => :public_read)
-				delete_tempfile
 			end
 
 			def file_url
