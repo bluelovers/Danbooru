@@ -130,7 +130,7 @@ module ImageStore
 		module InstanceMethods
 			def move_file
 				begin
-					Timeout::timeout(5) do
+					Timeout::timeout(30) do
 						AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
 						AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
 						if image?
