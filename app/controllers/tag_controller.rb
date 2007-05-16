@@ -101,6 +101,18 @@ class TagController < ApplicationController
 		@tag = Tag.new
 	end
 
+	def related
+		if params[:type]
+			@tags = Tag.calculate_related_by_type(params[:name], Tag.types[params[:type]]).map {|x| [x["name"].to_escaped_js, x["post_count"]]}
+		else
+			@tags = Tag.find_related(params[:name]).map {|x| [x[0].to_escaped_js, x[1]]}
+		end
+
+		respond_to do |fmt|
+			fmt.js {render :json => @tags.to_json}
+		end
+	end
+
 	def search
 		set_title "Search Tags"
 

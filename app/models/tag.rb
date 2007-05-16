@@ -61,7 +61,7 @@ class Tag < ActiveRecord::Base
 				AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?)
 				GROUP BY pt0.tag_id
 				ORDER BY post_count DESC
-				LIMIT 50
+				LIMIT 25
 			EOS
 
 			return connection.select_all(Tag.sanitize_sql([sql, tag, type]))

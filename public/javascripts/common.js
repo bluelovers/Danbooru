@@ -378,7 +378,7 @@ function findRelTags(tag_field, tag_type) {
 	var tag_type_param = ""
 
 	if (tag_type != null) {
-		tag_type_param = "&" + tag_type + "=1"
+		tag_type_param = "&type=" + tag_type
 	}
 
 	if (tag_field.selectionStart) {
@@ -398,12 +398,15 @@ function findRelTags(tag_field, tag_type) {
 		}
 	}
 
-	new Ajax.Request('/api/find_related_tags', {
+	tags = tags.replace(/^ +/, "").replace(/ +$/, "")
+
+	new Ajax.Request('/tag/related.js', {
 		method: 'get', 
 		onComplete:function(req) {
-			$('related').innerHTML = injectTagsHelper(req.responseText)
+			var resp = eval("(" + req.responseText + ")").map(function(x) {return x[0]}).join(" ")
+			$('related').innerHTML = injectTagsHelper(resp)
 		}, 
-		parameters:'tags=' + tags + tag_type_param
+		parameters:'name=' + tags + tag_type_param
 	})
 }
 
