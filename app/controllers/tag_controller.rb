@@ -103,7 +103,7 @@ class TagController < ApplicationController
 
 	def related
 		if params[:type]
-			@tags = Tag.calculate_related_by_type(params[:name], Tag.types[params[:type]]).map {|x| [x["name"].to_escaped_js, x["post_count"]]}
+			@tags = Tag.calculate_related_by_type(params[:name], Tag.types[params[:type]], 15).map {|x| [x["name"].to_escaped_js, x["post_count"]]}
 		else
 			@tags = Tag.find_related(params[:name]).map {|x| [x[0].to_escaped_js, x[1]]}
 		end
