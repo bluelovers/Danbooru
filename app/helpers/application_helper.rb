@@ -6,6 +6,45 @@ module ApplicationHelper
 		end
 	end
 
+	def time_ago_in_words(time)
+		from_time = time
+		to_time = Time.now
+		distance_in_minutes = (((to_time - from_time).abs)/60).round
+		distance_in_seconds = ((to_time - from_time).abs).round
+
+		case distance_in_minutes
+		when 0..1
+			return (distance_in_minutes == 0) ? 'less than a minute' : '1 minute'
+
+		when 2..44
+			"#{distance_in_minutes} minutes"
+
+		when 45..89
+			'1 hour'
+
+		when 90..1439
+			"#{(distance_in_minutes.to_f / 60.0).round} hours"
+
+		when 1440..2879
+			'1 day'
+
+		when 2880..43199
+			"#{(distance_in_minutes / 1440).round} days"
+
+		when 43200..86399
+			'1 month'
+
+		when 86400..525959
+			"#{(distance_in_minutes / 43200).round} months"
+
+		when 525960..1051919
+			'1 year'
+
+		else
+			"over #{(distance_in_minutes / 525960).round} years"
+		end
+	end
+
 	def custom_pagination_links(paginator, options = {})
 		options = {:link_to_current_page => false, :always_show_anchors => true, :window_size => 2, :params => {}}.merge(options)
 

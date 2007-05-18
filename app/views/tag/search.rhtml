@@ -1,13 +1,42 @@
 <% form_tag({:action => "search"}, :method => :get) do %>
-	<%= text_field_tag "name", "", :size => 30 %>
-	<%= select_tag "type", options_for_select([%w(Artist artist), %w(Tags search)]) %>
-	<%= submit_tag "Search" %>
+	<div class="option">
+		<label class="block" for="tag_name">Name</label>
+		<%= text_field_tag "tag_name", "", :size => 30 %>
+	</div>
+
+	<div class="option">
+		<label class="block" for="tag_type">Type</label>
+		<select name="tag_type">
+			<option value="">Any</option>
+			<option value="0">General</option>
+			<option value="1">Artist</option>
+			<option value="3">Copyright</option>
+			<option value="4">Character</option>
+		</select>
+	</div>
+
+	<div class="option">
+		<label class="block" for="tag_ambiguous">Ambiguous?</label>
+		<%= check_box_tag "tag_ambiguous" %>
+	</div>
+
+	<div class="option">
+		<label class="block" for="tag_order">Order</label>
+		<select name="tag_order">
+			<option value="name">Name</option>
+			<option value="date">Date</option>
+		</select>
+	</div>
+
+	<div class="option">
+		<%= submit_tag "Search" %>
+	</div>
 <% end %>
 
 <% if @tags %>
 	<ul>
 		<% @tags.each do |tag| %>
-			<li><%= link_to tag["name"], :controller => "post", :action => "index", :tags => tag["name"] %> (<%= tag["post_count"] %>)</li>
+			<li><%= link_to tag.name, :controller => "post", :action => "index", :tags => tag.name %> (<%= tag.post_count %>)</li>
 		<% end %>
 	</ul>
 <% end %>

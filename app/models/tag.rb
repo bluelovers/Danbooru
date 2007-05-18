@@ -11,10 +11,6 @@ class Tag < ActiveRecord::Base
 		"artist"		=> 1,
 		"art"			=> 1,
 
-		:ambiguous		=> 2,
-		"ambiguous"		=> 2,
-		"amb"			=> 2,
-
 		:copyright		=> 3,
 		"copyright"		=> 3,
 		"copy"			=> 3,
@@ -108,7 +104,7 @@ class Tag < ActiveRecord::Base
 			return [] if tags.blank?
 
 			tags = Tag.scan_tags(tags)
-			return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND tag_type = ? ORDER BY name", tags, @@tag_types[:ambiguous]]))
+			return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags]))
 		end
 
 		def update_cached_tags(tags)

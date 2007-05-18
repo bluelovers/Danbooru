@@ -406,7 +406,7 @@ function findRelTags(tag_field, tag_type) {
 			var resp = eval("(" + req.responseText + ")").map(function(x) {return x[0]}).join(" ")
 			$('related').innerHTML = injectTagsHelper(resp)
 		}, 
-		parameters:'name=' + tags + tag_type_param
+		parameters:'tags=' + tags + tag_type_param
 	})
 }
 

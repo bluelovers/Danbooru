@@ -103,9 +103,20 @@ class TagController < ApplicationController
 
 	def related
 		if params[:type]
-			@tags = Tag.calculate_related_by_type(params[:name], Tag.types[params[:type]], 15).map {|x| [x["name"].to_escaped_js, x["post_count"]]}
+			@tags = Tag.scan_tags(params[:tags])
+			@tags = TagAlias.to_aliased(@tags)
+			@tags = @tags.map {|x| Tag.calculate_related_by_type(x, Tag.types[params[:type]])}
+			@tags = @tags.inject([]) {|all, x| all += x.map {|y| [y["name"].to_escaped_js, y["post_count"]]}}
 		else
-			@tags = Tag.find_related(params[:name]).map {|x| [x[0].to_escaped_js, x[1]]}
+			@tags = params[:tags].scan(/\S+/)
+			@patterns, @tags = @tags.partition {|x| x.include?("*")}
+			@tags = TagAlias.to_aliased(@tags)
+			@tags = @tags.inject([]) {|all, x| all += Tag.find_related(x)}
+			@tags = @tags.map {|y| [y[0].to_escaped_js, y[1]]}
+			@patterns = @patterns.map {|x| x.to_escaped_for_sql_like}
+			@patterns = @patterns.inject([]) {|all, x| all += Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", x])}
+			@patterns = @patterns.map {|x| x.name}
+			@tags += @patterns
 		end
 
 		respond_to do |fmt|
@@ -116,22 +127,29 @@ class TagController < ApplicationController
 	def search
 		set_title "Search Tags"
 
-		if params[:name] && params[:type]
-			name = params[:name]
+		sql_conds = []
+		sql_params = []
 
-			case params[:type]
-			when "search"
-				escaped_name = name.gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_')
-				@tags = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", escaped_name.gsub(/^/, '%').gsub(/$/, '%').gsub(/ +/, '%')], :order => "name")
-
-			when "artist"
-				if name[/^http/]
-					escaped_name = File.dirname(name).gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_') + "%"
-					@tags = Tag.find(:all, :conditions => ["id IN (SELECT tag_id FROM posts_tags WHERE post_id IN (SELECT id FROM posts WHERE source LIKE ? ESCAPE '\\\\')) AND tag_type = ?", escaped_name, Tag.types[:artist]], :order => "name")
-				else
-					@tags = Tag.calculate_related_by_type(name, Tag.types[:artist])
-				end
-			end
+		if !params[:tag_name].blank?
+			sql_conds << "name LIKE ? ESCAPE '\\\\'"
+			sql_params << "%" + params[:tag_name].gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_') + "%"
 		end
+
+		if !params[:tag_type].blank?
+			sql_conds << "tag_type = ?"
+			sql_params << params[:tag_type].to_i
+		end
+
+		if params[:tag_ambiguous] == "1"
+			sql_conds << "is_ambiguous = TRUE"
+		end
+
+		if params[:tag_order] == "name"
+			order = "name"
+		else
+			order = "id desc"
+		end
+
+		@tags = Tag.find(:all, :conditions => [sql_conds.join(" AND "), *sql_params], :order => order)
 	end
 end

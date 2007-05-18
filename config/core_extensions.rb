@@ -20,6 +20,10 @@ class String
 		return "'%s'" % self
 	end
 
+	def to_escaped_for_sql_like
+		return self.gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
+	end
+
 	def to_escaped_js
 		return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
 	end

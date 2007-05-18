@@ -2,7 +2,8 @@ class ForumPost < ActiveRecord::Base
 	has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id, :order => "id"
 	belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
 	belongs_to :creator, :class_name => "User", :foreign_key => :user_id
-	after_create :update_parent
+	after_create :update_parent_on_create
+	before_destroy :update_parent_on_destroy
 	before_validation :validate_title
 	validates_length_of :body, :minimum => 1, :message => "You need to enter a message"
 
@@ -22,10 +23,25 @@ class ForumPost < ActiveRecord::Base
 		return true
 	end
 
-	def update_parent
+	def update_parent_on_destroy
 		unless self.parent?
 			p = self.parent
-			p.update_attribute(:updated_at, self.updated_at)
+			p.update_attributes(:response_count => p.response_count - 1)
+		end
+	end
+
+	def update_parent_on_create
+		unless self.parent?
+			p = self.parent
+			p.update_attributes(:updated_at => self.updated_at, :response_count => p.response_count + 1, :updated_by => self.user_id)
+		end
+	end
+
+	def last_updater
+		if self.last_updated_by
+			User.find(self.last_updated_by).name
+		else
+			CONFIG["default_guest_name"]
 		end
 	end
 
