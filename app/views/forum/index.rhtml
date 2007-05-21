@@ -1,10 +1,10 @@
 <div id="forum">
 <table>
 	<tr>
-		<th>Title</th>
-		<th>Author</th>
-		<th>Last Updated</th>
-		<th>Responses</th>
+		<th width="65%">Title</th>
+		<th width="10%">Author</th>
+		<th width="20%">Last Updated</th>
+		<th width="5%">Responses</th>
 	</tr>
 <% @forum_posts.each do |fp| %>
 	<tr class="<%= cycle 'even', 'odd' %>">
@@ -18,8 +18,15 @@
 		<td><%= fp.response_count %></td>
 	</tr>
 <% end %>
-	<tr class="footer">
-		<td colspan="3"><%= link_to "New Topic", :action => "add" %></td>
-	</tr>
 </table>
+
+<% form_tag(:action => "create") do %>
+	<h6><%= link_to_function "New Topic &raquo;", "Element.toggle('response')" %></h6>
+	<%= hidden_field_tag "forum_post[parent_id]", params["parent_id"] %>
+	<table style="display: none;" id="response">
+		<tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60 %></td></tr>
+		<tr><td><label for="forum_post_body">Body</label></td><td><%= text_area "forum_post", "body", :rows => 10, :cols => 60 %></td></tr>
+		<tr><td colspan="2"><%= submit_tag "Post" %></td></tr>
+	</table>
+<% end %>
 </div>

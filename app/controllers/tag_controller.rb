@@ -115,7 +115,7 @@ class TagController < ApplicationController
 			@tags = @tags.map {|y| [y[0].to_escaped_js, y[1]]}
 			@patterns = @patterns.map {|x| x.to_escaped_for_sql_like}
 			@patterns = @patterns.inject([]) {|all, x| all += Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", x])}
-			@patterns = @patterns.map {|x| x.name}
+			@patterns = @patterns.map {|x| [x.name.to_escaped_js, x.post_count]}
 			@tags += @patterns
 		end
 

@@ -346,7 +346,7 @@ function injectTagsHelper(tags) {
 	var tag_field = "post_tags"
 	var current = $F(tag_field).split(" ")
 
-	tags.cgiUnescape().split(" ").uniq().sort().each(function(tag) {
+	tags.split(" ").uniq().sort().each(function(tag) {
 		html += '<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="toggleTag(this, \'' + tag_field + '\'); return false"'
 
 		if (current.include(tag)) {
@@ -367,7 +367,7 @@ function injectTags(related, dest) {
 	}
 
 	if (readCookie("recent_tags").length > 0) {
-		$('recent').innerHTML = injectTagsHelper(readCookie("recent_tags"))
+		$('recent').innerHTML = injectTagsHelper(readCookie("recent_tags").cgiUnescape())
 	}
 }
 
