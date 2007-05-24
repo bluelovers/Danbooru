@@ -2,6 +2,8 @@ require_dependency 'login_system'
 
 class ApplicationController < ActionController::Base
 	include LoginSystem
+	include ExceptionNotifiable
+	local_addresses.clear
 
 	before_filter :set_title
 	before_filter :current_user

@@ -56,6 +56,10 @@ ActionMailer::Base.smtp_settings = {
 	:domain => "localhost"
 }
 
+ExceptionNotifier.exception_recipients = %w(r888888888@gmail.com)
+ExceptionNotifier.sender_address = "r888888888@gmail.com"
+ExceptionNotifier.email_prefix = "[Danbooru] "
+
 require 'base64'
 require 'diff/lcs/array'
 require 'image_size'
