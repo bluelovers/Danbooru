@@ -1,10 +1,21 @@
 class InviteController < ApplicationController
 	layout "default"
-	verify :method => :post, :only => [:create]
-	before_filter :user_only, :only => [:create]
+	verify :method => :post, :only => [:create, :destroy]
+	before_filter :user_only, :only => [:create, :destroy]
 
 	def self.generate_activation_key
 		return Digest::SHA1.hexdigest(rand().to_s)
+	end
+
+	def destroy
+		@invite = Invite.find(params[:id])
+		if @invite.user_id != @current_user.id
+			access_denied()
+		else
+			@invite.destroy
+			@current_user.increment!(:invite_count)
+			redirect_to :controller => "user", :action => "invites"
+		end
 	end
 
 	def create

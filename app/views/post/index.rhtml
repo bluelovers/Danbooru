@@ -30,6 +30,12 @@
 			</div>
 		<% end %>
 
+		<% if @suggestions.any? %>
+			<div id="suggestions">
+				<p>Maybe you meant: <%= @suggestions.map {|x| link_to x, :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
+			</div>
+		<% end %>
+
 		<%= render :partial => 'posts' %>
 
 		<div id="paginator">

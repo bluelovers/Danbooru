@@ -12,11 +12,14 @@
 
 <div id="current">
 	<h4>Current Invites</h4>
-	<ul>
-		<% @current_user.invites.each do |invite| %>
-			<li><%= invite.email %></li>
-		<% end %>
-	</ul>
+	<% form_tag(:controller => "invite", :action => "destroy") do %>
+		<ul>
+			<% @current_user.invites.each do |invite| %>
+				<li><%= radio_button_tag "id", invite.id %> <%= invite.email %></li>
+			<% end %>
+		</ul>
+		<%= submit_tag "Delete" %>
+	<% end %>
 </div>
 </div>
 

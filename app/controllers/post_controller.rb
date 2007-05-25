@@ -141,6 +141,12 @@ class PostController < ApplicationController
 		@pages = Paginator.new(self, Post.fast_count(params[:tags]), limit, params[:page])
 		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold))
 
+		if @posts.empty? && !params[:tags].blank? && CONFIG["enable_suggestions_on_no_results"]
+			@suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
+		else
+			@suggestions = []
+		end
+
 		respond_to do |fmt|
 			fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
 			fmt.xml {render :xml => @posts.to_xml(:select => params[:select].to_s.split(/,/))}

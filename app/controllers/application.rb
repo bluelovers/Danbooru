@@ -31,8 +31,4 @@ class ApplicationController < ActionController::Base
 	def local_request?
 		false
 	end
-
-	def rescue_action_in_public(e)
-		render :layout => "bare", :status => 500, :text => "<h6>Exception: #{e}</h6><pre>" + e.backtrace.reject {|i| i =~ /ruby/}.join("\n") + "</pre>"
-	end
 end

@@ -104,7 +104,12 @@ CONFIG["min_related_tags_cache_duration"]		= 8
 # amazon_s3: Save files to an Amazon S3 account.
 CONFIG["image_store"]							= :local_flat
 
-# These three configs are only relevant if you're using the Amazon S3 image store.
+# These three configs are only relevant if you're using the Amazon S3 
+# image store.
 CONFIG["amazon_s3_access_key_id"]				= ""
 CONFIG["amazon_s3_secret_access_key"]			= ""
 CONFIG["amazon_s3_bucket_name"]					= ""
+
+# Setting this true will offer the user suggestions if their search brought
+# up no results.
+CONFIG["enable_suggestions_on_no_results"]		= true
