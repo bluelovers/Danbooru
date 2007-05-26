@@ -159,6 +159,7 @@ module ImageStore
 			end
 
 			def delete_file
+				AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
 				AWS::S3::S3Object.delete(file_name, CONFIG["amazon_s3_bucket_name"])
 				AWS::S3::S3Object.delete("preview/#{md5}.jpg", CONFIG["amazon_s3_bucket_name"])
 			end

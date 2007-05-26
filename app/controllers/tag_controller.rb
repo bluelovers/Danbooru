@@ -144,10 +144,16 @@ class TagController < ApplicationController
 			sql_conds << "is_ambiguous = TRUE"
 		end
 
+		if sql_conds.empty?
+			sql_conds << "FALSE"
+		end
+
 		if params[:tag_order] == "name"
 			order = "name"
-		else
+		elsif params[:tag_order] = "date"
 			order = "id desc"
+		else
+			order = "name"
 		end
 
 		@tags = Tag.find(:all, :conditions => [sql_conds.join(" AND "), *sql_params], :order => order)
