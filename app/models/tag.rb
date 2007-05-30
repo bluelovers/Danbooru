@@ -83,7 +83,9 @@ class Tag < ActiveRecord::Base
 				sql << " ORDER BY tag_count DESC LIMIT 25"
 				return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
 			else
-				return tags.inject([]) {|all, x| all += Tag.find_related(x)}
+				return tags.inject([]) do |all, x|
+					all += connection.select_all(Tag.sanitize_sql(["SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.tag_id) AS tag_count FROM posts_tags pt0, posts_tags pt1, tags t WHERE pt1.post_id = pt0.post_id AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?) GROUP BY pt0.tag_id ORDER BY tag_count DESC LIMIT 25", x]))
+				end
 			end
 		end
 
