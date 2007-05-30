@@ -1,0 +1,42 @@
+<div id="artist">
+	<h3><%= @artist.name %></h3>
+	<ul>
+		<li>
+			<%= link_to "Edit", :action => "edit", :id => @artist.id %>
+			<% unless @artist.alias_id %>
+				<%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %>
+				<%= link_to "Wiki", :controller => "wiki", :action => "show", :title => @artist.name %>
+			<% end %>
+		</li>
+		<% unless @artist.url_a.blank? && @artist.url_b.blank? && @artist.url_c.blank? %>
+			<li>
+				URLs:
+				<% unless @artist.url_a.blank? %>
+					<%= link_to "[1]", @artist.url_a %>
+				<% end %>
+				<% unless @artist.url_b.blank? %>
+					<%= link_to "[2]", @artist.url_b %>
+				<% end %>
+				<% unless @artist.url_c.blank? %>
+					<%= link_to "[3]", @artist.url_c %>
+				<% end %>
+			</li>
+		<% end %>
+		<% if @artist.alias_id %>
+			<li>Alias for: <%= link_to @artist.alias, :action => "show", :id => @artist.alias_id %></li>
+		<% end %>
+		<% if @artist.aliases.any? %>
+			<li>Aliases: <%= @artist.aliases.map {|x| link_to(x.name, :action => "show", :id => x.id)}.join(", ") %></li>
+		<% end %>
+		<% if @artist.group %>
+			<li>Member of: <%= link_to @artist.group, :action => "show", :id => @artist.group_id %></li>
+		<% end %>
+		<% if @artist.members.any? %>
+			<li>Members: <%= @artist.members.map {|x| link_to(x.name, :action => "show", :id => x.id)}.join(", ") %></li>
+		<% end %>
+		<% unless @artist.alias_id %>
+			<li><%= link_to "Create an alias for this artist", :action => "add", :alias_id => @artist.id %></li>
+		<% end %>
+		<li><%= link_to "Mass edit this tag", :controller => "tag", :action => "mass_edit", :source => "source:" + File.dirname(@artist.url_b.to_s), :name => @artist.name %></li>
+	</ul>
+</div>

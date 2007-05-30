@@ -28,9 +28,13 @@ class ApplicationController < ActionController::Base
 		cookies["recent_tags"] = {:value => (tags + " " + prev_tags), :expires => 1.year.from_now}
 	end
 
+	def expire_cache
+		$cache_revision += 1
+	end
+
 	def cache_if_anonymous
 		if @current_user == nil && request.method == :get
-			cache_key = url_for(params)
+			cache_key = url_for(params) + $cache_revision.to_s
 			cached = read_fragment(cache_key)
 			if cached != nil
 				render :text => cached, :layout => false

@@ -14,7 +14,7 @@ class ForumController < ApplicationController
 			return
 		end
 
-		@forum_post = ForumPost.create(params[:forum_post].merge(:user_id => session[:user_id]))
+		@forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
 
 		if @forum_post.errors.empty?
 			if params[:forum_post][:parent_id] == "0"

@@ -21,6 +21,8 @@ if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 3
 	CONFIG["enable_anonymous_wiki_access"] = true
 end
 
+$cache_revision = 0
+
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
@@ -71,6 +73,10 @@ ActionMailer::Base.smtp_settings = {
 ExceptionNotifier.exception_recipients = [CONFIG["admin_contact"]]
 ExceptionNotifier.sender_address = CONFIG["admin_contact"]
 ExceptionNotifier.email_prefix = "[Danbooru] "
+
+if CONFIG["enable_caching"]
+	
+end
 
 require 'base64'
 require 'diff/lcs/array'
