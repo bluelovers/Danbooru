@@ -28,6 +28,21 @@ class ApplicationController < ActionController::Base
 		cookies["recent_tags"] = {:value => (tags + " " + prev_tags), :expires => 1.year.from_now}
 	end
 
+	def cache_if_anonymous
+		if @current_user == nil && request.method == :get
+			cache_key = url_for(params)
+			cached = read_fragment(cache_key)
+			if cached != nil
+				render :text => cached, :layout => false
+				return false
+			end
+
+			yield
+
+			write_fragment(cache_key, response.body)
+		end
+	end
+
 	public
 	def local_request?
 		false

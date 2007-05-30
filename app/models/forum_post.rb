@@ -67,7 +67,11 @@ class ForumPost < ActiveRecord::Base
 	end
 
 	def author
-		self.creator.name
+		if self.creator
+			self.creator.name
+		else
+			CONFIG["default_guest_name"]
+		end
 	end
 
 	def self.updated_since?(user_id)
