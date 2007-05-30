@@ -83,7 +83,7 @@ class Tag < ActiveRecord::Base
 				sql << " ORDER BY tag_count DESC LIMIT 25"
 				return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
 			else
-				return tags.inject([]) {|all, x| all += Tag.find_related(x, force_new)}
+				return tags.inject([]) {|all, x| all += Tag.find_related(x)}
 			end
 		end
 

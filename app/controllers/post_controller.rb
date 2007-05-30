@@ -133,13 +133,14 @@ class PostController < ApplicationController
 			limit = 15
 		end
 
+		safe_mode = (@current_user ? false : CONFIG["enable_anonymous_safe_post_mode"])
 		tag_blacklist = (@current_user ? @current_user.tag_blacklist.scan(/\S+/) : [])
 		user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/) : [])
 		post_threshold = (@curent_user ? @current_user.post_threshold : nil)
 
 		@ambiguous = Tag.select_ambiguous(params[:tags])
 		@pages = Paginator.new(self, Post.fast_count(params[:tags]), limit, params[:page])
-		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold))
+		@posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold, :safe_mode => safe_mode))
 
 		if @posts.empty? && !params[:tags].blank? && CONFIG["enable_suggestions_on_no_results"]
 			@suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
@@ -162,6 +163,11 @@ class PostController < ApplicationController
 	def show #:nodoc:
 		begin
 			@post = Post.find(params[:id])
+			if !@current_user && !CONFIG["enable_anonymous_safe_post_mode"] && @post.rating != 's'
+				flash[:notice] = "You must be logged in to view this post"
+				redirect_to :controller => "user", :action => "login"
+				return
+			end
 			@tags = {:include => @post.cached_tags.split(/ /)}
 			set_title @post.cached_tags
 		rescue ActiveRecord::RecordNotFound

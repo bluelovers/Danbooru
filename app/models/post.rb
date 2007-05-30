@@ -373,6 +373,10 @@ class Post < ActiveRecord::Base
 			end
 		end
 
+		if options[:safe_mode]
+			conditions << "p.rating = 's'"
+		end
+
 		if q[:unlocked_rating] == true
 			conditions << "p.is_rating_locked = FALSE"
 		end

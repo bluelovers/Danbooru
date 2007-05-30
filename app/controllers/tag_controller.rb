@@ -108,7 +108,7 @@ class TagController < ApplicationController
 			@tags = @tags.map {|x| Tag.calculate_related_by_type(x, Tag.types[params[:type]])}
 			@tags = @tags.inject([]) {|all, x| all += x.map {|y| [y["name"].to_escaped_js, y["post_count"]]}}
 		else
-			@tags = params[:tags].scan(/\S+/)
+			@tags = params[:tags].to_s.scan(/\S+/)
 			@patterns, @tags = @tags.partition {|x| x.include?("*")}
 			@tags = TagAlias.to_aliased(@tags)
 			@tags = @tags.inject([]) {|all, x| all += Tag.find_related(x)}
