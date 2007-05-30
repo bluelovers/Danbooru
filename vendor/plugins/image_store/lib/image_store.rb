@@ -1,8 +1,3 @@
-begin
-	require 'aws/s3'
-rescue
-end
-
 module ImageStore
 	def self.append_features(base) #:nodoc:
 		super

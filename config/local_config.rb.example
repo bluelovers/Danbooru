@@ -3,5 +3,5 @@
 
 # You MUST configure these settings for your own server!
 CONFIG["app_name"] = "Danbooru"
-CONFIG["server_host"] = "danbooru.donami.us"
-CONFIG["admin_contact"] "admin@" + CONFIG["server_host"]
+CONFIG["server_host"] = "danbooru.donmai.us"
+CONFIG["admin_contact"] = "admin@" + CONFIG["server_host"]
