@@ -53,6 +53,10 @@ Rails::Initializer.run do |config|
   # config.active_record.schema_format = :ruby
 
   # See Rails::Configuration for more options
+	if CONFIG["enable_caching"]
+		config.action_controller.session_store = :mem_cache_store
+		ActionController::Base.fragment_cache_store = :mem_cache_store
+	end
 end
 
 # Add new inflection rules using the following format
@@ -73,10 +77,6 @@ ActionMailer::Base.smtp_settings = {
 ExceptionNotifier.exception_recipients = [CONFIG["admin_contact"]]
 ExceptionNotifier.sender_address = CONFIG["admin_contact"]
 ExceptionNotifier.email_prefix = "[Danbooru] "
-
-if CONFIG["enable_caching"]
-	
-end
 
 require 'base64'
 require 'diff/lcs/array'
