@@ -15,7 +15,7 @@ class CreateArtists < ActiveRecord::Migration
     execute("CREATE INDEX idx_artists__image_url ON artists (image_url)")
     execute("CREATE INDEX idx_artists__personal_name ON artists (personal_name) WHERE personal_name IS NOT NULL")
     execute("CREATE INDEX idx_artists__handle_name ON artists (handle_name) WHERE handle_name IS NOT NULL")
-	artists = Tag.find(:all, :conditions => ["tag_type = ?", Tag::TYPE_ARTIST])
+	artists = Tag.find(:all, :conditions => ["tag_type = ?", Tag.types[:artist]])
     artists.each do |artist|
       personal_name = artist.name
 
