@@ -100,7 +100,9 @@ CONFIG["min_related_tags_cache_duration"]		= 8
 
 # What method to use to store images.
 # local_flat: Store every image in one directory.
-# local_hierarchy: Store every image in a hierarchical directory, based on the post's MD5 hash. On some file systems this may be faster.
+# local_hierarchy: Store every image in a hierarchical directory, 
+#   based on the post's MD5 hash. On some file systems this may be 
+#   faster.
 # amazon_s3: Save files to an Amazon S3 account.
 CONFIG["image_store"]							= :local_flat
 
@@ -114,5 +116,20 @@ CONFIG["amazon_s3_bucket_name"]					= ""
 # up no results.
 CONFIG["enable_suggestions_on_no_results"]		= true
 
-# If enabled, this setting will cause non-safe posts to be filtered out for people who don't login.
+# If enabled, this setting will cause non-safe posts to be filtered out 
+# for people who don't login.
 CONFIG["enable_anonymous_safe_post_mode"]		= false
+
+# This enables various caching mechanisms. You must have memcached (and 
+# the memcached ruby gem) installed in order for caching to work.
+CONFIG["enable_caching"]						= false
+
+# This config only comes into play if you enable caching. There are two 
+# levels of caching:
+# 1: Only cache actions visited by anonymous users.
+# 2: Cache actions, even if the user is logged in. This necessitates 
+#    deactivating a few features (such as blacklists).
+# 3: Page caching. This caches the output of actions into HTML files, to 
+#    be directly served by the web server. Again, this necessitates 
+#    decativating some features.
+CONFIG["cache_level"]							= 1

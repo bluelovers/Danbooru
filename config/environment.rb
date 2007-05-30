@@ -9,6 +9,18 @@ require File.join(File.dirname(__FILE__), 'boot')
 require 'default_config'
 require 'local_config'
 
+if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 2
+	CONFIG["enable_tag_blacklists"] = false
+	CONFIG["enable_user_blacklists"] = false
+	CONFIG["enable_post_thresholds"] = false
+end
+
+if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 3
+	CONFIG["enable_anonymous_post_access"] = true
+	CONFIG["enable_anonymous_comment_access"] = true
+	CONFIG["enable_anonymous_wiki_access"] = true
+end
+
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
