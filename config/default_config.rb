@@ -115,4 +115,4 @@ CONFIG["amazon_s3_bucket_name"]					= ""
 CONFIG["enable_suggestions_on_no_results"]		= true
 
 # If enabled, this setting will cause non-safe posts to be filtered out for people who don't login.
-CONFIG["enable_anonymous_safe_post_mode"]		= true
+CONFIG["enable_anonymous_safe_post_mode"]		= false
