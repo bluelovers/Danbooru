@@ -26,14 +26,17 @@ class ApplicationController < ActionController::Base
 
 	def cache_key
 		a = "#{params[:controller]}/#{params[:action]}"
+		tags = params[:tags].to_s.scan(/\S+/).sort.join(",")
 
 		case a
 		when "post/index"
-			tags = params[:tags].to_s.split(/ /).sort.join(",")
 			return "p/i/t=#{tags}&p=#{params[:page]}&v=#{$cache_version}"
 
 		when "post/show"
 			return "p/s/#{params[:id]}"
+
+		when "post/atom"
+			return "p/a/t=#{tags}&v=#{$cache_version}"
 
 		when "comment/index"
 			return "c/i/v=#{$cache_version}"
@@ -60,6 +63,8 @@ class ApplicationController < ActionController::Base
 			yield
 
 			Cache.put(key, response.body)
+		else
+			yield
 		end
 	end
 

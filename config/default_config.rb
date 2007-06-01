@@ -126,7 +126,7 @@ CONFIG["enable_caching"]						= false
 
 # The server and port where the memcache client can be accessed. Only
 # relevant if you enable caching.
-CONFIG["memcache_server"]						= ["localhost:4000"]
+CONFIG["memcache_servers"]						= ["localhost:4000"]
 
 # This config only comes into play if you enable caching. There are two 
 # levels of caching:

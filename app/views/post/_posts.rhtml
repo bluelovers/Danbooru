@@ -3,9 +3,7 @@
 		<h4>Nobody here but us chickens!</h4>
 	<%- else -%>
 		<%- for post in @posts -%>
-			<% if CONFIG["enable_anonymous_safe_post_mode"] && post.rating != 's' && @current_user == nil%>
-				<span class="thumb"><span class="blocked-post"></span></span>
-			<% else %>
+			<% if !(CONFIG["enable_anonymous_safe_post_mode"] && post.rating != 's' && @current_user == nil) %>
 				<%= content_tag "span", link_to(image_tag(post.preview_url, :alt => "post", :class => "preview", :onclick => "return postClick(#{post.id})", :title => "s:#{post.score} r:#{post.rating} #{h(post.cached_tags)}"), {:controller => "post", :action => "show", :id => post.id}), :class => "thumb", :id => "p#{post.id}" %>
 			<% end %>
 		<%- end -%>

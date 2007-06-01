@@ -10,7 +10,9 @@ require 'default_config'
 require 'local_config'
 
 if CONFIG["enable_caching"]
-	$cache_version = 1
+	# When we restart the server, we don't want to start at 0, since then
+	# there's a good chance we'll serve stale content. 
+	$cache_version = rand(1000)
 end
 
 if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 2
@@ -59,9 +61,6 @@ Rails::Initializer.run do |config|
   # config.active_record.schema_format = :ruby
 
   # See Rails::Configuration for more options
-	if CONFIG["enable_caching"]
-		config.action_controller.session_store = :mem_cache_store, CONFIG["memcache_server"]
-	end
 end
 
 if CONFIG["enable_caching"]
@@ -101,3 +100,5 @@ require 'acts_as_versioned'
 require 'net/http'
 require 'core_extensions'
 require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
+require 'memcache_util'
+require 'cache'

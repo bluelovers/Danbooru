@@ -12,7 +12,7 @@ class PostController < ApplicationController
 	end
 
 	if CONFIG["enable_caching"]
-		around_filter :cache_action, :only => [:index, :show]
+		around_filter :cache_action, :only => [:index, :show, :atom]
 	end
 
 	after_filter :save_tags_to_cookie, :only => [:update, :create]
