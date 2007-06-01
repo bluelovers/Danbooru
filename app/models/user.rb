@@ -43,6 +43,10 @@ class User < ActiveRecord::Base
 		end
 	end
 
+	def tag_blacklist=(tags)
+		write_attribute :tag_blacklist, tags.to_s.scan(/\S+/).slice(0, CONFIG["max_tag_blacklists"] || 1000).join(" ")
+	end
+
 	def validate_on_create
 		self.errors.add(:name, "too short") if name.size < 2
 		self.errors.add(:name, "has an illegal character (semicolon, space, period, slash)") if name =~ /[; .\/\\]/

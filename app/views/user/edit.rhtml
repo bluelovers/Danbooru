@@ -6,7 +6,12 @@
 			<div class="option">
 				<label class="block" for="user_tag_blacklist">Tag Blacklist</label>
 				<%= text_field "user", "tag_blacklist", :size => 40 %>
-				<p>Any post containing a blacklisted tag will be hidden.</p>
+				<p>
+					Any post containing a blacklisted tag will be hidden.
+					<% if CONFIG["max_tag_blacklists"] %>
+						You can have at most <%= CONFIG["max_tag_blacklists"] %> blacklisted tags.
+					<% end %>
+				</p>
 			</div>
 		<% end %>
 

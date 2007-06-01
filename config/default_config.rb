@@ -134,3 +134,7 @@ CONFIG["memcache_servers"]						= ["localhost:4000"]
 # 2: Cache actions, even if the user is logged in. This necessitates 
 #    deactivating a few features (such as blacklists).
 CONFIG["cache_level"]							= 1
+
+# The maximum number of blacklists tags a user can have. Set to false 
+# to disable.
+CONFIG["max_tag_blacklists"]					= false
