@@ -9,6 +9,10 @@ require File.join(File.dirname(__FILE__), 'boot')
 require 'default_config'
 require 'local_config'
 
+if CONFIG["enable_caching"]
+	$cache_version = 1
+end
+
 if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 2
 	CONFIG["enable_tag_blacklists"] = false
 	CONFIG["enable_user_blacklists"] = false
@@ -21,7 +25,9 @@ if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 3
 	CONFIG["enable_anonymous_wiki_access"] = true
 end
 
-$cache_revision = 0
+if CONFIG["enable_anonyomous_safe_post_mode"]
+	CONFIG["enable_anonymous_post_access"] = true
+end
 
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
@@ -54,9 +60,13 @@ Rails::Initializer.run do |config|
 
   # See Rails::Configuration for more options
 	if CONFIG["enable_caching"]
-		config.action_controller.session_store = :mem_cache_store
-		ActionController::Base.fragment_cache_store = :mem_cache_store
+		config.action_controller.session_store = :mem_cache_store, CONFIG["memcache_server"]
 	end
+end
+
+if CONFIG["enable_caching"]
+	CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
+	CACHE.servers = CONFIG["memcache_servers"]
 end
 
 # Add new inflection rules using the following format

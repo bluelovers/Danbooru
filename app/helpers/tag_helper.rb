@@ -25,8 +25,12 @@ module TagHelper
 		end
 
 		html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
-		html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
-		html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
+
+		if @current_user || CONFIG["enable_anonymous_post_access"] == false
+			html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
+			html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
+		end
+
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
 		if CONFIG["enable_tag_type_lookups"]

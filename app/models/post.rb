@@ -11,6 +11,11 @@ class Post < ActiveRecord::Base
 	attr_accessor :updater_user_id
 	after_save :commit_tags
 	after_save :blank_image_board_sources
+	if CONFIG["enable_caching"]
+		after_create :expire_cache_on_create
+		after_update :expire_cache_on_update
+		after_destroy :expire_cache_on_destroy
+	end
 	attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr
 
 	votable
@@ -32,6 +37,18 @@ class Post < ActiveRecord::Base
 				return c
 			end
 		end
+	end
+
+	def expire_cache_on_create
+		Cache.expire(:create_post => self.id)
+	end
+
+	def expire_cache_on_update
+		Cache.expire(:update_post => self.id)
+	end
+
+	def expire_cache_on_destroy
+		Cache.expire(:destroy_post => self.id)
 	end
 
 	def blank_image_board_sources
@@ -90,7 +107,7 @@ class Post < ActiveRecord::Base
 
 			@tag_cache.each do |t|
 				if t =~ /^rating:(.+)/
-					self.rating = $1
+					connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1[0,1], self.id]))
 				else
 					record = Tag.find_or_create_by_name(t)
 					unless tag_list.include?(record.name)

@@ -9,10 +9,6 @@ class ApplicationController < ActionController::Base
 	before_filter :current_user
 
 	protected
-	def api_request?
-		@is_api_request == true
-	end
-
 	def render_error(record)
 		@record = record
 		render :status => 500, :layout => "bare", :inline => "<%= error_messages_for('record') %>"
@@ -28,14 +24,34 @@ class ApplicationController < ActionController::Base
 		cookies["recent_tags"] = {:value => (tags + " " + prev_tags), :expires => 1.year.from_now}
 	end
 
-	def expire_cache
-		$cache_revision += 1
+	def cache_key
+		a = "#{params[:controller]}/#{params[:action]}"
+
+		case a
+		when "post/index"
+			tags = params[:tags].to_s.split(/ /).sort.join(",")
+			return "p/i/t=#{tags}&p=#{params[:page]}&v=#{$cache_version}"
+
+		when "post/show"
+			return "p/s/#{params[:id]}"
+
+		when "comment/index"
+			return "c/i/v=#{$cache_version}"
+		end
 	end
 
-	def cache_if_anonymous
-		if @current_user == nil && request.method == :get
-			cache_key = url_for(params) + $cache_revision.to_s
-			cached = read_fragment(cache_key)
+	def cache_action
+		cache = false
+
+		if CONFIG["cache_level"] == 1
+			cache = (@current_user == nil && request.method == :get)
+		elsif CONFIG["cache_level"] == 2
+			cache = (request.method == :get)
+		end
+
+		if cache == true
+			key = cache_key()
+			cached = Cache.get(key)
 			if cached != nil
 				render :text => cached, :layout => false
 				return false
@@ -43,7 +59,7 @@ class ApplicationController < ActionController::Base
 
 			yield
 
-			write_fragment(cache_key, response.body)
+			Cache.put(key, response.body)
 		end
 	end
 

@@ -120,9 +120,13 @@ CONFIG["enable_suggestions_on_no_results"]		= true
 # for people who don't login.
 CONFIG["enable_anonymous_safe_post_mode"]		= false
 
-# This enables various caching mechanisms. You must have memcached (and 
-# the memcached ruby gem) installed in order for caching to work.
+# This enables various caching mechanisms. You must have memcache (and 
+# the memcache-client ruby gem) installed in order for caching to work.
 CONFIG["enable_caching"]						= false
+
+# The server and port where the memcache client can be accessed. Only
+# relevant if you enable caching.
+CONFIG["memcache_server"]						= ["localhost:4000"]
 
 # This config only comes into play if you enable caching. There are two 
 # levels of caching:

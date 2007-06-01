@@ -4,7 +4,6 @@
 class ApiController < ApplicationController
 	verify :method => :post, :only => [:add_post, :change_post, :lock_post, :score_post, :del_favorite, :add_favorite]
 	verify :method => :post, :only => [:mark_comment, :add_comment] if CONFIG["enable_comments"]
-	before_filter :set_api_flag
 	after_filter :save_tags_to_cookie, :only => [:add_post, :change_post]
 
 # Adds a post to the database.
@@ -318,12 +317,5 @@ end # if CONFIG["enable_comments"]
 		else
 			render :text => "not logged in", :status => 403
 		end
-	end
-
-	protected
-
-	# Sets a flag to indicate this request is an API call. Useful for some library functions.
-	def set_api_flag
-		@is_api_request = true
 	end
 end

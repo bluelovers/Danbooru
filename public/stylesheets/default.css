@@ -248,7 +248,7 @@ span.informational {
 }
 
 img.preview {
-	margin: 1.5em;
+	margin: 20px;
 }
 
 span.thumb {
@@ -792,3 +792,12 @@ div#invite > div#current {
 	margin-top: 2em;
 }
 
+span.blocked-post {
+	display: block;
+	float: left;
+	text-align: center;
+	width: 150px;
+	height: 150px;
+	margin: 15px;
+	background-color: #fee;
+}
