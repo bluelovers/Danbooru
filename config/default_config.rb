@@ -133,7 +133,4 @@ CONFIG["memcache_servers"]						= ["localhost:4000"]
 # 1: Only cache actions visited by anonymous users.
 # 2: Cache actions, even if the user is logged in. This necessitates 
 #    deactivating a few features (such as blacklists).
-# 3: Page caching. This caches the output of actions into HTML files, to 
-#    be directly served by the web server. Again, this necessitates 
-#    decativating some features.
 CONFIG["cache_level"]							= 1
