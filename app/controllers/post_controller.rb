@@ -8,7 +8,7 @@ class PostController < ApplicationController
 			before_filter :user_only, :only => [:destroy, :create, :upload]
 		end
 	else
-		before_filter :user_only, :except => [:atom]
+		before_filter :user_only
 	end
 
 	if CONFIG["enable_caching"]

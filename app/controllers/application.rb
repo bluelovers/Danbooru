@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
 			return "p/i/t=#{tags}&p=#{params[:page]}&v=#{$cache_version}"
 
 		when "post/show"
-			return "p/s/#{params[:id]}"
+			return "p/s/#{params[:id]}/v=#{$cache_version_base}"
 
 		when "post/atom"
 			return "p/a/t=#{tags}&v=#{$cache_version}"

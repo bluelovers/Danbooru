@@ -27,6 +27,9 @@
 				<li><%= link_to "Moderate", :action => "moderate", :id => @post.id %></li>
 			</ul>
 		</div>
+		<% unless @current_user %>
+			<%= CONFIG["ad_code"] %>
+		<% end %>
 	</div>
 
 	<div class="content">

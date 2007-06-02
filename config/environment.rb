@@ -12,7 +12,8 @@ require 'local_config'
 if CONFIG["enable_caching"]
 	# When we restart the server, we don't want to start at 0, since then
 	# there's a good chance we'll serve stale content. 
-	$cache_version = rand(10_000)
+	$cache_version_base = rand(10_000)
+	$cache_version = $cache_version_base
 end
 
 if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 2

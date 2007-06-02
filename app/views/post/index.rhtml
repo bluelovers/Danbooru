@@ -43,7 +43,7 @@
 		</div>
 
 		<div id="footer">
-			<%= link_to "Upload", :controller => "post", :action => "upload" %> | <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> | <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> <% unless CONFIG["enable_anonymous_post_access"] %> | <%= link_to "My Favorites", :controller => "user", :action => "favorites", :id => @current_user.id %><% end %>
+			<%= link_to "Upload", :controller => "post", :action => "upload" %> | <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> | <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> <% if @current_user %> | <%= link_to "My Favorites", :controller => "user", :action => "favorites", :id => @current_user.id %><% end %>
 		</div>
 	</div>
 </div>
