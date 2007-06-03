@@ -132,6 +132,12 @@ class PostController < ApplicationController
 	def index
 		set_title "/#{params[:tags]}"
 
+		if @current_user == nil && CONFIG["enable_multi-tag_search_for_anonymous"] == false && params[:tags].to_s.include?(" ")
+			flash[:notice] = "You must be logged in to search for more than one tag at a time."
+			redirect_to :controller => "user", :action => "login"
+			return
+		end
+
 		limit = params[:limit].to_i
 		if limit == 0 || limit > 100
 			limit = 15

@@ -140,21 +140,8 @@ CONFIG["cache_level"]							= 1
 CONFIG["max_tag_blacklists"]					= false
 
 # This is printed on post/view if the user isn't logged in.
-CONFIG["ad_code"] = <<-EOS
-<div>
-	<h5>Ads</h5>
+CONFIG["ad_code"] 								= nil
 
-	<ul>
-		<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/SEARCH/megami">Megami Magazine</a></li>
-		<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/SEARCH/gothic">Gothic &amp; Lolita Bible</a></li>
-		<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/SEARCH/shunya+yamashita">Shunya Yamashita Artbook</a></li>
-		<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/SNACKS">Pocky</a></li>
-		<li><a href="http://affiliates.jlist.com/click/1144?url=http://www.jlist.com/CALENDARS">Anime Calendars</a></li>
-	</ul>
-
-	<a href="http://affiliates.jlist.com/click/1144/79" target="_blank" onmouseover="window.status='Visit J-List now'; return true;" onmouseout="window.status=''; return true;" title="Visit J-List now">
-		<img src="http://affiliates.jlist.com/media/1144/79" width="120" height="300" alt="Visit J-List now" border="0">
-	</a>
-</div>
-EOS
-
+# Set to false to prevent anonymous users from searching for more than one
+# tag at a time. Saves on database queries.
+CONFIG["enable_multi-tag_search_for_anonymous"]	= true

@@ -22,7 +22,9 @@
 					<td>
 						<%= link_to_unless artist.alias_id, "Posts", :controller => "post", :action => "index", :tags => artist.name %>
 						<%= link_to "Edit", :action => "edit", :id => artist.id %> 
-						<%= link_to "Delete", {:action => "destroy", :id => artist.id, :page => params[:page]}, :method => :post %>
+						<% if @current_user %>
+							<%= link_to "Delete", {:action => "destroy", :id => artist.id, :page => params[:page]}, :method => :post %>
+						<% end %>
 					</td>
 					<td><%= link_to artist.name, :action => "show", :id => artist.id %></td>
 					<% if artist.alias_id %>

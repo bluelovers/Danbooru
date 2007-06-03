@@ -372,6 +372,10 @@ class Post < ActiveRecord::Base
 			params << options[:post_threshold]
 		end
 
+		if options[:safe_mode]
+			conditions << "p.rating = 's'"
+		end
+
 		if CONFIG["enable_user_blacklists"] && options[:user_blacklist]
 			conditions << "p.user_id NOT IN (SELECT id FROM users WHERE name IN (?))"
 			params << options[:user_blacklist]
