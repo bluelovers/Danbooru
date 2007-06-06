@@ -1,16 +1,15 @@
 <h5>Globals</h5>
 <ul>
-	<li>$cache_version_base = <%= $cache_version_base %></li>
-	<li>$cache_version = <%= $cache_version %></li>
-	<li><%= link_to "Reset cache", :controller => "admin", :action => "reset_cache" %></li>
+  <li>$cache_version = <%= $cache_version %></li>
+  <li><%= link_to "Reset cache", :controller => "admin", :action => "reset_cache" %></li>
 </ul>
 
 <h5>Memcache Servers</h5>
 <% CACHE.stats.each do |server, stats| %>
-	<ul>
-		<li><%= server %></li>
-		<% stats.each do |k, v| %>
-			<li><%= k %> = <%= v %></li>
-		<% end %>
-	</ul>
+<ul>
+  <li><%= server %></li>
+  <% stats.each do |k, v| %>
+  <li><%= k %> = <%= v %></li>
+  <% end %>
+</ul>
 <% end %>

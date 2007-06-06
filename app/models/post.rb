@@ -102,6 +102,10 @@ class Post < ActiveRecord::Base
 		@tag_cache = TagImplication.with_implied(@tag_cache).uniq
 
 		transaction do
+			if (@tag_cache & CONFIG["questionable_tags"]).any? && self.rating == 's'
+				connection.execute("UPDATE posts SET rating = 'q' WHERE id = #{self.id}")
+			end
+
 			connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
 			tag_list = []
 

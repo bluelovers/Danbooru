@@ -9,22 +9,15 @@ require File.join(File.dirname(__FILE__), 'boot')
 require 'default_config'
 require 'local_config'
 
-if CONFIG["enable_caching"]
-	# When we restart the server, we don't want to start at 0, since then
-	# there's a good chance we'll serve stale content. 
-	$cache_version_base = rand(10_000)
-	$cache_version = $cache_version_base
-end
-
 if CONFIG["enable_caching"] && CONFIG["cache_level"] >= 2
-	CONFIG["enable_tag_blacklists"] = false
-	CONFIG["enable_user_blacklists"] = false
-	CONFIG["enable_post_thresholds"] = false
-	CONFIG["enable_anonymous_safe_post_access"] = false
+  CONFIG["enable_tag_blacklists"] = false
+  CONFIG["enable_user_blacklists"] = false
+  CONFIG["enable_post_thresholds"] = false
+  CONFIG["enable_anonymous_safe_post_access"] = false
 end
 
 if CONFIG["enable_anonyomous_safe_post_mode"]
-	CONFIG["enable_anonymous_post_access"] = true
+  CONFIG["enable_anonymous_post_access"] = true
 end
 
 Rails::Initializer.run do |config|
@@ -69,9 +62,9 @@ ActiveRecord::Base.allow_concurrency = false
 ActionMailer::Base.default_charset = "utf-8"
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {
-	:address => "localhost",
-	:port => 25,
-	:domain => "localhost"
+  :address => "localhost",
+  :port => 25,
+  :domain => "localhost"
 }
 
 ExceptionNotifier.exception_recipients = [CONFIG["admin_contact"]]
@@ -93,11 +86,17 @@ require 'core_extensions'
 require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
 
 if CONFIG["enable_caching"]
-	require 'memcache_util'
-	require 'cache'
-	require 'memcache_util_store'
-
-	CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
-	CACHE.servers = CONFIG["memcache_servers"]
-	ActionController::Base.session_store = :mem_cache_store
+  require 'memcache_util'
+  require 'cache'
+  require 'memcache_util_store'
+  
+  CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
+  CACHE.servers = CONFIG["memcache_servers"]
+  ActionController::Base.session_store = :mem_cache_store
+  
+  $cache_version = Cache.get("$cache_version").to_i
+  
+  if $cache_version == 0
+    Cache.put("$cache_version", 0)
+  end
 end
