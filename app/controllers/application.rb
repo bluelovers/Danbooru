@@ -26,20 +26,17 @@ class ApplicationController < ActionController::Base
 
 	def cache_key
 		a = "#{params[:controller]}/#{params[:action]}"
-		tags = params[:tags].to_s.scan(/\S+/).sort.join(",")
+		tags = params[:tags].to_s.downcase.scan(/\S+/).sort.join(",")
 
 		case a
 		when "post/index"
 			return "p/i/t=#{tags}&p=#{params[:page]}&v=#{$cache_version}"
 
 		when "post/show"
-			return "p/s/#{params[:id]}/v=#{$cache_version_base}"
+			return "p/s/#{params[:id]}&v=#{$cache_version}"
 
 		when "post/atom"
 			return "p/a/t=#{tags}&v=#{$cache_version}"
-
-		when "comment/index"
-			return "c/i/v=#{$cache_version}"
 		end
 	end
 
@@ -62,7 +59,11 @@ class ApplicationController < ActionController::Base
 
 			yield
 
-			Cache.put(key, response.body)
+			if CONFIG["expire_method"].is_a?(Integer)
+				Cache.put(key, response.body, rand(CONFIG["expire_method"].days))
+			else
+				Cache.put(key, response.body)
+			end
 		else
 			yield
 		end

@@ -59,11 +59,6 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options
 end
 
-if CONFIG["enable_caching"]
-	CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
-	CACHE.servers = CONFIG["memcache_servers"]
-end
-
 # Add new inflection rules using the following format
 # (all these examples are active by default):
 #Inflector.inflections do |inflect|
@@ -100,5 +95,9 @@ require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
 if CONFIG["enable_caching"]
 	require 'memcache_util'
 	require 'cache'
-end
+	require 'memcache_util_store'
 
+	CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
+	CACHE.servers = CONFIG["memcache_servers"]
+	ActionController::Base.session_store = :mem_cache_store
+end

@@ -14,6 +14,11 @@
 		<% end %>
 	</div>
 	<div style="font-size: 80%; margin-bottom: 2em;">
-		<p><%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash; Serving <%= number_with_delimiter Post.fast_count %> posts &ndash; Running Danbooru <%= CONFIG["version"] %></p>
+		<p>
+			<% if @current_user %>
+				<%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash; 
+			<% end %>
+			Serving <%= number_with_delimiter Post.fast_count %> posts &ndash; Running Danbooru <%= CONFIG["version"] %>
+		</p>
 	</div>
 </div>
