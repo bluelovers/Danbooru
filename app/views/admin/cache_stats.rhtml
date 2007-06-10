@@ -5,11 +5,19 @@
 </ul>
 
 <h5>Memcache Servers</h5>
-<% CACHE.stats.each do |server, stats| %>
-<ul>
-  <li><%= server %></li>
-  <% stats.each do |k, v| %>
-  <li><%= k %> = <%= v %></li>
+<table>
+  <tr>
+    <th>Server</th>
+    <th>Size</th>
+	<th>Hits:Misses</th>
+	<th>Hit Rate</th>
+  </tr>
+  <% CACHE.stats.each do |server, stats| %>
+    <tr>
+      <td><%= server %></td>
+      <td><%= stats["bytes"].to_i / 1024 %>/<%= stats["limit_maxbytes"].to_i / 1024 %></td>
+      <td><%= stats["get_hits"] %>:<%= stats["get_misses"] %></td>
+      <td><%= "%0.2f" % (100 * stats["get_hits"].to_f / stats["cmd_get"].to_f) %>%</td>
+    </tr>
   <% end %>
-</ul>
-<% end %>
+</table>

@@ -169,6 +169,15 @@ class PostController < ApplicationController
     render :layout => false
   end
 
+  def moderate
+    @post = Post.find(params[:id])
+
+    if request.post?
+      @post.update_attributes(params[:post])
+      redirect_to :controller => "post", :action => "show", :id => @post.id
+    end
+  end
+
   def show #:nodoc:
     begin
       @post = Post.find(params[:id])

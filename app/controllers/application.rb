@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
       yield
       
       if CONFIG["expire_method"].is_a?(Integer)
-        Cache.put(key, response.body, rand(CONFIG["expire_method"].days))
+        Cache.put(key, response.body, CONFIG["expire_method"].days)
       else
         Cache.put(key, response.body)
       end
