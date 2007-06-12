@@ -9,14 +9,14 @@
   <tr>
     <th>Server</th>
     <th>Size</th>
-	<th>Hits:Misses</th>
+	<th>Hits:Misses:Total</th>
 	<th>Hit Rate</th>
   </tr>
   <% CACHE.stats.each do |server, stats| %>
     <tr>
       <td><%= server %></td>
       <td><%= stats["bytes"].to_i / 1024 %>/<%= stats["limit_maxbytes"].to_i / 1024 %></td>
-      <td><%= stats["get_hits"] %>:<%= stats["get_misses"] %></td>
+      <td><%= stats["get_hits"] %>:<%= stats["get_misses"] %>:<%= stats["cmd_get"] %></td>
       <td><%= "%0.2f" % (100 * stats["get_hits"].to_f / stats["cmd_get"].to_f) %>%</td>
     </tr>
   <% end %>

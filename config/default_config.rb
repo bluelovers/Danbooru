@@ -155,3 +155,7 @@ CONFIG["expire_method"]							= :on_update
 # Any post rated safe that has one of the following tags will
 # automatically be rated questionable.
 CONFIG["questionable_tags"]						= %w(panties lingerie nude pussy penis cum bikini nipples erect_nipples anal vibrator dildo masturbation oral_sex sex paizuri penetration guro)
+
+# This enables a helper action that automatically attempts to romanize
+# Japanese characters. It requires the utf8proc gem, however.
+CONFIG["enable_romanizer"]						= false
