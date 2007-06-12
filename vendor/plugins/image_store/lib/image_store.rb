@@ -45,7 +45,7 @@ module ImageStore
 
 			def preview_url
 				if image?
-					"http://" + CONFIG["server_host"] + "/data/preview/#{file_name}"
+					"http://" + CONFIG["server_host"] + "/data/preview/#{md5}.jpg"
 				else
 					"http://" + CONFIG["server_host"] + "/data/preview/default.png"
 				end
