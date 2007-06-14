@@ -84,8 +84,13 @@ require 'acts_as_versioned'
 require 'net/http'
 require 'core_extensions'
 require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
-require 'utf8proc' if CONFIG["enable_romanizer"]
-require 'romanizer' if CONFIG["enable_romanizer"]
+
+if CONFIG["enable_romanizer"]
+  require 'utf8proc'
+  require 'romanizer'
+  ROMANIZER = Romanizer.new
+  ROMANIZER.packages = "large"
+end
 
 if CONFIG["enable_caching"]
   require 'memcache_util'

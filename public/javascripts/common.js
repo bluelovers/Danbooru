@@ -370,34 +370,52 @@ function injectTags(related, dest) {
 	}
 }
 
+function getTextSelection(field) {
+	var text = field.value
+
+	if (field.selectionStart) {
+		if (field.selectionStart < field.textLength) {
+			var start = field.selectionStart
+			var stop = field.selectionStart
+
+			while (field.value[start] != " " && start > 0) {
+				start -= 1
+			}
+
+			while (field.value[stop] != " " && stop < field.textLength) {
+				stop += 1
+			}
+
+			text = field.value.substr(start, (stop - start))
+		}
+	}
+
+	return text
+}
+
+function romanize(tag_field) {
+	$('related').innerHTML = '<em>Fetching...</em>'
+	var tag_field = $(tag_field)
+	var tags = getTextSelection(tag_field)
+
+	new Ajax.Request('/tag/romanize', {
+		method: 'get',
+		parameters: 'tags=' + tags,
+		onComplete: function(res) {
+			$('related').innerHTML = res.responseText
+		}
+	})
+}
+
 function findRelTags(tag_field, tag_type) {
 	$('related').innerHTML = '<em>Fetching...</em>'
 	var tag_field = $(tag_field)
-	var tags = tag_field.value
+	var tags = getTextSelection(tag_field)
 	var tag_type_param = ""
 
 	if (tag_type != null) {
 		tag_type_param = "&type=" + tag_type
 	}
-
-	if (tag_field.selectionStart) {
-		if (tag_field.selectionStart < tag_field.textLength) {
-			var start = tag_field.selectionStart
-			var stop = tag_field.selectionStart
-
-			while (tag_field.value[start] != " " && start > 0) {
-				start -= 1
-			}
-
-			while (tag_field.value[stop] != " " && stop < tag_field.textLength) {
-				stop += 1
-			}
-
-			tags = tag_field.value.substr(start, (stop - start))
-		}
-	}
-
-	tags = tags.replace(/^ +/, "").replace(/ +$/, "")
 
 	new Ajax.Request('/tag/related.js', {
 		method: 'get', 

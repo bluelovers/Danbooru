@@ -5,6 +5,7 @@ require 'jcode'
 require 'rubygems'
 require 'postgres'
 require 'utf8proc'
+require 'pp'
 
 class Romanizer
   def initialize(options = {})
@@ -19,7 +20,7 @@ class Romanizer
       @kana_hash[0x3041 + i] = char
       @kana_hash[0x30A1 + i] = char
     end
-    
+ 
     @kana_hash[0x30FC] = "--"
   end
 
@@ -38,6 +39,12 @@ class Romanizer
     i = 0
 
     while i < chars.size
+      if chars[i].is_a?(Array)
+        normalized << normalize_romanji(chars[i])
+        i += 1
+        next
+      end
+
       char = chars[i]
       next_char = chars[i + 1].to_s
 
@@ -76,7 +83,7 @@ class Romanizer
       i += 1
     end
 
-    return normalized.map {|x| x.gsub(/~/, "")}
+    return normalized.map {|x| x.is_a?(Array) ? x : x.gsub(/~/, "")}
   end
 
   def normalize_japanese(x)
@@ -86,13 +93,16 @@ class Romanizer
   # Romanizes a single kana character.
   def romanize_char(x)
     bytes = x.unpack("C*")
-    return nil if bytes.size != 3
+    return x if bytes.size != 3
     ucs2 = ((bytes[0] & 0x0F) << 12) | ((bytes[1] & 0x3F) << 6) | (bytes[2] & 0x3F)
-    return @kana_hash[ucs2]
+    return @kana_hash[ucs2] || x
   end
 
   def is_kana?(x)
-    return romanize_char(x) != nil
+    bytes = x.unpack("C*")
+    return false if bytes.size != 3
+    ucs2 = ((bytes[0] & 0x0F) << 12) | ((bytes[1] & 0x3F) << 6) | (bytes[2] & 0x3F)
+    return ucs2 >= 0x3040 && ucs2 <= 0x30FF
   end
 
   def is_kanji?(x)
@@ -107,11 +117,12 @@ class Romanizer
   end
 
   def query_db(word)
-    @db.exec("SELECT kana FROM dict WHERE kanji = $JA$%s$JA$ AND package IN (%s)" % [word, "'" + @packages.join(', ') + "'"]).result
+    sql = "SELECT kana FROM dict WHERE kanji = $JA$%s$JA$ AND package IN (%s)" % [word, "'" + @packages.join("', '") + "'"]
+    results = @db.exec(sql).result
   end
 
   def parse_query(query)
-    tokens = query.scan(/[\xe3-\xe9]..|[^\xe3-\xe9]+/).map do |x|
+    tokens = query.scan(/[\xe3-\xe9]..|\xef[\xbd-\xbe].|[^\xe3-\xe9]+/).map do |x|
       if x.size == 3
         normalize_japanese(x)
       else
@@ -121,14 +132,31 @@ class Romanizer
   end
 
   def to_romanji(kana)
-    z = normalize_romanji(kana.map {|x| romanize_char(x) || x})
+    kana.map do |x|
+      if x.is_a?(String)
+        romanize_char(x)
+      else
+        to_romanji(x)
+      end
+    end
+  end
+
+  def join_romanji(s)
+    s.map do |x|
+      if x.is_a?(Array)
+        " " + x.map {|y| y.join("")}.join("/") + " "
+      else
+        x
+      end
+    end.join("").gsub(/^\s+|\s+$/, '').gsub(/\s{2,}/, ' ')
   end
 
   def romanize(query)
     tokens = parse_query(query)
     original, kana = to_kana(tokens)
-    romanji = kana.map {|x| x.map {|y| to_romanji(parse_query(y)).join("")}}
-    return [original, romanji]
+    romanji = to_romanji(kana)
+    normalized_romanji = normalize_romanji(romanji)
+    return join_romanji(normalized_romanji)
   end
 
   def to_kana(characters)
@@ -138,32 +166,35 @@ class Romanizer
     characters << "~"
 
     while i1 < characters.size
-      word = []
-      matches = []
-      i2 = i1
+      if is_kanji?(characters[i1])
+        i2 = i1
+        prev_matches = []
 
-      while i2 < characters.size
-        word << characters[i2]
-        matches << query_db(word.join("")).flatten.sort
-     
-        if matches[-1].empty?
-          if word.size == 1
-            translated << word.join("")
-            original << word.join("")
-            i1 = i2
+        while i2 < characters.size
+          word = characters[i1..i2]
+          matches = query_db(word.join("")).flatten
+          if matches.empty?
+            if word.size == 1
+              original << word.join("")
+              translated << ["?"]
+            else
+              original << word[0..-2].join("")
+              translated << prev_matches.map {|x| parse_query(x)}
+            end
+            break
           else
-            translated << matches[-2]
-            original << word[0..-2].join("")
-            i1 = i2 - 1
+            prev_matches = matches
           end
 
-          break
+          i2 += 1
         end
 
-        i2 += 1
+        i1 = i2
+      else
+        original << characters[i1]
+        translated << characters[i1]
+        i1 += 1
       end
-
-      i1 += 1
     end
 
     if original[-1] == "~"
@@ -177,3 +208,4 @@ class Romanizer
     return [original, translated]
   end
 end
+
