@@ -24,7 +24,7 @@
 		</tr>
 		<% @aliases.each do |a| %>
 			<tr class="<%= cycle 'even', 'odd' %> <%= a.is_pending? ? 'pending-tag' : nil %>">
-				<td><input type="checkbox" name="aliases[<%= a.id %>]" value="1"/></td>
+				<td><input type="checkbox" name="aliases[<%= a.id %>]" value="1" <%= a.is_pending? ? 'class="pending"' : nil %>/></td>
 				<td><%= a.name %></td>
 				<td><%= Tag.find(a.alias_id).name %></td>
 			</tr>
