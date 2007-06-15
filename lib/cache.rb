@@ -1,22 +1,26 @@
 module Cache
-  def self.expire(actions = {})
-    if CONFIG["expire_method"] == :on_create_or_destroy && (actions[:create_post] || actions[:destroy_post])
-      actions[:tags].scan(/\S+/).each do |x|
-        key = "tag:#{x}"
-        if CACHE.get(key) == nil
-          CACHE.set(key, 0)
+  def self.expire(options = {})
+    if CONFIG["expire_method"] == :on_create_or_destroy && (options[:create_post] || options[:destroy_post])
+      if CONFIG["enable_anonymous_safe_post_mode"] == false || options[:rating] == 's'
+        options[:tags].scan(/\S+/).each do |x|
+          key = "tag:#{x}"
+          if CACHE.get(key) == nil
+            CACHE.set(key, 0)
+          end
+          CACHE.incr(key)
         end
-        CACHE.incr(key)
       end
     end
     
-    if CONFIG["expire_method"] == :on_update && (actions[:create_post] || actions[:destroy_post] || actions[:update_post])
-      actions[:tags].scan(/\S+/).each do |x|
-        key = "tag:#{x}"
-        if CACHE.get(key) == nil
-          CACHE.set(key, 0)
+    if CONFIG["expire_method"] == :on_update && (options[:create_post] || options[:destroy_post] || options[:update_post])
+      if CONFIG["enable_anonyous_safe_post_mode"] == false || options[:rating] == 's'
+        options[:tags].scan(/\S+/).each do |x|
+          key = "tag:#{x}"
+          if CACHE.get(key) == nil
+            CACHE.set(key, 0)
+          end
+          CACHE.incr(key)
         end
-        CACHE.incr(key)
       end
     end
   end

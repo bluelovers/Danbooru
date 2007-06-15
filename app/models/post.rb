@@ -40,15 +40,15 @@ class Post < ActiveRecord::Base
   end
 
   def expire_cache_on_create
-    Cache.expire(:create_post => self.id, :tags => self.cached_tags)
+    Cache.expire(:create_post => self.id, :tags => self.cached_tags, :rating => self.rating)
   end
 
   def expire_cache_on_update
-    Cache.expire(:update_post => self.id, :tags => self.cached_tags)
+    Cache.expire(:update_post => self.id, :tags => self.cached_tags, :rating => self.rating)
   end
 
   def expire_cache_on_destroy
-    Cache.expire(:destroy_post => self.id, :tags => self.cached_tags)
+    Cache.expire(:destroy_post => self.id, :tags => self.cached_tags, :rating => self.rating)
   end
 
   def blank_image_board_sources
