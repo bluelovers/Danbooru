@@ -64,7 +64,13 @@ class ApplicationController < ActionController::Base
       if CONFIG["expire_method"].is_a?(Integer)
         Cache.put(key, response.body, CONFIG["expire_method"].days)
       else
-        Cache.put(key, response.body)
+        if params[:tags].to_s.include?(':')
+          # Time out meta-tags since their version will never get
+          # incremented
+          Cache.put(key, response.body, 3.days)
+        else
+          Cache.put(key, response.body)
+        end
       end
     else
       yield
