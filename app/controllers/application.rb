@@ -26,18 +26,20 @@ class ApplicationController < ActionController::Base
   
   def cache_key
     a = "#{params[:controller]}/#{params[:action]}"
-    tags = params[:tags].to_s.downcase.scan(/\S+/).sort.join(",")
-    
+    tags = params[:tags].to_s.downcase.scan(/\S+/).sort.map do |x|
+      x + ":" + (Cache.get('tag:' + x) || 0).to_s
+    end.join(",")
+
     case a
     when "post/index"
-      return "p/i/t=#{tags}&p=#{params[:page]}&v=#{$cache_version}"
-      
-    when "post/show"
-      return "p/s/#{params[:id]}&v=#{$cache_version}"
+      key = "p/i/t=#{tags}&p=#{params[:page]}"
       
     when "post/atom"
-      return "p/a/t=#{tags}&v=#{$cache_version}"
+      key = "p/a/t=#{tags}"
     end
+
+    logger.info "==> cache_key=#{key}"
+    return key
   end
   
   def cache_action

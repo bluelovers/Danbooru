@@ -6,13 +6,6 @@ class AdminController < ApplicationController
     set_title "Admin"
   end
 
-  def reset_cache
-    $cache_version += 1
-    Cache.put("$cache_version", $cache_version)
-    flash[:notice] = "Cache version reset"
-    redirect_to :action => "cache_stats"
-  end
-
   def edit_account
     set_title "Edit Account"
 
