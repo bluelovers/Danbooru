@@ -147,7 +147,6 @@ CONFIG["ad_code"] 								= nil
 CONFIG["enable_multi-tag_search_for_anonymous"]	= true
 
 # Set this to control how the cache is expired. Options are:
-# on_create_or_destroy: Whenever a post is created or destroyed.
 # on_update: Whenever a post is created, destroyed, or updated.
 # <n>: Expire after <n> days, where n is a number.
 CONFIG["expire_method"]							= :on_update
