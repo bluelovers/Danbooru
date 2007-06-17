@@ -43,7 +43,7 @@ class TagController < ApplicationController
     if tag_type
       @pages, @tags = paginate :tags, :order => order, :per_page => params[:limit] || 50, :conditions => ["tag_type = ? AND id >= ?", tag_type, params[:after_id] || 0]
     else
-      @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => ["id >= ?", params[:after_id] || 0]]
+      @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => ["id >= ?", params[:after_id] || 0]
     end
 
     respond_to do |fmt|
