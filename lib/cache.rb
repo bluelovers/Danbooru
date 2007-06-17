@@ -27,7 +27,7 @@ module Cache
       
       options[:tags].scan(/\S+/).each do |x|
         key = "tag:#{x}"
-        if CACHE.get(key) == nil
+        if CACHE.get(key, true) == nil
           CACHE.set(key, 0)
         end
         CACHE.incr(key)

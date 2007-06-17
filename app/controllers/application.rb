@@ -27,7 +27,8 @@ class ApplicationController < ActionController::Base
   def cache_key
     a = "#{params[:controller]}/#{params[:action]}"
     tags = params[:tags].to_s.downcase.scan(/\S+/).sort.map do |x|
-      x + ":" + (Cache.get('tag:' + x) || 0).to_s
+      version = CACHE.get("tag:" + x, true).to_i
+      "#{x}:#{version}"
     end.join(",")
 
     case a
@@ -64,7 +65,7 @@ class ApplicationController < ActionController::Base
       if CONFIG["expire_method"].is_a?(Integer)
         Cache.put(key, response.body, CONFIG["expire_method"].days)
       else
-        if params[:tags].to_s.include?(':')
+        if CONFIG["enable_anonymous_safe_post_mode"] && (params[:tags] == nil || params[:tags].include?(':'))
           # Time out meta-tags since their version will never get
           # incremented
           Cache.put(key, response.body, 3.days)
