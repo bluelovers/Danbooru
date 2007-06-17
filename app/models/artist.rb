@@ -23,14 +23,14 @@ class Artist < ActiveRecord::Base
 
 		if @cached_aliases && @cached_aliases.any?
 			@cached_aliases.each do |name|
-				a = Artist.find_or_create_by_name(name.downcase.gsub(/ /, '_'))
+				a = Artist.find_or_create_by_name(name.downcase.gsub(/\s/, '_'))
 				a.update_attributes(:alias_id => self.id, :updater_id => self.updater_id)
 			end
 		end
 
 		if @cached_members && @cached_members.any?
 			@cached_members.each do |name|
-				a = Artist.find_or_create_by_name(name.downcase.gsub(/ /, '_'))
+				a = Artist.find_or_create_by_name(name.downcase.gsub(/\s/, '_'))
 				a.update_attributes(:group_id => self.id, :updater_id => self.updater_id)
 			end
 		end

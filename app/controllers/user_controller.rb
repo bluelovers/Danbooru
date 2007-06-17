@@ -2,8 +2,8 @@ require 'digest/sha2'
 
 class UserController < ApplicationController
 	layout "default"
-	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites]
 	verify :method => :post, :only => [:authenticate, :update, :create]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites]
 
 	protected
 	def save_cookies(user)

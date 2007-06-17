@@ -1,6 +1,8 @@
 class CommentController < ApplicationController
 	layout "default"
 
+	verify :method => :post, :only => [:create, :destroy, :mark_as_spam]
+
 	if CONFIG["enable_comment_spam_filter"]
 		before_filter :spam_filter, :only => :create
 	end
@@ -16,7 +18,6 @@ class CommentController < ApplicationController
 	end
 
 	before_filter :mod_only, :only => [:moderate]
-	verify :method => :post, :only => [:create, :destroy, :mark_as_spam]
 
 	def spam_filter
 		return false unless params[:email].blank?

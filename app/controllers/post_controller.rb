@@ -1,6 +1,8 @@
 class PostController < ApplicationController
   layout 'default'
   
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
+
   if CONFIG["enable_anonymous_post_access"]
     if CONFIG["enable_anonymous_post_uploads"]
       before_filter :user_only, :only => [:destroy]
@@ -17,7 +19,6 @@ class PostController < ApplicationController
 
   after_filter :save_tags_to_cookie, :only => [:update, :create]
   helper :wiki, :tag, :comment
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
   
 # Parameters
 # - post[source]: alternative to post[file], source url to download from
