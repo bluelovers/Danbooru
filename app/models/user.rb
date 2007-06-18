@@ -12,12 +12,12 @@ class User < ActiveRecord::Base
 	class AlreadyFavoritedError < Exception; end
 	
 	# Users are in one of seven possible roles:
-	LEVEL_UNACTIVATED 	= -1
-	LEVEL_BLOCKED 		= 1
-	LEVEL_MEMBER		= 2
-	LEVEL_SPECIAL		= 3
-	LEVEL_MOD			= 10
-	LEVEL_ADMIN			= 20
+	LEVEL_UNACTIVATED = -1
+	LEVEL_BLOCKED = 1
+	LEVEL_MEMBER = 2
+	LEVEL_SPECIAL = 3
+	LEVEL_MOD = 10
+	LEVEL_ADMIN = 20
 
 	# Please change the salt to something else, every application should use a different one
 	@@salt = 'choujin-steiner'
