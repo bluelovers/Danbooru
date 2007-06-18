@@ -426,8 +426,10 @@ class Post < ActiveRecord::Base
       sql << " OFFSET " + options[:offset].to_s
     end
 
-    logger.info(sql)
-    logger.info(params.inspect)
+    if CONFIG["enable_sql_logging"]
+      logger.info(sql)
+      logger.info(params.inspect)
+    end
 
     return Post.sanitize_sql([sql, *params])
   end
