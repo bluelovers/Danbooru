@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
       key = "p/a/t=#{tags}"
     end
 
-    logger.info "==> cache_key=#{key}"
+    logger.info "  Cache Key: #{key}"
     return key
   end
   

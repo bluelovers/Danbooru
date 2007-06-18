@@ -426,6 +426,9 @@ class Post < ActiveRecord::Base
       sql << " OFFSET " + options[:offset].to_s
     end
 
+    logger.info(sql)
+    logger.info(params.inspect)
+
     return Post.sanitize_sql([sql, *params])
   end
 

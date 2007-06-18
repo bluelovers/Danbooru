@@ -164,4 +164,34 @@ class TagController < ApplicationController
 
     render :text => romanji, :layout => false
   end
+
+  def popular_by_day
+    if params["year"] and params["month"] and params["day"]
+      @day = Time.gm(params["year"].to_i, params["month"], params["day"])
+    else
+      @day = Time.new.getgm.at_beginning_of_day
+    end
+
+    @tags = Tag.count_by_period(@day.beginning_of_day, @day.tomorrow.beginning_of_day)
+  end
+
+  def popular_by_week
+    if params["year"] and params["month"] and params["day"]
+      @day = Time.gm(params["year"].to_i, params["month"], params["day"]).beginning_of_week
+    else
+      @day = Time.new.getgm.at_beginning_of_day.beginning_of_week
+    end
+
+    @tags = Tag.count_by_period(@day, @day.next_week)
+  end
+
+  def popular_by_month
+    if params["year"] and params["month"]
+      @day = Time.gm(params["year"].to_i, params["month"], params["day"]).beginning_of_month
+    else
+      @day = Time.new.getgm.at_beginning_of_day.beginning_of_month
+    end
+
+    @tags = Tag.count_by_period(@day, @day.next_month)
+  end
 end

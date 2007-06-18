@@ -54,13 +54,13 @@ module TagHelper
 		return html
 	end
 
-	def cloud_view(tags)
+	def cloud_view(tags, divisor = 6)
 		html = ""
 
-		tags.each do |tag|
-			size = Math.log(tag.post_count) / 6
+		tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
+			size = Math.log(tag["post_count"].to_i) / divisor
 			size = 0.8 if size < 0.8
-			html << link_to(tag.name.tr("_", " "), {:controller => "post", :action => "index", :tags => tag.name}, :style => "font-size:#{size}em", :title => "#{tag.post_count} posts") << " "
+			html << link_to(tag["name"].tr("_", " "), {:controller => "post", :action => "index", :tags => tag["name"]}, :style => "font-size:#{size}em", :title => "#{tag['post_count']} posts") << " "
 		end
 
 		return html
