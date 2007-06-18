@@ -20,4 +20,26 @@ class AdminController < ApplicationController
       end
     end
   end
+
+  def settings
+    if request.post?
+      CONFIG.each_key do |x|
+        case CONFIG[x]
+        when Integer
+          CONFIG[x] = params[x].to_i
+
+        when TrueClass, FalseClass
+          CONFIG[x] = params[x] == "true" ? true : false
+
+        when Symbol
+          CONFIG[x] = params[x].to_sym
+
+        else
+          CONFIG[x] = params[x]
+        end
+      end
+
+      redirect_to :action => "settings"
+    end
+  end
 end

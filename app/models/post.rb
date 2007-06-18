@@ -426,12 +426,13 @@ class Post < ActiveRecord::Base
       sql << " OFFSET " + options[:offset].to_s
     end
 
+    x = Post.sanitize_sql([sql, *params])
+
     if CONFIG["enable_sql_logging"]
-      logger.info(sql)
-      logger.info(params.inspect)
+      logger.info(x)
     end
 
-    return Post.sanitize_sql([sql, *params])
+    return x
   end
 
   def pretty_rating

@@ -162,3 +162,8 @@ CONFIG["enable_romanizer"] = false
 # Enables logging of all SQL statements for post/index queries, even
 # in production mode.
 CONFIG["enable_sql_logging"] = false
+
+# Enables collection of statistics on tag searches, page hits, etc.
+# Since this is stored in memory (with periodic flushes to the database)
+# the overhead should be low.
+CONFIG["collect_stats"] = true
