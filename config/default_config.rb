@@ -158,12 +158,3 @@ CONFIG["questionable_tags"] = %w(panties lingerie nude pussy penis cum bikini ni
 # This enables a helper action that automatically attempts to romanize
 # Japanese characters. It requires the utf8proc gem, however.
 CONFIG["enable_romanizer"] = false
-
-# Enables logging of all SQL statements for post/index queries, even
-# in production mode.
-CONFIG["enable_sql_logging"] = false
-
-# Enables collection of statistics on tag searches, page hits, etc.
-# Since this is stored in memory (with periodic flushes to the database)
-# the overhead should be low.
-CONFIG["collect_stats"] = true
