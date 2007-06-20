@@ -51,6 +51,10 @@ class ApplicationController < ActionController::Base
     elsif CONFIG["cache_level"] == 2
       cache = (request.method == :get)
     end
+
+    if params[:format] == "xml" || params[:format] == "js"
+      cache = false
+    end
     
     if cache == true
       key = cache_key()

@@ -456,77 +456,14 @@ class Post < ActiveRecord::Base
   end
 
   def to_json(options = {})
-    return generate_attributes(options[:select], :js).to_json
+    "{id:%s,tags:'%s',created_at:'%s',creator_id:%s,source:'%s',score:%s,md5:'%s',file_url:'%s',preview_url:'%s',next_post_id:%s,prev_post_id:%s,rating:'%s'}" % [id, cached_tags.to_escaped_js, created_at.to_s, user_id, source.to_escaped_js, score, md5, file_url.to_escaped_js, preview_url.to_escaped_js, next_post_id || 0, prev_post_id || 0, rating]
   end
 
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    xml.post(generate_attributes(options[:select], :xml))
-  end
-
-  protected
-  def generate_attributes(select_attributes, escape_method)
-    attribs = {}
-    attribs[:id] = self.id
-    select_attributes ||= %w(tags author file)
-
-    select_attributes.each do |attr|
-      case attr
-      when "created_at"
-      attribs[:created_at] = self.created_at.strftime("%D %T")
-
-      when "source"
-      if escape_method == :xml
-        attribs[:source] = CGI.escapeHTML(self.source)
-      elsif escape_method == :js
-        attribs[:source] = self.source.to_escaped_js
-      else
-        attribs[:source] = source
-      end
-
-      when "author"
-      if escape_method == :xml
-        attribs[:author] = CGI.escapeHTML(self.author)
-      elsif escape_method == :js
-        attribs[:author] = self.author.to_escaped_js
-      else
-        attribs[:author] = self.author
-      end
-
-      when "score"
-      attribs[:score] = self.score
-
-      when "md5"
-      attribs[:md5] = self.md5
-
-      when "preview"
-      attribs[:preview] = self.preview_url
-
-      when "file"
-      attribs[:file] = self.file_url
-
-      when "rating"
-      attribs[:rating] = self.pretty_rating
-
-      when "tags"
-      if escape_method == :xml
-        attribs[:tags] = CGI.escapeHTML(self.cached_tags)
-      elsif escape_method == :js
-        attribs[:tags] = self.cached_tags.to_escaped_js
-      end
-
-      when "next"
-      attribs[:next] = self.next_post_id
-
-      when "previous"
-      attribs[:previous] = self.prev_post_id
-
-      end
-    end
-
-    return attribs
+    xml.post(:id => id, :tags => cached_tags, :created_at => created_at, :creator_id => user_id, :source => source, :score => score, :md5 => md5, :file_url => file_url, :preview_url => preview_url, :next_post_id => next_post_id, :prev_post_id => prev_post_id, :rating => rating)
   end
 
   def find_ext(file_path)

@@ -129,7 +129,6 @@ class PostController < ApplicationController
 # - limit: maximum number of posts to show on one response
 # - page: page number (starts at 1)
 # - tags: a space delimited string representing the tags to search for
-# - select: for API calls, a comma delimited list of specific fields to pull. can be: created_at, author, score, md5, preview, file, rating, tags, next, previous
   def index
     set_title "/#{params[:tags]}"
 
@@ -160,8 +159,8 @@ class PostController < ApplicationController
 
     respond_to do |fmt|
       fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
-      fmt.xml {render :xml => @posts.to_xml(:select => params[:select].to_s.split(/,/))}
-      fmt.js {render :json => @posts.to_json(:select => params[:select].to_s.split(/,/))}
+      fmt.xml {render :xml => @posts.to_xml}
+      fmt.js {render :json => @posts.to_json}
     end
   end
 

@@ -136,10 +136,10 @@ class Tag < ActiveRecord::Base
 			when /^(\d+)\.\.(\d+)$/
 				return [:between, $1.to_i, $2.to_i]
 
-			when /^\.\.(\d+)$/
+			when /^\.\.(\d+)$/, /^<=?(\d+)$/
 				return [:lt, $1.to_i]
 
-			when /^(\d+)\.\.$/
+			when /^(\d+)\.\.$/, /^>=?(\d+)$/
 				return [:gt, $1.to_i]
 
 			when /^(\d+)$/
@@ -187,7 +187,7 @@ class Tag < ActiveRecord::Base
 				elsif token[0] == ?~
 					q[:include] << token[1..-1]
 				elsif token.include?("*")
-					q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", token.gsub('\\', '\\\\').gsub('_', '\\_').gsub('%', '\\%').tr("*", "%")], :select => "name, post_count").map {|i| i.name}
+					q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count").map {|i| i.name}
 				elsif token == "unlockedrating"
 					q[:unlocked_rating] = true
 				else
