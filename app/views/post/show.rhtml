@@ -96,7 +96,7 @@
 				<% end %>
 			</p>
 		</div>
-
+		<!-- google_ad_section_start(weight=ignore) -->
 		<div id="edit" class="space">
 			<% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
 				<div class="option">
@@ -141,6 +141,7 @@
 				</div>
 			<% end %>
 		</div>
+		<!-- google_ad_section_end -->
 		<%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
 		<% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_responses"]) %>
 			<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
