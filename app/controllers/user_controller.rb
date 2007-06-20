@@ -21,13 +21,26 @@ class UserController < ApplicationController
 		set_title "My Account"
 	end
 
+  def index
+    if params[:id]
+      @users = [User.find(:first, :conditions => ["id = ?", params[:id]])]
+    elsif params[:name]
+      @users = User.find(:all, :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"])
+    end
+
+    respond_to do |fmt|
+      fmt.xml {render :xml => @users.to_xml}
+      fmt.js {render :json => @users.to_json}
+    end
+  end
+
 	def authenticate
 		save_cookies(@current_user)
 		@current_user.increment! :login_count
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "You are now logged in"; redirect_to(:action => "home")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.xml {render :xml => {:success => true}.to_xml("response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -88,7 +101,7 @@ class UserController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "You are now logged out"; redirect_to(:action => "home")}
-			fmt.xml {render :xml => {:success => true}.to_xml}
+			fmt.xml {render :xml => {:success => true}.to_xml("response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end

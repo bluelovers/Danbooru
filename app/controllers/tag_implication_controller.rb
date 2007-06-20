@@ -31,6 +31,12 @@ class TagImplicationController < ApplicationController
 	def index
 		set_title "Tag Implications"
 		@pages, @implications = paginate :tag_implications, :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50
+
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @implications.to_xml}
+      fmt.js {render :json => @implications.to_json}
+    end
 	end
 
 	def add

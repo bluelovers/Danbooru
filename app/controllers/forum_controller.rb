@@ -85,6 +85,16 @@ class ForumController < ApplicationController
 	end
 
 	def index
-		@pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 20, :conditions => "parent_id IS NULL"
+    if params[:parent_id]
+      @pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]]
+    else
+      @pages, @forum_posts = paginate :forum_posts, :order => "updated_at DESC", :per_page => 20, :conditions => "parent_id IS NULL"
+    end
+
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @forum_posts.to_xml}
+      fmt.js {render :json => @forum_posts.to_json}
+    end
 	end
 end

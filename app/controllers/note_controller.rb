@@ -1,5 +1,5 @@
 class NoteController < ApplicationController
-	layout 'default', :only => [:list, :history, :history_for_post]
+	layout 'default', :only => [:index, :history, :history_for_post]
 	verify :method => :post, :only => [:change, :revert, :remove]
 
 	if !CONFIG["enable_anonymous_note_edits"]
@@ -7,9 +7,20 @@ class NoteController < ApplicationController
 	end
 
 # Show a paginated list of every note.
-	def list
+	def index
 		set_title "Notes"
-		@pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 12
+
+    if params[:post_id]
+      @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => ["post_id = ?", params[:post_id]], :per_page => 100
+    else
+      @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 12
+    end
+
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @posts.to_xml}
+      fmt.js {render :json => @posts.to_json}
+    end
 	end
 
 # Show the history of a note if an id is supplied, otherwise show the history

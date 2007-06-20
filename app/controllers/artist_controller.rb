@@ -35,14 +35,14 @@ class ArtistController < ApplicationController
     if artist.errors.empty?
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Artist entry updated"; redirect_to(:action => "show", :id => artist.id)}
-        fmt.xml {render :xml => {:sucess => true}.to_xml}
+        fmt.xml {render :xml => {:sucess => true}.to_xml("response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
     else
       errors = artist.errors.full_messages.join(", ")
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Error: " + artist.errors; redirect_to(:action => "edit", :id => artist.id)}
-        fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml}
+        fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml("response")}
         fmt.js {render :json => {:success => false, :reason => errors}.to_json}
       end
     end
@@ -61,14 +61,14 @@ class ArtistController < ApplicationController
     if artist.errors.empty?
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Artist created"; redirect_to(:action => "show", :id => artist.id)}
-        fmt.xml {render :xml => {:success => true}.to_xml}
+        fmt.xml {render :xml => {:success => true}.to_xml("response")}
         fmt.js {render :json > {:success => true}.to_json}
       end
     else
       errors = artist.errors.full_messages.join(", ")
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Error: " + errors; redirect_to(:action => "add", :alias_id => params[:alias_id])}
-        fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml}
+        fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml("response")}
         fmt.js {render :json => {:success => false, :reason => errors}.to_json}
       end
     end

@@ -60,7 +60,7 @@ class TagController < ApplicationController
       if params[:start].blank?
         respond_to do |fmt|
           fmt.html {flash[:notice] = "You must fill the start tag field"; redirect_to(:action => "mass_edit")}
-          fmt.xml {render :xml => {:success => false, :reason => "start tag missing"}, :status => 500}
+          fmt.xml {render :xml => {:success => false, :reason => "start tag missing"}.to_xml("response"), :status => 500}
           fmt.js {render :json => {:success => false, :reason => "start tag missing"}, :status => 500}
         end
         return
@@ -75,7 +75,7 @@ class TagController < ApplicationController
 
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Tags updated"; redirect_to(:action => "mass_edit")}
-        fmt.xml {render :xml => {:success => true}.to_xml}
+        fmt.xml {render :xml => {:success => true}.to_xml("response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
     end
@@ -92,7 +92,7 @@ class TagController < ApplicationController
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Tag updated"; redirect_to(:action => "index")}
-      fmt.xml {render :xml => {:success => true}.to_xml}
+      fmt.xml {render :xml => {:success => true}.to_xml("response")}
       fmt.js {render :json => {:success => true}.to_json}
     end
   end

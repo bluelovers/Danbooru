@@ -13,6 +13,12 @@ class TagAliasController < ApplicationController
 	def index
 		set_title "Tag Aliases"
 		@pages, @aliases = paginate :tag_aliases, :order => "is_pending DESC, name", :per_page => 50
+
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @aliases.to_xml}
+      fmt.js {render :json => @aliases.to_json}
+    end
 	end
 
 	def add
