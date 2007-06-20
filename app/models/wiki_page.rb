@@ -133,4 +133,12 @@ class WikiPage < ActiveRecord::Base
 		connection.execute(WikiPage.sanitize_sql(["UPDATE wiki_pages SET title = ? WHERE id = ?", new_title, self.id]))
 		connection.execute(WikiPage.sanitize_sql(["UPDATE wiki_page_versions SET title = ? WHERE wiki_page_id = ?", new_title, self.id]))
 	end
+
+  def to_xml(options = {})
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_xml("wiki_page", options)
+  end
+
+  def to_json(options = {})
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_json(options)
+  end
 end

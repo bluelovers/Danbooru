@@ -18,9 +18,12 @@
 			<h5>Options</h5>
 			<ul>
 				<li><%= link_to "Delete", {:action => "destroy", :id => @post.id}, :method => :post, :confirm => "Are you sure you want to delete this post?" %></li>
-				<%- if @post.image? && !@post.is_note_locked? -%>
+				<% if @post.image? && !@post.is_note_locked? %>
 					<li><%= link_to_function "Add Translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
-				<%- end -%>
+				<% end %>
+				<% if @post.image? && @post.notes.empty? %>
+					<li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
+				<% end %>
 				<li><%= link_to_function "Add to Favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
 				<li><%= link_to "Tag History", :action => "tag_changes", :post_id => @post.id %></li>
 				<li><%= link_to "Note History", :controller => "note", :action => "history", :post_id => @post.id %></li>
@@ -32,7 +35,7 @@
 		<% end %>
 	</div>
 
-	<div class="content">
+	<div class="content" id="content">
 		<div>
 			<%- if @post.image? -%>
 				<div id="note-container">

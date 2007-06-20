@@ -17,7 +17,7 @@ end
 
 class String
 	def to_json(options = {})
-		return "'%s'" % self
+		return "'%s'" % to_escaped_js
 	end
 
 	def to_escaped_for_sql_like
@@ -60,6 +60,13 @@ class TrueClass
 end
 
 class Hash
+  def to_xml(name, options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] || Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.tag!(name, self)
+  end
+
 	def to_json(options = {})
 		arr = []
 

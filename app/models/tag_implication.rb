@@ -63,4 +63,12 @@ class TagImplication < ActiveRecord::Base
 
 		return all
 	end
+
+  def to_xml(options = {})
+    {:id => id, :consequent_id => consequent_id, :predicate_id => predicate_id, :pending => is_pending}.to_xml("implication", options)
+  end
+
+  def to_json(options = {})
+    {:id => id, :consequent_id => consequent_id, :predicate_id => predicate_id, :pending => is_pending}.to_json(options)
+  end
 end

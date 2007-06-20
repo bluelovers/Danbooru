@@ -20,4 +20,12 @@ class Comment < ActiveRecord::Base
 			CONFIG["default_guest_name"]
 		end
 	end
+
+  def to_xml(options = {})
+    {:id => id, :created_at => created_at, :post_id => post_id, :creator_id => user_id, :body => body}.to_xml("comment", options)
+  end
+
+  def to_json(options = {})
+    {:id => id, :created_at => created_at, :post_id => post_id, :creator_id => user_id, :body => body}.to_json(options)
+  end
 end

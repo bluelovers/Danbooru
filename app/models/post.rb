@@ -456,14 +456,11 @@ class Post < ActiveRecord::Base
   end
 
   def to_json(options = {})
-    "{id:%s,tags:'%s',created_at:'%s',creator_id:%s,source:'%s',score:%s,md5:'%s',file_url:'%s',preview_url:'%s',next_post_id:%s,prev_post_id:%s,rating:'%s'}" % [id, cached_tags.to_escaped_js, created_at.to_s, user_id, source.to_escaped_js, score, md5, file_url.to_escaped_js, preview_url.to_escaped_js, next_post_id || 0, prev_post_id || 0, rating]
+    {:id => id, :tags => cached_tags, :created_at => created_at, :creator_id => user_id, :source => source, :score => score, :md5 => md5, :file_url => file_url, :preview_url => preview_url, :next_post_id => next_post_id, :prev_post_id => prev_post_id, :rating => rating}.to_json(options)
   end
 
   def to_xml(options = {})
-    options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-    xml.instruct! unless options[:skip_instruct]
-    xml.post(:id => id, :tags => cached_tags, :created_at => created_at, :creator_id => user_id, :source => source, :score => score, :md5 => md5, :file_url => file_url, :preview_url => preview_url, :next_post_id => next_post_id, :prev_post_id => prev_post_id, :rating => rating)
+    {:id => id, :tags => cached_tags, :created_at => created_at, :creator_id => user_id, :source => source, :score => score, :md5 => md5, :file_url => file_url, :preview_url => preview_url, :next_post_id => next_post_id, :prev_post_id => prev_post_id, :rating => rating}.to_xml("post", options)
   end
 
   def find_ext(file_path)

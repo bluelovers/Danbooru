@@ -228,12 +228,10 @@ class Tag < ActiveRecord::Base
 	end
 
   def to_xml(options = {})
-    xml = options[:builder] || Builder::XmlMarkup.new(:indent => 2)
-    xml.instruct! unless options[:skip_instruct]
-    xml.tag(:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous)
+    {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_xml("tag", options)
   end
 
 	def to_json(options = {})
-    "{id:%s, name:'%s', count:%s, type:%s, ambiguous:%s}" % [id, name.to_escaped_js, post_count, tag_type, is_ambiguous]
+    {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_json(options)
 	end
 end

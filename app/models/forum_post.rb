@@ -87,4 +87,12 @@ class ForumPost < ActiveRecord::Base
     fp = ForumPostView.find(:first, :conditions => ["forum_posts_user_views.user_id = ? AND forum_posts_user_views.last_viewed_at < forum_posts.updated_at AND forum"])
     return fp != nil
   end
+
+  def to_xml(options = {})
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :parent_id => parent_id, :creator_id => creator_id, :response_count => response_count, :title => title, :last_updated_by => last_updated_by, :body => body}.to_xml("forum_post", options)
+  end
+
+  def to_json(options = {})
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :parent_id => parent_id, :creator_id => creator_id, :response_count => response_count, :title => title, :last_updated_by => last_updated_by, :body => body}.to_json(options)
+  end
 end

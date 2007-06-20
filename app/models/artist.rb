@@ -88,8 +88,12 @@ class Artist < ActiveRecord::Base
 		self.group_id = a.id
 	end
 
+  def to_xml(options = {})
+    {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_xml("artist", options)
+  end
+
 	def to_json(options = {})
-		{:id => self.id, :name => self.name, :alias_id => self.alias_id, :group_id => self.group_id, :url_a => self.url_a, :url_b => self.url_b, :url_c => self.url_c}.to_json(options)
+		{:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_json(options)
 	end
 
 	def to_s

@@ -48,4 +48,12 @@ class TagAlias < ActiveRecord::Base
 			return aliased
 		end
 	end
+
+  def to_xml(options = {})
+    {:id => id, :name => name, :alias_id => alias_id, :pending => is_pending}.to_xml("alias", options)
+  end
+
+  def to_json(options = {})
+    {:id => id, :name => name, :alias_id => alias_id, :pending => is_pending}.to_json(options)
+  end
 end

@@ -153,11 +153,11 @@ class User < ActiveRecord::Base
 	end
 
 	def to_xml(options = {})
-		{:name => CGI.escapeHTML(self.name), :id => self.id}.to_xml(options)
+		{:name => self.name, :id => self.id}.to_xml("user", options)
 	end
 
 	def to_json(options = {})
-		{:name => self.name.to_escaped_js, :id => self.id}.to_json(options)
+		{:name => self.name, :id => self.id}.to_json(options)
 	end
 
 	protected

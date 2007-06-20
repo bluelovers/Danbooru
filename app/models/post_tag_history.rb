@@ -7,7 +7,11 @@ class PostTagHistory < ActiveRecord::Base
 		end
 	end
 
+  def to_xml(options = {})
+    {:id => id, :post_id => post_id, :tags => tags}.to_xml("tag_history", options)
+  end
+
 	def to_json(options = {})
-		"{id:%s, post_id:%s, tags:'%s'}" % [self.id, self.post_id, self.tags.gsub(/\\/, '\0\0').gsub(/["']/) {|m| "\\#{m}"}]
+    {:id => id, :post_id => post_id, :tags => tags}.to_json(options)
 	end
 end
