@@ -398,6 +398,19 @@ class Post < ActiveRecord::Base
       end
     end
 
+    if q[:rating_negated].is_a?(String)
+      case q[:rating_negated].downcase
+      when "safe"
+        conditions << "p.rating <> 's'"
+
+      when "questionable"
+        conditions << "p.rating <> 'q'"
+
+      when "explicit"
+        conditions << "p.rating <> 'e'"
+      end
+    end
+
     if q[:unlocked_rating] == true
       conditions << "p.is_rating_locked = FALSE"
     end

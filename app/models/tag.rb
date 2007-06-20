@@ -168,7 +168,12 @@ class Tag < ActiveRecord::Base
 					elsif $1 == "md5"
 						q[:md5] = $2
 					elsif $1 == "rating"
-						q[:rating] = $2
+            rating = $2
+            if rating =~ /^-(.+)/
+              q[:rating_negated] = $1
+            else
+              q[:rating] = rating
+            end
 					elsif $1 == "id"
 						q[:post_id] = parse_helper($2)
 					elsif $1 == "width"
