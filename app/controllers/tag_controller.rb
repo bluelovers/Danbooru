@@ -48,8 +48,8 @@ class TagController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @tags.to_xml(:select => params[:select].to_s.split(/,/))}
-      fmt.js {render :json => @tags.to_json(:select => params[:select].to_s.split(/,/))}
+      fmt.xml {render :xml => @tags.to_xml}
+      fmt.js {render :json => @tags.to_json}
     end
   end
 

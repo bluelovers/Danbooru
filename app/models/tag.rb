@@ -3,23 +3,23 @@ class Tag < ActiveRecord::Base
 	after_create :update_related_tags!
 
 	@@tag_types = {
-		:general		=> 0,
-		"general"		=> 0,
-		"gen"			=> 0,
+		:general    => 0,
+		"general"   => 0,
+		"gen"       => 0,
 
-		:artist			=> 1,
-		"artist"		=> 1,
-		"art"			=> 1,
+		:artist     => 1,
+		"artist"    => 1,
+		"art"       => 1,
 
-		:copyright		=> 3,
-		"copyright"		=> 3,
-		"copy"			=> 3,
-		"co"			=> 3,
+		:copyright  => 3,
+		"copyright" => 3,
+		"copy"      => 3,
+		"co"        => 3,
 
-		:character		=> 4,
-		"character"		=> 4,
-		"char"			=> 4,
-		"ch"			=> 4
+		:character  => 4,
+		"character" => 4,
+		"char"      => 4,
+		"ch"        => 4
 	}
 
 	class << self
@@ -225,43 +225,13 @@ class Tag < ActiveRecord::Base
 		name <=> rhs.name
 	end
 
-	def to_xml(options = {})
-		attribs = {:id => self.id}
-
-		options[:select].each do |x|
-			case x
-			when "name"
-				attribs[:name] = self.name
-
-			when "count"
-				attribs[:count] = self.post_count
-
-			when "type"
-				attribs[:type] = self.tag_type
-
-			end
-		end
-
-		return attribs.to_xml(options)
-	end
+  def to_xml(options = {})
+    xml = options[:builder] || Builder::XmlMarkup.new(:indent => 2)
+    xml.instruct! unless options[:skip_instruct]
+    xml.tag(:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous)
+  end
 
 	def to_json(options = {})
-		attribs = {:id => self.id}
-
-		options[:select].each do |x|
-			case x
-			when "name"
-				attribs[:name] = self.name
-
-			when "count"
-				attribs[:count] = self.post_count
-	
-			when "type"
-				attribs[:type] = self.tag_type
-
-			end
-		end
-
-		return attribs.to_json(options)
+    "{id:%s, name:'%s', count:%s, type:%s, ambiguous:%s}" % [id, name.to_escaped_js, post_count, tag_type, is_ambiguous]
 	end
 end
