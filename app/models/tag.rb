@@ -160,20 +160,17 @@ class Tag < ActiveRecord::Base
 			q = Hash.new {|h, k| h[k] = []}
 
 			scan_query(query).each do |token|
-				if token =~ /^(user|fav|md5|rating|width|height|score|source|id):(.+)$/
+				if token =~ /^(user|fav|md5|-rating|rating|width|height|score|source|id):(.+)$/
 					if $1 == "user"
 						q[:user] = $2
 					elsif $1 == "fav"
 						q[:fav] = $2
 					elsif $1 == "md5"
 						q[:md5] = $2
+          elsif $1 == "-rating"
+            q[:rating_negated] = $2
 					elsif $1 == "rating"
-            rating = $2
-            if rating =~ /^-(.+)/
-              q[:rating_negated] = $1
-            else
-              q[:rating] = rating
-            end
+            q[:rating] = $2
 					elsif $1 == "id"
 						q[:post_id] = parse_helper($2)
 					elsif $1 == "width"
