@@ -32,8 +32,14 @@ class Tag < ActiveRecord::Base
     end
 
 		def find_or_create_by_name(name)
-			tag_type = @@tag_types[name[/^(.+?):/, 1]]
+      if name =~ /^ambiguous:|^amb:(.+)/
+        is_amb = true
+        name = $1
+      else
+        is_amb = false
+      end
 
+			tag_type = @@tag_types[name[/^(.+?):/, 1]]
 			if tag_type == nil
 				tag_type = Tag.types[:general]
 			else
@@ -43,12 +49,12 @@ class Tag < ActiveRecord::Base
 			t = Tag.find_by_name(name)
 			if t != nil
 				if t.tag_type == Tag.types[:general] && t.tag_type != tag_type
-					t.update_attributes(:tag_type => tag_type)
+					t.update_attributes(:tag_type => tag_type, :is_ambiguous => is_amb)
 				end
 				return t
 			end
 
-			Tag.create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday)
+			Tag.create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday, :is_ambiguous => is_amb)
 		end
 
 		def calculate_related_by_type(tag, type, limit = 25)
@@ -188,7 +194,7 @@ class Tag < ActiveRecord::Base
 					q[:include] << token[1..-1]
 				elsif token.include?("*")
 					q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count").map {|i| i.name}
-				elsif token == "unlockedrating"
+				elsif token == "@unlockedrating"
 					q[:unlocked_rating] = true
 				else
 					q[:related] << token

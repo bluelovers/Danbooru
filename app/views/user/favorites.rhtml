@@ -1,9 +1,15 @@
 <div id="user-favorites">
 	<h3><%= @user.name %>'s Favorites</h3>
 	<div>
-		<%- for post in @posts -%>
-			<span><span class="thumb" style="text-align: center; margin: 1em;"><%= link_to(image_tag(post.preview_url, :class => "preview", :alt => post.cached_tags), {:controller => "post", :action => "show", :id => post.id}, :title => post.cached_tags) %><br/><%= link_to_function "Remove", "new Ajax.Request('/api/del_favorite/#{post.id}', {asynchronous: true, method: 'post', onComplete: function(req) {if (req.status == 403) {notice('You need an account');} else {notice('Post deleted from favorites');}}});" %></span></span>
-		<%- end -%>
+		<% @posts.each do |post| %>
+		<span>
+			<span class="thumb" style="text-align: center; margin: 1em;"><%= link_to(image_tag(post.preview_url, :class => "preview", :alt => post.cached_tags), {:controller => "post", :action => "show", :id => post.id}, :title => post.cached_tags) %><br/>
+				<% if @current_user && @current_user.id == @user.id %>
+				<%= link_to_function "Remove", "new Ajax.Request('/api/del_favorite/#{post.id}', {asynchronous: true, method: 'post', onComplete: function(req) {if (req.status == 403) {notice('You need an account');} else {notice('Post deleted from favorites');}}});" %>
+				<% end %>
+			</span>
+		</span>
+		<% end %>
 	</div>
 </div>
 

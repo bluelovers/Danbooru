@@ -33,10 +33,18 @@ class ApplicationController < ActionController::Base
 
     case a
     when "post/index"
-      key = "p/i/t=#{tags}&p=#{params[:page]}"
+      if tags.empty?
+        key = "p/i/p=#{params[:page]}&v=#{$cache_version}"
+      else
+        key = "p/i/t=#{tags}&p=#{params[:page]}"
+      end
       
     when "post/atom"
-      key = "p/a/t=#{tags}"
+      if tags.empty?
+        key = "p/a/v=#{$cache_version}"
+      else
+        key = "p/a/t=#{tags}"
+      end
     end
 
     logger.info "  Cache Key: #{key}"
@@ -66,17 +74,7 @@ class ApplicationController < ActionController::Base
 
       yield
       
-      if CONFIG["expire_method"].is_a?(Integer)
-        Cache.put(key, response.body, CONFIG["expire_method"].days)
-      else
-        if CONFIG["enable_anonymous_safe_post_mode"] && (params[:tags] == nil || params[:tags].include?(':'))
-          # Time out meta-tags since their version will never get
-          # incremented
-          Cache.put(key, response.body, 3.days)
-        else
-          Cache.put(key, response.body)
-        end
-      end
+      Cache.put(key, response.body)
     else
       yield
     end

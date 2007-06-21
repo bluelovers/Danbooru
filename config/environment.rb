@@ -101,4 +101,6 @@ if CONFIG["enable_caching"]
   CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
   CACHE.servers = CONFIG["memcache_servers"]
   ActionController::Base.session_store = :mem_cache_store
+
+  $cache_version = CACHE.get("$cache_version", true) || 0
 end

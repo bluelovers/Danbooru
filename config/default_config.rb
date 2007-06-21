@@ -146,11 +146,6 @@ CONFIG["ad_code"] = nil
 # tag at a time. Saves on database queries.
 CONFIG["enable_multi-tag_search_for_anonymous"] = true
 
-# Set this to control how the cache is expired. Options are:
-# on_update: Whenever a post is created, destroyed, or updated.
-# <n>: Expire after <n> days, where n is a number.
-CONFIG["expire_method"] = :on_update
-
 # Any post rated safe that has one of the following tags will
 # automatically be rated questionable.
 CONFIG["questionable_tags"] = %w(panties lingerie nude pussy penis cum bikini nipples erect_nipples anal vibrator dildo masturbation oral_sex sex paizuri penetration guro)
