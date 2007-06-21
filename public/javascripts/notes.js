@@ -148,7 +148,7 @@ Note.prototype = {
 		var top = Position.deltaY
 		var left = Position.deltaX
 
-		inject += '<div id="edit-box" style="width: 350px; height: 150px; top: '+top+'px; left: '+left+'px;">'
+		inject += '<div id="edit-box" style="width: 350px; height: 150px; top: '+top+'px; left: '+left+'px; z-index: 1000;">'
 		inject += '<form onsubmit="return false;">'
 		inject += '<textarea rows="6" id="edit-box-text">' + this.textValue() + '</textarea>'
 		inject += '<input type="submit" value="Save" name="save" id="note-save-' + this.id + '" />'
@@ -164,6 +164,7 @@ Note.prototype = {
 		Event.observe('note-cancel-' + this.id, 'click', this.bind("cancel"), true)
 		Event.observe('note-remove-' + this.id, 'click', this.bind("remove"), true)
 		Event.observe('note-history-' + this.id, 'click', this.bind("history"), true)
+		$("edit-box").focus()
 	},
 
 	bodyShow: function(e) {

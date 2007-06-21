@@ -7,6 +7,7 @@ class Post < ActiveRecord::Base
   before_destroy :delete_file
   after_create :update_neighbor_links_on_create
   before_destroy :update_neighbor_links_on_destroy
+  after_update :update_neighbor_links_on_update
   attr_accessor :updater_ip_addr
   attr_accessor :updater_user_id
   after_save :commit_tags
@@ -177,10 +178,13 @@ class Post < ActiveRecord::Base
     return if !(source =~ /^http/ && file_ext.blank?)
 
     begin
-      img = Net::HTTP.get(URI.parse(source))
-      self.file_ext = find_ext(source)
+      url = URI.parse(source)
+      res = Net::HTTP.start(url.host, url.port) do |http|
+        http.get(url.request_uri)
+      end
+      self.file_ext = content_type_to_file_ext(res.content_type) || find_ext(source)
       File.open(tempfile_path, 'wb') do |out|
-        out.write(img)
+        out.write(res.body)
       end
     rescue Exception => x
       delete_tempfile
@@ -193,7 +197,7 @@ class Post < ActiveRecord::Base
   def file=(f)
     return if f.nil? || f.size == 0
 
-    self.file_ext = find_ext(f.original_filename)
+    self.file_ext = content_type_to_file_ext(f.content_type) || find_ext(f.original_filename)
 
     if f.local_path
       # Large files are stored in the temp directory, so instead of
@@ -261,6 +265,16 @@ class Post < ActiveRecord::Base
     elsif next_post == nil
       # no next post, therefore deleted post is last post
       connection.execute("UPDATE posts SET next_post_id = NULL WHERE id = #{prev_post.id}")
+    end
+  end
+
+  def update_neighbor_links_on_update
+    if next_post_id
+      connection.execute("UPDATE posts SET prev_post_id = #{id} WHERE id = #{next_post_id}")
+    end
+
+    if prev_post_id
+      connection.execute("UPDATE posts SET next_post_id = #{id} WHERE id = #{prev_post_id}")
     end
   end
 
@@ -469,6 +483,25 @@ class Post < ActiveRecord::Base
       return "txt"
     else
       return ext[1..-1].downcase
+    end
+  end
+
+  def content_type_to_file_ext(content_type)
+    case content_type
+    when "image/jpeg"
+      return "jpg"
+
+    when "image/gif"
+      return "gif"
+
+    when "image/png"
+      return "png"
+
+    when "application/x-shockwave-flash"
+      return "swf"
+
+    else
+      nil
     end
   end
 end

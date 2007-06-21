@@ -78,6 +78,7 @@ class PostController < ApplicationController
 # - post[source]: alternative to post[file], source url to download from
 # - post[file]: alternative to post[source], should contain multipart form data
 # - post[tags]: a space delimited string of tags
+# - post[rating]: the rating
 # - post[is_rating_locked]: OPTIONAL, lock rating changes
 # - post[is_note_locked]: OPTIONAL, lock note changes
 # - post[next_post_id]: OPTIONAL
@@ -167,15 +168,6 @@ class PostController < ApplicationController
   def atom #:nodoc:
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
     render :layout => false
-  end
-
-  def moderate
-    @post = Post.find(params[:id])
-
-    if request.post?
-      @post.update_attributes(params[:post])
-      redirect_to :controller => "post", :action => "show", :id => @post.id
-    end
   end
 
   def show #:nodoc:

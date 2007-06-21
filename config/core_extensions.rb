@@ -17,7 +17,7 @@ end
 
 class String
 	def to_json(options = {})
-		return "'%s'" % to_escaped_js
+		return "'" + to_escaped_js + "'"
 	end
 
 	def to_escaped_for_sql_like
@@ -31,7 +31,7 @@ end
 
 class Symbol
 	def to_json(options = {})
-		return to_s
+		return "'" + to_s.to_escaped_js + "'"
 	end
 end
 
@@ -39,6 +39,12 @@ class Integer
 	def to_json(options = {})
 		return self
 	end
+end
+
+class Time
+  def to_json(options = {})
+    return "'" + to_s + "'"
+  end
 end
 
 class Array

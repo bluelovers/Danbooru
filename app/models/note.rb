@@ -14,6 +14,10 @@ class Note < ActiveRecord::Base
 		self.body = "(empty)" if self.body.blank?
 	end
 
+  def formatted_body
+    self.body.gsub(/<tn>(.+?)<\/tn>/, '<br/><br/><p class="tn">\1</p>').gsub(/\n/, '<br/>')
+  end
+
 	def update_post
 		activenotes = connection.select_value("SELECT 1 FROM notes WHERE is_active = TRUE AND post_id = #{self.post_id} LIMIT 1")
 		if activenotes

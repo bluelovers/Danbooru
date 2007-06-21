@@ -800,3 +800,8 @@ span.blocked-post {
 	height: 150px;
 	margin: 15px;
 }
+
+p.tn {
+  font-size: smaller;
+  color: gray;
+}

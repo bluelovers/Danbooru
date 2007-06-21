@@ -1,7 +1,6 @@
 class TagController < ApplicationController
   layout 'default'
 
-  before_filter :admin_only, :only => [:rename]
   before_filter :mod_only, :only => [:mass_edit]
 
   def cloud
@@ -46,13 +45,37 @@ class TagController < ApplicationController
       order = "name"
     end
 
-    tag_type = Tag.types[params[:type]]
+    sql_conds = []
+    sql_params = []
 
-    if tag_type
-      @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => ["tag_type = ? AND id >= ?", tag_type, params[:after_id] || 0]
-    else
-      @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => ["id >= ?", params[:after_id] || 0]
+    if Tag.types[params[:type]]
+      sql_conds << "tag_type = ?"
+      sql_params << Tag.types[params[:type]]
     end
+
+    if params[:after_id]
+      sql_conds << "id >= ?"
+      sql_params << params[:after_id]
+    end
+
+    if params[:id]
+      sql_conds << "id = ?"
+      sql_params << params[:id]
+    end
+
+    if params[:name]
+      sql_conds << "name = ?"
+      sql_params << params[:name]
+    end
+
+    if params[:name_pattern]
+      sql_conds << "name ILIKE ? ESCAPE '\\\\'"
+      sql_params << ("%" + params[:name_pattern].to_escaped_for_sql_like + "%")
+    end
+
+    sql_conds << "TRUE" # for the empty case
+
+    @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => [sql_conds.join(" AND "), *sql_params]
 
     respond_to do |fmt|
       fmt.html
