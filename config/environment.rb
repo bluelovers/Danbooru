@@ -102,5 +102,5 @@ if CONFIG["enable_caching"]
   CACHE.servers = CONFIG["memcache_servers"]
   ActionController::Base.session_store = :mem_cache_store
 
-  $cache_version = CACHE.get("$cache_version", true) || 0
+  $cache_version = CACHE.get("$cache_version", true).to_i
 end
