@@ -461,8 +461,8 @@ function toggleImageResize() {
 				img.full_size = 0;
 				img.original_width = img.width;
 				img.original_height = img.height;
-				var client_width = $("content").clientWidth;
-				var client_height = $("content").clientHeight;
+				var client_width = $("right-col").clientWidth - 50;
+				var client_height = $("right-col").clientHeight;
 
 				if (img.width > client_width) {
 						var ratio = client_width / img.width;

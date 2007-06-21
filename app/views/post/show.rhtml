@@ -35,7 +35,7 @@
 		<% end %>
 	</div>
 
-	<div class="content" id="content">
+	<div class="content" id="right-col">
 		<div>
 			<%- if @post.image? -%>
 				<div id="note-container">
@@ -135,7 +135,7 @@
 					<% if @current_user %>
 						<%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
 					<% else %>
-						<%= javascript_tag "injecTags()" %>
+						<%= javascript_tag "injectTags()" %>
 					<% end %>
 					<%= javascript_tag "injectTags()" %>
 				</div>
