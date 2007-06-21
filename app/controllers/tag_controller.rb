@@ -13,6 +13,14 @@ class TagController < ApplicationController
   def index
     set_title "Tags"
 
+    if params[:limit] == "0"
+      limit = nil
+    elsif params[:limit] == nil
+      limit = 50
+    else
+      limit = params[:limit]
+    end
+
     if params[:letter]
       sql = "SELECT count(*) FROM tags WHERE substring(name FROM 1 FOR 1) < ?"
       cond_params = [params[:letter]]
@@ -41,9 +49,9 @@ class TagController < ApplicationController
     tag_type = Tag.types[params[:type]]
 
     if tag_type
-      @pages, @tags = paginate :tags, :order => order, :per_page => params[:limit] || 50, :conditions => ["tag_type = ? AND id >= ?", tag_type, params[:after_id] || 0]
+      @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => ["tag_type = ? AND id >= ?", tag_type, params[:after_id] || 0]
     else
-      @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => ["id >= ?", params[:after_id] || 0]
+      @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => ["id >= ?", params[:after_id] || 0]
     end
 
     respond_to do |fmt|

@@ -24,6 +24,9 @@
 		<%= render :partial => 'tags' %>
 	</div>
 	<div class="content">
+		<% unless @current_user %>
+			<%= CONFIG["ad_code_index_top"] %>
+		<% end %>
 		<% if @ambiguous.any? %>
 			<div id="amb-content">
 				<%= link_to_amb_tags(@ambiguous) %>

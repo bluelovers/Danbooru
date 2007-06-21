@@ -31,11 +31,14 @@
 			</ul>
 		</div>
 		<% unless @current_user %>
-			<%= CONFIG["ad_code"] %>
+			<%= CONFIG["ad_code_show_side"] %>
 		<% end %>
 	</div>
 
 	<div class="content" id="right-col">
+		<% unless @current_user %>
+			<%= CONFIG["ad_code_show_top"] %>
+		<% end %>
 		<div>
 			<%- if @post.image? -%>
 				<div id="note-container">
@@ -47,7 +50,7 @@
 						<div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= note.body %></div>
 					<%- end -%>
 				</div>
-				<%= image_tag(@post.file_url, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
+				<%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
 			<%- elsif @post.flash? -%>
 				<object width="<%= @post.width %>" height="<%= @post.height %>">
 					<param name="movie" value="<%= @post.file_url %>"/>
@@ -123,13 +126,13 @@
 					<%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %>)
 				</div>
 				<div class="option">
-					<h6>My Tags</h6>
+					<h6>Common</h6>
 					<div class="space" id="mytags"><a href="/account/options">Edit</a></div>
 
-					<h6>Recent Tags</h6>
+					<h6>Recent</h6>
 					<div class="space" id="recent"><em>None</em></div>
 
-					<h6>Related Tags</h6>
+					<h6>Related</h6>
 					<div class="space" id="related"><em>None</em></div>
 
 					<% if @current_user %>
@@ -146,7 +149,7 @@
 		</div>
 		<!-- google_ad_section_end -->
 		<%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
-		<% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_responses"]) %>
+		<% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_access"]) %>
 			<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
 			<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
 		<% end %>
