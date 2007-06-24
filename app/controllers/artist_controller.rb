@@ -41,7 +41,7 @@ class ArtistController < ApplicationController
     else
       errors = artist.errors.full_messages.join(", ")
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: " + artist.errors; redirect_to(:action => "edit", :id => artist.id)}
+        fmt.html {flash[:notice] = "Error: " + errors; redirect_to(:action => "edit", :id => artist.id)}
         fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml("response")}
         fmt.js {render :json => {:success => false, :reason => errors}.to_json}
       end

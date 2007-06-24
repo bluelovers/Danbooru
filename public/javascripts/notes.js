@@ -63,7 +63,7 @@ Note.create = function() {
 	note += '</div>'
 	note += '<div class="note-body" title="Click to edit" id="note-body-' + Note.counter + '"></div>'
 	new Insertion.Bottom('note-container', note)
-	Note.all.push(new Note(Note.counter, true))
+	Note.all.push(new Note(Note.counter, true, ''))
 	Note.counter -= 1
 };
 
@@ -82,7 +82,7 @@ Note.prototype = {
 		return this.bound_methods[method_name]
 	},
 
-	initialize: function(id, is_new) {
+	initialize: function(id, is_new, raw_body) {
 		this.id = id
 		this.is_new = is_new
 
@@ -96,11 +96,12 @@ Note.prototype = {
 
 		// store the data
 		this.old = {
-			left:		this.elements.box.offsetLeft,
-			top:		this.elements.box.offsetTop,
-			width:		this.elements.box.clientWidth,
-			height:		this.elements.box.clientHeight,
-			body:		this.elements.body.innerHTML
+			left:           this.elements.box.offsetLeft,
+			top:            this.elements.box.offsetTop,
+			width:          this.elements.box.clientWidth,
+			height:         this.elements.box.clientHeight,
+			raw_body:       raw_body,
+			formatted_body: this.elements.body.innerHTML
 		}
 
 		// reposition the box to be relative to the image
@@ -119,7 +120,7 @@ Note.prototype = {
 	},
 
 	textValue: function() {
-		return this.old.body.replace(/(?:^\s+|\s+$)/, '')
+		return this.old.raw_body.replace(/(?:^\s+|\s+$)/, '')
 	},
 
 	hideEditBox: function(e) {
@@ -164,7 +165,7 @@ Note.prototype = {
 		Event.observe('note-cancel-' + this.id, 'click', this.bind("cancel"), true)
 		Event.observe('note-remove-' + this.id, 'click', this.bind("remove"), true)
 		Event.observe('note-history-' + this.id, 'click', this.bind("history"), true)
-		$("edit-box").focus()
+		$("edit-box-text").focus()
 	},
 
 	bodyShow: function(e) {
@@ -315,7 +316,7 @@ Note.prototype = {
 		this.old.top = this.elements.box.offsetTop
 		this.old.width = this.elements.box.clientWidth
 		this.old.height = this.elements.box.clientHeight
-		this.old.body = $('edit-box-text').value
+		this.old.raw_body = $('edit-box-text').value
 		this.elements.body.innerHTML = this.textValue()
 
 		this.hideEditBox(e)
@@ -326,7 +327,7 @@ Note.prototype = {
 		params.push("note%5By%5D=" + this.old.top)
 		params.push("note%5Bwidth%5D=" + this.old.width)
 		params.push("note%5Bheight%5D=" + this.old.height)
-		params.push("note%5Bbody%5D=" + encodeURIComponent(this.old.body))
+		params.push("note%5Bbody%5D=" + encodeURIComponent(this.old.raw_body))
 
 		if (this.is_new) {
 			params.push("note%5Bpost_id%5D=" + Note.post_id)
@@ -337,23 +338,18 @@ Note.prototype = {
 			asynchronous: true,
 			method: 'post',
 			parameters: params.join("&"),
-			onComplete: function(req) {
-				if (req.status == 200) {
-					notice("Note saved")
-
-					var response = eval(req.responseText)
-
-					if (response.old_id < 0) {
-						var n = Note.find(response.old_id)
-						n.is_new = false
-						n.id = response.new_id
-						n.elements.box.id = 'note-box-' + n.id
-						n.elements.body.id = 'note-body-' + n.id
-						n.elements.corner.id = 'note-corner-' + n.id
-					}
-				} else {
-					notice("Error: " + req.responseText)
+			onSuccess: function(req) {
+				notice("Note saved")
+				var response = eval("(" + req.responseText + ")")
+				if (response.old_id < 0) {
+					var n = Note.find(response.old_id)
+					n.is_new = false
+					n.id = response.new_id
+					n.elements.box.id = 'note-box-' + n.id
+					n.elements.body.id = 'note-body-' + n.id
+					n.elements.corner.id = 'note-corner-' + n.id
 				}
+				$("note-body-" + response.new_id).innerHTML = response.formatted_body
 			}
 		})
 
@@ -368,7 +364,7 @@ Note.prototype = {
 		this.elements.box.style.left = this.old.left + "px"
 		this.elements.box.style.width = this.old.width + "px"
 		this.elements.box.style.height = this.old.height + "px"
-		this.elements.body.innerHTML = this.old.body
+		this.elements.body.innerHTML = this.old.formatted_body
 
 		Event.stop(e)
 	},

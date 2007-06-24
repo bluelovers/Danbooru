@@ -1,168 +1,168 @@
 <script src="/javascripts/notes.js" type="text/javascript"></script>
 
 <div id="post-view">
-<%- if @post.nil? -%>
-	<h2>Nobody here but us chickens!</h2>
-<%- else -%>
-	<div class="sidebar">
-		<%= render :partial => 'search' %>
-		<%= render :partial => 'tags' %>
-		<div id="stats">
-			<h5>Statistics</h5>
-			<ul>
-				<li>Rating: <%= @post.pretty_rating %></li>
-				<li>Score: <%= @post.score %> (vote <%= link_to_function "up", "vote(1, #{@post.id})" %>/<%= link_to_function "down", "vote(-1, #{@post.id})" %>)</li>
-				<li>Favorites: <%= link_to pluralize(@post.fav_count, "person"), :action => "favorites", :id => @post.id %></li>
-			</ul>
-		</div>
-		<div>
-			<h5>Options</h5>
-			<ul>
-				<li><%= link_to "Delete", {:action => "destroy", :id => @post.id}, :method => :post, :confirm => "Are you sure you want to delete this post?" %></li>
-				<% if @post.image? && !@post.is_note_locked? %>
-					<li><%= link_to_function "Add Translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
-				<% end %>
-				<% if @post.image? && @post.notes.empty? %>
-					<li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
-				<% end %>
-				<li><%= link_to_function "Add to Favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
-				<li><%= link_to "Tag History", :action => "tag_changes", :post_id => @post.id %></li>
-				<li><%= link_to "Note History", :controller => "note", :action => "history", :post_id => @post.id %></li>
-			</ul>
-		</div>
-		<% unless @current_user %>
-			<%= CONFIG["ad_code_show_side"] %>
-		<% end %>
-	</div>
+  <% if @post.nil? %>
+  <h2>Nobody here but us chickens!</h2>
+  <%- else -%>
+  <div class="sidebar">
+    <%= render :partial => 'search' %>
+    <%= render :partial => 'tags' %>
+    <div id="stats">
+      <h5>Statistics</h5>
+      <ul>
+        <li>Rating: <%= @post.pretty_rating %></li>
+        <li>Score: <%= @post.score %> (vote <%= link_to_function "up", "vote(1, #{@post.id})" %>/<%= link_to_function "down", "vote(-1, #{@post.id})" %>)</li>
+        <li>Favorites: <%= link_to pluralize(@post.fav_count, "person"), :action => "favorites", :id => @post.id %></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Options</h5>
+      <ul>
+        <li><%= link_to "Delete", {:action => "destroy", :id => @post.id}, :method => :post, :confirm => "Are you sure you want to delete this post?" %></li>
+        <% if @post.image? && !@post.is_note_locked? %>
+          <li><%= link_to_function "Add Translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
+        <% end %>
+        <% if @post.image? && @post.notes.empty? %>
+          <li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
+        <% end %>
+        <li><%= link_to_function "Add to Favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
+        <li><%= link_to "Tag History", :action => "tag_changes", :post_id => @post.id %></li>
+        <li><%= link_to "Note History", :controller => "note", :action => "history", :post_id => @post.id %></li>
+      </ul>
+    </div>
+    <% unless @current_user %>
+      <%= CONFIG["ad_code_show_side"] %>
+    <% end %>
+  </div>
 
-	<div class="content" id="right-col">
-		<% unless @current_user %>
-			<%= CONFIG["ad_code_show_top"] %>
-		<% end %>
-		<div>
-			<%- if @post.image? -%>
-				<div id="note-container">
-					<%- @post.notes.active.each do |note| -%>
-						<div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
-							<div class="note-corner" id="note-corner-<%= note.id %>"></div>
-						</div>
+  <div class="content" id="right-col">
+    <% unless @current_user %>
+      <%= CONFIG["ad_code_show_top"] %>
+    <% end %>
+    <div>
+      <%- if @post.image? -%>
+        <div id="note-container">
+          <%- @post.notes.active.each do |note| -%>
+            <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
+              <div class="note-corner" id="note-corner-<%= note.id %>"></div>
+            </div>
 
-						<div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= note.body %></div>
-					<%- end -%>
-				</div>
-				<%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
-			<%- elsif @post.flash? -%>
-				<object width="<%= @post.width %>" height="<%= @post.height %>">
-					<param name="movie" value="<%= @post.file_url %>"/>
-					<embed src="<%= @post.file_url %>" width="<%= @post.width %>" height="<%= @post.height %>" allowScriptAccess="never">
-					</embed>
-				</object>
+            <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= note.formatted_body %></div>
+          <%- end -%>
+        </div>
+        <%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
+      <%- elsif @post.flash? -%>
+        <object width="<%= @post.width %>" height="<%= @post.height %>">
+          <param name="movie" value="<%= @post.file_url %>"/>
+          <embed src="<%= @post.file_url %>" width="<%= @post.width %>" height="<%= @post.height %>" allowScriptAccess="never">
+          </embed>
+        </object>
 
-				<p><%= link_to "Save this flash (right-click and save)", @post.file_url %></p>
-			<%- else -%>
-				<h2><a href="<%= @post.file_url %>">Download</a></h2>
-				<p>You must download this file manually.</p>
-			<%- end -%>
-		</div>
+        <p><%= link_to "Save this flash (right-click and save)", @post.file_url %></p>
+      <%- else -%>
+        <h2><a href="<%= @post.file_url %>">Download</a></h2>
+        <p>You must download this file manually.</p>
+      <%- end -%>
+    </div>
 
-		<div class="space">
-			<p id="poster">
-				Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "index", :tags => "user:#{@post.author}" %>
-				<%- unless @post.source.blank? -%>
-					<%- if @post.source[/^http/] -%>
-						(<%= link_to "source", @post.source %>)
-					<%- else -%>
-						(source: <%= @post.source %>)
-					<%- end -%>
-				<%- end -%>
-			</p>
-			<p id="note-count"></p>
-			<script type="text/javascript">
-			//<![CDATA[
-				Note.post_id = <%= @post.id %>
+    <div class="space">
+      <p id="poster">
+        Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "index", :tags => "user:#{@post.author}" %>
+        <%- unless @post.source.blank? -%>
+          <%- if @post.source[/^http/] -%>
+            (<%= link_to "source", @post.source %>)
+          <%- else -%>
+            (source: <%= @post.source %>)
+          <%- end -%>
+        <%- end -%>
+      </p>
+      <p id="note-count"></p>
+      <script type="text/javascript">
+      //<![CDATA[
+        Note.post_id = <%= @post.id %>
 
-				<%- @post.notes.active.each do |note| -%>
-					Note.all.push(new Note(<%= note.id %>, false))
-				<%- end -%>
+        <%- @post.notes.active.each do |note| -%>
+          Note.all.push(new Note(<%= note.id %>, false, '<%= note.body.to_escaped_js.gsub(/\n/, '\\n') %>'))
+        <%- end -%>
 
-				Note.updateNoteCount()
-				Note.show()
-			//]]>
-			</script>
+        Note.updateNoteCount()
+        Note.show()
+      //]]>
+      </script>
 
-			<p id="post_menu">
-				<%= link_to_function "Edit", "Element.toggle('edit')" %>
-				<% if @post.prev_post_id %>
-					<strong class="divider">|</strong>
-					<%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %>
-				<% end %>
-				<% if @post.next_post_id %>
-					<strong class="divider">|</strong>
-					<%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %>
-				<% end %>
-			</p>
-		</div>
-		<!-- google_ad_section_start(weight=ignore) -->
-		<div id="edit" class="space">
-			<% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
-				<% unless @post.is_rating_locked? %>
-					<div class="option">
-						<label class="block" for="post_rating_questionable">Rating</label>
-						<%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> <label for="post_rating_explicit">Explicit</label> <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %> <label for="post_rating_questionable">Questionable</label> <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> <label for="post_rating_safe">Safe</label>
-					</div>
-				<% end %>
-				<% if @current_user && @current_user.role?(:mod) %>
-					<div class="option">
-						<label class="block" for="post_is_note_locked">Note locked?</label> <%= check_box "post", "is_note_locked" %>
-					</div>
-					<div class="option">
-						<label class="block" for="post_is_rating_locked">Rating locked?</label> <%= check_box "post", "is_rating_locked" %>
-					</div>
-				<% end %>
-				<div class="option">
-					<label class="block" for="post_prev_post_id">Previous Post ID</label>
-					<%= text_field "post", "prev_post_id", :size => 10 %>
-				</div>
-				<div class="option">
-					<label class="block" for="post_next_post_id">Next Post ID</label>
-					<%= text_field "post", "next_post_id", :size => 10 %>
-				</div>
-				<div class="option">
-					<label class="block" for="post_source">Source</label>
-					<%= text_field "post", "source", :size => 40 %>  <%= link_to_function("Find artist", "findArtist()") %>
-				</div>
-				<div class="option">
-					<label class="block" for="post_tags">Tags</label>
-					<%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %>)
-				</div>
-				<div class="option">
-					<h6>Common</h6>
-					<div class="space" id="mytags"><a href="/account/options">Edit</a></div>
+      <p id="post_menu">
+        <%= link_to_function "Edit", "Element.toggle('edit')" %>
+        <% if @post.prev_post_id %>
+          <strong class="divider">|</strong>
+          <%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %>
+        <% end %>
+        <% if @post.next_post_id %>
+          <strong class="divider">|</strong>
+          <%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %>
+        <% end %>
+      </p>
+    </div>
+    <!-- google_ad_section_start(weight=ignore) -->
+    <div id="edit" class="space">
+      <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
+        <% unless @post.is_rating_locked? %>
+          <div class="option">
+            <label class="block" for="post_rating_questionable">Rating</label>
+            <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> <label for="post_rating_explicit">Explicit</label> <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %> <label for="post_rating_questionable">Questionable</label> <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> <label for="post_rating_safe">Safe</label>
+          </div>
+        <% end %>
+        <% if @current_user && @current_user.role?(:mod) %>
+          <div class="option">
+            <label class="block" for="post_is_note_locked">Note locked?</label> <%= check_box "post", "is_note_locked" %>
+          </div>
+          <div class="option">
+            <label class="block" for="post_is_rating_locked">Rating locked?</label> <%= check_box "post", "is_rating_locked" %>
+          </div>
+        <% end %>
+        <div class="option">
+          <label class="block" for="post_prev_post_id">Previous Post ID</label>
+          <%= text_field "post", "prev_post_id", :size => 10 %>
+        </div>
+        <div class="option">
+          <label class="block" for="post_next_post_id">Next Post ID</label>
+          <%= text_field "post", "next_post_id", :size => 10 %>
+        </div>
+        <div class="option">
+          <label class="block" for="post_source">Source</label>
+          <%= text_field "post", "source", :size => 40 %>  <%= link_to_function("Find artist", "findArtist()") %>
+        </div>
+        <div class="option">
+          <label class="block" for="post_tags">Tags</label>
+          <%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %>)
+        </div>
+        <div class="option">
+          <h6>Common</h6>
+          <div class="space" id="mytags"><a href="/account/options">Edit</a></div>
 
-					<h6>Recent</h6>
-					<div class="space" id="recent"><em>None</em></div>
+          <h6>Recent</h6>
+          <div class="space" id="recent"><em>None</em></div>
 
-					<h6>Related</h6>
-					<div class="space" id="related"><em>None</em></div>
+          <h6>Related</h6>
+          <div class="space" id="related"><em>None</em></div>
 
-					<% if @current_user %>
-						<%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
-					<% else %>
-						<%= javascript_tag "injectTags()" %>
-					<% end %>
-					<%= javascript_tag "injectTags()" %>
-				</div>
-				<div class="option">
-					<%= submit_tag "Save changes" %>
-				</div>
-			<% end %>
-		</div>
-		<!-- google_ad_section_end -->
-		<%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
-		<% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_access"]) %>
-			<h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
-			<%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
-		<% end %>
-	</div>
+          <% if @current_user %>
+            <%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
+          <% else %>
+            <%= javascript_tag "injectTags()" %>
+          <% end %>
+          <%= javascript_tag "injectTags()" %>
+        </div>
+        <div class="option">
+          <%= submit_tag "Save changes" %>
+        </div>
+      <% end %>
+    </div>
+    <!-- google_ad_section_end -->
+    <%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
+    <% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_access"]) %>
+      <h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
+      <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
+    <% end %>
+  </div>
 <%- end -%>
 </div>

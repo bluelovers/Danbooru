@@ -1,2 +1,12 @@
 User-agent: *
 Disallow: comment/show
+Disallow: note/history
+Disallow: artist/edit
+Disallow: post/destroy
+Disallow: tag/edit
+Disallow: tag/mass_edit
+Disallow: post/atom
+Disallow: wiki/edit
+Disallow: wiki/history
+Disallow: wiki/rename
+Disallow: post/update

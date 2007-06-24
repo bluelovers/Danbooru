@@ -1,7 +1,7 @@
 class PostController < ApplicationController
   layout 'default'
-  
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
+
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :render => {:nothing => true}
 
   if CONFIG["enable_anonymous_post_access"]
     if CONFIG["enable_anonymous_post_uploads"]
@@ -12,14 +12,14 @@ class PostController < ApplicationController
   else
     before_filter :user_only
   end
-  
+
   if CONFIG["enable_caching"]
     around_filter :cache_action, :only => [:index, :atom]
   end
 
   after_filter :save_tags_to_cookie, :only => [:update, :create]
   helper :wiki, :tag, :comment
-  
+
 # Parameters
 # - post[source]: alternative to post[file], source url to download from
 # - post[file]: alternative to post[source], should contain multipart form data
@@ -28,6 +28,7 @@ class PostController < ApplicationController
 # - post[is_note_locked]: OPTIONAL, lock note changes
 # - post[next_post_id]: OPTIONAL
 # - post[prev_post_id]: OPTIONAL
+# - post[rating]: the rating, can be questionable/safe/explicit
 # - login: OPTIONAL, login name
 # - password: alternative to password_hash, your plaintext password
 # - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
