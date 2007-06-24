@@ -1,36 +1,30 @@
-<div id="post-recent-tag-changes">
-<% @changes.each do |change| %>
-  <% form_tag(:controller => "post", :action => "revert_tags", :id => change.post_id) do %>
-    <table>
-      <tr>
-        <th colspan="5"><%= link_to "Post ##{change.post_id}", :controller => "post", :action => "show", :id => change.post_id %></th>
+<div id="post-tag-history">
+  <table>
+    <tr>
+      <th></th>
+      <th>Post</th>
+      <th>Tags</th>
+      <th>Edited By</th>
+      <th>Date</th>
+      <th>Options</th>
+    </tr>
+    <% @changes.each do |change| %>
+      <tr style="white-space: nowrap;">
+        <td style="background: <%= id_to_color(change.post_id) %>;"></td>
+        <% if params[:post_id] %>
+          <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
+        <% else %>
+          <td><%= link_to change.post_id, :controller => "post", :action => "tag_history", :post_id => change.post_id %></td>
+        <% end %>
+        <td><%= change.tags %></td>
+        <td><%= change.author %></td>
+        <td><%= change.created_at.strftime("%D %T") %></td>
+        <td><%= link_to "Revert", {:controller => "post", :action => "revert_tags", :id => change.post_id, :history_id => change.id}, :method => :post %></td>
       </tr>
-      <% PostTagHistory.find(:all, :conditions => ["post_id = ?", change.post_id], :order => "id DESC").each do |history| %>
-        <tr style="white-space: nowrap;" class="<%= cycle 'even', 'odd', :name => "changes" %>">
-          <td width="95%">
-            <% if history.id == change.id %>
-              &raquo;
-            <% end %>
-            <%= history.tags %>
-          </td>
-          <td><%= history.created_at.strftime("%D %T") %></td>
-          <td><%= history.author %></td>
-          <% if @current_user && @current_user.role?(:mod) %>
-            <td><%= history.ip_addr %></td>
-          <% else %>
-            <td></td>
-          <% end %>
-          <td width="5%"><input type="radio" name="history_id" value="<%= history.id %>"/></td>
-        </tr>
-      <% end %>
-      <tr><td colspan="2"><%= submit_tag "Revert!" %></td></tr>
-      <% reset_cycle "changes" %>
-    </table>
-  <% end %>
-<% end %>
+    <% end %>
+  </table>
 
-<div id="paginator">
-  <%= custom_pagination_links(@pages) %>
-</div>
-
+  <div id="paginator">
+    <%= custom_pagination_links(@pages) %>
+  </div>
 </div>

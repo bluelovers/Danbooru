@@ -281,7 +281,7 @@ class PostController < ApplicationController
 # - offset: OPTIONAL
 # - post_id: OPTIONAL, ID of the post to query
   def tag_history
-    set_title "Tag changes"
+    set_title "Tag History"
 
     if params[:post_id]
       conditions = ["post_id = ?", params[:post_id]]
@@ -292,7 +292,7 @@ class PostController < ApplicationController
     limit = params[:limit] || 100
 
     respond_to do |fmt|
-      fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => 5, :conditions => conditions}
+      fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => limit, :conditions => conditions}
       fmt.xml {render :xml => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
       fmt.js {render :json => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_json}
     end
