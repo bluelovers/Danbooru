@@ -315,6 +315,7 @@ class Post < ActiveRecord::Base
     generate_sql__range_helper(q[:width], "p.width", conditions, params)
     generate_sql__range_helper(q[:height], "p.height", conditions, params)
     generate_sql__range_helper(q[:score], "p.score", conditions, params)
+    generate_sql__range_helper(q[:date], "p.created_at::date", conditions, params)
 
     if q[:md5].is_a?(String)
       conditions << "p.md5 = ?"
