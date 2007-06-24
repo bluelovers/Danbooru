@@ -280,7 +280,7 @@ class PostController < ApplicationController
 # - limit: OPTIONAL
 # - offset: OPTIONAL
 # - post_id: OPTIONAL, ID of the post to query
-  def tag_changes
+  def tag_history
     set_title "Tag changes"
 
     if params[:post_id]
