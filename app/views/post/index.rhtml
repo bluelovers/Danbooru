@@ -1,53 +1,61 @@
 <div id="post-list">
- 	<div class="sidebar">
-		<%= render :partial => "search" %>
-		<div class="space">
-			<h5>Mode</h5>
-			<form onsubmit="return false;" action="">
-				<select name="mode" id="mode" onchange="changeMode()" style="width: 12em;">
-					<option value="view">View Posts</option>
-					<option value="edit">Edit Posts</option>
-					<option value="fav">Add to Favorites</option>
-					<option value="vote-up">Vote Up</option>
-					<option value="vote-down">Vote Down</option>
-					<option value="lock-rating">Lock Rating</option>
-					<option value="lock-note">Lock Notes</option>
-					<option value="delete">Delete Post</option>
-					<option value="new-tag-script">New Tag Script</option>
-					<option value="delete-tag-script">Delete Tag Script</option>
-				</select>
-			</form>
+  <div class="sidebar">
+    <%= render :partial => "search" %>
+    <div class="space">
+      <h5>Mode</h5>
+      <form onsubmit="return false;" action="">
+        <select name="mode" id="mode" onchange="changeMode()" style="width: 12em;">
+          <option value="view">View Posts</option>
+          <option value="edit">Edit Posts</option>
+          <option value="fav">Add to Favorites</option>
+          <option value="vote-up">Vote Up</option>
+          <option value="vote-down">Vote Down</option>
+          <option value="lock-rating">Lock Rating</option>
+          <option value="lock-note">Lock Notes</option>
+          <option value="delete">Delete Post</option>
+          <option value="new-tag-script">New Tag Script</option>
+          <option value="delete-tag-script">Delete Tag Script</option>
+        </select>
+      </form>
 
-			<%= javascript_tag "loadMode()" %>
-		</div>
+      <%= javascript_tag "loadMode()" %>
+    </div>
 
-		<%= render :partial => 'tags' %>
-	</div>
-	<div class="content">
-		<% unless @current_user %>
-			<%= CONFIG["ad_code_index_top"] %>
-		<% end %>
-		<% if @ambiguous.any? %>
-			<div id="amb-content">
-				<%= link_to_amb_tags(@ambiguous) %>
-			</div>
-		<% end %>
+    <%= render :partial => 'tags' %>
+  </div>
+  <div class="content">
+    <% unless @current_user %>
+      <%= CONFIG["ad_code_index_top"] %>
+    <% end %>
+    <% if @ambiguous.any? %>
+      <div id="amb-content">
+        <%= link_to_amb_tags(@ambiguous) %>
+      </div>
+    <% end %>
 
-		<% if @suggestions.any? %>
-			<div id="suggestions">
-				<p>Maybe you meant: <%= @suggestions.map {|x| link_to x, :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
-			</div>
-		<% end %>
+    <% if @suggestions.any? %>
+      <div id="suggestions">
+        <p>Maybe you meant: <%= @suggestions.map {|x| link_to x, :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
+      </div>
+    <% end %>
 
-		<%= render :partial => 'posts' %>
+    <%= render :partial => 'posts' %>
 
-		<div id="paginator">
-			<%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>
-		</div>
+    <div id="paginator">
+      <%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>
+    </div>
 
-		<div id="footer">
-			<%= link_to "Upload", :controller => "post", :action => "upload" %> | <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> | <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> <% if @current_user %> | <%= link_to "My Favorites", :controller => "user", :action => "favorites", :id => @current_user.id %><% end %>
-		</div>
-	</div>
+    <div id="footer">
+      <% if @current_user || CONFIG["enable_anonymous_post_uploads"] %>
+        <%= link_to "Upload", :controller => "post", :action => "upload" %> |
+      <% end %>
+      <% if @current_user %>
+        <%= link_to "My Favorites", :controller => "user", :action => "favorites", :id => @current_user.id %> |
+      <% end %>
+      <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> |
+      <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> |
+      <%= link_to "Tag History", :controller => "post", :action => "tag_history" %>
+    </div>
+  </div>
 </div>
 
