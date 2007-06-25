@@ -72,7 +72,6 @@ class Post < ActiveRecord::Base
     end
 
     if self.is_rating_locked?
-      self.errors.add "rating", "rating is locked"
       return
     end
 

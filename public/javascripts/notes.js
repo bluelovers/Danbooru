@@ -47,7 +47,7 @@ Note.updateNoteCount = function() {
 		else
 			label = "notes"
 
-		$('note-count').innerHTML = "This post has <a href=\"/note/history_for_post/" + Note.post_id + "\">" + Note.all.length + " " + label + "</a>"
+		$('note-count').innerHTML = "This post has <a href=\"/note/history?post_id=" + Note.post_id + "\">" + Note.all.length + " " + label + "</a>"
 	} else {
 		$('note-count').innerHTML = ""
 	}
