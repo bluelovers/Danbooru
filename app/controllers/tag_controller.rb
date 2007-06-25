@@ -17,7 +17,7 @@ class TagController < ApplicationController
     elsif params[:limit] == nil
       limit = 50
     else
-      limit = params[:limit]
+      limit = params[:limit].to_i
     end
 
     if params[:letter]
