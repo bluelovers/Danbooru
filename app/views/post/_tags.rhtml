@@ -2,15 +2,15 @@
 	<h5>Tags</h5>
 	<!-- google_ad_section_start -->
 	<ul>
-		<% [*@tags[:exclude]].each do |tt| %>
+		<% @tags[:exclude].to_a.each do |tt| %>
 			<li><%= tag_link(tt, "-") %></li>
 		<% end %>
 
-		<% [*@tags[:include]].each do |tt| %>
+		<% @tags[:include].to_a.each do |tt| %>
 			<li><%= tag_link(tt) %></li>
 		<% end %>
 
-		<% Tag.find_related([*@tags[:related]]).each do |tt| %>
+		<% Tag.find_related(@tags[:related].to_a).each do |tt| %>
 			<li><%= tag_link(tt) %></li>
 		<% end %>
 	</ul>

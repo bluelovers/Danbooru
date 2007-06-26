@@ -27,8 +27,10 @@ class Tag < ActiveRecord::Base
       @@tag_types
     end
 
-    def count_by_period(start, stop)
-      counts = connection.select_all(Tag.sanitize_sql(["select count(pt.tag_id) as post_count, (select name from tags where id = pt.tag_id) as name from posts p, posts_tags pt, tags t where p.created_at between ? and ? and p.id = pt.post_id and pt.tag_id = t.id group by pt.tag_id order by post_count desc limit 50", start, stop]))
+    def count_by_period(start, stop, options = {})
+      options[:limit] ||= 50
+
+      counts = connection.select_all(Tag.sanitize_sql(["select count(pt.tag_id) as post_count, (select name from tags where id = pt.tag_id) as name from posts p, posts_tags pt, tags t where p.created_at between ? and ? and p.id = pt.post_id and pt.tag_id = t.id group by pt.tag_id order by post_count desc limit #{options[:limit]}", start, stop]))
     end
 
     def find_or_create_by_name(name)

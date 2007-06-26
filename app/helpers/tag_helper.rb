@@ -5,19 +5,23 @@ module TagHelper
 		begin
 			case t
 			when String
-			name = t
-			count = Tag.find_by_name(name).post_count
+        name = t
+        count = Tag.find_by_name(name).post_count
+
+      when Hash
+        name = t["name"]
+        count = t["post_count"]
 
 			when Tag
-			name = t.name
-			count = t.post_count
-
+        name = t.name
+        count = t.post_count
+        
 			when Array
-			name = t[0].to_s
-			count = t[1]
+        name = t[0].to_s
+        count = t[1]
 
 			else
-			raise
+        raise
 
 			end
 		rescue Exception

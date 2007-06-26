@@ -162,7 +162,13 @@ class PostController < ApplicationController
     end
 
     respond_to do |fmt|
-      fmt.html {@tags = (params[:tags] ? Tag.parse_query(params[:tags]) : {:include => Tag.find(:all, :order => "post_count DESC", :limit => 25)})}
+      fmt.html do
+        if params[:tags]
+          @tags = Tag.parse_query(params[:tags])
+        else
+          @tags = {:include => Tag.count_by_period(1.week.ago, Time.now, :limit => 20)}
+        end
+      end
       fmt.xml {render :xml => @posts.to_xml}
       fmt.js {render :json => @posts.to_json}
     end
