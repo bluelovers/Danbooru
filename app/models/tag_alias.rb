@@ -1,4 +1,16 @@
 class TagAlias < ActiveRecord::Base
+  before_create :validate_uniqueness
+
+  def validate_uniqueness
+		n = Tag.find_or_create_by_name(self.name)
+		a = Tag.find(self.alias_id)
+
+    if self.class.find(:first, :conditions => ["name = ? OR name = ?", n.name, a.name])
+      self.errors.add_to_base("Alias already exists")
+      return false
+    end
+  end
+
 	def alias=(name)
 		tag = Tag.find_or_create_by_name(name)
 		self.alias_id = tag.id
@@ -9,10 +21,6 @@ class TagAlias < ActiveRecord::Base
 		a = Tag.find(self.alias_id)
 
 		transaction do
-			if self.class.find(:first, :conditions => ["is_pending = FALSE AND (name = ? OR name = ?)", n.name, a.name])
-				raise "Tag alias already exists"
-			end
-
 			connection.execute(Tag.sanitize_sql(["DELETE FROM posts_tags WHERE tag_id = ? AND post_id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", n.id, a.id]))
 			connection.execute(Tag.sanitize_sql(["UPDATE posts_tags SET tag_id = ? WHERE tag_id = ?", a.id, n.id]))
 			connection.execute(Tag.sanitize_sql(["UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags WHERE tag_id = tags.id) WHERE tags.name IN (?, ?)", n.name, a.name]))

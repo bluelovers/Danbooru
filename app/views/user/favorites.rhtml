@@ -1,5 +1,6 @@
 <div id="user-favorites">
 	<h3><%= @user.name %>'s Favorites</h3>
+	<p>These posts were also favorited by: <%= User.find(:all, :joins => "JOIN favorites ON favorites.user_id = users.id", :conditions => ["favorites.post_id IN (?) AND users.id <> ?", @posts.map {|x| x.id}, @user.id], :order => "lower(name)", :select => "users.*").map {|x| link_to(x.name, :controller => "user", :action => "favorites", :id => x.id)}.uniq.to_sentence %>.</p>
 	<div>
 		<% @posts.each do |post| %>
 		<span>

@@ -12,7 +12,7 @@
       <ul>
         <li>Rating: <%= @post.pretty_rating %></li>
         <li>Score: <%= @post.score %> (vote <%= link_to_function "up", "vote(1, #{@post.id})" %>/<%= link_to_function "down", "vote(-1, #{@post.id})" %>)</li>
-        <li>Favorites: <%= link_to pluralize(@post.fav_count, "person"), :action => "favorites", :id => @post.id %></li>
+        <li>Favorited by: <%= favorite_list(@post) %></li>
       </ul>
     </div>
     <div>
@@ -164,6 +164,9 @@
     </div>
     <!-- google_ad_section_end -->
     <%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
+		<% if @current_user && @current_user.always_resize_images? %>
+			<%= javascript_tag "toggleImageResize()" %>
+		<% end %>
     <% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_access"]) %>
       <h5><%= pluralize(@post.comments.size, "comment") %> (<a href="#" onclick="return false" id="ci<%= @post.id %>">0 hidden</a>)</h5>
       <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>

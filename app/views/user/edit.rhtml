@@ -1,5 +1,5 @@
 <div id="user-edit">
-	<% form_tag(:action => "update") do %>
+	<% form_tag(:controller => "user", :action => "update") do %>
 		<p><strong>Separate individual tags and users with spaces.</strong></p>
 
 		<% if CONFIG["enable_tag_blacklists"] %>
@@ -39,6 +39,12 @@
 			<% else %>
 				<p>This field is optional. It is useful if you ever forget your password and want to reset it.</p>
 			<% end %>
+		</div>
+
+		<div class="option">
+			<label class="block" for="user_always_resize_images">Resize Images</label>
+			<%= check_box "user", "always_resize_images" %>
+			<p>If enabled, large images will always be resized to fit the screen.</p>
 		</div>
 
 		<div class="option">

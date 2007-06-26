@@ -4,7 +4,7 @@ class TagImplicationController < ApplicationController
 	verify :method => :post, :only => [:create, :destroy, :approve]
 
 	def create
-		TagImplication.create(params[:tag_implication].merge(:is_pending => true))
+    TagImplication.create(params[:tag_implication].merge(:is_pending => true))
 
 		flash[:notice] = "Tag implication created"
 		redirect_to :action => "index"
