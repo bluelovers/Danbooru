@@ -21,6 +21,11 @@ class AdminController < ApplicationController
     end
   end
 
+  def reset_cache
+    $cache_version += 1
+    redirect_to :action => "index"
+  end
+
   def settings
     if request.post?
       CONFIG.each_key do |x|

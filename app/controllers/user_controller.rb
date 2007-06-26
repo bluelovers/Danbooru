@@ -2,8 +2,8 @@ require 'digest/sha2'
 
 class UserController < ApplicationController
 	layout "default"
-	verify :method => :post, :only => [:authenticate, :update, :create]
-	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites]
+	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites, :add_favorite, :delete_favorite]
 
 	protected
 	def save_cookies(user)
@@ -169,6 +169,32 @@ class UserController < ApplicationController
 	end
 
 	def invites
+	end
+
+	def add_favorite
+    begin
+      @current_user.add_favorite(params[:post_id])
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
+        fmt.js {render :json => {:success => true}.to_json}
+        fmt.xml {render :xml => {:success => true}.to_xml("response")}
+      end
+    rescue User::AlreadyFavoritedError
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
+        fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
+        fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml("response"), :status => 409}
+      end
+    end
+	end
+
+	def delete_favorite
+    @current_user.delete_favorite(params[:post_id])
+    respond_to do |fmt|
+      fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
+      fmt.js {render :json => {:success => true}.to_json}
+      fmt.xml {render :xml => {:success => true}.to_xml("response")}
+    end
 	end
 
 	if CONFIG["enable_account_email_activation"]

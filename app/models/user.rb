@@ -1,6 +1,8 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
+  class AlreadyFavoritedError < Exception; end
+
 	before_create :set_role
 	before_create :set_invite_count
 	before_create :crypt_password
@@ -8,8 +10,6 @@ class User < ActiveRecord::Base
 	validates_confirmation_of :password
 	validates_format_of :email, :with => /\A[^@\s]+@[^\s]+\.[^\s]+\Z/, :message => 'Invalid e-mail address'
 	has_many :invites
-
-	class AlreadyFavoritedError < Exception; end
 	
 	# Users are in one of seven possible roles:
 	LEVEL_UNACTIVATED = -1
@@ -63,14 +63,14 @@ class User < ActiveRecord::Base
 
 	def add_favorite(post_id)
 		if connection.select_value("SELECT 1 FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
-			raise AlreadyFavoritedError
-		else
+      raise AlreadyFavoritedError
+    else
 			connection.execute("INSERT INTO favorites (post_id, user_id) VALUES (#{post_id}, #{id})")
 			connection.execute("UPDATE posts SET fav_count = fav_count + 1, score = score + 1 WHERE id = #{post_id}")
 		end
 	end
 
-	def del_favorite(post_id)
+	def delete_favorite(post_id)
 		if connection.select_value("SELECT 1 FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
 			connection.execute("DELETE FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
 			connection.execute("UPDATE posts SET fav_count = fav_count - 1, score = score - 1 WHERE id = #{post_id}")

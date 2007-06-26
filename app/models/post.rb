@@ -27,15 +27,28 @@ class Post < ActiveRecord::Base
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   belongs_to :user
 
-  def self.fast_count(tags = nil)
-    if tags.blank?
-      return connection.select_value("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
-    else
-      c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-      if c == 0
-        return Post.count_by_sql(Post.generate_sql(tags, :count => true))
+  def self.fast_count(tags = nil, safe = false)
+    if safe
+      if tags.blank?
+        return connection.select_value("SELECT row_count FROM table_data WHERE name = 'safe_posts'").to_i
       else
-        return c
+        c = connection.select_value(sanitize_sql(["SELECT safe_post_count FROM tags WHERE name = ?", tags])).to_i
+        if c == 0
+          return Post.count_by_sql(Post.generate_sql(tags, :count => true, :safe_mode => true))
+        else
+          return c
+        end
+      end
+    else
+      if tags.blank?
+        return connection.select_value("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
+      else
+        c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
+        if c == 0
+          return Post.count_by_sql(Post.generate_sql(tags, :count => true))
+        else
+          return c
+        end
       end
     end
   end

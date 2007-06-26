@@ -2,7 +2,6 @@ module WikiHelper
 	def wikilize(text)
 		fmt = text.dup
 
-		fmt.gsub!(/^:(.+)$/, '<span style="display: none;">\1</span>')
 		fmt.gsub!(/\[\[(.+?)\]\]/) do
 			match = $1
 
