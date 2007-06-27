@@ -140,8 +140,6 @@ class PostController < ApplicationController
       return
     end
 
-    safe_mode = (@current_user == nil && CONFIG["enable_anonymous_safe_post_mode"])
-
     limit = params[:limit].to_i
     if limit == 0 || limit > 100
       limit = 15
@@ -152,8 +150,8 @@ class PostController < ApplicationController
     post_threshold = (@curent_user ? @current_user.post_threshold : nil)
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
-    @pages = Paginator.new(self, Post.fast_count(params[:tags], safe_mode), limit, params[:page])
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold, :safe_mode => safe_mode))
+    @pages = Paginator.new(self, Post.fast_count(params[:tags], is_safe_mode?), limit, params[:page])
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold, :safe_mode => is_safe_mode?))
 
     if @posts.empty? && !params[:tags].blank? && CONFIG["enable_suggestions_on_no_results"]
       @suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
@@ -166,7 +164,7 @@ class PostController < ApplicationController
         if params[:tags]
           @tags = Tag.parse_query(params[:tags])
         else
-          @tags = {:include => Tag.count_by_period(1.week.ago, Time.now, :limit => 20)}
+          @tags = {:include => Tag.count_by_period(1.week.ago, Time.now, :limit => 25, :safe_mode => is_safe_mode?)}
         end
       end
       fmt.xml {render :xml => @posts.to_xml}
@@ -175,16 +173,14 @@ class PostController < ApplicationController
   end
 
   def atom #:nodoc:
-    safe_mode = (@current_user == nil && CONFIG["enable_anonymous_safe_post_mode"])
-
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :safe_mode => safe_mode))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :safe_mode => is_safe_mode?))
     render :layout => false
   end
 
   def show #:nodoc:
     begin
       @post = Post.find(params[:id])
-      if !@current_user && CONFIG["enable_anonymous_safe_post_mode"] && @post.rating != 's'
+      if is_safe_mode? && @post.rating != 's'
         flash[:notice] = "You must be logged in to view this post"
         redirect_to :controller => "user", :action => "login"
         return

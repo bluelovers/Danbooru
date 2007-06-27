@@ -1,14 +1,19 @@
-require_dependency 'login_system'
+require 'login_system'
 
 class ApplicationController < ActionController::Base
   include LoginSystem
   include ExceptionNotifiable
   local_addresses.clear
   
+  helper_method :is_safe_mode?
   before_filter :set_title
   before_filter :current_user
   
   protected
+  def is_safe_mode?
+    @current_user == nil && CONFIG["enable_anonymous_safe_post_mode"]
+  end
+
   def render_error(record)
     @record = record
     render :status => 500, :layout => "bare", :inline => "<%= error_messages_for('record') %>"

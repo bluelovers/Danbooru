@@ -72,9 +72,10 @@ function loadMode() {
 
 function addFavorite(post_id) {
   notice('Adding post #' + post_id)
-  new Ajax.Request('/api/add_favorite/'+post_id, {
+  new Ajax.Request('/user/add_favorite.js', {
     asynchronous: true,
     method: 'post',
+		postBody: 'post_id='+post_id,
     onComplete: function(req) {
       if (req.status == 409) {
         notice("Post #" + post_id + " already in your favorites")
@@ -308,7 +309,7 @@ function toggleTag(link, tag_field) {
 
 function markcom(id) {
   notice("Marking comment #" + id + " as spam...")
-  new Ajax.Request("/comment/mark_as_spam/" + id + ".js", {
+  new Ajax.Request("/comment/mark_as_spam.js/" + id, {
     asynchronous: true,
     method: "post",
     onComplete: function(req) {

@@ -1,12 +1,16 @@
 module TagHelper
-	def tag_link(t, prefix = "")
+	def tag_link(t, prefix = "", safe_mode = false)
 		html = ""
 
 		begin
 			case t
 			when String
         name = t
-        count = Tag.find_by_name(name).post_count
+        if safe_mode
+          count = Tag.find_by_name(name).safe_post_count
+        else
+          count = Tag.find_by_name(name).post_count
+        end
 
       when Hash
         name = t["name"]
@@ -14,7 +18,11 @@ module TagHelper
 
 			when Tag
         name = t.name
-        count = t.post_count
+        if safe_mode
+          count = t.safe_post_count
+        else
+          count = t.post_count
+        end
         
 			when Array
         name = t[0].to_s

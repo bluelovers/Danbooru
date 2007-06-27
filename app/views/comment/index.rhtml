@@ -5,7 +5,7 @@
 <% end %>
 
 <% @posts.each do |post| %>
-<% if @current_user || (CONFIG["enable_anonymous_safe_post_mode"] && post.rating == 's') %>
+<% unless is_safe_mode? && post.rating != 's' %>
 	<div class="post" id="p<%= post.id %>">
 		<div class="col1">
 			<%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
