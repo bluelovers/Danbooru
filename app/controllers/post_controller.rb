@@ -164,7 +164,7 @@ class PostController < ApplicationController
         if params[:tags]
           @tags = Tag.parse_query(params[:tags])
         else
-          @tags = {:include => Tag.count_by_period(1.week.ago, Time.now, :limit => 25, :safe_mode => is_safe_mode?)}
+          @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :safe_mode => is_safe_mode?)}
         end
       end
       fmt.xml {render :xml => @posts.to_xml}

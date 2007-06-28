@@ -217,13 +217,11 @@ function postClick(post_id) {
     }
 
     notice('Changing post #' + post_id + '...')
-
     newTags = newTags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
-
-    new Ajax.Request('/api/change_post', {
+    new Ajax.Request('/post/update.js', {
       asynchronous: true,
       method: 'post',
-      parameters: 'id='+post_id+'&tags='+newTags.join(' '),
+      postBody: 'id='+post_id+'&post[tags]='+newTags.join(' '),
       onComplete: function(req) {
         notice('Tags changed for post #' + post_id)
       }
@@ -236,12 +234,47 @@ function postClick(post_id) {
   } else if (s.value == 'vote-up') {
     vote(1, post_id)
     return false
-  } else if (s.value == 'lock-rating') {
-    notice("Locking post #" + post_id + "...")
-    new Ajax.Request("/api/lock_post", {
+  } else if (s.value == 'rating-q') {
+    notice("Rating post #" + post_id + "...")
+    new Ajax.Request("/post/update.js", {
       asynchronous: true,
       method: "post",
-      parameters: "id=" + post_id + "&rating=1",
+      postBody: "id=" + post_id + "&post[rating]=questionable",
+      onComplete: function(r) {
+        notice("Post #" + post_id + " marked as questionable")
+      }
+    })
+    return false
+
+  } else if (s.value == 'rating-s') {
+    notice("Rating post #" + post_id + "...")
+    new Ajax.Request("/post/update.js", {
+      asynchronous: true,
+      method: "post",
+      postBody: "id=" + post_id + "&post[rating]=safe",
+      onComplete: function(r) {
+        notice("Post #" + post_id + " marked as safe")
+      }
+    })
+    return false
+
+  } else if (s.value == 'rating-e') {
+    notice("Rating post #" + post_id + "...")
+    new Ajax.Request("/post/update.js", {
+      asynchronous: true,
+      method: "post",
+      postBody: "id=" + post_id + "&post[rating]=explicit",
+      onComplete: function(r) {
+        notice("Post #" + post_id + " marked as explicit")
+      }
+    })
+    return false
+  } else if (s.value == 'lock-rating') {
+    notice("Locking post #" + post_id + "...")
+    new Ajax.Request("/post/update.js", {
+      asynchronous: true,
+      method: "post",
+      postBody: "id=" + post_id + "&post[is_rating_locked]=1",
       onComplete: function(r) {
         notice("Post #" + post_id + " locked")
       }
@@ -249,17 +282,28 @@ function postClick(post_id) {
     return false
   } else if (s.value == 'lock-note') {
     notice("Locking post #" + post_id + "...")
-    new Ajax.Request("/api/lock_post", {
+    new Ajax.Request("/post/update.js", {
       asynchronous: true,
       method: "post",
-      parameters: "id=" + post_id + "&note=1",
+      parameters: "id=" + post_id + "&post[is_note_locked]=1",
       onComplete: function(r) {
         notice("Post #" + post_id + " locked")
       }
     })
     return false
   } else if (s.value == 'delete') {
-    deletePost(post_id)
+    new Ajax.Request('/post/destroy.js', {
+      method: 'post',
+      postBody: 'id=' + post_id,
+      onComplete: function(res) {
+        var resp = eval('(' + res.responseText + ')')
+        if (resp['success'] == true) {
+          notice('Post #' + post_id + ' deleted')
+        } else {
+          notice('Error: ' + resp['reason'])
+        }
+      }
+    })
     return false
   } else if (s.value.match(/^tag-script-/)) {
     var script = eval("(" + readCookie("tag-script") + ")")[s.value.substr(11,100)]
@@ -272,10 +316,10 @@ function postClick(post_id) {
 
     var newTags = posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
 
-    new Ajax.Request('/api/change_post', {
+    new Ajax.Request('/post/update.js', {
       asynchronous: true,
       method: 'post',
-      parameters: 'id='+post_id+'&tags='+newTags.join(' '),
+      postBody: 'id='+post_id+'&post[tags]='+newTags.join(' '),
       onComplete: function(req) {
         notice('Tags changed for post #' + post_id)
       }
@@ -437,21 +481,6 @@ function findArtist() {
       $('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["name"]}).join(" "))
     },
     parameters:'name='+$F('post_source')
-  })
-}
-
-function deletePost(post_id) {
-  new Ajax.Request('/post/destroy', {
-    method: 'post',
-    postBody: 'id=' + post_id,
-    onComplete: function(res) {
-      var resp = eval('(' + res.responseText + ')')
-      if (resp['success'] == true) {
-        notice('Post #' + post_id + ' deleted')
-      } else {
-        notice('Error: ' + resp['reason'])
-      }
-    }
   })
 }
 
