@@ -157,10 +157,15 @@ function changeMode() {
   if (s == "view") {
     document.body.style.background = "white"
   } else if (s == "edit") {
-    document.body.style.background = "#FAF"
     document.body.style.background = "#3A3"
   } else if (s == "fav") {
     document.body.style.background = "#FFA"
+  } else if (s == "rating-q") {
+    document.body.style.background = "#AAA"
+  } else if (s == "rating-s") {
+    document.body.style.background = "#6F6"
+  } else if (s == "rating-e") {
+    document.body.style.background = "#F66"
   } else if (s == "vote-down") {
     document.body.style.background = "#FAA"
   } else if (s == "vote-up") {
@@ -177,6 +182,8 @@ function changeMode() {
     var name = prompt("Enter a name for this tag script")
 
     if (name == null) {
+      $("mode").value = "view"
+      createCookie("mode", "view", 7)
       return
     }
 
@@ -245,7 +252,6 @@ function postClick(post_id) {
       }
     })
     return false
-
   } else if (s.value == 'rating-s') {
     notice("Rating post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
@@ -257,7 +263,6 @@ function postClick(post_id) {
       }
     })
     return false
-
   } else if (s.value == 'rating-e') {
     notice("Rating post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
