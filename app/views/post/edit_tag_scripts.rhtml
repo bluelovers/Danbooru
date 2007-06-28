@@ -1,0 +1,14 @@
+<script type="text/javascript" src="/javascripts/tag_script_admin.js"></script>
+
+<table id="tag-scripts">
+  <tr>
+    <th>Name</th>
+    <th>Script</th>
+    <th></th>
+  </tr>
+  <tr id="last-row">
+    <td colspan="3">
+      <%= link_to_function "Add", "ts_add(false, false, false, true)" %> <%= link_to_function "Save", "ts_save(); location.href = '#{params[:url]}'" %>
+    </td>
+  </tr>
+</table>

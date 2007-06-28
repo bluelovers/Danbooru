@@ -96,7 +96,7 @@ class PostController < ApplicationController
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id)}
         fmt.xml {render :xml => {:success => true}.to_xml("response")}
-        fmt.js {render :json > {:success => true}.to_json}
+        fmt.js {render :json => {:success => true}.to_json}
       end
     else
       respond_to do |fmt|
