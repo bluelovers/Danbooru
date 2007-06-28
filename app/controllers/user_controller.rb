@@ -25,7 +25,9 @@ class UserController < ApplicationController
     if params[:id]
       @users = [User.find(:first, :conditions => ["id = ?", params[:id]])]
     elsif params[:name]
-      @users = User.find(:all, :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"])
+      @users = User.find(:all, :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"], :order => "lower(name)")
+    else
+      @users = User.find(:all, :order => "lower(name)")
     end
 
     respond_to do |fmt|

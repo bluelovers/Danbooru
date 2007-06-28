@@ -137,16 +137,16 @@ class TagController < ApplicationController
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.map {|x| Tag.calculate_related_by_type(x, Tag.types[params[:type]])}
-      @tags = @tags.inject([]) {|all, x| all += x.map {|y| [y["name"].to_escaped_js, y["post_count"]]}}
+      @tags = @tags.inject([]) {|all, x| all += x.map {|y| [y["name"], y["post_count"]]}}
     else
       @tags = params[:tags].to_s.scan(/\S+/)
       @patterns, @tags = @tags.partition {|x| x.include?("*")}
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject([]) {|all, x| all += Tag.find_related(x)}
-      @tags = @tags.map {|y| [y[0].to_escaped_js, y[1]]}
+      @tags = @tags.map {|y| [y[0], y[1]]}
       @patterns = @patterns.map {|x| x.to_escaped_for_sql_like}
       @patterns = @patterns.inject([]) {|all, x| all += Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", x])}
-      @patterns = @patterns.map {|x| [x.name.to_escaped_js, x.post_count]}
+      @patterns = @patterns.map {|x| [x.name, x.post_count]}
       @tags += @patterns
     end
 
