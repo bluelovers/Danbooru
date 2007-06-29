@@ -1,15 +1,15 @@
 var ts_scripts = []
 
-function ts_add(id, name, script, fade_in) {
+function ts_add(id, name, script) {
   var row = document.createElement("tr")
   var row_name = document.createElement("td")
   var row_name_field = document.createElement("input")
   var row_script = document.createElement("td")
   var row_script_field = document.createElement("input")
-  var row_options = document.createElement("options")
+  var row_options = document.createElement("td")
   var row_options_button = document.createElement("input")
-  
-  if (id) {
+
+  if (id != null) {
     row.script_id = id
     row.id = "ts-" + id
   } else {
@@ -19,15 +19,17 @@ function ts_add(id, name, script, fade_in) {
   }
 
   row_name_field.type = "text"
-  row_name_field.size = 25
+  row_name_field.size = 30
+  row_name_field.className = "tag-script-names"
   if (name) {
     row_name_field.value = name
   }
 
   row_script_field.type = "text"
-  row_script_field.size = 40
+  row_script_field.size = 60
+  row_script_field.className = "tag-script-values"
   if (script) {
-    row_script_field.value = value
+    row_script_field.value = script
   }
 
   row_options_button.type = "button"
@@ -42,34 +44,38 @@ function ts_add(id, name, script, fade_in) {
   row.appendChild(row_script)
   row.appendChild(row_options)
 
-  if (fade_in) {
-    row.style.display = "none"
-    $('tag-scripts').insertBefore(row, $('last-row'))
-    Effect.Appear(row)
-  } else {
-    $('tag-scripts').insertBefore(row, $('last-row'))
-  }
+  $('tag-scripts').appendChild(row)
 }
 
 function ts_save() {
-  writeCookie("tag-scripts", ts_scripts.toJSON())
+  ts_scripts = []
+  var names = $A(document.getElementsByClassName("tag-script-names")).pluck("value")
+  var values = $A(document.getElementsByClassName("tag-script-values")).pluck("value")
+
+  for (i=0; i<names.length; ++i) {
+    ts_scripts.push([i, names[i], values[i]])
+  }
+
+  createCookie("tag-scripts", ts_scripts.toJSON())
 }
 
 function ts_destroy(row) {
-  Effect.Fade(row)
+  Element.remove(row)
   ts_scripts = ts_scripts.reject(function(x) {return x[0] == row.script_id})
   ts_save()
 }
 
 function ts_load() {
   if (readCookie("tag-scripts") != "") {
-    ts_scripts = eval("(" +readCookie("tag-scripts") + ")")
+    ts_scripts = eval(readCookie("tag-scripts"))
 
     for (i=0; i<ts_scripts.length; ++i) {
       var id = ts_scripts[i][0]
       var name = ts_scripts[i][1]
       var script = ts_scripts[i][2]
-      ts_add(id, name, script, false)
+      ts_add(id, name, script)
     }
   }
 }
+
+ts_load()

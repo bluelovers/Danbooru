@@ -1,11 +1,11 @@
 function loadMode() {
-  if (readCookie("tag-script") != "") {
-    var tag_scripts = eval("(" + readCookie("tag-scripts") + ")")
+  if (readCookie("tag-scripts") != "") {
+    var tag_scripts = eval(readCookie("tag-scripts"))
 
     for (i=0; i<tag_scripts.length; ++i) {
       var o = document.createElement("option")
       o.value = "tag-script-" + tag_scripts[i][0]
-      o.innerHTML = "Script: " + tag_scripts[i][1]
+      o.text = "Script: " + tag_scripts[i][1]
       $("mode").appendChild(o)
     }
   }
@@ -141,7 +141,7 @@ function postClick(post_id) {
       }
     })
   } else if (s.value.match(/^tag-script-/)) {
-    var tag_script = getTagScript(parseInt(s.value.substr(11, 100)))
+    var tag_script = getTagScript(s.value.substr(11, 100))
     var commands = tagScriptParse(tag_script)
 
     commands.each(function(x) {
@@ -166,11 +166,16 @@ function postClick(post_id) {
 }
 
 function getTagScript(id) {
-  var tag_scripts = eval("(" + readCookie("tag_scripts") + ")")
-  for (i=0; i<tag_scripts.length; ++i) {
-    if (tag_scripts[i][0] == id) {
-      return tag_scripts[i][2]
+  id = parseInt(id)
+  if (readCookie("tag-scripts")) {
+    var tag_scripts = eval(readCookie("tag-scripts"))
+    for (i=0; i<tag_scripts.length; ++i) {
+      if (tag_scripts[i][0] == id) {
+        return tag_scripts[i][2]
+      }
     }
+  } else {
+    return ""
   }
 }
 
