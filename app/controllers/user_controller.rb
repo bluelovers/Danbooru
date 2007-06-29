@@ -192,6 +192,7 @@ class UserController < ApplicationController
 
 	def delete_favorite
     @current_user.delete_favorite(params[:post_id])
+    response.headers["X-Post-Id"] = params[:post_id]
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
       fmt.js {render :json => {:success => true}.to_json}

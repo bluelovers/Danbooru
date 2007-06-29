@@ -4,8 +4,8 @@
 
 <div id="post-view">
   <% if @post.nil? %>
-  <h2>Nobody here but us chickens!</h2>
-  <%- else -%>
+  	<h2>Nobody here but us chickens!</h2>
+  <% else %>
   <div class="sidebar">
     <%= render :partial => 'search' %>
     <%= render :partial => 'tags' %>

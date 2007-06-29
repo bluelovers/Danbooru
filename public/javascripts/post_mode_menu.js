@@ -1,16 +1,16 @@
 function loadMode() {
   if (readCookie("tag-script") != "") {
-    var hash = eval("(" + readCookie("tag-script") + ")")
+    var tag_scripts = eval("(" + readCookie("tag-scripts") + ")")
 
-    for (i in hash) {
+    for (i=0; i<tag_scripts.length; ++i) {
       var o = document.createElement("option")
-      o.value = "tag-script-" + i
-      o.innerHTML = "Script: " + i
+      o.value = "tag-script-" + tag_scripts[i][0]
+      o.innerHTML = "Script: " + tag_scripts[i][1]
       $("mode").appendChild(o)
     }
   }
 
-  $("mode").value = readCookie("mode") || "view"
+  $("mode").value = readCookie("mode")
   changeMode()
 }
 
@@ -40,32 +40,9 @@ function changeMode() {
     document.body.style.background = "#3AA"
   } else if (s == "delete") {
     document.body.style.background = "#F00"
-  } else if (s == "new-tag-script") {
-    tagScriptCheckFirstTime()
-
-    var name = prompt("Enter a name for this tag script")
-
-    if (name == null) {
-      $("mode").value = "view"
-      createCookie("mode", "view", 7)
-      return
-    }
-
-    var script = prompt("Enter the tag script")
-    tagScriptUpdate(name, script)
-    var c = document.createElement("option")
-    c.value = "tag-script-" + name
-    c.innerHTML = "Script: " + name
-    $("mode").appendChild(c)
-    $("mode").value = "view"
-    createCookie("mode", "view", 7)
-    document.body.style.background = "#FFF"
-  } else if (s == "delete-tag-script") {
-    var name = prompt("Enter the script's name")
-
-    tagScriptUpdate(name, null)
-    $("mode").value = "view"
+  } else if (s == "edit-tag-scripts") {
     createCookie("mode", "view")
+    location.href = "/post/edit_tag_scripts?url=" + encodeURIComponent(location.href)
   } else {
     document.body.style.background = "#AFA"
   }
@@ -78,7 +55,6 @@ function postClick(post_id) {
     return true
   } else if (s.value == "fav") {
     addFavorite(post_id)
-    return false
   } else if (s.value == "edit") {
     var post = posts[post_id]
     var newTags = prompt('Change tags', post.tags.join(" "))
@@ -97,14 +73,10 @@ function postClick(post_id) {
         notice('Tags changed for post #' + post_id)
       }
     })
-
-    return false
   } else if (s.value == 'vote-down') {
     vote(-1, post_id)
-    return false
   } else if (s.value == 'vote-up') {
     vote(1, post_id)
-    return false
   } else if (s.value == 'rating-q') {
     notice("Rating post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
@@ -115,7 +87,6 @@ function postClick(post_id) {
         notice("Post #" + post_id + " marked as questionable")
       }
     })
-    return false
   } else if (s.value == 'rating-s') {
     notice("Rating post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
@@ -126,7 +97,6 @@ function postClick(post_id) {
         notice("Post #" + post_id + " marked as safe")
       }
     })
-    return false
   } else if (s.value == 'rating-e') {
     notice("Rating post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
@@ -137,7 +107,6 @@ function postClick(post_id) {
         notice("Post #" + post_id + " marked as explicit")
       }
     })
-    return false
   } else if (s.value == 'lock-rating') {
     notice("Locking post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
@@ -148,7 +117,6 @@ function postClick(post_id) {
         notice("Post #" + post_id + " locked")
       }
     })
-    return false
   } else if (s.value == 'lock-note') {
     notice("Locking post #" + post_id + "...")
     new Ajax.Request("/post/update.js", {
@@ -159,7 +127,6 @@ function postClick(post_id) {
         notice("Post #" + post_id + " locked")
       }
     })
-    return false
   } else if (s.value == 'delete') {
     new Ajax.Request('/post/destroy.js', {
       method: 'post',
@@ -173,10 +140,10 @@ function postClick(post_id) {
         }
       }
     })
-    return false
   } else if (s.value.match(/^tag-script-/)) {
-    var script = eval("(" + readCookie("tag-script") + ")")[s.value.substr(11,100)]
-    var commands = tagScriptParse(script)
+    var tag_script = getTagScript(parseInt(s.value.substr(11, 100)))
+    var commands = tagScriptParse(tag_script)
+
     commands.each(function(x) {
       posts[post_id].tags = tagScriptProcess(posts[post_id].tags, x)
     })
@@ -193,8 +160,17 @@ function postClick(post_id) {
         notice('Tags changed for post #' + post_id)
       }
     })
+  }
 
-    return false
+  return false
+}
+
+function getTagScript(id) {
+  var tag_scripts = eval("(" + readCookie("tag_scripts") + ")")
+  for (i=0; i<tag_scripts.length; ++i) {
+    if (tag_scripts[i][0] == id) {
+      return tag_scripts[i][2]
+    }
   }
 }
 
@@ -239,22 +215,4 @@ function tagScriptProcess(tags, command) {
     tags.push(command)
     return tags
   }
-}
-
-function tagScriptCheckFirstTime() {
-  if (readCookie("tag-script") == "") {
-    $("mode").value = "view"
-    createCookie("tag-script", $H({}).toJSON())
-  }
-}
-
-function tagScriptUpdate(name, script) {
-  var hash = eval("(" + readCookie("tag-script") + ")")
-  if (script == null) {
-    delete hash[name]
-  } else {
-    hash[name] = script
-  }
-
-  createCookie("tag-script", $H(hash).toJSON())
 }
