@@ -36,7 +36,7 @@ class PostController < ApplicationController
   def create
     user_id = @current_user.id rescue nil
 
-    @post = Post.create(params["post"].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
+    @post = Post.create(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -89,10 +89,14 @@ class PostController < ApplicationController
 # - password: alternative to password_hash, your plaintext password
 # - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
   def update
-    @post = Post.find(params["id"])
+    @post = Post.find(params[:id])
     user_id = current_user().id rescue nil
 
-    if @post.update_attributes(params["post"].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    # Make sure this gets assigned first in case we want to change this
+    # and change the post's rating at once.
+    @post.is_rating_locked = params[:post][:is_rating_locked] if params[:post] && params[:post][:is_rating_locked]
+
+    if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id)}
         fmt.xml {render :xml => {:success => true}.to_xml("response")}
