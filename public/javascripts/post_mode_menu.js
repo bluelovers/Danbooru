@@ -10,7 +10,12 @@ function loadMode() {
     }
   }
 
-  $("mode").value = readCookie("mode")
+  if (readCookie("mode") == "") {
+    createCookie("mode", "view")
+    $("mode").value = "view"
+  } else {
+    $("mode").value = readCookie("mode")
+  }
   changeMode()
 }
 
