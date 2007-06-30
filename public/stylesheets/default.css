@@ -248,15 +248,16 @@ span.informational {
 }
 
 img.preview {
-  margin: 20px;
+  margin: auto;
 }
 
 span.thumb {
   height: 180px;
   width: 180px;
-  display: block;
+  display: inline-block;
   float: left;
   text-align: center;
+  vertical-align: center;
 }
 
 .hidden-comment {

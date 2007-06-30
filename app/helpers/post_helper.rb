@@ -1,4 +1,11 @@
 module PostHelper
+  def print_preview(post, options = {})
+    image = image_tag(post.preview_url, :alt => post.cached_tags, :class => "preview", :title => post.cached_tags)
+    link = link_to(image, {:controller => "post", :action => "show", :id => post.id}, :onclick => options[:onclick])
+    span = content_tag "span", link, :class => "thumb", :id => "p#{post.id}"
+    return span
+  end
+
   def favorite_list(post)
     html = ""
     users = User.find_people_who_favorited(post.id)

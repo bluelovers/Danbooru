@@ -4,6 +4,7 @@ class UserController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
 	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites, :add_favorite, :delete_favorite]
+  helper :post
 
 	protected
 	def save_cookies(user)

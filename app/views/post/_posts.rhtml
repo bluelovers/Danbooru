@@ -4,7 +4,7 @@
 	<% else %>
 		<% @posts.each do |post| %>
 			<% unless is_safe_mode? && post.rating != 's' %>
-				<%= content_tag "span", link_to(image_tag(post.preview_url, :alt => "post", :class => "preview", :onclick => "return postClick(#{post.id})", :title => "s:#{post.score} r:#{post.rating} #{h(post.cached_tags)}"), {:controller => "post", :action => "show", :id => post.id}), :class => "thumb", :id => "p#{post.id}" %>
+      	<%= print_preview(post, :onclick => "return postClick(#{post.id})") %>
 			<% end %>
 		<% end %>
 		<script type="text/javascript">
