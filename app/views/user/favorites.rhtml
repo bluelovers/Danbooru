@@ -27,7 +27,7 @@
 	<% if @current_user && @current_user.id == @user.id %>
   	<label for="del-mode">Delete Mode</label> <input type="checkbox" id="del-mode"/>
   <% end %>
-	<div>
+	<div style="margin-top: 1em;">
 		<% @posts.each do |post| %>
     	<%= print_preview(post, :onclick => "return deleteFav(#{post.id})") %>
 		<% end %>

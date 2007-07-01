@@ -41,9 +41,9 @@ class ApplicationController < ActionController::Base
     case a
     when "post/index"
       if tags.empty?
-        key = "p/i/p=#{params[:page]}&v=#{$cache_version}"
+        key = "p/i/p=#{params[:page].to_i}&v=#{$cache_version}"
       else
-        key = "p/i/t=#{tags}&p=#{params[:page]}"
+        key = "p/i/t=#{tags}&p=#{params[:page].to_i}"
       end
       
     when "post/atom"

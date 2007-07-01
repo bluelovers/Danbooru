@@ -1,6 +1,7 @@
 class NoteController < ApplicationController
   layout 'default', :only => [:index, :history, :history_for_post]
   verify :method => :post, :only => [:change, :revert, :remove]
+  helper :post
 
   if !CONFIG["enable_anonymous_note_edits"]
     before_filter :user_only, :only => [:remove, :change, :revert]

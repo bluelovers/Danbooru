@@ -5,6 +5,7 @@ class Artist < ActiveRecord::Base
 	belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
 
 	def normalize
+    self.name = self.name.gsub(/^\s+/, "").gsub(/\s+$/, "")
 		self.name = self.name.downcase.gsub(/ /, '_')
 
 		self.url_a.gsub!(/\/$/, "") if self.url_a
