@@ -1,0 +1,15 @@
+<div id="news-edit">
+  <% form_tag(:action => "update", :id => @news_update.id) do %>
+  	<div class="option">
+      <label for="news_update_title">Title</label>
+      <%= text_field "news_update", "title", :size => 50 %>
+    </div>
+
+    <div class="option">
+      <label for="news_update_body">Body</label>
+      <%= text_area "news_update", "body", :size => "50x10" %>
+    </div>
+
+    <%= submit_tag "Save" %>
+  <% end %>
+</div>
