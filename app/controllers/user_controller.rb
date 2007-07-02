@@ -67,9 +67,12 @@ class UserController < ApplicationController
 				redirect_to :action => "login"
 				return
 			end
+      inviter_id = @invite.id
+    else
+      inviter_id = nil
 		end
 
-		user = User.create(params[:user].merge(:invited_by => @invite.user_id))
+		user = User.create(params[:user].merge(:invited_by => inviter_id))
 
 		if user.errors.empty?
 			@invite.destroy if @invite
