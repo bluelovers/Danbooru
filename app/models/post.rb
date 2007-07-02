@@ -484,6 +484,12 @@ class Post < ActiveRecord::Base
     end
   end
 
+  def blacklisted?(user)
+    return false if user == nil
+
+    return (user.tag_blacklist.split(/ /) & cached_tags.split(/ /)).any?
+  end
+
   def content_type_to_file_ext(content_type)
     case content_type
     when "image/jpeg"

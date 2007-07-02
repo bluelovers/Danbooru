@@ -69,7 +69,7 @@ class UserController < ApplicationController
 			end
 		end
 
-		user = User.create(params[:user])
+		user = User.create(params[:user].merge(:invited_by => @invite.user_id))
 
 		if user.errors.empty?
 			@invite.destroy if @invite

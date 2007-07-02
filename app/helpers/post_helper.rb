@@ -1,9 +1,7 @@
 module PostHelper
   def print_preview(post, options = {})
-    if options[:user]
-      if (options[:user].tag_blacklist.split(/ /) & post.cached_tags.split(/ /)).any?
-        return ""
-      end
+    if post.blacklisted?(options[:user])
+      return ""
     end
 
     image = image_tag(post.preview_url, :alt => post.cached_tags, :class => "preview", :title => post.cached_tags)
