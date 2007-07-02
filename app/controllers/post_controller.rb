@@ -149,13 +149,9 @@ class PostController < ApplicationController
       limit = 15
     end
 
-    tag_blacklist = (@current_user ? @current_user.tag_blacklist.scan(/\S+/) : [])
-    user_blacklist = (@current_user ? @current_user.user_blacklist.scan(/\S+/) : [])
-    post_threshold = (@curent_user ? @current_user.post_threshold : nil)
-
     @ambiguous = Tag.select_ambiguous(params[:tags])
     @pages = Paginator.new(self, Post.fast_count(params[:tags], is_safe_mode?), limit, params[:page])
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :tag_blacklist => tag_blacklist, :user_blacklist => user_blacklist, :post_threshold => post_threshold, :safe_mode => is_safe_mode?))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :safe_mode => is_safe_mode?))
 
     if @posts.empty? && !params[:tags].blank? && CONFIG["enable_suggestions_on_no_results"]
       @suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}

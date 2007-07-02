@@ -29,7 +29,7 @@
   <% end %>
 	<div style="margin-top: 1em;">
 		<% @posts.each do |post| %>
-    	<%= print_preview(post, :onclick => "return deleteFav(#{post.id})") %>
+    	<%= print_preview(post, :onclick => "return deleteFav(#{post.id})", :user => @current_user) %>
 		<% end %>
 	</div>
 </div>
