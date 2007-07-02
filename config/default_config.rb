@@ -57,15 +57,6 @@ CONFIG["enable_anonymous_forum_access"] = false
 # Set to true to allow Anonymous to post to the forum.
 CONFIG["enable_anonymous_forum_posts"] = false
 
-# Set to true to enable server-side tag blacklists.
-CONFIG["enable_tag_blacklists"] = false
-
-# Set to true to enable server-side user blacklists.
-CONFIG["enable_user_blacklists"] = false
-
-# Set to true to enable server-side post thresholds
-CONFIG["enable_post_thresholds"] = false
-
 # Set to true to enable the artist/character/copyright descriptors
 # when displaying tag lists. This is informative but adds strain to
 # the database.

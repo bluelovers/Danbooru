@@ -2,34 +2,11 @@
 	<% form_tag(:controller => "user", :action => "update") do %>
 		<p><strong>Separate individual tags and users with spaces.</strong></p>
 
-		<% if CONFIG["enable_tag_blacklists"] %>
-			<div class="option">
-				<label class="block" for="user_tag_blacklist">Tag Blacklist</label>
-				<%= text_field "user", "tag_blacklist", :size => 40 %>
-				<p>
-					Any post containing a blacklisted tag will be hidden.
-					<% if CONFIG["max_tag_blacklists"] %>
-						You can have at most <%= CONFIG["max_tag_blacklists"] %> blacklisted tags.
-					<% end %>
-				</p>
-			</div>
-		<% end %>
-
-		<% if CONFIG["enable_user_blacklists"] %>
-			<div class="option">
-				<label class="block" for="user_user_blacklist">User Blacklist</label>
-				<%= text_field "user", "user_blacklist", :size => 40 %>
-				<p>Any post or comment from a blacklisted user will be hidden.</p>
-			</div>
-		<% end %>
-
-		<% if CONFIG["enable_post_thresholds"] %>
-			<div class="option">
-				<label class="block" for="user_post_threshold">Post Threshold</label>
-				<%= text_field "user", "post_threshold", :size => 5 %>
-				<p>Any post with a score below this will be hidden.</p>
-			</div>
-		<% end %>
+		<div class="option">
+			<label class="block" for="user_tag_blacklist">Tag Blacklist</label>
+			<%= text_field "user", "tag_blacklist", :size => 40 %>
+			<p>Any post containing a blacklisted tag will be hidden.</p>
+		</div>
 
 		<div class="option">
 			<label class="block" for="user_email">Email</label>

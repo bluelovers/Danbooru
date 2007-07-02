@@ -393,23 +393,8 @@ class Post < ActiveRecord::Base
       params << q[:exclude]
     end
 
-    if CONFIG["enable_tag_blacklists"] && options[:tag_blacklist] && options[:tag_blacklist].any?
-      conditions << "p.id NOT IN (SELECT pt_.post_id FROM posts_tags pt_, tags t_ WHERE pt_.tag_id = t_.id AND t_.name IN (?))"
-      params << options[:tag_blacklist]
-    end
-
-    if CONFIG["enable_post_thresholds"] && options[:post_threshold]
-      conditions << "p.score >= ?"
-      params << options[:post_threshold]
-    end
-
     if options[:safe_mode]
       conditions << "p.rating = 's'"
-    end
-
-    if CONFIG["enable_user_blacklists"] && options[:user_blacklist] && options[:user_blacklist].any?
-      conditions << "p.user_id NOT IN (SELECT id FROM users WHERE name IN (?))"
-      params << options[:user_blacklist]
     end
 
     if q[:rating].is_a?(String)
