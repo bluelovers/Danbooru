@@ -799,3 +799,7 @@ p.tn {
   font-size: smaller;
   color: gray;
 }
+
+ul.news li {
+  margin-bottom: 0.5em;
+}

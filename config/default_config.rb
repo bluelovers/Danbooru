@@ -126,13 +126,6 @@ CONFIG["memcache_servers"] = ["localhost:4000"]
 # deactivating a few features (such as blacklists).
 CONFIG["cache_level"] = 1
 
-# The maximum number of blacklists tags a user can have. Set to false 
-# to disable.
-CONFIG["max_tag_blacklists"] = false
-
-# This is printed on post/view if the user isn't logged in.
-CONFIG["ad_code"] = nil
-
 # Set to false to prevent anonymous users from searching for more than one
 # tag at a time. Saves on database queries.
 CONFIG["enable_multi-tag_search_for_anonymous"] = true
