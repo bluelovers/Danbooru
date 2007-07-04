@@ -1,12 +1,25 @@
 class ForumController < ApplicationController
 	layout "default"
-	verify :method => :post, :only => [:create, :destroy, :update]
+	verify :method => :post, :only => [:create, :destroy, :update, :stick, :unstick]
+  before_filter :mod_only, :only => [:stick, :unstick]
 
 	if CONFIG["enable_anonymous_forum_access"]
 		before_filter :user_only, :only => [:destroy]
 	else
 		before_filter :user_only, :only => [:create, :destroy, :update, :edit, :add, :show, :index]
 	end
+
+  def stick
+    @forum_post = ForumPost.find(params[:id])
+    @forum_post.update_attribute(:is_sticky, true)
+    redirect_to :action => "show", :id => params[:id]
+  end
+
+  def unstick
+    @forum_post = ForumPost.find(params[:id])
+    @forum_post.update_attribute(:is_sticky, false)
+    redirect_to :action => "show", :id => params[:id]
+  end
 
 	def create
 		if CONFIG["enable_anonymous_forum_posts"] == false && @current_user == nil
