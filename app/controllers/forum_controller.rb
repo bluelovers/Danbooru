@@ -11,13 +11,13 @@ class ForumController < ApplicationController
 
   def stick
     @forum_post = ForumPost.find(params[:id])
-    @forum_post.update_attribute(:is_sticky, true)
+    @forum_post.update_attributes(:is_sticky => true, :last_updated_by => @current_user.id)
     redirect_to :action => "show", :id => params[:id]
   end
 
   def unstick
     @forum_post = ForumPost.find(params[:id])
-    @forum_post.update_attribute(:is_sticky, false)
+    @forum_post.update_attributes(:is_sticky => false, :last_updated_by => @current_user.id)
     redirect_to :action => "show", :id => params[:id]
   end
 
