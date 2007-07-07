@@ -50,13 +50,16 @@
 		</table>
 	<% end %>
 
-	<div id="paginator">
-		<%= custom_pagination_links(@pages, :params => {:controller => "artist", :action => "index", :name => params[:name], :order => params[:order]}) %>
-	</div>
+  <% if @pages %>
+		<div id="paginator">
+		  <%= custom_pagination_links(@pages, :params => {:controller => "artist", :action => "index", :name => params[:name], :order => params[:order]}) %>
+	  </div>
+  <% end %>
 
 	<div id="footer">
 		<%= link_to "Add", :action => "add" %> |
 		<%= link_to "Order by Name", :order => "name" %> | 
-		<%= link_to "Order by Date", :order => "date" %>
+		<%= link_to "Order by Date", :order => "date" %> |
+    <%= link_to "Help", :controller => "static", :action => "help_artists" %>
 	</div>
 </div>

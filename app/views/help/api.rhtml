@@ -1,0 +1,230 @@
+<div class="help">
+<h1>Help: API</h1>
+
+<div class="section">
+<p>Danbooru offers a simple <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">REST-based API</a> to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">get and post</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> and <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
+<p style="text-align: center;"><a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a></p>
+</div>
+
+<div class="section">
+  <h2>Basics</h2>
+  <p>All API calls are made by getting or posting to URLs.
+</div>
+
+<div class="section">
+  <h2>Posts</h2>
+  <a name="posts"></a>
+  <p>As interesting as Danbooru comments are, probably what you're really interested in are the posts. Here's an extremely simple demonstration of the kind of API calls you'll be invoking: <a class="code" href="http://miezaru.donmai.us/post/index.xml?limit=1" target="_blank">/post/index.xml?limit=1</a>.</p>
+  <p>This basically pulls one single post. Posts will always be sorted by ID descending, so this call will give us the post with the highest ID number currently in the database.</p>
+  <p>Now say we want more than one record. We can just increase the limit. Note howver that limit can't be more than 100. If you want more, you'll have to make use of the page parameter: <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.xml?limit=100&amp;page=2">/post/index.xml?limit=100&amp;page=2</a> would give us the top 100 posts <em>after</em> the first 100.</p>
+
+  <div class="section">
+    <h4>Searching With Tags</h4>
+    <p>That's all fine and dandy, but getting a chunk of random posts isn't very interesting. Fortunately, the API lets you search for posts by tags. The API will accept any sort of tag query you could enter on the main site. This includes all the various meta-tags like score, user, width, and source. You just have to pass them in through a tags parameter. Note that you have to URI escape them!</p>
+    <div class="code">
+	    <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.xml?limit=5&amp;tags=dress">/post/index.xml?limit=5&amp;tags=dress</a><br/>
+	    <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.xml?limit=5&amp;tags=dress+monochrome">/post/index.xml?limit=5&amp;tags=dress+monochrome</a><br/>
+	    <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.xml?limit=5&amp;tags=score%3A100%2E%2E">/post/index.xml?limit=5&amp;tags=score%3A100%2E%2E</a><br/>
+	    <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.xml?limit=5&amp;tags=user%3ASeem">/post/index.xml?limit=5&amp;tags=user%3ASeem</a><br/>
+	    <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.xml?limit=5&amp;tags=source%3Ahttp%3A%2F%2Finitial%2Dg%2Ejp">/post/index.xml?limit=5&amp;tags=source%3Ahttp%3A%2F%2Finitial%2Dg%2Ejp</a><br/>
+    </div>
+  </div>
+  <div class="section">
+    <h4>Just Say No To XML</h4>
+    <p>If you're working with JavaScript, you don't have to try and parse XML responses. You can get a JSON response just as easily, just by tweaking the request URL slightly: <a target="_blank" class="code" href="http://miezaru.donmai.us/post/index.js?limit=1">/post/index.js?limit=1</a>. Once you get the response text, you can just eval it and get a nice JavaScript data structure (usually an array of hashes).</p>
+    <div class="code">
+	    var data = eval("(" + responseText + ")")
+	    data.response
+    </div>
+  </div>
+  <div class="section">
+    <h4>Logging In</h4>
+    <p>If the Danbooru you're trying to interface with requires a login, you can specify two additional parameters: login and password_hash. You can find both of these in your cookies, in login and pass_hash respectively.</p>
+    <div class="code">
+	    <a class="code" target="_blank" href="http://miezaru.donmai.us/post/index.xml?limit=1&amp;login=test&amp;password_hash=098f6bcd4621d373cade4e832627b4f6">/post/index.xml?limit=1&amp;login=test&amp;password_hash=098f6bcd4621d373cade4e832627b4f6</a>
+    </div>
+    <p>Note that just MD5 hashing your password won't work; Danbooru salts its password hashes. The one stored in your cookie will be correct, however.</p>
+    <p>Also keep in mind that sending even the hash of your password through the internet like this is dangerous. While the chances of someone figuring out your password are slim, you will still be vulnerable to cross-site scripting attacks (someone could theoretically hijack your account).</p>
+  </div>
+  <div class="section">
+    <h4>Mutating Danbooru</h4>
+    <p>That's all fine and good, but what if you want to do more? What if you want to upload something through the API? Or change the tags on a post? Or vote?</p>
+    <p>Not a problem. The idea is the same, we just have to adjust the request URL a bit. Oh, and most of these require that you post to the URL instead of just getting it.</p>
+  </div>
+  <div class="section">
+    <h4>Create</h4>
+    <p>The base URL you want is /post/create.xml. There are only two mandatory fields: you need to supply the tags, and you need to supply the file, either through a multipart form or through a source URL. These fields are post[tags], post[file], and post[source] respectively.</p>
+    <p>This is where some sort of HTTP library really comes in handy, unless you enjoy writing multipart form encoded data by hand.</p>
+    <p>Here's a list of all the parameters:</p>
+    <ul>
+	    <li><strong>post[tags]</strong> A space delimited list of tags.</li>
+	    <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+	    <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
+	    <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
+	    <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
+	    <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
+	    <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
+	    <li><strong>md5</strong> Supply an MD5 if you want Danbooru to verify the file after uploading. If the MD5 doesn't match, the post is destroyed.</li>
+    </ul>
+    <p>All API calls that change state like this typically return a single element response (for XML calls). They are formatted like this:</p>
+    <div class="code">
+	    &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br/>
+	    &lt;response success="false" reason="duplicate"/&gt;
+    </div>
+    <p>For JSON responses, they'll look like this:</p>
+    <div class="code">
+	    {success: false, reason: "duplicate"}
+    </div>
+    <p>For post/create in particular, if the call failed there are a couple of different potential reasons:</p>
+    <ul>
+	    <li><strong>md5 mismatch</strong> This means you supplied an MD5 parameter and what Danbooru got doesn't match. Try uploading the file again.</li>
+	    <li><strong>duplicate</strong> This post already exists in Danbooru (based on the MD5 hash). An additional attribute called <code>location</code> will be set, pointing to the (relative) URL of the original post.</li>
+	    <li><strong><em>other</em></strong> Any other error will have its error message printed.</li>
+    </ul>
+    <p>If the post upload succeeded, you'll get an attributed called <code>location</code> in the response pointing to the relative URL of your newly uploaded post.</p>
+  </div>
+  <div class="section">
+    <h4>Update</h4>
+    <p>The base URL is /post/update.xml.</p>
+    <ul>
+      <li><strong>id</strong> The id number of the post to update.</li>
+	    <li><strong>post[tags]</strong> A space delimited list of tags.</li>
+	    <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+	    <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
+	    <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
+	    <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
+	    <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
+	    <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
+	    <li><strong>md5</strong> Supply an MD5 if you want Danbooru to verify the file after uploading. If the MD5 doesn't match, the post is destroyed.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Destroy</h4>
+    <p>You must be logged in to use this method. You must also be the user who uploaded the post (or you must be a moderator).</p>
+    <ul>
+      <li><strong>id</strong> The id number of the post to delete.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Tag History</h4>
+    <p>This method retrieves the history of tag changes for a post (or all posts). The base URL is /post/tag_history.xml.</p>
+    <ul>
+      <li><strong>post_id</strong> Specify if you only want the tag histories for a single post.</li>
+      <li><strong>limit</strong> How many histories you want to retrieve.</li>
+      <li><strong>page</strong> The offset.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Revert Tags</h4>
+    <p>This method reverts a post to a previous set of tags. The base URL is /post/revert_tags.xml.</p>
+    <ul>
+      <li><strong>id</strong> The post id number to update.</li>
+      <li><strong>history_id</strong> The id number of the tag history.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Favorites</h4>
+    <p>This method finds all the users who have favorited a post. The base URL is /post/favorites.xml.</p>
+    <ul>
+      <li><strong>id</strong> The post id number to query.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Vote</h4>
+    <p>This method lets you vote for a post. You can only vote once per post per IP address. The base URL is /post/vote.</p>
+    <ul>
+      <li><strong>id</strong> The post id number to update.</li>
+      <li><strong>score</strong> Set to <code>1</code> to vote up and <code>-1</code> to vote down. All other values will be ignored.</li>
+    </ul>
+  </div>
+</div>
+<div class="section">
+  <div class="section">
+	  <a name="tags"></a>
+	  <h2>Tags</h2>
+	  <p>By now you should understand how the API works, so only the methods and their parameters will be listed.</p>
+  </div>
+  <div class="section">
+	  <h4>Search</h4>
+    <p>The base URL is /tag/index.xml.</p>
+    <ul>
+      <li><strong>limit</strong> How many tags to retrieve. Setting this to 0 will return every tag.</li>
+      <li><strong>page</strong> The offset.</li>
+      <li><strong>order</strong> Can be <code>date</code>, <code>count</code>, or <code>name</code>.</li>
+      <li><strong>id</strong> The id number of the tag.</li>
+      <li><strong>after_id</strong> Return all tags that have an id number greater than this.</li>
+      <li><strong>name</strong> The exact name of the tag.</li>
+      <li><strong>name_pattern</strong> Search for any tag that has this parameter in its name.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Update</h4>
+    <p>The base URL is /tag/update.xml.</p>
+    <ul>
+      <li><strong>id</strong> The id number of the tag to update.</li>
+      <li><strong>tag[name]</strong> The name of the tag.</li>
+      <li><strong>tag[tag_type]</strong> The tag type. General: 0, artist: 1, copyright: 3, character: 4.</li>
+      <li><strong>tag[is_ambiguous]</strong> Whether or not this tag is ambiguous. Use 1 for true and 0 for false.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Related Tags</h4>
+    <p>The base URL is /tag/related.xml.</p>
+    <ul>
+      <li><strong>tags</strong> The tag names to query.</li>
+      <li><strong>type</strong> Restrict results to this tag type (can be <code>general</code>, <code>artist</code>, <code>copyright</code>, or <code>character</code>).</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section">
+    <a name="artists"></a>
+    <h2>Artists</h2>
+    <p>By now you should understand how the API works, so only the methods and their parameters will be listed.</p>
+  </div>
+  <div class="section">
+    <h4>Search</h4>
+    <p>The base URL is /artist/index.xml.</p>
+    <ul>
+      <li><strong>name</strong> The name (or a fragment of the name) of the artist.</li>
+      <li><strong>url</strong> A URL pointing to the artist's site.</li>
+      <li><strong>md5</strong> The MD5 hash of an image created by the artist.</li>
+      <li><strong>order</strong> Can be <code>date</code> or <code>name</code>.</li>
+      <li><strong>page</strong> The offset.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Create</h4>
+    <p>The base URL is /artist/create.xml.</p>
+    <ul>
+      <li><strong>artist[name]</strong> The artist's name.</li>
+      <li><strong>artist[url_a]</strong> The artist's site URL.</li>
+      <li><strong>artist[url_b]</strong> The artist's secondary URL.</li>
+      <li><strong>artist[url_c]</strong> The artist's tertiary URL.</li>
+      <li><strong>artist[alias]</strong> The artist that this artist is an alias for. Simply enter the alias artist's name.</li>
+      <li><strong>artist[group]</strong> The group or cicle that this artist is a member of. Simply enter the group's name.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Update</h4>
+    <p>The base URL is /artist/update.xml. Only the <strong>id</strong> parameter is required. The other parameters are optional.</p>
+    <ul>
+      <li><strong>id</strong> The id of thr artist to update.</li>
+      <li><strong>artist[name]</strong> The artist's name.</li>
+      <li><strong>artist[url_a]</strong> The artist's site URL.</li>
+      <li><strong>artist[url_b]</strong> The artist's secondary URL.</li>
+      <li><strong>artist[url_c]</strong> The artist's tertiary URL.</li>
+      <li><strong>artist[alias]</strong> The artist that this artist is an alias for. Simply enter the alias artist's name.</li>
+      <li><strong>artist[group]</strong> The group or cicle that this artist is a member of. Simply enter the group's name.</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Destroy</h4>
+    <p>The base URL is /artist/destroy.xml. You must be logged in to delete artists.</p>
+    <ul>
+      <li><strong>id</strong> The id of the artist to destroy.</li>
+    </ul>
+  </div>
+</div>
+</div>

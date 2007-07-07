@@ -18,7 +18,7 @@ class PostController < ApplicationController
   end
 
   after_filter :save_tags_to_cookie, :only => [:update, :create]
-  helper :wiki, :tag, :comment, :news_update
+  helper :wiki, :tag, :comment
 
 # Parameters
 # - post[source]: alternative to post[file], source url to download from

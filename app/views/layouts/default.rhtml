@@ -33,7 +33,7 @@
 				<% end %>
 			<% end %>
 			<% if CONFIG["enable_trac_link"] %>
-				<li><a href="http://trac.donmai.us">Trac</a></li>
+				<li><a href="http://cart.donmai.us">Trac</a></li>
 			<% end %>
 			<% if @current_user && @current_user.role?(:admin) %>
 				<li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
@@ -42,6 +42,8 @@
 			<li id="notice"><%= flash[:notice] %></li>
 		</ul>
 	</div>
+  <div id="long-notice">
+  </div>
 	<div id="content">
 		<%= @content_for_layout %>
 	</div>

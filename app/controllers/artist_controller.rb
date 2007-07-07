@@ -99,20 +99,17 @@ class ArtistController < ApplicationController
 # - name: the artist's name. If you supply a URL beginning with http, Danbooru will search against the URL database. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
   def index
     if params[:name]
-      name = params[:name]
-
-      if name =~ /^http/
-        @artists = []
-
-        while @artists.empty? && name.size > 10
-          escaped_name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
-          @pages, @artists = paginate :artists, :conditions => "url_a LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_b LIKE '#{escaped_name}%' ESCAPE '\\\\' OR url_c LIKE '#{escaped_name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
-          name = File.dirname(name)
-        end
+      if params[:name] =~ /^http/
+        @artists = Artist.find_all_by_url(params[:name])
+      elsif params[:name] =~ /^[a-fA-F0-9]{32,32}$/
+        @artists = Artist.find_all_by_md5(params[:name])
       else
-        name = name.gsub(/'/, "''").gsub(/\\/, '\\\\')
-        @pages, @artists = paginate :artists, :conditions => "name LIKE '%#{name}%' ESCAPE '\\\\'", :order => "name", :per_page => 25
+        @pages, @artists = paginate :artists, :conditions => ["name LIKE ? ESCAPE '\\\\'", '%' + params[:name].to_escaped_for_sql_like + '%'], :order => "name", :per_page => 50
       end
+    elsif params[:url]
+      @artists = Artist.find_all_by_url(params[:url])
+    elsif params[:md5]
+      @artists = Artist.find_all_by_md5(params[:md5])
     else
       if params[:order] == "date"
         order = "updated_at DESC"
@@ -120,7 +117,7 @@ class ArtistController < ApplicationController
         order = "name"
       end
 
-      @pages, @artists = paginate :artists, :conditions => "name <> ''", :order => order, :per_page => 25
+      @pages, @artists = paginate :artists, :order => order, :per_page => 25
     end
 
     respond_to do |fmt|

@@ -118,8 +118,8 @@ class TagController < ApplicationController
   end
 
   def update
-    tag = Tag.find_or_create_by_name(params[:tag][:name])
-    tag.update_attributes(:tag_type => params[:tag][:tag_type])
+    tag = Tag.find(params[:id])
+    tag.update_attributes(params[:tag])
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Tag updated"; redirect_to(:action => "index")}
@@ -151,6 +151,7 @@ class TagController < ApplicationController
     end
 
     respond_to do |fmt|
+      fmt.xml {render :xml => @tags.to_xml}
       fmt.js {render :json => @tags.to_json}
     end
   end

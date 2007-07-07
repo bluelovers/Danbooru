@@ -100,4 +100,29 @@ class Artist < ActiveRecord::Base
 	def to_s
 		return self.name
 	end
+
+  def self.find_all_by_md5(md5)
+    p = Post.find_by_md5(md5)
+
+    if p == nil
+      return []
+    else
+      artist_type = Tag.types[:artist]
+      artists = p.tags.select {|x| x.tag_type == artist_type}.map {|x| x.name}
+      return Artist.find_all_by_name(artists)
+    end
+  end
+
+  def self.find_all_by_url(url)
+    artists = []
+
+    while artists.empty? && url.size > 10
+      puts url
+      u = url.to_escaped_for_sql_like + '%'
+      artists += Artist.find(:all, :conditions => ["url_a LIKE ? ESCAPE '\\\\' OR url_b LIKE ? ESCAPE '\\\\' OR url_c LIKE ? ESCAPE '\\\\'", u, u, u], :order => "name")
+      url = File.dirname(url)
+    end
+
+    return artists
+  end
 end
