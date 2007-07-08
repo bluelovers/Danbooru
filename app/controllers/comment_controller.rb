@@ -1,7 +1,7 @@
 class CommentController < ApplicationController
   layout "default"
 
-  verify :method => :post, :only => [:create, :destroy, :mark_as_spam], :render => { :nothing => true }
+  verify :method => :post, :only => [:create, :destroy, :update], :render => { :nothing => true }
 
   if CONFIG["enable_comment_spam_filter"]
     before_filter :spam_filter, :only => :create
@@ -9,9 +9,9 @@ class CommentController < ApplicationController
 
   if CONFIG["enable_anonymous_comment_access"]
     if CONFIG["enable_anonymous_comment_responses"]
-      before_filter :user_only, :only => :destroy
+      before_filter :user_only, :only => [:destroy, :update]
     else
-      before_filter :user_only, :only => [:create, :destroy]
+      before_filter :user_only, :only => [:create, :destroy, :update]
     end
   else
     before_filter :user_only
@@ -23,6 +23,19 @@ class CommentController < ApplicationController
     return false unless params[:email].blank?
     return false if params[:comment][:body].scan(/http/).size > 2
     return true
+  end
+
+  def update
+    comment = Comment.find(params[:id])
+    if @current_user.has_permission?(comment)
+      comment.update_attributes(params[:comment])
+      respond_to do |fmt|
+        fmt.xml {render :xml => {:success => true}.to_xml("response")}
+        fmt.js {render :json => {:success => true}.to_json}
+      end
+    else
+      access_denied()
+    end
   end
 
   def destroy
@@ -116,28 +129,6 @@ class CommentController < ApplicationController
       redirect_to :action => "moderate"
     else
       @comments = Comment.find(:all, :conditions => "is_spam = TRUE", :order => "id DESC")
-    end
-  end
-
-  def mark_as_spam
-    comment = Comment.find(params[:id])
-
-    if comment.is_spam == false
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "This comment has already been marked as not spam"; redirect_to(:controller => "post", :action => "show", :id => comment.post_id)}
-        fmt.xml {render :xml => {:success => false, :reason => "not spam"}.to_xml("response"), :status => 409}
-        fmt.js {render :json => {:success => false, :reason => "not spam"}.to_json, :status => 409}
-      end
-    elsif comment.is_spam == nil
-      comment.update_attribute(:is_spam, true)
-      if comment.post.comments.size == 0
-        comment.post.update_attribute(:last_commented_at, nil)
-      end
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Comment marked as spam"; redirect_to(:action => "index")}
-        fmt.xml {render :xml => {:success => true}.to_xml("response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
     end
   end
 end if CONFIG["enable_comments"]
