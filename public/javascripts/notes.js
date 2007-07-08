@@ -398,14 +398,15 @@ Note.prototype = {
 			new Ajax.Request('/note/update/' + this.id, {
 				asynchronous: true,
 				method: 'post',
-				postBody: 'note%5Bis_active%5D=0',
+				postBody: 'note[is_active]=0',
 				onComplete: function(req) {
+          var resp = eval("(" + req.responseText + ")")
 					if (req.status == 403) {
 						notice("Access denied")
 					} else if (req.status == 500) {
-						notice("Error: " + req.responseText)
+						notice("Error: " + resp.reason)
 					} else {
-						Note.find(parseInt(req.responseText)).removeCleanup()
+						Note.find(parseInt(resp.old_id)).removeCleanup()
 						notice("Note removed")
 					}
 				}
