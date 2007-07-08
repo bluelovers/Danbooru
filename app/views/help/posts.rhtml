@@ -1,0 +1,92 @@
+<div class="help">
+  <h1>Help: Posts</h1>
+  <p>A post represents a single file that's been uploaded. Posts can be tagged, commented on, voted on, and favorited. Additionally, you can add notes to posts.</p>
+
+  <div class="section">
+    <h4>Searching</h4>
+    <p>Searching for posts is straightforward. Simply enter the tags you want to search for, separated by spaces. For example, searching for @original pantsu@ will return every post that has both the original tag *AND* the pantsu tag.</p>
+    <p>If the tag you're searching for has spaces in them, replace the spaces with underscores. For example, @maria-sama ga miteru@ becomes @maria-sama_ga_miteru@.</p>
+    <p>There's a lot more you can do with search:</p>
+  </div>
+  <div class="section">
+    <h6>Exclude Tags</h6>
+    <p>To exclude a tag from your search, prefix it with a minus sign. For example, a search for @original -pantsu@ will return every post that has the original tag but *NOT* the pantsu tag.</p>
+  </div>
+  <div class="section">
+    <h6>Include Tags</h6>
+    <p>To include a tag in your search, prefix it with a tilde. For example, a search for @~original ~pantsu@ will return every post that has either the original tag *OR* the pantsu tag.</p>
+  </div>
+
+h6. Wildcard Search
+
+You can search for a specific pattern by using the asterisk symbol. For example, a search for @gun*@ would return any post that has a tag that begins with the word gun. You can place the wildcard symbol wherever you like.
+
+h6. Name Search
+
+To search for a character's name, use the @name:@ prefix. If you specify a full name, Danbooru will search both FirstName LastName order and LastName FirstName order. If you only specify a first or last name, Danbooru will search any tag that contains that name.
+
+h6. User Search
+
+To search from posts made by a specific user, use the @user:@ prefix. For example, a search for @user:bob@ would only return posts uploaded by bob (provided he was logged in at the time). You can combine this with other tags, so @user:bob original@ would return all posts uploaded by bob with the original tag. Remember to replace spaces with underscores!
+
+h6. Favorite Search
+
+To search from someone's favorites, use the @fav:@ prefix. Behavior is otherwise the same as a user search.
+
+h6. MD5 Search
+
+If you know the MD5 hash of a file, you can try searching for it by prefixing the hash with the @md5:@ prefix. If a match is found, a single post will be returned, otherwise you'll get no results.
+
+h6. Rating
+
+If you want to filter posts based on their rating, use the @rating:@ prefix. There are currently three ratings: explicit, questionable, and safe. The three are mutually exclusive.
+
+h6. Width and Height
+
+You can search for explicit image dimensions by using @width:@ and @height:@. For example, @width:1024 height:768@ will find all images with those exact dimensions. You can also specify operators like @width:1024..@ for all images at least 1024px wide, @width:..1920@ for images 1920x and under and @width:1024..1920@ for images between these values inclusive.
+
+h6. Score
+
+You can search for a specific score range. This works the same way as width and height. For example, @score:100..@.
+
+h4. Tags
+
+The tags sidebar allows you to easily search for new tags without having to type them in.
+
+The question mark links you to the wiki page for that tag.
+
+h4. Mode
+
+The mode panel is mainly for power users. It allows you to make many changes at once, without having to view each post. Note that using these modes requires you to activate JavaScript.
+
+h6. View Posts
+
+This is the default mode. Whenever you click on a thumbnail, you'll go to that post.
+
+h6. Edit Posts
+
+Whenever you click on a thumbnail, you'll get a JavaScript prompt. Here you can easily change the post's tags, and the site will update the post for you in the background.
+
+h6. Add to Favorites
+
+Whenever you click on a thumbnail, that post will be added to your list of favorites.
+
+h6. Vote Up
+
+Whenever you click on a thumbnail, that post will be voted up.
+
+h6. Vote Down
+
+Whenever you click on a thumbnail, that post will be voted down.
+
+h6. Delete Post
+
+Whenever you click on a thumbnail, that post will be deleted.
+
+h6. New tag Script
+
+See [[Help:Tag Scripts]]
+
+h6. Delete Tag Script
+
+This will delete the named tag script.
