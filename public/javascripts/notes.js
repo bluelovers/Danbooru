@@ -395,9 +395,10 @@ Note.prototype = {
 		} else {
 			notice("Removing note...")
 
-			new Ajax.Request('/note/destroy/' + this.id, {
+			new Ajax.Request('/note/update/' + this.id, {
 				asynchronous: true,
 				method: 'post',
+				postBody: 'note%5Bis_active%5D=0',
 				onComplete: function(req) {
 					if (req.status == 403) {
 						notice("Access denied")

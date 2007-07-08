@@ -378,20 +378,23 @@
     <h4>Revert</h4>
     <p>The base URL is /note/revert.xml.</p>
     <ul>
+      <li><strong>id</strong> The note id to update.</li>
+      <li><strong>version</strong> The version to revert to.</li>
     </ul>
   </div>
 
   <div class="section">
     <h4>Create/Update</h4>
-    <p>The base URL is /note/update.xml.</p>
+    <p>The base URL is /note/update.xml. Notes differ from the other controllers in that the interface for creation and updates is the same. If you supply an <code>id</code> parameter, then Danbooru will assume you're updating an existing note. Otherwise, it will create a new note.</p>
     <ul>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h4>Destroy</h4>
-    <p>The base URL is /note/destroy.xml.</p>
-    <ul>
+      <li><strong>id</strong> If you are updating a note, this is the note id number to update.</li>
+      <li><strong>note[post_id]</strong> The post id number this note belongs to.</li>
+      <li><strong>note[x]</strong> The x coordinate of the note.</li>
+      <li><strong>note[y]</strong> The y coordinate of the note.</li>
+      <li><strong>note[width]</strong> The width of the note.</li>
+      <li><strong>note[height]</strong> The height of the note.</li>
+      <li><strong>note[is_active]</strong> Whether or not the note is visible. Set to 1 for active, 0 for inactive.</li>
+      <li><strong>note[body]</strong> The note message.</li>
     </ul>
   </div>
 </div>

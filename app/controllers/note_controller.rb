@@ -85,23 +85,4 @@ class NoteController < ApplicationController
       render_error(note)
     end
   end
-
-# Removes a note by setting its active flag to false.
-  def destroy
-    note = Note.find(params['id'])
-
-    if note.locked?
-      render :text => "This post is locked and notes cannot be altered", :status => 500
-      return
-    end
-
-    note.is_active = false
-    note.ip_addr = request.remote_ip
-
-    if note.save
-      render :text => note.id.to_s
-    else
-      render_error(note)
-    end
-  end
 end
