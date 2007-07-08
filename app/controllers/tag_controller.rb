@@ -118,7 +118,7 @@ class TagController < ApplicationController
   end
 
   def update
-    tag = Tag.find(params[:id])
+    tag = Tag.find(params[:name])
     tag.update_attributes(params[:tag])
 
     respond_to do |fmt|
@@ -154,41 +154,6 @@ class TagController < ApplicationController
       fmt.xml {render :xml => @tags.to_xml}
       fmt.js {render :json => @tags.to_json}
     end
-  end
-
-  def search
-    set_title "Search Tags"
-
-    sql_conds = []
-    sql_params = []
-
-    if !params[:tag_name].blank?
-      sql_conds << "name LIKE ? ESCAPE '\\\\'"
-      sql_params << "%" + params[:tag_name].gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_') + "%"
-    end
-
-    if !params[:tag_type].blank?
-      sql_conds << "tag_type = ?"
-      sql_params << params[:tag_type].to_i
-    end
-
-    if params[:tag_ambiguous] == "1"
-      sql_conds << "is_ambiguous = TRUE"
-    end
-
-    if sql_conds.empty?
-      sql_conds << "FALSE"
-    end
-
-    if params[:tag_order] == "name"
-      order = "name"
-    elsif params[:tag_order] = "date"
-      order = "id desc"
-    else
-      order = "name"
-    end
-
-    @tags = Tag.find(:all, :conditions => [sql_conds.join(" AND "), *sql_params], :order => order)
   end
 
   def romanize

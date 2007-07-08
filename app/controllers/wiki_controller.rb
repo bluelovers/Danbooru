@@ -57,8 +57,16 @@ class WikiController < ApplicationController
 # * per_page: how many wiki pages per page
 	def index
 		set_title "Wiki"
+		
+		order = case params[:order]
+		when "date"
+			"updated_at"
+			
+		else
+			"lower(title)"
+		end
 
-		@pages, @wiki_pages = paginate :wiki_pages, :order => "lower(title)", :per_page => (params[:per_page] || 25)
+		@pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => (params[:limit] || 25)
 
 		respond_to do |fmt|
 			fmt.html
@@ -210,21 +218,8 @@ class WikiController < ApplicationController
 		@oldpage = WikiPage.find_page(params[:title], params[:from])
 		@difference = @oldpage.diff(params[:to])
 	end
-
-# Parameters
-# * title: title of the wiki page to update
-# * wiki_page[title]: new title
+	
 	def rename
 		@wiki_page = WikiPage.find_page(params[:title])
-
-		if request.post?
-			@wiki_page.rename!(params[:wiki_page][:title])
-
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Wiki page renamed"; redirect_to(:action => "show", :title => params[:wiki_page][:title])}
-				fmt.xml {render :xml => {:success => true}.to_xml("response")}
-				fmt.js {render :json => {:success => true}.to_json}
-			end
-		end
 	end
 end

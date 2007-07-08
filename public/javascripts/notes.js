@@ -334,7 +334,7 @@ Note.prototype = {
 		}
 
 		notice("Saving note...")
-		new Ajax.Request('/note/change/' + this.id, {
+		new Ajax.Request('/note/update/' + this.id, {
 			asynchronous: true,
 			method: 'post',
 			parameters: params.join("&"),
@@ -395,7 +395,7 @@ Note.prototype = {
 		} else {
 			notice("Removing note...")
 
-			new Ajax.Request('/note/remove/' + this.id, {
+			new Ajax.Request('/note/destroy/' + this.id, {
 				asynchronous: true,
 				method: 'post',
 				onComplete: function(req) {

@@ -1,10 +1,10 @@
 class NoteController < ApplicationController
   layout 'default', :only => [:index, :history, :history_for_post]
-  verify :method => :post, :only => [:change, :revert, :remove]
+  verify :method => :post, :only => [:update, :revert, :destroy]
   helper :post
 
   if !CONFIG["enable_anonymous_note_edits"]
-    before_filter :user_only, :only => [:remove, :change, :revert]
+    before_filter :user_only, :only => [:destroy, :update, :revert]
   end
 
 # Show a paginated list of every note.
@@ -63,7 +63,7 @@ class NoteController < ApplicationController
   end
 
 # save a note
-  def change
+  def update
     if params["note"]["post_id"]
       note = Note.new(:post_id => params["note"]["post_id"])
     else
@@ -87,7 +87,7 @@ class NoteController < ApplicationController
   end
 
 # Removes a note by setting its active flag to false.
-  def remove
+  def destroy
     note = Note.find(params['id'])
 
     if note.locked?

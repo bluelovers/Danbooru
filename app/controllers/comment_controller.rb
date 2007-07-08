@@ -87,11 +87,6 @@ class CommentController < ApplicationController
       cond_params << params[:post_id].to_i
     end
 
-    if CONFIG["enable_tag_blacklist"] && @current_user && @current_user.tag_blacklist =~ /\S/
-      cond << "id NOT IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id IN (SELECT id FROM tags WHERE name IN (?)))"
-      cond_params << @current_user.tag_blacklist.scan(/\S+/)
-    end
-
     respond_to do |fmt|
       fmt.html do
         @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10

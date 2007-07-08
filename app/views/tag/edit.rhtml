@@ -1,5 +1,5 @@
 <% form_tag(:action => "update") do %>
-	<label>Tag to Update:</label> <%= text_field "tag", "name" %>
+	<label>Tag to Update:</label> <%= text_field_tag "name", "" %>
 	<%= select "tag", "tag_type", Tag.types.select {|k, v| k.is_a?(Symbol)}.map {|(name, val)| [name.to_s.capitalize, val]}.sort {|a, b| a[1] <=> b[1]} %><br/>
 	<label>Ambiguous:</label> <%= check_box "tag", "is_ambiguous" %>
 	<%= submit_tag "Save" %>
