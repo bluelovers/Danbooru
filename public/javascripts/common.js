@@ -74,7 +74,7 @@ function addFavorite(post_id) {
 
 function markcom(id) {
   notice("Marking comment #" + id + " as spam...")
-  new Ajax.Request("/comment/update.js/", {
+  new Ajax.Request("/comment/mark_as_spam.js/", {
     asynchronous: true,
     method: "post",
     postBody: "id=" + id + "&comment[is_spam]=1",

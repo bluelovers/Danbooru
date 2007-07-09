@@ -10,8 +10,8 @@ class AdminController < ApplicationController
     set_title "Edit Account"
 
     if request.post?
-      @user = User.find_by_name(params["user"]["name"])
-      @user.level = params["user"]["level"]
+      @user = User.find_by_name(params[:user][:name])
+      @user.level = params[:user][:level]
 
       if @user.save
         redirect_to :action => "edit_account"

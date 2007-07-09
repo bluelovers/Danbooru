@@ -10,10 +10,12 @@ class User < ActiveRecord::Base
 	validates_confirmation_of :password
 	validates_format_of :email, :with => /\A[^@\s]+@[^\s]+\.[^\s]+\Z/, :message => 'Invalid e-mail address'
 	has_many :invites
+	attr_protected :level
 	
 	# Users are in one of seven possible roles:
 	LEVEL_UNACTIVATED = -1
-	LEVEL_BLOCKED = 1
+	LEVEL_BLOCKED = 0
+	LEVEL_VIEW_ONLY = 1
 	LEVEL_MEMBER = 2
 	LEVEL_SPECIAL = 3
 	LEVEL_MOD = 10

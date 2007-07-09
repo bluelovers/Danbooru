@@ -30,6 +30,10 @@ module LoginSystem
 		if @current_user == nil && params[:user]
 			@current_user = User.authenticate(params[:user][:name], params[:user][:password])
 		end
+		
+		if @current_user && @current_user.level == User::LEVEL_BLOCKED
+			@current_user = nil
+		end
 
 		if @current_user
 			session[:user_id] = @current_user.id

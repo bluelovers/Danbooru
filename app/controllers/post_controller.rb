@@ -34,7 +34,20 @@ class PostController < ApplicationController
 # - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
 # - md5: OPTIONAL, used to verify the upload's integrity
   def create
-    user_id = @current_user.id rescue nil
+		if @current_user && @current_user.level == User::LEVEL_VIEW_ONLY
+			respond_to do |fmt|
+				fmt.html {flash[:notice] = "Your account has been blocked from uploading new posts."; redirect_to(:controller => "post", :action => "index")}
+				fmt.js {render :json => {:success => false, :reason => "account block"}.to_json}
+				fmt.xml {render :xml => {:success => false, :reason => "account block"}.to_xml("response")}
+			end
+			return
+		end
+		
+		if @current_user
+			user_id = @current_user.id
+		else
+			user_id = nil
+		end
 
     @post = Post.create(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
 
