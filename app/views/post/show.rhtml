@@ -118,14 +118,12 @@
             <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> <label for="post_rating_explicit">Explicit</label> <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %> <label for="post_rating_questionable">Questionable</label> <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> <label for="post_rating_safe">Safe</label>
           </div>
         <% end %>
-        <% if @current_user && @current_user.role?(:mod) %>
-          <div class="option">
-            <label class="block" for="post_is_note_locked">Note locked?</label> <%= check_box "post", "is_note_locked" %>
-          </div>
-          <div class="option">
-            <label class="block" for="post_is_rating_locked">Rating locked?</label> <%= check_box "post", "is_rating_locked" %>
-          </div>
-        <% end %>
+        <div class="option">
+          <label class="block" for="post_is_note_locked">Note locked?</label> <%= check_box "post", "is_note_locked" %>
+        </div>
+        <div class="option">
+          <label class="block" for="post_is_rating_locked">Rating locked?</label> <%= check_box "post", "is_rating_locked" %>
+        </div>
         <div class="option">
           <label class="block" for="post_prev_post_id">Previous Post ID</label>
           <%= text_field "post", "prev_post_id", :size => 10 %>
