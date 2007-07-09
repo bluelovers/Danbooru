@@ -5,12 +5,10 @@ class Artist < ActiveRecord::Base
 	belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
 
 	def normalize
-    self.name = self.name.gsub(/^\s+/, "").gsub(/\s+$/, "")
-		self.name = self.name.downcase.gsub(/ /, '_')
-
-		self.url_a.gsub!(/\/$/, "") if self.url_a
-		self.url_b.gsub!(/\/$/, "") if self.url_b
-		self.url_c.gsub!(/\/$/, "") if self.url_c
+    self.name = self.name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
+		self.url_a = self.url_a.gsub(/\/$/, "") if self.url_a
+		self.url_b = self.url_b.gsub(/\/$/, "") if self.url_b
+		self.url_c = self.url_c.gsub(/\/$/, "") if self.url_c
 	end
 
 	def commit_relations
@@ -24,21 +22,21 @@ class Artist < ActiveRecord::Base
 
 		if @cached_aliases && @cached_aliases.any?
 			@cached_aliases.each do |name|
-				a = Artist.find_or_create_by_name(name.downcase.gsub(/\s/, '_'))
+				a = Artist.find_or_create_by_name(name)
 				a.update_attributes(:alias_id => self.id, :updater_id => self.updater_id)
 			end
 		end
 
 		if @cached_members && @cached_members.any?
 			@cached_members.each do |name|
-				a = Artist.find_or_create_by_name(name.downcase.gsub(/\s/, '_'))
+				a = Artist.find_or_create_by_name(name)
 				a.update_attributes(:group_id => self.id, :updater_id => self.updater_id)
 			end
 		end
 	end
 
 	def aliases=(names)
-		@cached_aliases = names.split(/\s*,\s*/)
+		@cached_aliases = names.scan(/\s*,\s*/)
 	end
 
 	def members=(names)
@@ -62,9 +60,12 @@ class Artist < ActiveRecord::Base
 	end
 
 	def alias=(n)
-		return if n.blank?
-		a = Artist.find_or_create_by_name(n)
-		self.alias_id = a.id
+		if n.blank?
+			self.alias_id = nil
+		else
+			a = Artist.find_or_create_by_name(n)
+			self.alias_id = a.id
+		end
 	end
 
 	def group
@@ -84,9 +85,12 @@ class Artist < ActiveRecord::Base
 	end
 
 	def group=(n)
-		return if n.blank?
-		a = Artist.find_or_create_by_name(n)
-		self.group_id = a.id
+		if n.blank?
+			self.group_id = nil
+		else
+			a = Artist.find_or_create_by_name(n)
+			self.group_id = a.id
+		end
 	end
 
   def to_xml(options = {})

@@ -16,11 +16,6 @@ class Comment < ActiveRecord::Base
 	def author
 		if user
 			user.name
-		elsif @author
-			@author
-		elsif user_id
-			@author = connection.select_value("SELECT name FROM users WHERE id = #{user_id}")
-			@author
 		else
 			CONFIG["default_guest_name"]
 		end

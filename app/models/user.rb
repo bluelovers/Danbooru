@@ -35,13 +35,13 @@ class User < ActiveRecord::Base
 		end
 	end
 
-    def new_password=(pass)
-      self.password = pass
-    end
+  def new_password=(pass)
+    self.password = pass
+  end
 
-    def new_password
-      ""
-    end
+  def new_password
+    ""
+  end
 
 	def set_role
 		if User.fast_count == 0
@@ -53,13 +53,9 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	def tag_blacklist=(tags)
-		write_attribute :tag_blacklist, tags.to_s.scan(/\S+/).slice(0, CONFIG["max_tag_blacklists"] || 1000).join(" ")
-	end
-
 	def validate_on_create
 		self.errors.add(:name, "too short") if name.size < 2
-		self.errors.add(:name, "has an illegal character (semicolon, space, period, slash)") if name =~ /[; .\/\\]/
+		self.errors.add(:name, "cannot have spaces") if name =~ /\s/
 		self.errors.add(:name, "already exists") if User.find(:first, :conditions => ["lower(name) = lower(?)", name])
 	end
 
@@ -67,15 +63,19 @@ class User < ActiveRecord::Base
 		if connection.select_value("SELECT 1 FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
       raise AlreadyFavoritedError
     else
-			connection.execute("INSERT INTO favorites (post_id, user_id) VALUES (#{post_id}, #{id})")
-			connection.execute("UPDATE posts SET fav_count = fav_count + 1, score = score + 1 WHERE id = #{post_id}")
+			transaction do
+				connection.execute("INSERT INTO favorites (post_id, user_id) VALUES (#{post_id}, #{id})")
+				connection.execute("UPDATE posts SET fav_count = fav_count + 1, score = score + 1 WHERE id = #{post_id}")
+			end
 		end
 	end
 
 	def delete_favorite(post_id)
 		if connection.select_value("SELECT 1 FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
-			connection.execute("DELETE FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
-			connection.execute("UPDATE posts SET fav_count = fav_count - 1, score = score - 1 WHERE id = #{post_id}")
+			transaction do
+				connection.execute("DELETE FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
+				connection.execute("UPDATE posts SET fav_count = fav_count - 1, score = score - 1 WHERE id = #{post_id}")
+			end
 		end
 	end
 
@@ -89,6 +89,26 @@ class User < ActiveRecord::Base
 
 	def activated?
 		self.level > LEVEL_UNACTIVATED
+	end
+	
+	def admin?
+		self.level >= LEVEL_ADMIN
+	end
+	
+	def mod?
+		self.level >= LEVEL_MOD
+	end
+	
+	def member?
+		self.level >= LEVEL_VIEW_ONLY
+	end
+	
+	def view_only?
+		self.level == LEVEL_VIEW_ONLY
+	end
+	
+	def blocked?
+		self.level <= LEVEL_BLOCKED
 	end
 
 	def role?(role)
@@ -111,7 +131,7 @@ class User < ActiveRecord::Base
 		if self.role?(:mod)
 			true
 		elsif record.respond_to?(foreign_key)
-			record.user_id == self.id
+			record[foreign_key] == self.id
 		else
 			false
 		end
@@ -146,8 +166,8 @@ class User < ActiveRecord::Base
 		pass = ""
 
 		4.times do
-			pass << consonants[(rand * 21).to_i, 1]
-			pass << vowels[(rand * 5).to_i, 1]
+			pass << consonants[rand(21).to_i, 1]
+			pass << vowels[rand(5), 1]
 		end
 
 		connection.execute(User.sanitize_sql(["UPDATE users SET password = ? WHERE id = ?", User.sha1(pass), self.id]))

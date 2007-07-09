@@ -1,7 +1,7 @@
 class CommentController < ApplicationController
   layout "default"
 
-  verify :method => :post, :only => [:create, :destroy, :update], :render => { :nothing => true }
+  verify :method => :post, :only => [:create, :destroy, :update], :render => {:nothing => true}
 
   if CONFIG["enable_comment_spam_filter"]
     before_filter :spam_filter, :only => :create
@@ -20,7 +20,6 @@ class CommentController < ApplicationController
   before_filter :mod_only, :only => [:moderate]
 
   def spam_filter
-    return false unless params[:email].blank?
     return false if params[:comment][:body].scan(/http/).size > 2
     return true
   end
@@ -92,6 +91,7 @@ class CommentController < ApplicationController
   def index
     set_title "Comments"
 
+		params[:limit] ||= 25
     cond = ["TRUE"]
     cond_params = []
 
@@ -104,8 +104,8 @@ class CommentController < ApplicationController
       fmt.html do
         @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10
       end
-      fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => (params[:limit] || 25), :order => "id DESC", :offset => params[:offset]).to_xml}
-      fmt.js {render :json => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => (params[:limit] || 25), :order => "id DESC", :offset => params[:offset]).to_json}
+      fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_xml}
+      fmt.js {render :json => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_json}
     end
   end
 

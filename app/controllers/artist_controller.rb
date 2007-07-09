@@ -4,8 +4,6 @@ class ArtistController < ApplicationController
   before_filter :mod_only, :only => [:destroy]
   verify :method => :post, :only => [:destroy, :update, :create]
 
-# Parameters
-# - id: the ID number of the artist to delete
   def destroy
     artist = Artist.find(params[:id])
     artist.destroy
@@ -15,14 +13,6 @@ class ArtistController < ApplicationController
     end
   end
 
-# Parameters
-# - id: the ID number of the artist to update
-# - artist[name]: the artist's name
-# - artist[url_a]: base URL of the artist's home page
-# - artist[url_b]: base URL of the site storing the artist's images
-# - artist[url_c]: extra base URL
-# - artist[alias]: artist this artist is an alias for
-# - artist[group]: artist group this artist belongs to
   def update
     if params[:commit] == "Cancel"
       redirect_to :action => "show", :id => params[:id]
@@ -48,13 +38,6 @@ class ArtistController < ApplicationController
     end
   end
 
-# Parameters
-# - artist[name]: the artist's name
-# - artist[url_a]: base URL of the artist's home page
-# - artist[url_b]: base URL of the site storing the artist's images
-# - artist[url_c]: extra base URL
-# - artist[alias]: artist this artist is an alias for
-# - artist[group]: artist group this artist belongs to
   def create
     artist = Artist.create(params[:artist].merge(:updater_id => (@current_user ? @current_user.id : nil)))
 
@@ -95,8 +78,6 @@ class ArtistController < ApplicationController
     end
   end
 
-# Parameters
-# - name: the artist's name. If you supply a URL beginning with http, Danbooru will search against the URL database. Danbooru will automatically progressively shorten the supplied URL until either a match is found or the string is too short (so you can supply direct links to images and Danbooru will find a match).
   def index
     if params[:name]
       if params[:name] =~ /^http/

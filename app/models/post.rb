@@ -66,7 +66,7 @@ class Post < ActiveRecord::Base
   end
 
   def blank_image_board_sources
-    if self.source.to_s =~ /moeboard|\/src\/[1-9]{12,}/
+    if self.source.to_s =~ /moeboard|\/src\/\d{12,}/
       connection.execute("UPDATE posts SET source = '' WHERE id = #{self.id}")
     end
   end
@@ -123,8 +123,8 @@ class Post < ActiveRecord::Base
       tag_list = []
 
       @tag_cache.each do |t|
-        if t =~ /^rating:(.+)/
-          connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1[0,1], self.id]))
+        if t =~ /^rating:([qse])/
+          connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
         else
           record = Tag.find_or_create_by_name(t)
           unless tag_list.include?(record.name)
@@ -185,7 +185,7 @@ class Post < ActiveRecord::Base
     end
   end
 
-# auto_download automatically downloads from the source url if it's a URL
+# automatically downloads from the source url if it's a URL
   def auto_download
     return if !(source =~ /^http/ && file_ext.blank?)
 
@@ -398,27 +398,27 @@ class Post < ActiveRecord::Base
     end
 
     if q[:rating].is_a?(String)
-      case q[:rating].downcase
-      when "safe"
+      case q[:rating][0, 1].downcase
+      when "s"
         conditions << "p.rating = 's'"
 
-      when "questionable"
+      when "q"
         conditions << "p.rating = 'q'"
 
-      when "explicit"
+      when "e"
         conditions << "p.rating = 'e'"
       end
     end
 
     if q[:rating_negated].is_a?(String)
-      case q[:rating_negated].downcase
-      when "safe"
+      case q[:rating_negated][0, 1].downcase
+      when "s"
         conditions << "p.rating <> 's'"
 
-      when "questionable"
+      when "q"
         conditions << "p.rating <> 'q'"
 
-      when "explicit"
+      when "e"
         conditions << "p.rating <> 'e'"
       end
     end

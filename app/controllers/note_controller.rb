@@ -7,7 +7,6 @@ class NoteController < ApplicationController
     before_filter :user_only, :only => [:destroy, :update, :revert]
   end
 
-# Show a paginated list of every note.
   def index
     set_title "Notes"
 
@@ -24,8 +23,6 @@ class NoteController < ApplicationController
     end
   end
 
-# Show the history of a note if an id is supplied, otherwise show the history
-# for all notes.
   def history
     set_title "Note History"
 
@@ -41,9 +38,8 @@ class NoteController < ApplicationController
     end
   end
 
-# Revert a note to a previous version.
   def revert
-    note = Note.find(params["id"])
+    note = Note.find(params[:id])
 
     if note.locked?
       flash[:notice] = "This post is locked and notes cannot be altered"
@@ -51,7 +47,7 @@ class NoteController < ApplicationController
       return
     end
 
-    note.revert_to(params["version"])
+    note.revert_to(params[:version])
     note.ip_addr = request.remote_ip
 
     if note.save_without_revision
@@ -62,12 +58,11 @@ class NoteController < ApplicationController
     end
   end
 
-# save a note
   def update
-    if params["note"]["post_id"]
-      note = Note.new(:post_id => params["note"]["post_id"])
+    if params[:note][:post_id]
+      note = Note.new(:post_id => params[:note][:post_id])
     else
-      note = Note.find(params['id'])
+      note = Note.find(params[:id])
     end
 
     if note.locked?
@@ -75,7 +70,7 @@ class NoteController < ApplicationController
       return
     end
 
-    note.attributes = params["note"]
+    note.attributes = params[:note]
     note.user_id = current_user.id rescue nil
     note.ip_addr = request.remote_ip
 

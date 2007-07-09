@@ -1,3 +1,5 @@
+# For API documentation, consult http://miezaru.donmai.us/help/api
+
 class PostController < ApplicationController
   layout 'default'
 
@@ -20,25 +22,12 @@ class PostController < ApplicationController
   after_filter :save_tags_to_cookie, :only => [:update, :create]
   helper :wiki, :tag, :comment
 
-# Parameters
-# - post[source]: alternative to post[file], source url to download from
-# - post[file]: alternative to post[source], should contain multipart form data
-# - post[tags]: a space delimited string of tags
-# - post[is_rating_locked]: OPTIONAL, lock rating changes
-# - post[is_note_locked]: OPTIONAL, lock note changes
-# - post[next_post_id]: OPTIONAL
-# - post[prev_post_id]: OPTIONAL
-# - post[rating]: the rating, can be questionable/safe/explicit
-# - login: OPTIONAL, login name
-# - password: alternative to password_hash, your plaintext password
-# - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
-# - md5: OPTIONAL, used to verify the upload's integrity
   def create
-		if @current_user && @current_user.level == User::LEVEL_VIEW_ONLY
+		if @current_user && @current_user.view_only?
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "Your account has been blocked from uploading new posts."; redirect_to(:controller => "post", :action => "index")}
-				fmt.js {render :json => {:success => false, :reason => "account block"}.to_json}
-				fmt.xml {render :xml => {:success => false, :reason => "account block"}.to_xml("response")}
+				fmt.js {render :json => {:success => false, :reason => "account blocked"}.to_json}
+				fmt.xml {render :xml => {:success => false, :reason => "account blocked"}.to_xml("response")}
 			end
 			return
 		end
@@ -88,26 +77,16 @@ class PostController < ApplicationController
     @post = Post.new
   end
 
-# Parameters
-# - post[source]: alternative to post[file], source url to download from
-# - post[file]: alternative to post[source], should contain multipart form data
-# - post[tags]: a space delimited string of tags
-# - post[rating]: the rating
-# - post[is_rating_locked]: OPTIONAL, lock rating changes
-# - post[is_note_locked]: OPTIONAL, lock note changes
-# - post[next_post_id]: OPTIONAL
-# - post[prev_post_id]: OPTIONAL
-# - id: the ID number of the post to update
-# - login: OPTIONAL, login name
-# - password: alternative to password_hash, your plaintext password
-# - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
   def update
     @post = Post.find(params[:id])
-    user_id = current_user().id rescue nil
+		if @current_user
+    	user_id = @current_user.id
+		else
+			user_id = nil
+		end
 
-    # Make sure this gets assigned first in case we want to change this
-    # and change the post's rating at once.
-    @post.is_rating_locked = params[:post][:is_rating_locked] if params[:post] && params[:post][:is_rating_locked]
+    # Make sure this gets assigned first in case we want to change this and change the post's rating at once.
+    @post.is_rating_locked = params[:post][:is_rating_locked] if params[:post][:is_rating_locked]
 
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       respond_to do |fmt|
@@ -124,11 +103,6 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - id: the ID number of the post to destroy
-# - login: login name
-# - password: alternative to password_hash, your plaintext password
-# - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
   def destroy
     @post = Post.find(params["id"])
     if @current_user.has_permission?(@post)
@@ -144,10 +118,6 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - limit: maximum number of posts to show on one response
-# - page: page number (starts at 1)
-# - tags: a space delimited string representing the tags to search for
   def index
     set_title "/#{params[:tags]}"
 
@@ -206,14 +176,9 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - year: self-explanatory
-# - month: self-explanatory
-# - day: self-explanatory
-# - select: for API calls, a comma delimited list of specific fields to pull. can be: created_at, author, score, md5, preview, file, rating, tags, next, previous
   def popular_by_day
-    if params["year"] and params["month"] and params["day"]
-      @day = Time.gm(params["year"].to_i, params["month"], params["day"])
+    if params[:year] && params[:month] && params[:day]
+      @day = Time.gm(params[:year].to_i, params[:month], params[:day])
     else
       @day = Time.new.getgm.at_beginning_of_day
     end
@@ -228,14 +193,9 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - year: self-explanatory
-# - month: self-explanatory
-# - day: self-explanatory
-# - select: for API calls, a comma delimited list of specific fields to pull. can be: created_at, author, score, md5, preview, file, rating, tags, next, previous
   def popular_by_week
-    if params["year"] and params["month"] and params["day"]
-      @start = Time.gm(params["year"].to_i, params["month"], params["day"]).beginning_of_week
+    if params[:year] && params[:month] && params[:day]
+      @start = Time.gm(params[:year].to_i, params[:month], params[:day]).beginning_of_week
     else
       @start = Time.new.getgm.beginning_of_week
     end
@@ -253,13 +213,9 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - year: self-explanatory
-# - month: self-explanatory
-# - select: for API calls, a comma delimited list of specific fields to pull. can be: created_at, author, score, md5, preview, file, rating, tags, next, previous
   def popular_by_month
-    if params["year"] and params["month"]
-      @start = Time.gm(params["year"].to_i, params["month"], 1)
+    if params[:year] && params[:month]
+      @start = Time.gm(params[:year].to_i, params[:month], 1)
     else
       @start = Time.new.getgm.beginning_of_month
     end
@@ -277,12 +233,6 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - id: post ID to change
-# - history_id: the ID of the post tag history record
-# - login: login name
-# - password: alternative to password_hash, your plaintext password
-# - password_hash: alternative to password, your salted, hashed password (stored in a cookie called pass_hash)
   def revert_tags
     user_id = @current_user.id rescue nil
     @post = Post.find(params[:id])
@@ -295,12 +245,10 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - limit: OPTIONAL
-# - offset: OPTIONAL
-# - post_id: OPTIONAL, ID of the post to query
   def tag_history
     set_title "Tag History"
+
+		params[:limit] ||= 100
 
     if params[:post_id]
       conditions = ["post_id = ?", params[:post_id]]
@@ -308,17 +256,13 @@ class PostController < ApplicationController
       conditions = nil
     end
 
-    limit = params[:limit] || 100
-
     respond_to do |fmt|
-      fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => limit, :conditions => conditions}
-      fmt.xml {render :xml => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
-      fmt.js {render :json => PostTagHistory.find(:all, :limit => limit, :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_json}
+      fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => params[:limit], :conditions => conditions}
+      fmt.xml {render :xml => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
+      fmt.js {render :json => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_json}
     end
   end
 
-# Parameters
-# - id: post ID number
   def favorites
     set_title "Users who favorited this post"
     @post = Post.find(params["id"])
@@ -331,9 +275,6 @@ class PostController < ApplicationController
     end
   end
 
-# Parameters
-# - id: post ID number
-# - score: the score (must be either 1 or -1)
   def vote
     p = Post.find(params[:id])
     score = params[:score].to_i

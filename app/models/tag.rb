@@ -30,13 +30,13 @@ class Tag < ActiveRecord::Base
     def count_by_period(start, stop, options = {})
       options[:limit] ||= 50
 
-      cond = ["p.created_at between ? and ? and p.id = pt.post_id and pt.tag_id = t.id"]
+      cond = ["p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id"]
 
       if options[:safe_mode]
         cond << "p.rating = 's'"
       end
 
-      counts = connection.select_all(sanitize_sql(["select count(pt.tag_id) as post_count, (select name from tags where id = pt.tag_id) as name from posts p, posts_tags pt, tags t where " + cond.join(" and ") + " group by pt.tag_id order by post_count desc limit #{options[:limit]}", start, stop]))
+      counts = connection.select_all(sanitize_sql(["SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE " + cond.join(" and ") + " GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT #{options[:limit]}", start, stop]))
     end
 
     def find_or_create_by_name(name)

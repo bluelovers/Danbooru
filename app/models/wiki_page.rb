@@ -1,7 +1,6 @@
 class WikiPage < ActiveRecord::Base
 	acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
 	before_save :make_title_canonical
-#	before_save :identify_artist
 	belongs_to :user
 
 	TAG_DEL = '<del>'
@@ -13,31 +12,6 @@ class WikiPage < ActiveRecord::Base
 
 	def make_title_canonical
 		self.title = title.tr(" ", "_")
-	end
-
-	def identify_artist
-		tag = Tag.find_by_name(self.title)
-		if tag != nil && tag.tag_type == Tag.types[:artist]
-			attribs = {}
-			attribs[:name] = self.title
-			attribs[:url_a] = self.body[/"Home page":(\S+)/, 1] rescue nil
-			attribs[:url_b] = Post.find(:first, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id IN (SELECT t.id FROM tags t WHERE t.name = ?)) AND source LIKE 'http%'", self.title]).source rescue nil
-			artist = Artist.find_by_name(tag.name)
-			if artist == nil
-				artist = Artist.create(attribs)
-			end
-
-			attribs[:name] = self.body[/Japanese name:\s*(.+?)$/, 1] rescue nil
-			attribs[:alias_id] = artist.id
-			attribs.delete(:url_a)
-			attribs.delete(:url_b)
-			if attribs[:name]
-				artist2 = Artist.find_by_name(attribs[:name])
-				if artist2 == nil
-					Artist.create(attribs)
-				end
-			end
-		end
 	end
 
 	def last_version?
