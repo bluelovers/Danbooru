@@ -23,7 +23,7 @@
 
 <div id="user-favorites">
 	<h3><%= @user.name %>'s Favorites</h3>
-	<p>These posts were also favorited by: <%= User.find(:all, :joins => "JOIN favorites ON favorites.user_id = users.id", :conditions => ["favorites.post_id IN (?) AND users.id <> ?", @posts.map {|x| x.id}, @user.id], :order => "lower(name)", :select => "users.*").map {|x| link_to(x.name, :controller => "user", :action => "favorites", :id => x.id)}.uniq.to_sentence %>.</p>
+	<p>Some of these posts were also favorited by: <%= print_also_favorited_by(@posts, @user) %>.</p>
 	<% if @current_user && @current_user.id == @user.id %>
   	<label for="del-mode">Delete Mode</label> <input type="checkbox" id="del-mode"/>
   <% end %>
@@ -39,5 +39,5 @@
 </div>
 
 <div id="footer">
-	<%= link_to "Atom Feed", :action => "favorites_atom", :id => @user.id %> | <%= link_to "Everyone's Favorites", :action => "favorites_list", :page => 1 %>
+	<%= link_to "Atom Feed", :action => "favorites_atom", :id => @user.id %> | <%= link_to "Everyone's Favorites", :action => "favorites_list", :page => 1 %> | <%= link_to "Help", :controller => "help", :action => "favorites" %>
 </div>

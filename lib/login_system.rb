@@ -43,7 +43,7 @@ module LoginSystem
 	end
 
 	def mod_only
-		if @current_user && @current_user.role?(:mod)
+		if @current_user && @current_user.mod?
 			return true
 		else
 			access_denied
@@ -52,7 +52,7 @@ module LoginSystem
 	end
 
 	def admin_only
-		if @current_user && @current_user.role?(:admin)
+		if @current_user && @current_user.admin?
 			return true
 		else
 			access_denied
@@ -61,7 +61,7 @@ module LoginSystem
 	end
 
 	def user_only
-		if @current_user && @current_user.role?(:member)
+		if @current_user && @current_user.member?
 			return true
 		else
 			access_denied
