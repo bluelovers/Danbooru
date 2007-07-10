@@ -5,17 +5,17 @@ class Comment < ActiveRecord::Base
 	after_save :update_last_commented_at
 
 	def update_last_commented_at
-    comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{self.post_id} AND comments.is_spam <> TRUE").to_i
-    if comment_count == 0
-      connection.execute("UPDATE posts SET last_commented_at = NULL WHERE id = #{post_id}")
-    else
+    has_comments = connection.select_value("SELECT 1 FROM comments WHERE post_id = #{self.post_id} AND is_spam <> TRUE LIMIT 1").to_i
+    if has_comments
       connection.execute("UPDATE posts SET last_commented_at = '#{created_at.to_formatted_s(:db)}' WHERE id = #{post_id}")
+    else
+      connection.execute("UPDATE posts SET last_commented_at = NULL WHERE id = #{post_id}")
     end
 	end
 
 	def author
-		if user
-			user.name
+		if user_id
+			connection.select_value("SELECT name FROM users WHERE id = #{self.user_id}")
 		else
 			CONFIG["default_guest_name"]
 		end
