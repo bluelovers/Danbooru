@@ -22,7 +22,7 @@ class Post < ActiveRecord::Base
   votable
   image_store
   has_and_belongs_to_many :tags, :order => "name"
-  has_many :comments, :order => "id", :conditions => "(is_spam <> TRUE)"
+  has_many :comments, :order => "id", :conditions => "(is_spam IS NULL OR is_spam = FALSE)"
   has_many :notes, :order => "id desc"
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   belongs_to :user
