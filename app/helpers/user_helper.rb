@@ -1,4 +1,4 @@
-module AccountHelper
+module UserHelper
 	def print_also_favorited_by(posts, user)
 		post_ids = posts.map {|x| x.id}
 		users = User.find(

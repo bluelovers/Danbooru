@@ -12,31 +12,28 @@ class Artist < ActiveRecord::Base
 	end
 
 	def commit_relations
-		self.aliases.each do |a|
-			a.update_attribute(:alias_id, nil)
-		end
+    transaction do
+      connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{self.id}")
+      connection.execute("UPDATE artists SET group_id = NULL WHERE group_id = #{self.id}")
 
-		self.members.each do |m|
-			m.update_attribute(:group_id, nil)
-		end
+      if @cached_aliases && @cached_aliases.any?
+        @cached_aliases.each do |name|
+          a = Artist.find_or_create_by_name(name)
+          a.update_attributes(:alias_id => self.id, :updater_id => self.updater_id)
+        end
+      end
 
-		if @cached_aliases && @cached_aliases.any?
-			@cached_aliases.each do |name|
-				a = Artist.find_or_create_by_name(name)
-				a.update_attributes(:alias_id => self.id, :updater_id => self.updater_id)
-			end
-		end
-
-		if @cached_members && @cached_members.any?
-			@cached_members.each do |name|
-				a = Artist.find_or_create_by_name(name)
-				a.update_attributes(:group_id => self.id, :updater_id => self.updater_id)
-			end
-		end
+      if @cached_members && @cached_members.any?
+        @cached_members.each do |name|
+          a = Artist.find_or_create_by_name(name)
+          a.update_attributes(:group_id => self.id, :updater_id => self.updater_id)
+        end
+      end
+    end
 	end
 
 	def aliases=(names)
-		@cached_aliases = names.scan(/\s*,\s*/)
+		@cached_aliases = names.split(/\s*,\s*/)
 	end
 
 	def members=(names)
