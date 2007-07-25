@@ -6,6 +6,8 @@
 	<title><%= @page_title %></title>
 	<meta http-equiv="content-type" content="application/xhtml_xml; charset=utf-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+	<link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
+	<%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s">' % [type, title, url_for(href)] } %>
 	<link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/default.css" title="default"/>
 	<%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params["tags"] %>
 	<script src="/javascripts/prototype.js" type="text/javascript"></script>

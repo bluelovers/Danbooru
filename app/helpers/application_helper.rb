@@ -94,4 +94,23 @@ module ApplicationHelper
 
     html
   end
+
+  # this assumes the paginator is called @pages
+  def navigation_links
+    html = []
+    if @pages
+      unless @pages.current.first?
+        html << yield('first', 'First Page',  params.merge(:page => @pages.first))
+        html << yield('prev', 'Previous Page',  params.merge(:page => @pages.current.number - 1))
+      end
+      unless @pages.current.last?
+        html << yield('next', 'Next Page',  params.merge(:page => @pages.current.number + 1))
+        html << yield('last', 'Last Page',  params.merge(:page => @pages.last))
+      end
+    elsif @post
+      html << yield('prev', 'Previous Post', :controller => "post", :action => "show", :id => @post.prev_post_id) if @post.prev_post_id
+      html << yield('next', 'Next Post', :controller => "post", :action => "show", :id => @post.next_post_id) if @post.next_post_id
+    end
+    html.join("\n")
+  end
 end
