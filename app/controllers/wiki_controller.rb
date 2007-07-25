@@ -134,6 +134,11 @@ class WikiController < ApplicationController
 
 # For API calls, see the index method
 	def show
+    if params[:title] == nil
+      render :text => "no title specified"
+      return
+    end
+
 		tag_type = Tag.find_by_name(params[:title]).tag_type rescue nil
 
 		if tag_type == Tag.types[:artist]
@@ -152,7 +157,11 @@ class WikiController < ApplicationController
 
 # For API calls, see the update method
 	def edit
-		@wiki_page = WikiPage.find_page(params[:title], params[:version]) || WikiPage.new(:title => params[:title])
+    if params[:title] == nil
+      render :text => "no title specified"
+    else
+      @wiki_page = WikiPage.find_page(params[:title], params[:version]) || WikiPage.new(:title => params[:title])
+    end
 	end
 
 # Parameters

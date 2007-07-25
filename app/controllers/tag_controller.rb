@@ -118,7 +118,7 @@ class TagController < ApplicationController
   end
 
   def update
-    tag = Tag.find(params[:name])
+    tag = Tag.find_by_name(params[:name])
     tag.update_attributes(params[:tag])
 
     respond_to do |fmt|

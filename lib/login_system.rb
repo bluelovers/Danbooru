@@ -16,15 +16,11 @@ module LoginSystem
 		end
 
 		if @current_user == nil && params[:login] && params[:password_hash]
-			@curent_user = User.authenticate_hash(params[:login], params["password_hash"])
+			@current_user = User.authenticate_hash(params[:login], params[:password_hash])
 		end
 
-		if @current_user == nil && params[:login] && params["password"]
-			@current_user = User.authenticate(params[:login], params["password"])
-		end
-
-		if @current_user == nil && cookies[:login] && cookies["pass_hash"]
-			@current_user = User.authenticate_hash(cookies[:login], cookies["pass_hash"])
+		if @current_user == nil && cookies[:login] && cookies[:pass_hash]
+			@current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
 		end
 
 		if @current_user == nil && params[:user]

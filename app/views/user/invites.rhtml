@@ -14,12 +14,33 @@
 	<h4>Current Invites</h4>
 	<% form_tag(:controller => "invite", :action => "destroy") do %>
 		<ul>
+      <% if @current_user.invites.empty? %>
+      	<li>You have no current invites.</li>
+      <% end %>
 			<% @current_user.invites.each do |invite| %>
 				<li><%= radio_button_tag "id", invite.id %> <%= invite.email %></li>
-			<% end %>
+	    <% end %>
 		</ul>
 		<%= submit_tag "Delete" %>
-	<% end %>
+  <% end %>
+</div>
+
+<div style="margin-top: 2em;">
+  <h4>People You've Invited</h4>
+  <table>
+    <tr>
+      <th>User</th>
+      <th>Posts</th>
+      <th>Favorites</th>
+    </tr>
+    <% User.find(:all, :order => "lower(name)", :conditions => ["invited_by = ?", @current_user.id]).each do |x| %>
+	  	<tr>
+    	  <td><%= x.name %></td>
+        <td><%= link_to Post.count(:conditions => ["user_id = ?", x.id]), :controller => "post", :action => "index", :tags => "user:#{x.name}" %></td>
+        <td><%= link_to x.favorites_count, :controller => "user", :action => "favorites", :id => x.id %></td>
+      </tr>
+    <% end %>
+  </table>
 </div>
 </div>
 
