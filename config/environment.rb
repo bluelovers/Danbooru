@@ -86,6 +86,12 @@ require 'core_extensions'
 require 'persistent_hash'
 require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
 
+begin
+  require 'superredcloth'
+rescue LoadError
+  require 'redcloth'
+end
+
 if CONFIG["enable_romanizer"]
   require 'utf8proc'
   require 'romanizer'

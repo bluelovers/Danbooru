@@ -180,10 +180,12 @@ class UserController < ApplicationController
 	def add_favorite
     begin
       @current_user.add_favorite(params[:post_id])
+      p = Post.find(:first, :conditions => ["id = ?", params[:post_id]], :select => "posts.score")
+
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-        fmt.js {render :json => {:success => true}.to_json}
-        fmt.xml {render :xml => {:success => true}.to_xml("response")}
+        fmt.js {render :json => {:success => true, :score => p.score, :post_id => params[:post_id]}.to_json}
+        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => params[:post_id]}.to_xml("response")}
       end
     rescue User::AlreadyFavoritedError
       respond_to do |fmt|

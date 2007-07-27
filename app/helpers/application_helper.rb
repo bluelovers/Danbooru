@@ -1,5 +1,21 @@
 # The methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  def textilize(text)
+    if text.blank?
+      return ""
+    end
+
+    if Object.const_defined?(:SuperRedCloth)
+      textilized = SuperRedCloth.new(text)
+      textilized.to_html
+    elsif Object.const_defined?(:RedCloth)
+      textilized = RedCloth.new(text)
+      textilized.to_html
+    else
+      text
+    end
+  end
+
   def id_to_color(id)
     id = id.to_i
     "rgb(%d, %d, %d)" % [150 + (11 * id) % 105, 150 + (7 * id) % 105, 150 + (5 * id) % 105]

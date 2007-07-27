@@ -70,7 +70,7 @@ class CommentController < ApplicationController
     else
       error_messages = comment.errors.full_messages.join(", ")
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: #{h(error_messages)}"; redirect_to(:action => "show", :id => comment.post_id)}
+        fmt.html {flash[:notice] = "Error: #{error_messages}"; redirect_to(:action => "show", :id => comment.post_id)}
         fmt.xml {render :xml => {:success => false, :reason => error_messages}.to_xml("response")}
         fmt.js {render :json => {:success => false, :reason => error_messages}.to_json}
       end
@@ -135,6 +135,7 @@ class CommentController < ApplicationController
 	def mark_as_spam
 		@comment = Comment.find(params[:id])
 		@comment.update_attributes(:is_spam => true)
+
 		respond_to do |fmt|
 			fmt.xml {render :xml => {:success => true}.to_xml("response")}
 			fmt.js {render :json => {:success => true}.to_json}

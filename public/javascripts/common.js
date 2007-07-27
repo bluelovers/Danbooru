@@ -61,12 +61,17 @@ function addFavorite(post_id) {
     method: 'post',
 		postBody: 'post_id='+post_id,
     onComplete: function(req) {
+      var resp = eval("(" + req.responseText + ")")
+
       if (req.status == 409) {
         notice("Post #" + post_id + " already in your favorites")
       } else if (req.status == 500) {
         notice("You are not logged in")
       } else {
         notice("Post #" + post_id + " added to favorites")
+        if ($("post-score-" + resp.post_id)) {
+          $("post-score-" + resp.post_id).innerHTML = resp.score
+        }
       }
     }
   })
@@ -100,6 +105,7 @@ function vote(score, id) {
       resp = eval("(" + req.responseText + ")")
       if (resp["success"]) {
         notice("Vote saved for post #" + id);
+        $("post-score-" + resp["post_id"]).innerHTML = resp["score"]
       } else {
         notice("Error: " + resp["reason"]);
       }
