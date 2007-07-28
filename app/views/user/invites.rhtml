@@ -1,47 +1,44 @@
 <% if CONFIG["enable_invites"] %>
+  <div id="invite">
+    <div id="new">
+      <h4>New Invite</h4>
+      <p>You can invite up to <%= pluralize @current_user.invite_count, "friend" %> to <%= CONFIG["app_name"] %>. Enter their email address here:</p>
 
-<div id="invite">
-<div id="new">
-<h4>New Invite</h4>
-<p>You can invite up to <%= pluralize @current_user.invite_count, "friend" %> to <%= CONFIG["app_name"] %>. Enter their email address here:</p>
-
-<% form_tag(:controller => "invite", :action => "create") do %>
-	<%= text_field_tag "email", "", :size => 60 %> <%= submit_tag "Invite" %>
-<% end %>
-</div>
-
-<div id="current">
-	<h4>Current Invites</h4>
-	<% form_tag(:controller => "invite", :action => "destroy") do %>
-		<ul>
-      <% if @current_user.invites.empty? %>
-      	<li>You have no current invites.</li>
+      <% form_tag(:controller => "invite", :action => "create") do %>
+      	<%= text_field_tag "email", "", :size => 60 %> <%= submit_tag "Invite" %>
       <% end %>
-			<% @current_user.invites.each do |invite| %>
-				<li><%= radio_button_tag "id", invite.id %> <%= invite.email %></li>
-	    <% end %>
-		</ul>
-		<%= submit_tag "Delete" %>
-  <% end %>
-</div>
+    </div>
 
-<div style="margin-top: 2em;">
-  <h4>People You've Invited</h4>
-  <table>
-    <tr>
-      <th>User</th>
-      <th>Posts</th>
-      <th>Favorites</th>
-    </tr>
-    <% User.find(:all, :order => "lower(name)", :conditions => ["invited_by = ?", @current_user.id]).each do |x| %>
-	  	<tr>
-    	  <td><%= x.name %></td>
-        <td><%= link_to Post.count(:conditions => ["user_id = ?", x.id]), :controller => "post", :action => "index", :tags => "user:#{x.name}" %></td>
-        <td><%= link_to x.favorites_count, :controller => "user", :action => "favorites", :id => x.id %></td>
-      </tr>
+    <% if @current_user.invites.any? %>
+      <div id="current">
+      	<h4>Current Invites</h4>
+      	<% form_tag(:controller => "invite", :action => "destroy") do %>
+      		<ul>
+      			<% @current_user.invites.each do |invite| %>
+      				<li><%= radio_button_tag "id", invite.id %> <%= invite.email %></li>
+      	    <% end %>
+      		</ul>
+    		  <%= submit_tag "Delete" %>
+        <% end %>
+      </div>
+
+      <div style="margin-top: 2em;">
+        <h4>People You've Invited</h4>
+        <table>
+          <tr>
+            <th>User</th>
+            <th>Posts</th>
+            <th>Favorites</th>
+          </tr>
+          <% User.find(:all, :order => "lower(name)", :conditions => ["invited_by = ?", @current_user.id]).each do |x| %>
+      	  	<tr>
+          	  <td><%= x.name %></td>
+              <td><%= link_to Post.count(:conditions => ["user_id = ?", x.id]), :controller => "post", :action => "index", :tags => "user:#{x.name}" %></td>
+              <td><%= link_to x.favorites_count, :controller => "user", :action => "favorites", :id => x.id %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
     <% end %>
-  </table>
-</div>
-</div>
-
+  </div>
 <% end %>

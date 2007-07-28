@@ -1,15 +1,10 @@
-<h5>Server Variables</h5>
-<ul>
-	<li>$cache_version = <%= $cache_version %> (<%= link_to "reset", :action => "reset_cache" %>)</li>
-</ul>
-
 <h5>Memcache Servers</h5>
 <table>
   <tr>
     <th>Server</th>
     <th>Size</th>
-	<th>Hits:Misses:Total</th>
-	<th>Hit Rate</th>
+    <th>Hits:Misses:Total</th>
+    <th>Hit Rate</th>
   </tr>
   <% CACHE.stats.each do |server, stats| %>
     <tr>

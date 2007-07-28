@@ -1,11 +1,8 @@
 <div id="comment-edit">
-<h4>Edit Comment</h4>
+  <h4>Edit Comment</h4>
 
-<% form_tag(:controller => "comment", :action => "edit", :id => @comment.id) do %>
-
-<%= text_area("comment", "body", :rows => "10") %><br />
-<%= submit_tag "Save changes" %>
-
-<% end %>
-
+  <% form_tag(:controller => "comment", :action => "edit", :id => @comment.id) do %>
+    <%= text_area("comment", "body", :rows => "10") %><br />
+    <%= submit_tag "Save changes" %>
+  <% end %>
 </div>

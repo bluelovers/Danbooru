@@ -13,7 +13,8 @@
 		<%= text_area "comment", "body", :rows => 4, :id => "rtxt#{post_id}" %>
 		<input name="comment[post_id]" type="hidden" value="<%= post_id %>"/>
 		<%= submit_tag "Post comment" %>
-		<input value="1" name="comment[anonymous]" type="checkbox" id="anon<%= post_id %>"/> <label for="anon<%= post_id %>">Post as <%= CONFIG["default_guest_name"] %></label>
+		<label for="anon<%= post_id %>">Post as <%= CONFIG["default_guest_name"] %></label>
+		<input value="1" name="comment[anonymous]" type="checkbox" id="anon<%= post_id %>"/>
 	<% end %>
 </div>
 <% end %>

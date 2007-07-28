@@ -2,22 +2,22 @@
   <script type="text/javascript" src="/javascripts/related_tags.js"></script>
 	<% form_tag({:controller => "post", :action => "create"}, :multipart => true) do %>
 		<div id="posts">
-			<table width="100%">
-				<% if params["url"] %>
+			<table>
+				<% if params[:url] %>
 					<tr>
 						<td colspan="2"><%= image_tag(params["url"], :title => "Preview") %></td>
 					</tr>
 				<% end %>
 				<tr>
-					<td><%= content_tag "label", "File", :for => "post_file" %></td>
+					<th><%= content_tag "label", "File", :for => "post_file" %></th>
 					<td><%= file_field "post", "file", :size => 50 %></td>
 				</tr>
 				<tr>
-					<td><%= content_tag "label", "Source", :for => "post_source" %></td>
+					<th><%= content_tag "label", "Source", :for => "post_source" %></th>
 					<td><%= text_field "post", "source", :value => params["url"], :size => 50 %> <%= link_to_function("Find artist", "findArtist()") %></td>
 				</tr>
 				<tr>
-					<td><%= content_tag "label", "Tags", :for => "post_tags" %></td>
+					<th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
 					<td>
 						<%= text_field "post", "tags", :size => 50 %> 
 						<%= link_to_function "Find related", "findRelTags('post_tags')" %> (
@@ -31,7 +31,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><%= content_tag "label", "Rating", :for => "post_rating_questionable" %> (<%= link_to "help", :controller => "wiki", :action => "show", :title => "Help:Ratings" %>)</td>
+					<th><%= content_tag "label", "Rating", :for => "post_rating_questionable" %></th>
 					<td>
 						<input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" />
 						<label for="post_rating_explicit">Explicit</label>
@@ -44,15 +44,15 @@
 					</td>
 				</tr>
 				<tr>
-					<td><strong>My Tags</strong> (<%= link_to "edit", :controller => "user", :action => "edit" %>)</td>
+					<th>My Tags</th>
 					<td><div id="mytags"><a href="/account/options">Edit</a></div></td>
 				</tr>
 				<tr>
-					<td><strong>Recent Tags</strong></td>
+					<th>Recent Tags</th>
 					<td><div id="recent"><em>None</em></div></td>
 				</tr>
 				<tr>
-					<td><strong>Related Tags</strong></td>
+					<th>Related Tags</th>
 					<td><div id="related"><em>None</em></div></td>
 				</tr>
 			</table>

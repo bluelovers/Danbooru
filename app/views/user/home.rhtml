@@ -1,33 +1,25 @@
 <div id="user-index">
-	<%- if @current_user -%>
+	<% if @current_user %>
 		<h2>Namasté <%= @current_user.name %>!</h2>
 		<p>From here you can access account-specific options and features.</p>
 
-		<h4><%= link_to "&raquo; Logout", :action => "logout" %></h4>
-		<p>Had enough? You can log out at any time.</p>
-
-		<h4><%= link_to "&raquo; My Favorites", :action => "favorites", :id => @current_user.id %></h4>
-		<p>View and manage your favorite posts.</p>
-
-		<% if CONFIG["enable_invites"] %>
-			<h4><%= link_to "&raquo; Invites", :action => "invites" %></h4>
-			<p>You have <%= @current_user.invite_count %> invites.</p>
-		<% end %>
-
-		<h4><%= link_to "&raquo; Settings", :action => "edit" %></h4>
-		<p>Manage account settings.</p>
-	<%- else -%>
+    <ul class="link-page">
+      <li><%= link_to "&raquo; Logout", :action => "logout" %></li>
+      <li><%= link_to "&raquo; My Favorites", :action => "favorites", :id => @current_user.id %></li>
+  		<% if CONFIG["enable_invites"] %>
+  			<li><%= link_to "&raquo; Invites", :action => "invites" %></li>
+  		<% end %>
+		  <li><%= link_to "&raquo; Settings", :action => "edit" %></li>
+	<% else %>
 		<h2>You are not logged in.</h2>
 
-		<h4><%= link_to "&raquo; Login", :action => "login" %></h4>
-		<p>If you already have an user you can login here. Alternatively, accessing features that require an user will automatically log you in if you've enabled cookies.</p>
-
-		<% if CONFIG["enable_signups"] %>
-			<h4><%= link_to "&raquo; Sign Up", :action => "signup" %></h4>
-			<p>Registration is simple. Just a login and password, no email required.</p>
-		<% else %>
-			<h4>&raquo; Sign Up</h4>
-			<p>Sorry, registration is currently disabled.</p>
-		<% end %>
-	<%- end -%>
+    <ul class="link-page">
+      <li><%= link_to "&raquo; Login", :action => "login" %></li>
+  		<% if CONFIG["enable_signups"] %>
+  			<li><%= link_to "&raquo; Sign Up", :action => "signup" %></li>
+  		<% else %>
+  			<li>&raquo; Sign Up</li>
+  		<% end %>
+  	</ul>
+	<% end %>
 </div>

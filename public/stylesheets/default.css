@@ -1,11 +1,11 @@
-* {
-  font-family: verdana,sans-serif;
+body, div, h1, h2, h3, h4, h5, h6, p, ul, li {
+  font-family: 'lucida grande', verdana, sans-serif;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font: 80% verdana, sans-serif;
+  font: 80%;
   background: white;
   padding: 1em 3em;
 }
@@ -90,11 +90,6 @@ a.help {
   color: #33CFFF;
 }
 
-label {
-  font-weight: bold;
-  padding-right: 2em;
-}
-
 strong.divider {
   font-weight: bold;
   color: gray;
@@ -107,14 +102,8 @@ span.author {
 th {
   font-weight: bold;
   text-align: left;
-  background-color: #66C;
-  color: white;
   padding: 0.2em 0.5em;
   white-space: nowrap;
-}
-
-th a, th a:link, th a:visited {
-  color: rgb(250, 250, 255);
 }
 
 tr.padded th {
@@ -225,22 +214,6 @@ div.sidebar li {
 div.content {
   float: left;
   width: 78%;
-}
-
-div.option {
-  clear: both;
-  margin-bottom: 0.5em;
-}
-
-div.option p {
-  width: 15em;
-  font-size: 90%;
-}
-
-label.block {
-  float: left;
-  width: 15em;
-  padding-right: 1em;
 }
 
 span.informational {
@@ -430,71 +403,23 @@ div.comment-quote div.comment-quote {
   background: #DDD;
 }
 
-div#comment-list2 li {
-  list-style-type: none;
-  margin: 0;
+div#comment-list div.post-info {
+	color: #BBB;
 }
 
-div#comment-list2 ul.post-info {
-  font-size: 1.2em;
-  color: #AAA;
+div#comment-list div.post-info strong {
+	color: #999;
 }
 
-div#comment-list2 h4 a {
-  color: #339;
+div#comment-list div.post-info a,
+div#comment-list div.post-info a:link,
+div#comment-list div.post-info a:link,
+div#comment-list div.post-info a:visited {
+	color: #BBB;
 }
 
-div#comment-list2 h5.post-header {
-  margin-bottom: 1em;
-  font-weight: normal;
-  color: #AAA;
-}
-
-div#comment-list2 h5 a {
-  color: #666;
-}
-
-div#comment-list2 h5 a:hover {
-  color: #33CFFF;
-}
-
-div#comment-list2 div.col1 {
-  width: 200px;
-  float: left;
-  text-align: center;
-}
-
-div#comment-list2 div.col2 {
-  width: 500px;
-  padding-right: 1em;
-  float: left;
-}
-
-div#comment-list2 div.col3 {
-  width: 200px;
-  float: left;
-}
-
-div#comment-list2 div.comment {
-  margin-bottom: 1em;
-}
-
-div#comment-list2 h4.comment-header {
-  font-weight: normal;
-  color: #AAA;
-}
-
-div#comment-list2 img.preview {
-  display: block;
-  margin: auto;
-}
-
-div#comment-list2 div.post {
-  margin: 0 2em 0 0;
-  padding: 2em 1em;
-  float: left;
-  clear: both;
-  width: 100%;
+div#comment-list div.post-info a:hover {
+	color: #666;
 }
 
 div#post-list div.upload input {
@@ -666,11 +591,6 @@ div#post-add div#related a {
   margin-right: 15px;
 }
 
-div#post-add label {
-  padding: 0;
-  margin: 0;
-}
-
 div#post-popular {
   text-align: center;
 }
@@ -786,17 +706,8 @@ div#invite > div#current {
   margin-top: 2em;
 }
 
-span.blocked-post {
-  display: block;
-  float: left;
-  text-align: center;
-  width: 150px;
-  height: 150px;
-  margin: 15px;
-}
-
 p.tn {
-  font-size: smaller;
+  font-size: 0.8em;
   color: gray;
 }
 
@@ -849,4 +760,53 @@ div.help div.code {
 
 a.code {
   font-family: monospace;
+}
+
+table.form {
+	width: 100%;
+}
+
+table.form th {
+	background: white;
+	color: black;
+	font-weight: normal;
+	white-space: normal;
+}
+
+table.form label {
+	font-weight: bold;
+}
+
+table.form p {
+	font-size: 0.8em;
+	width: 15em;
+	margin: 0;
+	padding: 0 1em 0 0;
+}
+
+table.form tfoot input {
+	margin-top: 1em;
+}
+
+ul.link-page {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+ul.link-page li {
+	margin: 0 0 0 1em;
+	padding: 0;
+	list-style-type: none;
+}
+
+div.page {
+	width: 40em;
+}
+
+textarea:focus, input[type=text]:focus, input[type=password]:focus {
+	background: #FFC;
+}
+
+div#info {
+	font-style: italic;
 }

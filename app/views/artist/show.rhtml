@@ -1,6 +1,8 @@
 <div id="artist">
 	<h3><%= @artist.name %></h3>
-	<p><%= @artist.notes %></p>
+	<% unless @artist.notes.blank? %>
+	  <p><%= @artist.notes %></p>
+	<% end %>
 	<ul>
 		<li>
 			<%= link_to "Edit", :action => "edit", :id => @artist.id %>

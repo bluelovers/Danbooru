@@ -61,6 +61,8 @@ module ImageStore
 				FileUtils.chmod(0775, file_path)
 
 				if image?
+					puts tempfile_preview_path
+					puts preview_path
 					FileUtils.mv(tempfile_preview_path, preview_path)
 					FileUtils.chmod(0775, preview_path)
 				end

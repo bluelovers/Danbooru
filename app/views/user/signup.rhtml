@@ -1,34 +1,54 @@
 <% if !CONFIG["enable_signups"] %>
 	<h4>Signups are currently disabled.</h4>
 <% else %>
-<% form_tag(:controller => "user", :action => "create") do %>
-	<div class="option">
-		<label class="block" for="user_name">Desired name</label>
-		<%= text_field "user", "name", :size => 30 %>
-	</div>
-
-	<div class="option">
-		<label class="block" for="user_email">Email</label>
-		<%= text_field "user", "email", :size => 30 %>
-		<% if CONFIG["enable_account_email_activation"] %>
-			<p>This field is required to activate your account.</p>
-		<% else %>
-			<p>This field is optional and is mainly useful if you ever forget your password.</p>
-		<% end %>
-	</div>
-
-	<div class="option">
-		<label class="block" for="user_password">Choose password</label>
-		<%= password_field "user", "password", :size => 30 %>
-	</div>
-
-	<div class="option">
-		<label class="block" for="user_password_confirmation">Confirm password</label>
-		<%= password_field "user", "password_confirmation", :size => 30 %>
-	</div>
-
-	<div class="option">
-		<input type="submit" value="Signup" />
-	</div>
-<% end %>
+  <% form_tag(:controller => "user", :action => "create") do %>
+    <table class="form">
+      <tbody>
+        <tr>
+          <th>
+            <label class="block" for="user_name">Name</label>
+          </th>
+          <td>
+    		    <%= text_field "user", "name", :size => 30 %>
+    		  </td>
+    		</tr>
+        <tr>
+          <th>
+    		    <label class="block" for="user_email">Email</label>
+        		<% if CONFIG["enable_account_email_activation"] %>
+        			<p>This field is required to activate your account.</p>
+        		<% else %>
+        			<p>This field is optional and is mainly useful if you ever forget your password.</p>
+        		<% end %>
+    		  </th>
+    		  <td>
+    		    <%= text_field "user", "email", :size => 30 %>
+    		  </td>
+    		</tr>
+        <tr>
+          <th>
+    		    <label class="block" for="user_password">Password</label>
+    		  </th>
+    		  <td>
+    		    <%= password_field "user", "password", :size => 30 %>
+    		  </td>
+    		</tr>
+        <tr>
+    		  <th>
+    		    <label class="block" for="user_password_confirmation">Confirm password</label>
+    		  </th>
+    		  <td>
+    		    <%= password_field "user", "password_confirmation", :size => 30 %>
+    		  </td>
+    		</tr>
+    	</tbody>
+  		<tfoot>
+    		<tr>
+          <td colspan="2">
+    		    <input type="submit" value="Signup" />
+    		  </td>
+    		</tr>
+    	</tfoot>
+  	</table>
+  <% end %>
 <% end %>

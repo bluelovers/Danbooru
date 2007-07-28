@@ -1,17 +1,25 @@
 <div id="admin-edit-account">
 	<% form_tag(:controller => "user", :action => "update") do %>
-		<div class="option">
-			<label class="block" for="user_id">User</label>
-			<%= text_field "user", "name" %>
-		</div>
-
-		<div class="option">
-			<label class="block" for="user_level">Level</label>
-			<%= select "user", "level", [["Admin", User::LEVEL_ADMIN], ["Mod", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["View Only", User::LEVEL_VIEW_ONLY], ["Blocked", User::LEVEL_BLOCKED]] %>
-		</div>
-
-		<div class="option">
-			<%= submit_tag "Save" %>
-		</div>
+	  <table class="form">
+	    <tr>
+	      <th>
+	        <label class="block" for="user_id">User</label>
+	      </th>
+	      <td>
+			    <%= text_field "user", "name" %>
+			  </td>
+			</tr>
+      <tr>
+        <th>
+			    <label class="block" for="user_level">Level</label>
+			  </th>
+			  <td>
+			    <%= select "user", "level", [["Admin", User::LEVEL_ADMIN], ["Mod", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["View Only", User::LEVEL_VIEW_ONLY], ["Blocked", User::LEVEL_BLOCKED]] %>
+			  </td>
+			</tr>
+			<tr>
+			  <td colspan="2"><%= submit_tag "Save" %></td>
+			</tr>
+		</table>
 	<% end %>
 </div>

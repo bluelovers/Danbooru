@@ -16,7 +16,7 @@ The following dependencies are optional:
 - ragel (required for superredcloth)
 - superredcloth (gem install superredcloth --source=http://code.whytheluckystiff.net)
 
-Installing the postgres gem might be tricky because the gem looks for PostgreSQL development files in the wrong location. If the gem install fails, download the PostgreSQL adapter and manually install it using "ruby extconf.rb --with-pgsql-lib-dir=/usr/local/pgsql/lib --with-pgsql-include-dir=/usr/local/pgsql/include" or something similar. Then do "make" and "make install". Then do "gem install postgres" again to have the gem get registered by rubygems.
+Installing the postgres gem might be tricky because the gem looks for PostgreSQL development files in the wrong location. If the gem install fails, try running "gem install postgres -- --with-pgsql-lib-dir=/usr/local/pgsql/lib --with-pgsql-include-dir=/usr/local/pgsql/include". Substitute "/usr/local/pgsql" with wherever your PostgreSQL files are.
 
 Once you've downloaded and installed everything, get the latest copy of Danbooru through Subversion:
 
