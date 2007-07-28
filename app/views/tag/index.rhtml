@@ -12,4 +12,10 @@
 	<%= render :partial => "alpha_paginator" %>
 </div>
 
+<div style="text-align: center; margin-top: 1em; color: #CCC;">
+  <%= link_to "Order by Name", :order => "name" %> |
+  <%= link_to "Order by Count", :order => "count" %> |
+  <%= link_to "Order by Date", :order => "date" %>
+</div>
+
 <%= render :partial => "footer" %>

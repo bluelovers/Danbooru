@@ -117,12 +117,12 @@
               <tr>
                 <th><label class="block" for="post_rating_questionable">Rating</label></th>
                 <td>
-                  <label for="post_rating_explicit">Explicit</label> 
                   <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> 
-                  <label for="post_rating_questionable">Questionable</label>
+                  <label for="post_rating_explicit">Explicit</label> 
                   <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %>  
-                  <label for="post_rating_safe">Safe</label>
+                  <label for="post_rating_questionable">Questionable</label>
                   <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> 
+                  <label for="post_rating_safe">Safe</label>
                 </td>
               </tr>
             <% end %>
@@ -147,7 +147,7 @@
                 <label class="block" for="post_prev_post_id">Previous Post ID</label>
               </th>
               <td>
-                <%= text_field "post", "prev_post_id", :size => 10 %>
+                <%= text_field "post", "prev_post_id", :size => 5 %>
               </td>
             </tr>
             <tr>
@@ -155,7 +155,7 @@
                 <label class="block" for="post_next_post_id">Next Post ID</label>
               </th>
               <td>
-                <%= text_field "post", "next_post_id", :size => 10 %>
+                <%= text_field "post", "next_post_id", :size => 5 %>
               </td>
             </tr>
             <tr>
