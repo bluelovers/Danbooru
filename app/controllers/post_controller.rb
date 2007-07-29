@@ -19,6 +19,7 @@ class PostController < ApplicationController
     around_filter :cache_action, :only => [:index, :atom]
   end
 
+  before_filter :admin_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
   helper :wiki, :tag, :comment
 
@@ -77,6 +78,23 @@ class PostController < ApplicationController
     @post = Post.new
   end
 
+  def moderate
+    if request.post?
+      @posts = Post.find(:all, :conditions => ["id in (?)", params[:ids].keys])
+      @posts.each do |post|
+        if params[:commit] == "Unflag"
+          post.update_attribute(:is_flagged, false)
+        else
+          post.destroy
+        end
+      end
+
+      redirect_to :action => "moderate"
+    else
+      @posts = Post.find(:all, :conditions => "is_flagged = TRUE", :order => "id")
+    end
+  end
+
   def update
     @post = Post.find(params[:id])
 		if @current_user
@@ -104,17 +122,15 @@ class PostController < ApplicationController
   end
 
   def destroy
-    @post = Post.find(params["id"])
+    @post = Post.find(params[:id])
     if @current_user.has_permission?(@post)
       @post.destroy
+    end
 
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post successfully deleted"; redirect_to(:action => "index")}
-        fmt.xml {render :xml => {:success => true}.to_xml("response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
-    else
-      access_denied()
+    respond_to do |fmt|
+      fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "index")}
+      fmt.xml {render :xml => {:success => true}.to_xml("response")}
+      fmt.js {render :json => {:success => true}.to_json}
     end
   end
 

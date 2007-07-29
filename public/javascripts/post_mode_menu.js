@@ -43,7 +43,7 @@ function changeMode() {
     document.body.style.background = "#AA3"
   } else if (s == "lock-note") {
     document.body.style.background = "#3AA"
-  } else if (s == "delete") {
+  } else if (s == "flag") {
     document.body.style.background = "#F00"
   } else if (s == "edit-tag-scripts") {
     createCookie("mode", "view")
@@ -70,81 +70,23 @@ function postClick(post_id) {
 
     notice('Changing post #' + post_id + '...')
     newTags = newTags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
-    new Ajax.Request('/post/update.js', {
-      asynchronous: true,
-      method: 'post',
-      postBody: 'id='+post_id+'&post[tags]='+newTags.join(' '),
-      onComplete: function(req) {
-        notice('Tags changed for post #' + post_id)
-      }
-    })
+    updatePost(post_id, 'post[tags]=' + newTags.join(' '))
   } else if (s.value == 'vote-down') {
     vote(-1, post_id)
   } else if (s.value == 'vote-up') {
     vote(1, post_id)
   } else if (s.value == 'rating-q') {
-    notice("Rating post #" + post_id + "...")
-    new Ajax.Request("/post/update.js", {
-      asynchronous: true,
-      method: "post",
-      postBody: "id=" + post_id + "&post[rating]=questionable",
-      onComplete: function(r) {
-        notice("Post #" + post_id + " marked as questionable")
-      }
-    })
+    updatePost(post_id, 'post[rating]=questionable')
   } else if (s.value == 'rating-s') {
-    notice("Rating post #" + post_id + "...")
-    new Ajax.Request("/post/update.js", {
-      asynchronous: true,
-      method: "post",
-      postBody: "id=" + post_id + "&post[rating]=safe",
-      onComplete: function(r) {
-        notice("Post #" + post_id + " marked as safe")
-      }
-    })
+    updatePost(post_id, 'post[rating]=safe')
   } else if (s.value == 'rating-e') {
-    notice("Rating post #" + post_id + "...")
-    new Ajax.Request("/post/update.js", {
-      asynchronous: true,
-      method: "post",
-      postBody: "id=" + post_id + "&post[rating]=explicit",
-      onComplete: function(r) {
-        notice("Post #" + post_id + " marked as explicit")
-      }
-    })
+    updatePost(post_id, 'post[rating]=explicit')
   } else if (s.value == 'lock-rating') {
-    notice("Locking post #" + post_id + "...")
-    new Ajax.Request("/post/update.js", {
-      asynchronous: true,
-      method: "post",
-      postBody: "id=" + post_id + "&post[is_rating_locked]=1",
-      onComplete: function(r) {
-        notice("Post #" + post_id + " locked")
-      }
-    })
+    updatePost(post_id, 'post[is_rating_locked]=1')
   } else if (s.value == 'lock-note') {
-    notice("Locking post #" + post_id + "...")
-    new Ajax.Request("/post/update.js", {
-      asynchronous: true,
-      method: "post",
-      parameters: "id=" + post_id + "&post[is_note_locked]=1",
-      onComplete: function(r) {
-        notice("Post #" + post_id + " locked")
-      }
-    })
-  } else if (s.value == 'delete') {
-    new Ajax.Request('/post/destroy.js', {
-      method: 'post',
-      postBody: 'id=' + post_id,
-      onComplete: function(res) {
-        var resp = eval('(' + res.responseText + ')')
-        if (resp['success'] == true) {
-          notice('Post #' + post_id + ' deleted')
-        } else {
-          notice('Error: ' + resp['reason'])
-        }
-      }
-    })
+    updatePost(post_id, 'post[is_note_locked]=1')
+  } else if (s.value == 'flag') {
+    updatePost(post_id, 'post[is_flagged]=1')
   } else if (s.value.match(/^tag-script-/)) {
     var tag_script = getTagScript(s.value.substr(11, 100))
     var commands = tagScriptParse(tag_script)
@@ -153,18 +95,8 @@ function postClick(post_id) {
       posts[post_id].tags = tagScriptProcess(posts[post_id].tags, x)
     })
 
-    notice('Changing post #' + post_id + '...')
-
     var newTags = posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
-
-    new Ajax.Request('/post/update.js', {
-      asynchronous: true,
-      method: 'post',
-      postBody: 'id='+post_id+'&post[tags]='+newTags.join(' '),
-      onComplete: function(req) {
-        notice('Tags changed for post #' + post_id)
-      }
-    })
+    updatePost(post_id, 'post[tags]' + newTags.join(' '))
   }
 
   return false

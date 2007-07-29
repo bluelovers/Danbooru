@@ -20,14 +20,14 @@
       <div>
         <h5>Options</h5>
         <ul>
-          <li><%= link_to "Delete", {:action => "destroy", :id => @post.id}, :method => :post, :confirm => "Are you sure you want to delete this post?" %></li>
+          <li><%= link_to_function "Flag for deletion", "updatePost(#{@post.id}, 'post[is_flagged]=1')" %></li>
           <% if @post.image? && !@post.is_note_locked? %>
-            <li><%= link_to_function "Add Translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
+            <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
           <% end %>
           <% if @post.image? && @post.notes.empty? %>
-            <li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
+            <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
-          <li><%= link_to_function "Add to Favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
+          <li><%= link_to_function "Add to favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
         </ul>
       </div>
       <div>

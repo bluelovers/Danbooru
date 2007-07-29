@@ -17,7 +17,7 @@ class Post < ActiveRecord::Base
     after_update :expire_cache_on_update
     after_destroy :expire_cache_on_destroy
   end
-  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr
+  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_flagged
 
   votable
   image_store

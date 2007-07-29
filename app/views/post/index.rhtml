@@ -16,7 +16,7 @@
           <option value="rating-e">Rate Explicit</option>
           <option value="lock-rating">Lock Rating</option>
           <option value="lock-note">Lock Notes</option>
-          <option value="delete">Delete Post</option>
+          <option value="flag">Flag Post</option>
           <option value="edit-tag-scripts">Edit Tag Scripts</option>
         </select>
       </form>
@@ -58,7 +58,9 @@
       <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> |
       <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> |
       <%= link_to "Tag History", :controller => "post", :action => "tag_history" %> |
+      <%= link_to "Moderate", :controller => "post", :action => "moderate" %> |
       <%= link_to "Help", :controller => "help", :action => "posts" %>
+      
     </div>
   </div>
 </div>
