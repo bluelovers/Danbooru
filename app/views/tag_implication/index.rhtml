@@ -3,11 +3,11 @@
 	<p>The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.</p>
 	<table>
 		<tr>
-			<td><label for="tag_implication_predicate">Predicate</label></td>
+			<th><label for="tag_implication_predicate">Predicate</label></th>
 			<td><%= text_field "tag_implication", "predicate", :size => 40 %></td>
 		</tr>
 		<tr>
-			<td><label for="tag_implication_consequent">Consequent</label></td>
+			<th><label for="tag_implication_consequent">Consequent</label></th>
 			<td><%= text_field "tag_implication", "consequent", :size => 40 %></td>
 		</tr>
 		<tr>

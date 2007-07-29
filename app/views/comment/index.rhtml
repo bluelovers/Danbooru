@@ -32,8 +32,7 @@
   </div>
 
   <div id="footer">
-    <% if @current_user && @current_user.mod? %>
-  	  <%= link_to "Moderate", :action => "moderate" %>
-  	<% end %>
+  	<%= link_to "Moderate", :action => "moderate" %> |
+    <%= link_to "Help", :controller => "help", :action => "comments" %>
   </div>
 </div>

@@ -3,14 +3,10 @@ class Comment < ActiveRecord::Base
 	belongs_to :post
 	belongs_to :user
 	after_save :update_last_commented_at
+  after_destroy :update_last_commented_at
 
 	def update_last_commented_at
-    has_comments = connection.select_value("SELECT 1 FROM comments WHERE post_id = #{self.post_id} AND is_spam <> TRUE LIMIT 1").to_i
-    if has_comments
-      connection.execute("UPDATE posts SET last_commented_at = '#{created_at.to_formatted_s(:db)}' WHERE id = #{post_id}")
-    else
-      connection.execute("UPDATE posts SET last_commented_at = NULL WHERE id = #{post_id}")
-    end
+    connection.execute("UPDATE posts SET last_commented_at = (SELECT created_at FROM comments WHERE post_id = #{self.post_id} ORDER BY created_at DESC LIMIT 1) WHERE posts.id = #{self.post_id}")
 	end
 
 	def author

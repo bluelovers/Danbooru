@@ -6,6 +6,8 @@
 	</div>
 
 	<div id="footer">
-		<a href="/note/history">History of all notes</a> | <a href="/post/index?tags=translation_request">Translation Requests</a>
+    <%= link_to "History", :action => "history" %> |
+    <%= link_to "Translatin requests", :controller => "post", :action => "index", :tags => "translation_request" %> |
+    <%= link_to "Help", :controller => "help", :action => "notes" %>
 	</div>
 </div>
