@@ -584,6 +584,12 @@ div#post-add div#related {
   margin: 0 3em 1em 0;
 }
 
+div#post-add div#mytags a,
+div#post-add div#recent a,
+div#post-add div#related a {
+  margin-right: 1em;
+}
+
 div#post-popular {
   text-align: center;
 }

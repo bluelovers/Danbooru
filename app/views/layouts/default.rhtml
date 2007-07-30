@@ -16,6 +16,8 @@
 </head>
 <body>
 	<div id="header">
+    <!-- google_ad_section_start(weight=ignore) -->
+
 		<h2><%= link_to(CONFIG["app_name"], "/") %><%= tag_links(params['tags']) %></h2>
 		<ul class="flat-list" id="navbar">
 			<li><%= link_to "My Account", :controller => "user", :action => "home" %></li>
@@ -42,6 +44,7 @@
 			<li><a href="/static/more">More &raquo;</a></li>
 			<li id="notice"><%= flash[:notice] %></li>
 		</ul>
+    <!-- google_ad_section_end -->
 	</div>
   <div id="long-notice">
   </div>
