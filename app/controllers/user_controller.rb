@@ -67,7 +67,7 @@ class UserController < ApplicationController
 				redirect_to :action => "login"
 				return
 			end
-      inviter_id = @invite.id
+      inviter_id = @invite.user_id
     else
       inviter_id = nil
 		end
