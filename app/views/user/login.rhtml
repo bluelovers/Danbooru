@@ -1,19 +1,21 @@
 <div id="user-login">
 
 <% form_tag({:action => "authenticate"}, :class => "simple-form") do %>
-	<div class="option">
-		<label class="block" for="user_name">Name</label>
-		<%= text_field "user", "name" %>
-	</div>
-
-	<div class="option">
-		<label class="block" for="user_password">Password</label>
-		<%= password_field "user", "password" %>
-		<p>If you've forgotten your password, you can <%= link_to "reset it", :action => "reset_password" %> (provided you gave an email address during signup).</p>
-	</div>
-
-	<div class="option">
-		<%= submit_tag "Login" %>
-	</div>
+	<table class="form">
+    <tr>
+      <th><label class="block" for="user_name">Name</label></th>
+      <td><%= text_field "user", "name" %></td>
+    </tr>
+    <tr>
+      <th>
+        <label class="block" for="user_password">Password</label>
+		    <p>If you've forgotten your password, you can <%= link_to "reset it", :action => "reset_password" %> (provided you gave an email address during signup).</p>
+      </th>
+      <td><%= password_field "user", "password" %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><%= submit_tag "Login" %></td>
+    </tr>
+  </table>
 <% end %>
 </div>

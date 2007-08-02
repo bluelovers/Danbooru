@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: artist/edit
+Disallow: artist/update
 Disallow: comment/show
 Disallow: post/atom
 Disallow: post/upload
@@ -9,7 +10,10 @@ Disallow: post/tag_history
 Disallow: post/update
 Disallow: note/history
 Disallow: tag/edit
+Disallow: tag/update
 Disallow: tag/mass_edit
 Disallow: wiki/edit
+Disallow: wiki/update
+Disallow: wiki/revert
 Disallow: wiki/history
 Disallow: wiki/rename

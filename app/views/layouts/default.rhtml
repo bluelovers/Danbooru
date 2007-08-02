@@ -25,9 +25,9 @@
 			<% if CONFIG["enable_comments"] %>
 				<li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
 			<% end %>
-			<li><%= link_to "Tags", :controller => "tag", :action => "cloud" %></li>
 			<li><%= link_to "Notes", :controller => "note", :action => "index" %></li>
 			<li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
+			<li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
 			<% if CONFIG["enable_forum"] %>
 				<% if @current_user && ForumPostView.updated?(@current_user.id) %>
 					<li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :class => "forum-update" %></li>
