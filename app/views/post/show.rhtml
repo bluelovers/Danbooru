@@ -90,7 +90,7 @@
           Note.post_id = <%= @post.id %>
 
           <%- @post.notes.active.each do |note| -%>
-            Note.all.push(new Note(<%= note.id %>, false, '<%= note.body.to_escaped_js.gsub(/\n/, '\\n') %>'))
+            Note.all.push(new Note(<%= note.id %>, false, '<%= note.body.to_escaped_js.gsub(/\r\n|\r|\n/, '\\n') %>'))
           <%- end -%>
 
           Note.updateNoteCount()
