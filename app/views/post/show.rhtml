@@ -14,7 +14,7 @@
         <ul>
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "vote(1, #{@post.id})" %>/<%= link_to_function "down", "vote(-1, #{@post.id})" %>)</li>
-          <li>Favorited by: <%= favorite_list(@post) %></li>
+          <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
         </ul>
       </div>
       <!-- google_ad_section_start(weight=ignore) -->

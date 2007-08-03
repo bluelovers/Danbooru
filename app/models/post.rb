@@ -65,6 +65,10 @@ class Post < ActiveRecord::Base
     Cache.expire(:destroy_post => self.id, :tags => self.cached_tags, :rating => self.rating)
   end
 
+  def favorited_by
+    User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.*", :conditions => ["f.post_id = ?", self.id], :order => "lower(users.name)")
+  end
+
   def blank_image_board_sources
     if self.source.to_s =~ /moeboard|\/src\/\d{12,}/
       connection.execute("UPDATE posts SET source = '' WHERE id = #{self.id}")

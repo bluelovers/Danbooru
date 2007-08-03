@@ -12,7 +12,7 @@ module PostHelper
 
   def favorite_list(post)
     html = ""
-    users = User.find_people_who_favorited(post.id)
+    users = post.favorited_by
 
     if users.empty?
       html << "no one"

@@ -87,6 +87,9 @@ function addFavorite(post_id) {
         notice("You are not logged in")
       } else {
         notice("Post #" + post_id + " added to favorites")
+        if ($("favorited-by")) {
+          $("favorited-by").innerHTML = resp.favorited
+        }
         if ($("post-score-" + resp.post_id)) {
           $("post-score-" + resp.post_id).innerHTML = resp.score
         }
