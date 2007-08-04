@@ -91,11 +91,17 @@ CONFIG["min_related_tags_cache_duration"] = 8
 
 # What method to use to store images.
 # local_flat: Store every image in one directory.
-# local_hierarchy: Store every image in a hierarchical directory, 
-# based on the post's MD5 hash. On some file systems this may be 
+# local_hierarchy: Store every image in a hierarchical directory,
+# based on the post's MD5 hash. On some file systems this may be
 # faster.
 # amazon_s3: Save files to an Amazon S3 account.
+# remote_hierarchy: Some images will be stored on separate image
+# servers using a hierarchical directory.
 CONFIG["image_store"] = :local_flat
+
+# Only used when image_store == :remote_hierarchy.
+# An array of image servers (use http://domain.com format).
+CONFIG["image_servers"] = []
 
 # These three configs are only relevant if you're using the Amazon S3 
 # image store.
