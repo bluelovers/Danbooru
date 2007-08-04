@@ -13,8 +13,8 @@ module TagHelper
         end
 
       when Hash
-        name = t["name"]
-        count = t["post_count"]
+        name = t["name"].to_s
+        count = t["post_count"].to_i
 
 			when Tag
         name = t.name
@@ -26,7 +26,7 @@ module TagHelper
         
 			when Array
         name = t[0].to_s
-        count = t[1]
+        count = t[1].to_i
 
 			else
         raise
