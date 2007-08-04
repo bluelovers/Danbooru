@@ -144,7 +144,7 @@ module ImageStore
 
 			def file_url
         if self.is_warehoused?
-          select_random_image_servers() + "/data/#{file_hierarchy}/#{file_name}"
+          select_random_image_server() + "/data/#{file_hierarchy}/#{file_name}"
         else
           "http://" + CONFIG["server_host"] + "/data/#{file_hierarchy}/#{file_name}"
         end
