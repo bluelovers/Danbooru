@@ -6,7 +6,11 @@ class Comment < ActiveRecord::Base
   after_destroy :update_last_commented_at
 
 	def update_last_commented_at
-    connection.execute("UPDATE posts SET last_commented_at = (SELECT created_at FROM comments WHERE post_id = #{self.post_id} ORDER BY created_at DESC LIMIT 1) WHERE posts.id = #{self.post_id}")
+    comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{self.post_id}").to_i
+
+    if comment_count < CONFIG["comment_threshold"]
+      connection.execute("UPDATE posts SET last_commented_at = (SELECT created_at FROM comments WHERE post_id = #{self.post_id} ORDER BY created_at DESC LIMIT 1) WHERE posts.id = #{self.post_id}")
+    end
 	end
 
 	def author

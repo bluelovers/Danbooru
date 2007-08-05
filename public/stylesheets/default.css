@@ -505,7 +505,7 @@ div#tag-list {
   margin-bottom: 2em;
 }
 
-div#tag-list div.space a {
+div#tag-list a {
   padding-right: 5px;
 }
 
@@ -811,3 +811,8 @@ div#info {
 table.listing tbody tr:hover {
   background: #FFD;
 }
+
+span.tag-list a {
+  margin: 0 0.5em;
+}
+

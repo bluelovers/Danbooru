@@ -143,3 +143,7 @@ CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum nipples erect_n
 # This enables a helper action that automatically attempts to romanize
 # Japanese characters. It requires the utf8proc gem, however.
 CONFIG["enable_romanizer"] = false
+
+# After a post receives this many posts, new comments will no longer
+# bump the post in comment/index.
+CONFIG["comment_threshold"] = 20
