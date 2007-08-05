@@ -66,7 +66,7 @@ CONFIG["enable_tag_type_lookups"] = false
 # when searching for multiple tags. This relies on an expensive
 # database query and probably shouldn't be enabled if you're
 # expecting more than a dozen concurrent connections.
-CONFIG["enable_related_tag_intersection"] = false
+CONFIG["enable_related_tag_intersection"] = true
 
 # Set to true to link to the Danbooru Trac on the navigation bar.
 CONFIG["enable_trac_link"] = false

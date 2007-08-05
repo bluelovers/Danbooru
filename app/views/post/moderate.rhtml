@@ -1,0 +1,17 @@
+<form method="post" action="/post/moderate">
+  <table>
+  	<tr>
+  		<th></th>
+  		<th></th>
+  	</tr>
+    <% @posts.each do |p| %>
+    	<tr>
+    		<td><input type="checkbox" class="p" name="ids[<%= p.id %>]"/></td>
+    		<td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
+    	</tr>
+    <% end %>
+  	<tr>
+  		<td colspan="3"><%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true}); return false" %> <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked}); return false" %> <%= submit_tag "Unflag" %> <%= submit_tag "Delete" %></td>
+  	</tr>
+  </table>
+</form>
