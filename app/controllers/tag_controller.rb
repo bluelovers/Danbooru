@@ -151,7 +151,7 @@ class TagController < ApplicationController
     end
 
     respond_to do |fmt|
-      fmt.xml {render :xml => @tags.map {|x| {:name => x["name"], :count => x["post_count"]}}.to_xml(:root => "tags", :children => "tag")}
+      fmt.xml {render :xml => @tags.map {|x| {"name" => x[0], "count" => x[1]}}.to_xml(:root => "tags", :children => "tag")}
       fmt.js {render :json => @tags.to_json}
     end
   end
