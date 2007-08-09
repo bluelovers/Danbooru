@@ -17,8 +17,11 @@ module ApplicationHelper
   end
 
   def id_to_color(id)
-    id = id.to_i
-    "rgb(%d, %d, %d)" % [150 + (11 * id) % 105, 150 + (7 * id) % 105, 150 + (5 * id) % 105]
+    crc = Zlib.crc32(id.to_s)
+    r = crc % 255
+    g = (crc >> 8) % 255
+    b = (crc >> 16) % 255
+    "rgb(#{r}, #{g}, #{b})"
   end
 
   def tag_links(tags)

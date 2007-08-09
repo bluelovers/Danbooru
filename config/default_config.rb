@@ -138,7 +138,7 @@ CONFIG["enable_multi-tag_search_for_anonymous"] = true
 
 # Any post rated safe that has one of the following tags will
 # automatically be rated questionable.
-CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum nipples erect_nipples anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob)
+CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum nipples erect_nipples anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob cameltoe blowjob cunnilingus anal_sex topless)
 
 # This enables a helper action that automatically attempts to romanize
 # Japanese characters. It requires the utf8proc gem, however.

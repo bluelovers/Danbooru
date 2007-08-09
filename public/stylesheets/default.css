@@ -4,6 +4,10 @@ body, div, h1, h2, h3, h4, h5, h6, p, ul, li, dd, dt {
   padding: 0;
 }
 
+h1, h2, h3, h4 {
+  font-family: tahoma;
+}
+
 body {
   font-size: 0.8em;
   background: white;

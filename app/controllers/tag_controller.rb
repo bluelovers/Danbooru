@@ -151,7 +151,7 @@ class TagController < ApplicationController
     end
 
     respond_to do |fmt|
-      fmt.xml {render :xml => @tags.to_xml}
+      fmt.xml {render :xml => @tags.to_xml(:root => "tags", :children => "tag")}
       fmt.js {render :json => @tags.to_json}
     end
   end
