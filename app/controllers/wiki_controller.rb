@@ -21,7 +21,7 @@ class WikiController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "Page deleted"; redirect_to(:action => "show", :title => params[:title])}
-			fmt.xml {render :xml => {:success => true}.to_xml("response")}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -34,7 +34,7 @@ class WikiController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "Page locked"; redirect_to(:action => "show", :title => params[:title])}
-			fmt.xml {render :xml => {:success => true}.to_xml("response")}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -47,7 +47,7 @@ class WikiController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "Page unlocked"; redirect_to(:action => "show", :title => params[:title])}
-			fmt.xml {render :xml => {:success => true}.to_xml("response")}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -88,14 +88,14 @@ class WikiController < ApplicationController
 			respond_to do |fmt|
 				location = url_for(:action => "show", :title => page.title)
 				fmt.html {flash[:notice] = "New wiki page created"; redirect_to(location)}
-				fmt.xml {render :xml => {:success => true, :location => location}.to_xml("response")}
+				fmt.xml {render :xml => {:success => true, :location => location}.to_xml(:root => "response")}
 				fmt.js {render :json => {:success => true, :location => location}.to_json}
 			end
 		else
 			respond_to do |fmt|
 				error = page.errors.full_messages.join(", ")
 				fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
-				fmt.xml {render :xml => {:success => false, :reason => error}.to_xml("response"), :status => 500}
+				fmt.xml {render :xml => {:success => false, :reason => error}.to_xml(:root => "response"), :status => 500}
 				fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
 			end
 		end
@@ -111,21 +111,21 @@ class WikiController < ApplicationController
 		if @page.is_locked?
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "This page is locked and cannot be edited"; redirect_to(:action => "show", :title => params[:title])}
-				fmt.xml {render :xml => {:success => false, :reason => "page locked"}.to_xml("response")}
+				fmt.xml {render :xml => {:success => false, :reason => "page locked"}.to_xml(:root => "response")}
 				fmt.js {render :json => {:success => false, :reason => "page locked"}.to_json}
 			end
 		else
 			if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
 				respond_to do |fmt|
 					fmt.html {flash[:notice] = "Wiki page updated"; redirect_to(:action => "show", :title => @page.title)}
-					fmt.xml {render :xml => {:success => true}.to_xml("response")}
+					fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 					fmt.js {render :json => {:success => true}.to_json}
 				end
 			else
 				respond_to do |fmt|
 					error = page.errors.full_messages.join(", ")
 					fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
-					fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml("response"), :status => 500}
+					fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml(:root => "response"), :status => 500}
 					fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
 				end
 			end
@@ -173,7 +173,7 @@ class WikiController < ApplicationController
 		if @page.is_locked?
 			respond_to do |fmt|
 				fmt.html {flash[:notice] = "This page is locked and cannot be edited"; redirect_to(:action => "show", :title => params[:title])}
-				fmt.xml {render :xml => {:success => false, :reason => "page locked"}.to_xml("response"), :status => 409}
+				fmt.xml {render :xml => {:success => false, :reason => "page locked"}.to_xml(:root => "response"), :status => 409}
 				fmt.js {render :json => {:success => false, :reason => "page locked"}.to_json, :status => 409}
 			end
 		else
@@ -182,14 +182,14 @@ class WikiController < ApplicationController
 			if @page.revert_to!(params[:version])
 				respond_to do |fmt|
 					fmt.html {flash[:notice] = "Wiki page was reverted"; redirect_to(:action => "show", :title => @page.title)}
-					fmt.xml {render :xml => {:success => true}.to_xml("response")}
+					fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 					fmt.js {render :json => {:success => true}.to_json}
 				end
 			else
 				respond_to do |fmt|
 					error = @page.errors.full_messages.join(", ")
 					fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
-					fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml("response"), :status => 500}
+					fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml(:root => "response"), :status => 500}
 					fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
 				end
 			end

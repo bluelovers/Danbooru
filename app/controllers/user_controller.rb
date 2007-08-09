@@ -43,7 +43,7 @@ class UserController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "You are now logged in"; redirect_to(:action => "home")}
-			fmt.xml {render :xml => {:success => true}.to_xml("response")}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -107,7 +107,7 @@ class UserController < ApplicationController
 
 		respond_to do |fmt|
 			fmt.html {flash[:notice] = "You are now logged out"; redirect_to(:action => "home")}
-			fmt.xml {render :xml => {:success => true}.to_xml("response")}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
@@ -194,13 +194,13 @@ class UserController < ApplicationController
 
           render :json => {:success => true, :score => p.score, :post_id => params[:post_id], :favorited => favorited_users}.to_json
         end
-        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => params[:post_id]}.to_xml("response")}
+        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => params[:post_id]}.to_xml(:root => "response")}
       end
     rescue User::AlreadyFavoritedError
       respond_to do |fmt|
         fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
         fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
-        fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml("response"), :status => 409}
+        fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml(:root => "response"), :status => 409}
       end
     end
 	end
@@ -211,7 +211,7 @@ class UserController < ApplicationController
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
       fmt.js {render :json => {:success => true}.to_json}
-      fmt.xml {render :xml => {:success => true}.to_xml("response")}
+      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
     end
 	end
 

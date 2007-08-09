@@ -21,7 +21,13 @@
       <div>
         <h5>Options</h5>
         <ul>
-          <li><%= link_to_function "Flag for deletion", "updatePost(#{@post.id}, 'post[is_flagged]=1')" %></li>
+          <li>
+            <% if @current_user && @current_user.id == @post.user_id %>
+              <%= link_to "Delete", :action => "delete", :id => @post.id %>
+            <% else %>
+              <%= link_to_function "Flag for deletion", "updatePost(#{@post.id}, 'post[is_flagged]=1')" %>
+            <% end %>
+          </li>
           <% if @post.image? && !@post.is_note_locked? %>
             <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
           <% end %>

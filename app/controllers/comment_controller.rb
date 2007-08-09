@@ -29,7 +29,7 @@ class CommentController < ApplicationController
     if @current_user.has_permission?(comment)
       comment.update_attributes(params[:comment])
       respond_to do |fmt|
-        fmt.xml {render :xml => {:success => true}.to_xml("response")}
+        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
     else
@@ -44,7 +44,7 @@ class CommentController < ApplicationController
 
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Comment deleted"; redirect_to(:controller => "post", :action => "show", :id => comment.post_id)}
-        fmt.xml {render :xml => {:success => true}.to_xml("response")}
+        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
     else
@@ -64,14 +64,14 @@ class CommentController < ApplicationController
     if comment.errors.empty?
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Comment added"; redirect_to(:action => "index")}
-        fmt.xml {render :xml => {:success => true}.to_xml("response")}
+        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
     else
       error_messages = comment.errors.full_messages.join(", ")
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Error: #{error_messages}"; redirect_to(:action => "show", :id => comment.post_id)}
-        fmt.xml {render :xml => {:success => false, :reason => error_messages}.to_xml("response")}
+        fmt.xml {render :xml => {:success => false, :reason => error_messages}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => false, :reason => error_messages}.to_json}
       end
     end
@@ -137,7 +137,7 @@ class CommentController < ApplicationController
 		@comment.update_attributes(:is_spam => true)
 
 		respond_to do |fmt|
-			fmt.xml {render :xml => {:success => true}.to_xml("response")}
+			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end

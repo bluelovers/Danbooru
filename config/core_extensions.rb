@@ -66,11 +66,21 @@ class TrueClass
 end
 
 class Hash
-  def to_xml(name, options = {})
-    options[:indent] ||= 2
-    xml = options[:builder] || Builder::XmlMarkup.new(:indent => options[:indent])
-    xml.instruct! unless options[:skip_instruct]
-    xml.tag!(name, self)
+	alias_method :to_xml_orig, :to_xml
+	
+  def to_xml(options = {})
+		if false == options.delete(:no_children)
+			to_xml_orig(options)
+		else
+			options[:indent] ||= 2
+			options[:no_children] ||= true
+			options[:root] ||= "hash"
+			dasherize = !options.has_key?(:dasherize) || options[:dasherize]
+			root = dasherize ? options[:root].dasherize : options[:root]
+			options.reverse_merge!({:builder => Builder::XmlMarkup.new(:indent => options[:indent]), :root => root})
+			options[:builder].instruct! unless options.delete(:skip_instruct)
+	    options[:builder].tag!(root, self)
+		end
   end
 
 	def to_json(options = {})
