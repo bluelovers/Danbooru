@@ -55,7 +55,7 @@ function eraseCookie(name) {
 }
 
 function updatePost(post_id, params) {
-  notice('Updating post')
+  notice('Updating post #' + post_id)
 
   new Ajax.Request('/post/update.js', {
     asynchronous: true,

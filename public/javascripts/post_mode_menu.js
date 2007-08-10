@@ -1,15 +1,4 @@
 function loadMode() {
-  if (readCookie("tag-scripts") != "") {
-    var tag_scripts = eval(readCookie("tag-scripts"))
-
-    for (i=0; i<tag_scripts.length; ++i) {
-      var o = document.createElement("option")
-      o.value = "tag-script-" + tag_scripts[i][0]
-      o.text = "Script: " + tag_scripts[i][1]
-      $("mode").appendChild(o)
-    }
-  }
-
   if (readCookie("mode") == "") {
     createCookie("mode", "view")
     $("mode").value = "view"
@@ -45,9 +34,17 @@ function changeMode() {
     document.body.style.background = "#3AA"
   } else if (s == "flag") {
     document.body.style.background = "#F00"
-  } else if (s == "edit-tag-scripts") {
-    createCookie("mode", "view")
-    location.href = "/post/edit_tag_scripts?url=" + encodeURIComponent(location.href)
+	} else if (s == "apply-tag-script") {
+		document.body.style.background = "#A3A"
+  } else if (s == "edit-tag-script") {
+	  document.body.style.background = "white"
+		var script = prompt("Enter a tag script")
+		if (script) {
+			createCookie("tag-script", script)
+		}
+		
+		createCookie("mode", "view", 7)
+		$("mode").value = "view"
   } else {
     document.body.style.background = "#AFA"
   }
@@ -68,7 +65,6 @@ function postClick(post_id) {
       return false
     }
 
-    notice('Changing post #' + post_id + '...')
     newTags = newTags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
     updatePost(post_id, 'post[tags]=' + newTags.join(' '))
   } else if (s.value == 'vote-down') {
@@ -87,8 +83,8 @@ function postClick(post_id) {
     updatePost(post_id, 'post[is_note_locked]=1')
   } else if (s.value == 'flag') {
     updatePost(post_id, 'post[is_flagged]=1')
-  } else if (s.value.match(/^tag-script-/)) {
-    var tag_script = getTagScript(s.value.substr(11, 100))
+	} else if (s.value == "apply-tag-script") {
+    var tag_script = readCookie("tag-script")
     var commands = tagScriptParse(tag_script)
 
     commands.each(function(x) {
@@ -96,24 +92,10 @@ function postClick(post_id) {
     })
 
     var newTags = posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
-    updatePost(post_id, 'post[tags]' + newTags.join(' '))
+    updatePost(post_id, 'post[tags]=' + newTags.join(' '))
   }
 
   return false
-}
-
-function getTagScript(id) {
-  id = parseInt(id)
-  if (readCookie("tag-scripts")) {
-    var tag_scripts = eval(readCookie("tag-scripts"))
-    for (i=0; i<tag_scripts.length; ++i) {
-      if (tag_scripts[i][0] == id) {
-        return tag_scripts[i][2]
-      }
-    }
-  } else {
-    return ""
-  }
 }
 
 function tagScriptParse(script) {
@@ -143,7 +125,8 @@ function tagScriptTest(tags, predicate) {
 
 function tagScriptProcess(tags, command) {
   if (command.match(/^\[if/)) {
-    var match = command.match(/\[if\s*,\s*(.+?)\s*,\s*(.+?)\]/)
+    var match = command.match(/\[if\s+(.+?)\s*,\s*(.+?)\]/)
+		console.log("test=%s result=%s", match[1], match[2])
     if (tagScriptTest(tags, match[1])) {
       return tagScriptProcess(tags, match[2])
     } else {
