@@ -126,7 +126,6 @@ function tagScriptTest(tags, predicate) {
 function tagScriptProcess(tags, command) {
   if (command.match(/^\[if/)) {
     var match = command.match(/\[if\s+(.+?)\s*,\s*(.+?)\]/)
-		console.log("test=%s result=%s", match[1], match[2])
     if (tagScriptTest(tags, match[1])) {
       return tagScriptProcess(tags, match[2])
     } else {
