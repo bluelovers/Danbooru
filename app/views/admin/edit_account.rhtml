@@ -1,9 +1,11 @@
+<%= javascript_include_tag "controls" %>
+
 <div id="admin-edit-account">
 	<% form_tag(:controller => "user", :action => "update") do %>
 	  <table class="form">
 	    <tr>
 	      <th>
-	        <label class="block" for="user_id">User</label>
+	        <label class="block" for="user_name">User</label>
 	      </th>
 	      <td>
 			    <%= text_field "user", "name" %>
