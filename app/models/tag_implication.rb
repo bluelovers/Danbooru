@@ -68,7 +68,7 @@ class TagImplication < ActiveRecord::Base
 	end
 
   def to_xml(options = {})
-    {:id => id, :consequent_id => consequent_id, :predicate_id => predicate_id, :pending => is_pending}.to_xml("implication", options)
+    {:id => id, :consequent_id => consequent_id, :predicate_id => predicate_id, :pending => is_pending}.to_xml(options.merge(:root => "tag_implication"))
   end
 
   def to_json(options = {})

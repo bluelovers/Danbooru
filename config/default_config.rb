@@ -146,4 +146,4 @@ CONFIG["enable_romanizer"] = false
 
 # After a post receives this many posts, new comments will no longer
 # bump the post in comment/index.
-CONFIG["comment_threshold"] = 20
+CONFIG["comment_threshold"] = 12

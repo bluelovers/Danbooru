@@ -58,7 +58,7 @@ class TagAlias < ActiveRecord::Base
 	end
 
   def to_xml(options = {})
-    {:id => id, :name => name, :alias_id => alias_id, :pending => is_pending}.to_xml("alias", options)
+    {:id => id, :name => name, :alias_id => alias_id, :pending => is_pending}.to_xml(options.merge(:root => "tag_alias"))
   end
 
   def to_json(options = {})

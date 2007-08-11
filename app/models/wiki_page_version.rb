@@ -12,7 +12,7 @@ class WikiPageVersion < ActiveRecord::Base
 	end
 
   def to_xml(options = {})
-    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version, :post_id => post_id}.to_xml("wiki_page", options)
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version, :post_id => post_id}.to_xml(options.merge(:root => "wiki_page_version"))
   end
 
   def to_json(options = {})

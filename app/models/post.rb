@@ -476,7 +476,7 @@ class Post < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-    {:id => id, :tags => cached_tags, :created_at => created_at, :creator_id => user_id, :source => source, :score => score, :md5 => md5, :file_url => file_url, :preview_url => preview_url, :next_post_id => next_post_id, :prev_post_id => prev_post_id, :rating => rating}.to_xml("post", options)
+    {:id => id, :tags => cached_tags, :created_at => created_at, :creator_id => user_id, :source => source, :score => score, :md5 => md5, :file_url => file_url, :preview_url => preview_url, :next_post_id => next_post_id, :prev_post_id => prev_post_id, :rating => rating}.to_xml(options.merge(:root => "post"))
   end
 
   def find_ext(file_path)

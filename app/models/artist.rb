@@ -1,3 +1,4 @@
+
 class Artist < ActiveRecord::Base
 	before_save :normalize
 	after_save :commit_relations
@@ -91,7 +92,7 @@ class Artist < ActiveRecord::Base
 	end
 
   def to_xml(options = {})
-    {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_xml("artist", options)
+    {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_xml(options.merge(:root => "artist"))
   end
 
 	def to_json(options = {})
