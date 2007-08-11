@@ -20,8 +20,11 @@
             <div>
               <strong>Tags</strong> <span class="tag-list"><%= post.cached_tags.split(/ /).map {|x| link_to(x, :controller => "post", :action => "index", :tags => x)}.join(" ") %></span>
             </div>
+            <% if post.comment_count > 6 %>
+            	<p><%= link_to "#{post.comment_count - 6} comments hidden", :controller => "post", :action => "show", :id => post.id %></p>
+            <% end %>
   		    </div>
-          <%= render :partial => "comments", :locals => {:comments => post.comments, :post_id => post.id} %>
+          <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id} %>
   		  <% end %>
   	  <% end %>
     <% end %>

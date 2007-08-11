@@ -1,7 +1,7 @@
 CONFIG = {}
 
 # The version of this Danbooru.
-CONFIG["version"] = "1.6.0"
+CONFIG["version"] = "1.7.0"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"
@@ -146,4 +146,4 @@ CONFIG["enable_romanizer"] = false
 
 # After a post receives this many posts, new comments will no longer
 # bump the post in comment/index.
-CONFIG["comment_threshold"] = 12
+CONFIG["comment_threshold"] = 40
