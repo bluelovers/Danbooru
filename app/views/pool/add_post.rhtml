@@ -1,0 +1,17 @@
+<h3>Add to Pool</h3>
+
+<%= link_to(image_tag(@post.preview_url), :controller => "post", :action => "show", :id => @post.id) %>
+
+<p>Select a pool to add this post to:</p>
+
+<% form_tag(:action => "add_post") do %>
+  <%= hidden_field_tag("post_id", @post.id) %>
+  
+  <select name="pool_id">
+    <%= options_from_collection_for_select @pools, :id, :name %>
+  </select>
+
+  <%= submit_tag "Add" %> <%= button_to_function "Cancel", "history.back()" %>
+<% end %>
+
+<%= render :partial => "footer" %>

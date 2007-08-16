@@ -1,0 +1,22 @@
+<div id="pool-show">
+	<h3>Pool: <%= @pool.name %></h3>
+	<% unless @pool.description.blank? %>
+	  <div style="margin-bottom: 2em;"><%= @pool.description %></div>
+	<% end %>
+	<% if @current_user && @current_user.id == @pool.user_id %>
+  	<input type="checkbox" id="del-mode" onclick="Element.toggle('info')"/>
+  	<label for="del-mode">Delete Mode</label>
+  	<div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
+  <% end %>
+	<div style="margin-top: 1em;">
+		<% @posts.each do |post| %>
+    	<%= print_preview(post, :onclick => "return removePostFromPool(#{post.id}, #{@pool.id})", :user => @current_user) %>
+		<% end %>
+	</div>
+</div>
+
+<div id="paginator">
+	<%= custom_pagination_links(@pages) %>
+</div>
+
+<%= render :partial => "footer" %>

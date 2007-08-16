@@ -98,6 +98,42 @@ function addFavorite(post_id) {
   })
 }
 
+function addPostToPool(post_id, pool_id) {
+	notice("Adding post #" + post_id + " to pool...")
+	new Ajax.Request("/pool/add_post.js", {
+		asynchronous: true,
+		method: "post",
+		postBody: "post_id=" + post_id + "&pool_id=" + pool_id,
+		onComplete: function(res) {
+			var resp = eval("(" + res.responseText + ")")
+			
+			if (resp.success) {
+				notice("Post added to pool")
+			} else {
+				notice("Error: " + resp.reason)				
+			}
+		}
+	})
+}
+
+function removePostFromPool(post_id, pool_id) {
+  if ($("del-mode") && $("del-mode").checked == true) {
+    new Ajax.Request('/pool/remove_post.js', {
+      asynchronous: true,
+      method: 'post',
+      postBody: 'post_id=' + post_id + "&pool_id=" + pool_id,
+      onComplete: function(res) {
+        notice("Post removed from pool")
+        Element.remove('p' + res.getResponseHeader('X-Post-Id'))
+      }
+    })
+
+    return false
+  } else {
+    return true
+  }
+}
+
 function markcom(id) {
   notice("Marking comment #" + id + " as spam...")
   new Ajax.Request("/comment/mark_as_spam.js/", {

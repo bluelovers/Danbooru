@@ -34,6 +34,8 @@ function changeMode() {
     document.body.style.background = "#3AA"
   } else if (s == "flag") {
     document.body.style.background = "#F00"
+	} else if (s == "add-to-pool") {
+		document.body.style.background = "#26A"
 	} else if (s == "apply-tag-script") {
 		document.body.style.background = "#A3A"
   } else if (s == "edit-tag-script") {
@@ -83,6 +85,8 @@ function postClick(post_id) {
     updatePost(post_id, 'post[is_note_locked]=1')
   } else if (s.value == 'flag') {
     updatePost(post_id, 'post[is_flagged]=1')
+	} else if (s.value == 'add-to-pool') {
+		addPostToPool(post_id, 0)
 	} else if (s.value == "apply-tag-script") {
     var tag_script = readCookie("tag-script")
     var commands = tagScriptParse(tag_script)

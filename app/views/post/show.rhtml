@@ -35,6 +35,10 @@
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
           <li><%= link_to_function "Add to favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
+          <% if session[:previous_pool_id] %>
+            <li><%= link_to_function "Add to previous pool", "addPostToPool(#{@post.id}, #{session[:previous_pool_id]})", :title => "Add to pool: #{session[:previous_pool_name]}" %></li>
+          <% end %>
+          <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
         </ul>
       </div>
       <div>

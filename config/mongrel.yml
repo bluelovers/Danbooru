@@ -13,7 +13,7 @@
 :group: 
 :daemon: true
 :prefix: 
-:cwd: /var/www/sites/miezaru
+:cwd: /Users/ayi/Documents/apps/danbooru
 :includes: 
 - mongrel
 :log_file: log/mongrel.log

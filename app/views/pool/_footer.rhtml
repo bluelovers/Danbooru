@@ -1,0 +1,9 @@
+<div id="footer">
+  <%= link_to "List", :action => "index" %> |
+  <%= link_to "Create", :action => "create" %> |
+  <%= link_to "Delete", :action => "destroy" %> |
+  <% if @posts %>
+    <%= link_to "Order", :action => "order", :id => params[:id] %> |
+  <% end %>
+  <%= link_to "Help", :controller => "help", :action => "pools" %>
+</div>

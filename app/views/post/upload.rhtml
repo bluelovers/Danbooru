@@ -14,12 +14,12 @@
 				</tr>
 				<tr>
 					<th><%= content_tag "label", "Source", :for => "post_source" %></th>
-					<td><%= text_field "post", "source", :value => params["url"], :size => 75 %> <%= link_to_function("Find artist", "findArtist()") %></td>
+					<td><%= text_field "post", "source", :value => params["url"], :size => 50 %> <%= link_to_function("Find artist", "findArtist()") %></td>
 				</tr>
 				<tr>
 					<th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
 					<td>
-						<%= text_field "post", "tags", :size => 75 %> 
+						<%= text_field "post", "tags", :size => 50 %> 
 						<%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %><% if CONFIG["enable_romanizer"] %>/<%= link_to_function "romanize", "romanize('post_tags')" %><% end %>)
 					</td>
 				</tr>
@@ -39,10 +39,10 @@
       </table>
 
       <div>
-        <h6>Common</h6>
+        <h6>My Tags</h6>
 				<div id="mytags"><a href="/account/options">Edit</a></div>
 
-        <h6>Recent</h6>
+        <h6>Recent Tags</h6>
 				<div id="recent"><em>None</em></div>
 
         <h6>Related Tags</h6>

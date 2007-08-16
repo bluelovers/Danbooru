@@ -1,0 +1,27 @@
+<h3>Pool Ordering: <%= @pool.name %></h3>
+<p>Lower numbers will appear first.</p>
+
+<% form_tag(:action => "order") do %>
+  <%= hidden_field_tag "id", @pool.id %>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Order</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pool_posts.each do |pp| %>
+        <tr>
+          <td><%= link_to(image_tag(pp.post.preview_url), {:controller => "post", :action => "show", :id => pp.post_id}, :title => pp.post.cached_tags)%></td>
+          <td><%= text_field_tag "pool_post_sequence[#{pp.id}]", pp.sequence, :size => 5 %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
+      </tr>
+    </tfoot>
+  </table>
+<% end %>

@@ -1,0 +1,27 @@
+<div id="pool-index">
+  <% form_tag({:action => "index"}, :method => :get) do %>
+    <%= text_field_tag "query", "", :size => 40 %>
+    <%= submit_tag "Search" %>
+  <% end %>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Creator</th>
+        <th>Posts</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pools.each do |p| %>
+        <tr>
+          <td><%= link_to p.name, :action => "show", :id => p.id %></td>
+          <td><%= p.user.name %></td>
+          <td><%= p.post_count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= render :partial => "footer" %>
