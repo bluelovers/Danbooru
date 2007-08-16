@@ -1,4 +1,4 @@
 <div id="footer">
-	<p><%= link_to "List", :action => "index" %> | <%= link_to "Aliases", :controller => "tag_alias", :action => "index" %> | <%= link_to "Implications", :controller => "tag_implication", :action => "index" %> | <%= link_to "Mass Edit", :action => "mass_edit" %> | <%= link_to "Edit", :action => "edit" %> | <%= link_to "Help", :controller => "help", :action => "tags" %></p>
-	<p><%= link_to "Popular (by day)", :action => "popular_by_day" %> | <%= link_to "Popular (by week)", :action => "popular_by_week" %> | <%= link_to "Popular (by month)", :action => "popular_by_month" %></p>
+	<p><%= link_to "List", :controller => "tag", :action => "index" %> | <%= link_to "Popular", :controller => "tag", :action => "popular_by_day" %> | <%= link_to "Aliases", :controller => "tag_alias", :action => "index" %> | <%= link_to "Implications", :controller => "tag_implication", :action => "index" %> | <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit" %> | <%= link_to "Edit", :controller => "tag", :action => "edit" %> | <%= link_to "Help", :controller => "help", :action => "tags" %></p>
+	<%= @content_for_footer %>
 </div>

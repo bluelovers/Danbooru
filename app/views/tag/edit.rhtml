@@ -1,7 +1,7 @@
 <% form_tag(:action => "update") do %>
 	<table>
     <tr>
-      <th><label>Tag to Update</label></th>
+      <th><label for="name">Tag</label></th>
       <td>
         <%= text_field_tag "name", "" %>
 	      <%= select "tag", "tag_type", [["General", 0], ["Artist", 1], ["Copyright", 3], ["Character", 4]] %>

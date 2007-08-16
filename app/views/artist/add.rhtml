@@ -2,35 +2,35 @@
 	<p>Separate multiple aliases and group members with commas.</p>
 
 	<form method="post" action="/artist/create">
-		<table>
+		<table class="form">
 			<tr>
-				<td><label for="artist_name">Name</label></td>
+				<th><label for="artist_name">Name</label></th>
 				<td><%= text_field "artist", "name", :size => 80 %></td>
 			</tr>
 			<% if params[:alias_id] %>
 				<tr>
-					<td><label for="artist_alias">Alias for</label></td>
+					<th><label for="artist_alias">Alias for</label></th>
 					<td><%= text_field "artist", "alias", :size => 80 %></td>
 				</tr>
 			<% end %>
 			<tr>
-				<td><label for"artist_aliases">Jap Name/Aliases</label</td>
+				<th><label for"artist_aliases">Jap Name/Aliases</label</th>
 				<td><%= text_field "artist", "aliases", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_url_a">Site URL</label></td>
+				<th><label for="artist_url_a">Site URL</label></th>
 				<td><%= text_field "artist", "url_a", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_url_b">Image URL</label></td>
+				<th><label for="artist_url_b">Image URL</label></th>
 				<td><%= text_field "artist", "url_b", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_notes">Notes</label></td>
+				<th><label for="artist_notes">Notes</label></th>
 				<td><%= text_area "artist", "notes" %></td>
 			</tr>
 			<tr>
-				<td colspan="2"><%= submit_tag "Save" %></td>
+				<td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
 			</tr>
 		</table>
 	</form>

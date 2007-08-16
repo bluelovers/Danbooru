@@ -3,13 +3,15 @@ class ArtistController < ApplicationController
 
   before_filter :mod_only, :only => [:destroy]
   verify :method => :post, :only => [:destroy, :update, :create]
+	helper :post
 
   def destroy
-    artist = Artist.find(params[:id])
-    artist.destroy
+    @artist = Artist.find(params[:id])
+    @artist.destroy
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Artist deleted"; redirect_to(:action => "index", :page => params[:page])}
+			fmt.js
     end
   end
 
@@ -110,5 +112,6 @@ class ArtistController < ApplicationController
 
   def show
     @artist = Artist.find(params[:id])
+		@posts = Post.find_by_sql(Post.generate_sql(@artist.name, :limit => 5, :order => "id desc", :safe_mode => is_safe_mode?))
   end
 end

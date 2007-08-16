@@ -19,4 +19,8 @@
 	<%= custom_pagination_links(@pages) %>
 </div>
 
+<% content_for("footer") do %>
+  <%= link_to "Order", :action => "order", :id => params[:id] %> |
+<% end %>
+
 <%= render :partial => "footer" %>

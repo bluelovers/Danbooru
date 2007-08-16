@@ -3,37 +3,37 @@
 
 	<% form_tag(:action => (@artist.new_record? ? "create" : "update")) do %>
 		<%= hidden_field_tag "id", @artist.id %>
-		<table>
+		<table class="form">
 			<tr>
-				<td><label for="artist_name">Name</label></td>
+				<th><label for="artist_name">Name</label></th>
 				<td><%= text_field "artist", "name", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for"artist_aliases">Jap Name/Aliases</label</td>
+				<th><label for"artist_aliases">Jap Name/Aliases</label></th>
 				<td><%= text_field "artist", "aliases", :size => 80, :value => @artist.aliases.join(", ") %></td>
 			</tr>
 			<tr>
-				<td><label for"artist_aliases">Members</label</td>
+				<th><label for"artist_aliases">Members</label></th>
 				<td><%= text_field "artist", "members", :size => 80, :value => @artist.members.join(", ") %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_url_a">Site URL</label></td>
+				<th><label for="artist_url_a">Site URL</label></th>
 				<td><%= text_field "artist", "url_a", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_url_b">Image URL</label></td>
+				<th><label for="artist_url_b">Image URL</label></th>
 				<td><%= text_field "artist", "url_b", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_url_c">Extra URL</label></td>
+				<th><label for="artist_url_c">Extra URL</label></th>
 				<td><%= text_field "artist", "url_c", :size => 80 %></td>
 			</tr>
 			<tr>
-				<td><label for="artist_notes">Notes</label></td>
-				<td><%= text_area "artist", "notes" %></td>
+				<th><label for="artist_notes">Notes</label></th>
+				<td><%= text_area "artist", "notes", :size => "4x10" %></td>
 			</tr>
 			<tr>
-				<td colspan="2"><%= submit_tag "Save" %> <%= submit_tag "Cancel" %></td>
+				<td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
 			</tr>
 		</table>
 	<% end %>

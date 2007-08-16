@@ -1,8 +1,10 @@
 <div id="pool-index">
-  <% form_tag({:action => "index"}, :method => :get) do %>
-    <%= text_field_tag "query", "", :size => 40 %>
-    <%= submit_tag "Search" %>
-  <% end %>
+  <div style="margin-bottom: 2em;">
+    <% form_tag({:action => "index"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search" %>
+    <% end %>
+  </div>
   
   <table>
     <thead>
@@ -23,5 +25,10 @@
     </tbody>
   </table>
 </div>
+
+<% content_for("footer") do %>
+  <%= link_to "Order by Name", :action => "index", :query => params[:query], :order => "name" %> |
+  <%= link_to "Order by Date", :action => "index", :query => params[:query], :order => "date" %> | 
+<% end %>
 
 <%= render :partial => "footer" %>
