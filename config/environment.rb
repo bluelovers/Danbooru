@@ -92,6 +92,15 @@ rescue LoadError
   require 'redcloth'
 end
 
+begin
+	require 'ferret'
+	FileUtils.mkdir_p("#{RAILS_ROOT}/tmp/ferret")
+	FERRET = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/index", :key => :id)
+	WikiPage.index_pages()
+rescue LoadError
+	# do nothing
+end
+
 if CONFIG["enable_romanizer"]
   require 'utf8proc'
   require 'romanizer'

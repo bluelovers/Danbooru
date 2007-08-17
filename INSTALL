@@ -15,6 +15,7 @@ The following dependencies are optional:
 - aws/s3 (required for Amazon S3 support, gem install aws-s3)
 - ragel (required for superredcloth)
 - superredcloth (gem install superredcloth --source=http://code.whytheluckystiff.net)
+- ferret (required for wiki/comment search, gem install ferret)
 
 Installing the postgres gem might be tricky because the gem looks for PostgreSQL development files in the wrong location. If the gem install fails, try running "gem install postgres -- --with-pgsql-lib-dir=/usr/local/pgsql/lib --with-pgsql-include-dir=/usr/local/pgsql/include". Substitute "/usr/local/pgsql" with wherever your PostgreSQL files are.
 

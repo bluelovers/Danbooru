@@ -58,15 +58,19 @@ class WikiController < ApplicationController
 	def index
 		set_title "Wiki"
 		
-		order = case params[:order]
-		when "date"
-			"updated_at"
-			
+		if params[:order] == "date"
+			order = "updated_at"
 		else
-			"lower(title)"
+			order = "lower(title)"
 		end
 
-		@pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => (params[:limit] || 25)
+		if params[:query]
+			hits = FERRET.search("title|body:#{params[:query]}").hits
+			@pages = Paginator.new(:wiki, hits.size, 25, params[:page])
+			@wiki_pages = hits.map {|x| WikiPage.find(FERRET[x.doc][:id])}
+		else
+			@pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => (params[:limit] || 25)
+		end
 
 		respond_to do |fmt|
 			fmt.html

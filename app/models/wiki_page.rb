@@ -2,6 +2,11 @@ class WikiPage < ActiveRecord::Base
 	acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
 	before_save :make_title_canonical
 	belongs_to :user
+	
+	if Object.const_defined?(:Ferret)
+		after_save :update_index
+		before_destroy :delete_index
+	end
 
 	TAG_DEL = '<del>'
 	TAG_INS = '<ins>'
@@ -10,6 +15,26 @@ class WikiPage < ActiveRecord::Base
 	TAG_NEWLINE = "<img src=\"/images/nl.png\" alt=\"newline\"/>\n"
 	TAG_BREAK = "<br/>\n"
 
+	def self.index_pages
+		if Object.const_defined?(:Ferret)
+			find(:all).each do |page|
+				page.update_index()
+			end
+		else
+			raise "Ferret not installed"
+		end
+	end
+
+	def update_index
+		FERRET << {:id => self.id, :title => self.title, :body => self.body}
+	end
+	
+	def delete_index
+		FERRET.search_each("id:#{self.id}") do |id, score|
+			FERRET.delete(id)
+		end
+	end
+	
 	def make_title_canonical
 		self.title = title.tr(" ", "_")
 	end

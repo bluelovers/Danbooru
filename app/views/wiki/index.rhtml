@@ -1,3 +1,12 @@
+<% if Object.const_defined?(:Ferret) %>
+	<div style="margin-bottom: 1em;">
+		<% form_tag({:action => "index"}, :method => :get) do %>
+			<%= text_field_tag "query", params[:query], :size => 40 %>
+			<%= submit_tag "Search" %>
+		<% end %>
+	</div>
+<% end %>
+
 <table width="100%">
 	<tr>
 		<th width="70%">Title</th>
@@ -14,3 +23,5 @@
 <div id="paginator">
 	<%= custom_pagination_links(@pages) %>
 </div>
+
+<%= render :partial => "footer" %>
