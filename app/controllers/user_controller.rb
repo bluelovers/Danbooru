@@ -128,27 +128,7 @@ class UserController < ApplicationController
 		set_title "Edit Account"
 		@user = @current_user
 	end
-
-	def favorites
-		@user = User.find(params["id"])
-
-		set_title "#{@user.name}'s Favorites"
-		@pages, @posts = paginate :posts, :per_page => 24, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
-
-		respond_to do |fmt|
-			fmt.html
-			fmt.xml {render :xml => @posts.to_xml}
-			fmt.js {render :json => @posts.to_json}
-		end
-	end
-
-	def favorites_atom
-		@posts = Post.find(:all, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :limit => 24, :select => "posts.*")
-		@user = User.find(params["id"])
-
-		render :layout => false
-	end
-
+	
 	def reset_password
 		set_title "Reset Password"
 
@@ -173,47 +153,6 @@ class UserController < ApplicationController
 		else
 			@user = User.new
 		end
-	end
-
-	def invites
-	end
-
-	def add_favorite
-    begin
-      @current_user.add_favorite(params[:post_id])
-      p = Post.find(:first, :conditions => ["id = ?", params[:post_id]], :select => "posts.score, posts.id")
-
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-        fmt.js do
-          favorited_users = p.favorited_by.map {|x| '<a href="/user/favorites/%s">%s</a>' % [x.id, x.name]}
-          if favorited_users.empty?
-            favorited_users = "Favorited by: no one"
-          else
-            favorited_users = "Favorited by: #{favorited_users.join(', ')}"
-          end
-
-          render :json => {:success => true, :score => p.score, :post_id => params[:post_id], :favorited => favorited_users}.to_json
-        end
-        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => params[:post_id]}.to_xml(:root => "response")}
-      end
-    rescue User::AlreadyFavoritedError
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-        fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
-        fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml(:root => "response"), :status => 409}
-      end
-    end
-	end
-
-	def delete_favorite
-    @current_user.delete_favorite(params[:post_id])
-    response.headers["X-Post-Id"] = params[:post_id]
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-      fmt.js {render :json => {:success => true}.to_json}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-    end
 	end
 
 	if CONFIG["enable_account_email_activation"]

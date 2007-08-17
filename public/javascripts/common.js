@@ -74,10 +74,10 @@ function updatePost(post_id, params) {
 
 function addFavorite(post_id) {
   notice('Adding post #' + post_id)
-  new Ajax.Request('/user/add_favorite.js', {
+  new Ajax.Request('/favorite/create.js', {
     asynchronous: true,
     method: 'post',
-		postBody: 'post_id='+post_id,
+		postBody: 'id='+post_id,
     onComplete: function(req) {
       var resp = eval("(" + req.responseText + ")")
 

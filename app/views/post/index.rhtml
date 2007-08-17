@@ -57,7 +57,7 @@
         <%= link_to "Add", :controller => "post", :action => "upload" %> |
       <% end %>
       <% if @current_user %>
-        <%= link_to "My Favorites", :controller => "user", :action => "favorites", :id => @current_user.id %> |
+        <%= link_to "My Favorites", :controller => "favorite", :action => "show", :id => @current_user.id %> |
       <% end %>
       <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> |
       <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> |

@@ -1,0 +1,46 @@
+<script type="text/javascript">
+	function deleteFav(post_id) {
+		if ($("del-mode") && $("del-mode").checked == true) {
+			new Ajax.Request('/user/delete_favorite.js', {
+				asynchronous: true,
+				method: 'post',
+				postBody: 'post_id=' + post_id,
+				onSuccess: function(res) {
+					notice("Post deleted")
+					var resp = eval("(" + res.responseText + ")")
+					Element.remove('p' + resp.post_id)
+				},
+				onFailure: function(req) {
+					notice("Error")
+				}
+			})
+
+			return false
+		} else {
+			return true
+		}
+	}
+</script>
+
+<div id="user-favorites">
+	<h3><%= @user.name %>'s Favorites</h3>
+	<p>Some of these posts were also favorited by: <%= print_also_favorited_by(@posts, @user) %>.</p>
+	<% if @current_user && @current_user.id == @user.id %>
+		<input type="checkbox" id="del-mode" onclick="Element.toggle('info')"/>
+		<label for="del-mode">Delete Mode</label>
+		<div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from your favorites.</div>
+	<% end %>
+	<div style="margin-top: 1em;">
+		<% @posts.each do |post| %>
+			<%= print_preview(post, :onclick => "return deleteFav(#{post.id})", :user => @current_user) %>
+		<% end %>
+	</div>
+</div>
+
+<div id="paginator">
+	<%= custom_pagination_links(@pages) %>
+</div>
+
+<div id="footer">
+	<%= link_to "Atom Feed", :action => "show", :format => "atom", :id => @user.id %> | <%= link_to "Everyone's Favorites", :action => "index" %> | <%= link_to "Help", :controller => "help", :action => "favorites" %>
+</div>

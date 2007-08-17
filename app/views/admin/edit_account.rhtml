@@ -16,7 +16,7 @@
 			    <label class="block" for="user_level">Level</label>
 			  </th>
 			  <td>
-			    <%= select "user", "level", [["Admin", User::LEVEL_ADMIN], ["Mod", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["View Only", User::LEVEL_VIEW_ONLY], ["Blocked", User::LEVEL_BLOCKED]] %>
+			    <%= select "user", "level", [["Administrator", User::LEVEL_ADMIN], ["Moderator", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["View Only", User::LEVEL_VIEW_ONLY], ["Blocked", User::LEVEL_BLOCKED]] %>
 			  </td>
 			</tr>
 			<tr>

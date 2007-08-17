@@ -21,7 +21,7 @@ class PostController < ApplicationController
 
   before_filter :admin_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
-  helper :wiki, :tag, :comment
+  helper :wiki, :tag, :comment, :pool, :favorite
 
   def create
 		if @current_user && @current_user.view_only?
