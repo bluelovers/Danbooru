@@ -8,7 +8,7 @@
 	        <label class="block" for="user_name">User</label>
 	      </th>
 	      <td>
-			    <%= text_field "user", "name" %>
+			    <%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %>
 			  </td>
 			</tr>
       <tr>
