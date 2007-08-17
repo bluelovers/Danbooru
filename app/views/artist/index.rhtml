@@ -11,10 +11,8 @@
 			  <tr>
 				  <th></th>
 				  <th>Name</th>
-				  <th>Alias</th>
-				  <th>Group</th>
 				  <th>Updated By</th>
-				  <th>Site</th>
+				  <th>URL #1</th>
 				  <th>URL #2</th>
 				  <th>URL #3</th>
 			  </tr>
@@ -23,31 +21,29 @@
 			  <% @artists.each do |artist| %>
         	<% content_tag(:tr, :class => cycle('even', 'odd'), :id => "artist-#{artist.id}") do %>
 					  <td>
-						  <%= link_to_unless artist.alias_id, "Posts", :controller => "post", :action => "index", :tags => artist.name %>
-						  <%= link_to "Edit", :action => "edit", :id => artist.id %> 
+						  <%= link_to_unless artist.alias_id, "P", {:controller => "post", :action => "index", :tags => artist.name}, :title => "Find posts for artist" %>
+						  <%= link_to "E", {:action => "edit", :id => artist.id}, :title => "Edit artist" %> 
 						  <% if @current_user %>
-								<%= link_to_remote "Delete", :url => {:action => "destroy", :id => artist.id}, :confirm => "Are you sure you want to delete #{artist.name}?" %>
+								<%= link_to_remote "D", {:url => {:action => "destroy", :id => artist.id}, :confirm => "Are you sure you want to delete #{artist.name}?"}, :title => "Delete artist" %>
 				      <% end %>
 					  </td>
-					  <td><%= link_to artist.name, :action => "show", :id => artist.id %></td>
-					  <% if artist.alias_id %>
-							<td><%= link_to artist.alias, :action => "show", :id => artist.alias_id %></td>
-			      <% else %>
-							<td></td>
-					  <% end %>
-					  <% if artist.group_id %>
-							<td><%= link_to artist.group, :action => "show", :id => artist.group_id %></td>
-					  <% else %>
-							<td></td>
-						<% end %>
+					  <td>
+							<%= link_to artist.name, {:action => "show", :id => artist.id} %>
+							<% if artist.alias_id %>
+								&rarr; <%= link_to artist.alias, {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
+							<% end %>
+							<% if artist.group_id %>
+								[<%= link_to artist.group, {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
+							<% end %>							
+						</td>
 						<% if artist.updater %>
 							<td><%= artist.updater.name %></td>
 						<% else %>
 							<td></td>
 						<% end %>
-					  <td><%= link_to artist.url_a, artist.url_a %></td>
-					  <td><%= artist.url_b %></td>
-					  <td><%= artist.url_c %></td>
+					  <td><%= link_to_unless artist.url_a.nil?, truncate(artist.url_a, 20), artist.url_a %></td>
+					  <td><%= link_to_unless artist.url_b.nil?, truncate(artist.url_b, 20), artist.url_b %></td>
+					  <td><%= link_to_unless artist.url_c.nil?, truncate(artist.url_c, 20), artist.url_c %></td>
 				  <% end %>
 		    <% end %>
       </tbody>
