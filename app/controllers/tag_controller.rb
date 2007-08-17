@@ -1,6 +1,6 @@
 class TagController < ApplicationController
   layout 'default'
-
+	auto_complete_for :tag, :name
   before_filter :mod_only, :only => [:mass_edit]
 
   def cloud
@@ -118,7 +118,7 @@ class TagController < ApplicationController
   end
 
   def update
-    tag = Tag.find_by_name(params[:name])
+    tag = Tag.find_by_name(params[:tag][:name])
     tag.update_attributes(params[:tag])
 
     respond_to do |fmt|

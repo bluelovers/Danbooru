@@ -3,7 +3,7 @@
     <tr>
       <th><label for="name">Tag</label></th>
       <td>
-        <%= text_field_tag "name", "" %>
+        <%= text_field_with_auto_complete "tag", "name", :min_chars => 3, :url => {:controller => "tag", :action => "auto_complete_for_name"} %>
 	      <%= select "tag", "tag_type", [["General", 0], ["Artist", 1], ["Copyright", 3], ["Character", 4]] %>
       </td>
     </tr>

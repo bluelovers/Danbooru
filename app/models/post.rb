@@ -365,6 +365,13 @@ class Post < ActiveRecord::Base
       params << q[:user]
     end
 
+		if q[:pool].is_a?(String)
+			from << "pools"
+			from << "pools_posts"
+			conditions << "pools.id = pools_posts.pool_id AND pools_posts.post_id = p.id AND pools.name ILIKE ? ESCAPE '\\\\'"
+			params << "%" + q[:pool].to_escaped_for_sql_like + "%"
+		end
+
     if q[:related].any? || q[:include].any?
       conditions2 = []
       

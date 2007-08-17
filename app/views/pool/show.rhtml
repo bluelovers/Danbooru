@@ -1,5 +1,5 @@
 <div id="pool-show">
-	<h3>Pool: <%= @pool.name %></h3>
+	<h3>Pool: <%= @pool.pretty_name %></h3>
 	<% unless @pool.description.blank? %>
 	  <div style="margin-bottom: 2em;"><%= @pool.description %></div>
 	<% end %>

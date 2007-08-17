@@ -428,6 +428,10 @@ div#comment-list div.post-info {
   margin-bottom: 1em;
 }
 
+div#comment-list div.post-info span.info {
+	margin-right: 1em;
+}
+
 div#comment-list div.comment {
   margin-bottom: 1em;
 }
@@ -817,6 +821,6 @@ table.listing tbody tr:hover {
 }
 
 span.tag-list a {
-  margin: 0 0.5em;
+  margin-right: 1em;
 }
 
