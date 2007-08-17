@@ -467,6 +467,10 @@ class Post < ActiveRecord::Base
     return Post.sanitize_sql([sql, *params])
   end
 
+	def self.find_by_tags(tags, options = {})
+		return find_by_sql(Post.generate_sql(tags, options))
+	end
+
   def pretty_rating
     case rating
     when "q"

@@ -155,4 +155,22 @@ class PoolController < ApplicationController
 			@pool_posts = PoolPost.find(:all, :conditions => ["pool_id = ?", params[:id]], :order => "sequence")
 		end
 	end
+	
+	def import
+		@pool = Pool.find(params[:id])
+		
+		unless @pool.is_public? || (@current_user && @pool.user_id == @current_user.id)
+			access_denied()
+			return
+		end
+		
+		if request.post?
+		elsif params[:query]
+			respond_to do |fmt|
+				fmt.js do
+					@posts = Post.find_by_tags(params[:query], :order => "id desc")
+				end
+			end
+		end
+	end
 end

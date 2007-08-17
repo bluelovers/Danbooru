@@ -21,6 +21,7 @@
 
 <% content_for("footer") do %>
   <%= link_to "Order", :action => "order", :id => params[:id] %> |
+	<%= link_to "Import", :action => "import", :id => params[:id] %> |
 <% end %>
 
 <%= render :partial => "footer" %>
