@@ -1,0 +1,22 @@
+<div style="margin-bottom: 1em;">
+	<% form_tag({:action => "search"}, :method => :get) do %>
+		<%= text_field_tag "query", params[:query], :size => 40 %> <%= submit_tag "Search" %>
+	<% end %>
+</div>
+
+<% @comments.each do |c| %>
+	<div class="comment" id="c<%= c.id %>">
+		<h4><%= link_to(c.author.tr("_", " "), {:controller => "comment", :action => "show", :id => c.id}) %></h4>
+		<h6 class="comment-header">Posted on <%= c.created_at.strftime("%D %I:%M") %> (<%= link_to_function("Mark as spam", "markcom(#{c.id}); return false") %>)</h6>
+		<div id="cbody<%= c.id %>"><%= print_comment(c) %></div>
+	</div>
+<% end %>
+
+<% if @pages %>
+	<div id="paginator">
+		<%= custom_pagination_links(@pages)  %>
+	</div>
+<% end %>
+
+<%= render :partial => "footer" %>
+

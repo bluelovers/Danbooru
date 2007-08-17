@@ -5,6 +5,27 @@ class Comment < ActiveRecord::Base
 	after_save :update_last_commented_at
   after_destroy :update_last_commented_at
 
+	if Object.const_defined?(:Ferret)
+		after_save :update_index
+		before_destroy :delete_index
+		
+		def self.index_comments
+			find(:all).each do |c|
+				c.update_index()
+			end
+		end
+
+		def update_index
+			COMMENT_INDEX << {:id => self.id, :body => self.body}
+		end
+	
+		def delete_index
+			COMMENT_INDEX.search_each("id:#{self.id}") do |id, score|
+				COMMENT_INDEX.delete(id)
+			end
+		end
+	end
+
 	def update_last_commented_at
     comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{self.post_id}").to_i
 

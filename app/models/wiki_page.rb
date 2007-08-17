@@ -3,11 +3,6 @@ class WikiPage < ActiveRecord::Base
 	before_save :make_title_canonical
 	belongs_to :user
 	
-	if Object.const_defined?(:Ferret)
-		after_save :update_index
-		before_destroy :delete_index
-	end
-
 	TAG_DEL = '<del>'
 	TAG_INS = '<ins>'
 	TAG_DEL_CLOSE = '</del>'
@@ -15,23 +10,24 @@ class WikiPage < ActiveRecord::Base
 	TAG_NEWLINE = "<img src=\"/images/nl.png\" alt=\"newline\"/>\n"
 	TAG_BREAK = "<br/>\n"
 
-	def self.index_pages
-		if Object.const_defined?(:Ferret)
+	if Object.const_defined?(:Ferret)
+		after_save :update_index
+		before_destroy :delete_index
+		
+		def self.index_pages
 			find(:all).each do |page|
 				page.update_index()
 			end
-		else
-			raise "Ferret not installed"
 		end
-	end
 
-	def update_index
-		FERRET << {:id => self.id, :title => self.title, :body => self.body}
-	end
+		def update_index
+			WIKI_INDEX << {:id => self.id, :title => self.title, :body => self.body}
+		end
 	
-	def delete_index
-		FERRET.search_each("id:#{self.id}") do |id, score|
-			FERRET.delete(id)
+		def delete_index
+			WIKI_INDEX.search_each("id:#{self.id}") do |id, score|
+				WIKI_INDEX.delete(id)
+			end
 		end
 	end
 	

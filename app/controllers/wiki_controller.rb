@@ -64,10 +64,10 @@ class WikiController < ApplicationController
 			order = "lower(title)"
 		end
 
-		if params[:query]
-			hits = FERRET.search("title|body:#{params[:query]}").hits
+		if params[:query] && Object.const_defined?(:Ferret)
+			hits = WIKI_INDEX.search("title|body:#{params[:query]}").hits
 			@pages = Paginator.new(:wiki, hits.size, 25, params[:page])
-			@wiki_pages = hits.map {|x| WikiPage.find(FERRET[x.doc][:id])}
+			@wiki_pages = hits.map {|x| WikiPage.find(WIKI_INDEX[x.doc][:id])}
 		else
 			@pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => (params[:limit] || 25)
 		end

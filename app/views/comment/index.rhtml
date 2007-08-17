@@ -34,8 +34,5 @@
   	<%= custom_pagination_links(@pages)  %>
   </div>
 
-  <div id="footer">
-  	<%= link_to "Moderate", :action => "moderate" %> |
-    <%= link_to "Help", :controller => "help", :action => "comments" %>
-  </div>
+	<%= render :partial => "footer" %>
 </div>
