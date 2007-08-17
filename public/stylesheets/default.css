@@ -772,7 +772,7 @@ table.form th {
   padding-right: 2em;
 }
 
-table.form label {
+label {
 	font-weight: bold;
   white-space: nowrap;
 }

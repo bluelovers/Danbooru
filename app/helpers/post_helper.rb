@@ -8,7 +8,7 @@ module PostHelper
 			return ""
 		end
 
-    image = image_tag(post.preview_url, :alt => post.cached_tags, :class => "preview", :title => post.cached_tags)
+    image = image_tag(post.preview_url, :alt => post.cached_tags, :class => "preview", :title => post.cached_tags, :id => options[:image_id])
     link = link_to(image, {:controller => "post", :action => "show", :id => post.id}, :onclick => options[:onclick])
     span = content_tag "span", link, :class => "thumb", :id => "p#{post.id}"
     return span

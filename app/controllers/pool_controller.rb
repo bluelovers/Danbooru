@@ -165,10 +165,23 @@ class PoolController < ApplicationController
 		end
 		
 		if request.post?
-		elsif params[:query]
+			PoolPost.transaction do
+				params[:posts].keys.each do |post_id|
+					begin
+						@pool.add_post(post_id)
+					rescue Pool::PostAlreadyExistsError
+						# ignore
+					end
+				end
+			end
+			
+			redirect_to :action => "show", :id => @pool.id
+		else
 			respond_to do |fmt|
+				fmt.html
 				fmt.js do
 					@posts = Post.find_by_tags(params[:query], :order => "id desc")
+					render :action => "import.rjs"
 				end
 			end
 		end
