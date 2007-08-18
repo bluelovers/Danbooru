@@ -5,11 +5,19 @@ class Artist < ActiveRecord::Base
 	validates_uniqueness_of :name
 	belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
 
+  def self.normalize_url(url)
+    if url
+      url.gsub(/\/$/, "").gsub(/www\d+\w?\./, "www.").gsub(/blog\d+\./, "blog.").gsub(/blog-imgs-\d+\./, "blog-imgs")
+    else
+      nil
+    end
+  end
+
 	def normalize
     self.name = self.name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
-		self.url_a = self.url_a.gsub(/\/$/, "") if self.url_a
-		self.url_b = self.url_b.gsub(/\/$/, "") if self.url_b
-		self.url_c = self.url_c.gsub(/\/$/, "") if self.url_c
+		self.url_a = self.class.normalize_url(self.url_a)
+		self.url_b = self.class.normalize_url(self.url_b)
+		self.url_c = self.class.normalize_url(self.url_c)
 	end
 
 	def commit_relations
@@ -116,11 +124,12 @@ class Artist < ActiveRecord::Base
   end
 
   def self.find_all_by_url(url)
+    url = normalize_url(url)
     artists = []
 
     while artists.empty? && url.size > 10
       puts url
-      u = url.to_escaped_for_sql_like + '%'
+      u = url.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
       artists += Artist.find(:all, :conditions => ["url_a LIKE ? ESCAPE '\\\\' OR url_b LIKE ? ESCAPE '\\\\' OR url_c LIKE ? ESCAPE '\\\\'", u, u, u], :order => "name")
       url = File.dirname(url)
     end

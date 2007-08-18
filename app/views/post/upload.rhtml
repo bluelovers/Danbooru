@@ -54,6 +54,10 @@
 			<% else %>
 				<%= javascript_tag "injectTags()" %>
 			<% end %>
+
+      <% if params[:url].to_s =~ /^http/ %>
+      	<%= javascript_tag "findArtist()" %>
+      <% end %>
 		</div>
 
 		<%= submit_tag "Upload" %>

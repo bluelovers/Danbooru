@@ -15,11 +15,11 @@
 			<% end %>
 			<tr>
 				<th><label for"artist_aliases">Jap Name/Aliases</label</th>
-				<td><%= text_field "artist", "aliases", :size => 80 %></td>
+				<td><%= text_field "artist", "aliases", :size => 80, :value => params[:jp_name] %></td>
 			</tr>
 			<tr>
 				<th><label for="artist_url_a">Site URL</label></th>
-				<td><%= text_field "artist", "url_a", :size => 80 %></td>
+				<td><%= text_field "artist", "url_a", :size => 80, :value => params[:url] %></td>
 			</tr>
 			<tr>
 				<th><label for="artist_url_b">Image URL</label></th>

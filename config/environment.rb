@@ -96,7 +96,7 @@ begin
 	require 'ferret'
 	FileUtils.mkdir_p("#{RAILS_ROOT}/tmp/ferret")
 	WIKI_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/wiki_index", :key => :id)
-	COMMENT_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/comment_index", :key => :id)
+  WikiPage.index_pages()
 rescue LoadError
 	# do nothing
 end
