@@ -16,6 +16,11 @@ class PoolController < ApplicationController
 			@pools = Pool.find(:all, :order => order)
 		end
 	end
+
+  def slideshow
+    @pool = Pool.find(params[:id])
+    @posts = Post.find(:all, :order => "pools_posts.sequence", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", @pool.id], :select => "posts.*")
+  end
 	
 	def show
 		@pool = Pool.find(params[:id])

@@ -1,0 +1,48 @@
+<script type="text/javascript">
+// <![CDATA[
+
+  var posts = []
+  var i = 0
+  
+  <% @posts.each do |p| %>
+    posts.push([<%= p.id %>, '<%= p.file_url %>'])
+  <% end %>
+
+  function loadPost() {
+    $("img").src = posts[i][1]
+    $("link").href = '/post/show/' + posts[i][0]
+    $("current-post").innerHTML = i + 1
+  }
+
+  function nextPost() {
+    if (i < <%= @posts.size() - 1 %>) {
+      i += 1
+    }
+
+    loadPost()
+  }
+
+  function prevPost() {
+    if (i > 0) {
+      i -= 1
+    }
+
+    loadPost()
+  }
+
+// ]]>  
+</script>
+
+<h3>Pool: <%= @pool.pretty_name %></h3>
+
+<div style="text-align: center;">
+  <h3>
+    <%= link_to_function "&laquo;", "prevPost()" %>
+    <span id="current-post">1</span>/<%= @posts.size %>
+    <%= link_to_function "&raquo;", "nextPost()" %>
+  </h3>
+
+  <a target="_blank" href="/post/show/<%= @posts[0].id %>" id="link">
+    <img id="img" src="<%= @posts[0].file_url %>" style="display: block; margin: 2em auto;" />
+  </a>
+</div>
