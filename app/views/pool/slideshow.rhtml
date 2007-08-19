@@ -2,14 +2,19 @@
 // <![CDATA[
 
   var posts = []
-  var i = 0
+  var i = -1
   
   <% @posts.each do |p| %>
-    posts.push([<%= p.id %>, '<%= p.file_url %>'])
+    posts.push([<%= p.id %>, '<%= p.file_url %>', '<%= p.rating %>'])
   <% end %>
 
   function loadPost() {
-    $("img").src = posts[i][1]
+    if (<%= is_safe_mode? %> && posts[i][2] != 's') {
+      notice("You must be logged in to view this post")
+    } else {
+      $("img").src = posts[i][1]
+    }
+
     $("link").href = '/post/show/' + posts[i][0]
     $("current-post").innerHTML = i + 1
   }
@@ -42,7 +47,9 @@
     <%= link_to_function "&raquo;", "nextPost()" %>
   </h3>
 
-  <a target="_blank" href="/post/show/<%= @posts[0].id %>" id="link">
-    <img id="img" src="<%= @posts[0].file_url %>" style="display: block; margin: 2em auto;" />
+  <a target="_blank" href="" id="link">
+    <img id="img" src="" style="display: block; margin: 2em auto;" />
   </a>
+
+  <%= javascript_tag "nextPost()" %>
 </div>

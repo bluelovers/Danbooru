@@ -157,7 +157,7 @@ class PoolController < ApplicationController
 
 			redirect_to :action => "show", :id => params[:id]
 		else
-			@pool_posts = PoolPost.find(:all, :conditions => ["pool_id = ?", params[:id]], :order => "sequence")
+			@pool_posts = PoolPost.find(:all, :conditions => ["pool_id = ?", params[:id]], :order => "sequence, post_id")
 		end
 	end
 	

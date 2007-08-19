@@ -14,6 +14,18 @@ function orderAutoFill() {
 	})
 }
 
+function orderReverse() {
+  var orders = []
+  document.getElementsByClassName("pp").each(function(x) {
+    orders.push(x.value)
+  })
+  var i = orders.size() - 1
+  document.getElementsByClassName("pp").each(function(x) {
+    x.value = orders[i]
+    i -= 1
+  })
+}
+
 // ]]>
 </script>
 
@@ -36,7 +48,7 @@ function orderAutoFill() {
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Auto Order", "orderAutoFill()" %> <%= button_to_function "Cancel", "history.back()" %></td>
+        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Auto Order", "orderAutoFill()" %> <%= button_to_function "Reverse", "orderReverse()" %> <%= button_to_function "Cancel", "history.back()" %></td>
       </tr>
     </tfoot>
   </table>
