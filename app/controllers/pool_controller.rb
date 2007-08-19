@@ -178,6 +178,8 @@ class PoolController < ApplicationController
 						# ignore
 					end
 				end
+        
+        @pool.update_attribute(:post_count, Post.count_by_sql(["SELECT COUNT(*) FROM pools_posts WHERE pool_id = ?", @pool.id]))
 			end
 			
 			redirect_to :action => "show", :id => @pool.id
