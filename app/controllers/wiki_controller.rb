@@ -83,6 +83,10 @@ class WikiController < ApplicationController
 		render :inline => "<%= wikilize(params[:body]) %>"
 	end
 
+  def add
+    @wiki_page = WikiPage.new
+  end
+
 # Parameters
 # * wiki_page[title]: title of the new wiki page
 # * wiki_page[body]: content of the new wiki page

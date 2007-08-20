@@ -94,9 +94,16 @@ end
 
 begin
 	require 'ferret'
-	FileUtils.mkdir_p("#{RAILS_ROOT}/tmp/ferret")
-	WIKI_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/wiki_index", :key => :id)
-  WikiPage.index_pages()
+
+  if File.exists?("#{RAILS_ROOT}/tmp/ferret")
+    index_all = false
+  else
+    index_all = true
+  end
+
+  FileUtils.mkdir_p("#{RAILS_ROOT}/tmp/ferret")
+  WIKI_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/wiki_index", :key => :id)
+  WikiPage.index_page() if index_all
 rescue LoadError
 	# do nothing
 end
