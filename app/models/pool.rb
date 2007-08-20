@@ -1,6 +1,5 @@
 class Pool < ActiveRecord::Base
-	class PostAlreadyExistsError < Exception
-	end
+	class PostAlreadyExistsError < Exception; end
 	
 	belongs_to :user
 	validates_uniqueness_of :name
@@ -15,18 +14,18 @@ class Pool < ActiveRecord::Base
 	end
 	
 	def add_post(post_id)
-		if self.class.connection.select_value("SELECT 1 FROM pools_posts WHERE pool_id = #{self.id} AND post_id = #{post_id.to_i}")
+		if PoolPost.find(:first, :conditions => ["pool_id = ? and post_id = ?", self.id, post_id])
 			raise PostAlreadyExistsError
 		end
 
-		Pool.transaction do
+		transaction do
 			update_attributes(:updated_at => Time.now)
-			self.class.connection.execute("INSERT INTO pools_posts (pool_id, post_id) VALUES (#{self.id}, #{post_id.to_i})")
+			PoolPost.create(:pool_id => self.id, :post_id => post_id)
 		end
 	end
 	
 	def remove_post(post_id)
-		self.class.connection.execute("DELETE FROM pools_posts WHERE pool_id = #{self.id} AND post_id = #{post_id.to_i}")
+		PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
 	end
 end
 
