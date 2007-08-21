@@ -317,6 +317,7 @@ Note.prototype = {
 		this.old.width = this.elements.box.clientWidth
 		this.old.height = this.elements.box.clientHeight
 		this.old.raw_body = $('edit-box-text').value
+		this.old.formatted_body = this.textValue()
 		this.elements.body.innerHTML = this.textValue()
 
 		this.hideEditBox(e)
