@@ -18,8 +18,8 @@ class NoteController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @posts.to_xml}
-      fmt.js {render :json => @posts.to_json}
+      fmt.xml {render :xml => @posts.map {|x| x.notes}.flatten.to_xml}
+      fmt.js {render :json => @posts.map {|x| x.notes}.flatten.to_json}
     end
   end
 

@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = params[:tags] || params[:post][:tags]
-      prev_tags = cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|amb|artist):/, "").scan(/\S+/)[0..20].join(" ")
+      prev_tags = cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|amb|artist):/, "").scan(/\S+/)[0..20].uniq.sort.join(" ")
       cookies["recent_tags"] = {:value => (tags + " " + prev_tags), :expires => 1.year.from_now}
     end
   end
@@ -54,7 +54,6 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    logger.info "  Cache Key: #{key}"
     return key
   end
   
