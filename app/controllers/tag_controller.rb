@@ -1,6 +1,6 @@
 class TagController < ApplicationController
   layout 'default'
-	auto_complete_for :tag, :name
+  auto_complete_for :tag, :name
   before_filter :mod_only, :only => [:mass_edit]
 
   def cloud
@@ -136,8 +136,9 @@ class TagController < ApplicationController
     if params[:type]
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
-      @tags = @tags.map {|x| Tag.calculate_related_by_type(x, Tag.types[params[:type]])}
-      @tags = @tags.inject([]) {|all, x| all += x.map {|y| [y["name"], y["post_count"]]}}
+      @tags = @tags.map do |x| 
+        {x => Tag.calculate_related_by_type(x, Tag.types[params[:type]]).map {|y| {"name" => y["name"], "count" => y["post_count"]}}}
+      end
     else
       @tags = params[:tags].to_s.scan(/\S+/)
       @patterns, @tags = @tags.partition {|x| x.include?("*")}
