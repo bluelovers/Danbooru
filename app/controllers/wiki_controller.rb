@@ -115,6 +115,10 @@ class WikiController < ApplicationController
 # * wiki_page[is_locked]: set to 1 or 0, determines whether or not the page is locked
 	def update
 		@page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
+		
+		if @page == nil
+			@page = WikiPage.create(:title => params[:title] || params[:wiki_page][:title])
+		end
 
 		if @page.is_locked?
 			respond_to do |fmt|

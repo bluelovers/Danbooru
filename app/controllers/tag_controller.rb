@@ -119,7 +119,7 @@ class TagController < ApplicationController
 
   def update
     tag = Tag.find_by_name(params[:tag][:name])
-    tag.update_attributes(params[:tag])
+    tag.update_attributes(params[:tag]) if tag
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Tag updated"; redirect_to(:action => "index")}
