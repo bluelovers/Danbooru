@@ -136,8 +136,9 @@ class TagController < ApplicationController
     if params[:type]
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
-      @tags = @tags.map do |x| 
-        {x => Tag.calculate_related_by_type(x, Tag.types[params[:type]]).map {|y| {"name" => y["name"], "count" => y["post_count"]}}}
+      @tags = @tags.inject({}) do |all, x| 
+        all[x] = Tag.calculate_related_by_type(x, Tag.types[params[:type]]).map {|y| [y["name"], y["post_count"]]}
+        all
       end
     else
       @tags = params[:tags].to_s.scan(/\S+/)
@@ -152,7 +153,22 @@ class TagController < ApplicationController
     end
 
     respond_to do |fmt|
-      fmt.xml {render :xml => @tags.map {|x| {"name" => x[0], "count" => x[1]}}.to_xml(:root => "tags", :children => "tag")}
+      fmt.xml do
+        # We basically have to do this by hand.
+        builder = Builder::XmlMarkup.new(:indent => 2)
+        builder.instruct!
+        xml = builder.tag!("tags") do
+          @tags.each do |parent, related|
+            builder.tag!("tag", :name => parent) do
+              related.each do |tag, count|
+                builder.tag!("tag", :name => tag, :count => count)
+              end
+            end
+          end
+        end
+        
+        render :xml => xml
+      end
       fmt.js {render :json => @tags.to_json}
     end
   end
