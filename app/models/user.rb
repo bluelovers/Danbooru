@@ -8,7 +8,6 @@ class User < ActiveRecord::Base
 	before_create :crypt_password
 	before_validation_on_update :crypt_unless_empty
 	validates_confirmation_of :password
-	validates_format_of :email, :with => /\A[^@\s]+@[^\s]+\.[^\s]+\Z/, :message => 'Invalid e-mail address'
 	has_many :invites
 	attr_protected :level
 	
