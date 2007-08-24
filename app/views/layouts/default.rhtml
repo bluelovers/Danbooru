@@ -10,8 +10,8 @@
 	<%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s"/>' % [type, title, url_for(href)] } %>
 	<link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/default.css" title="default"/>
 	<%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params["tags"] %>
-	<%= javascript_include_tag :defaults %>
-	<%= javascript_include_tag "common" %>
+  <script type="text/javascript" src="/javascripts/prototype.js"></script>
+  <script type="text/javascript" src="/javascripts/common.js"></script>
 </head>
 <body>
 	<div id="header">

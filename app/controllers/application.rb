@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   helper_method :is_safe_mode?
   before_filter :set_title
   before_filter :current_user
-  
+
   protected
   def is_safe_mode?
     @current_user == nil && CONFIG["enable_anonymous_safe_post_mode"]

@@ -274,6 +274,7 @@ class PostController < ApplicationController
     set_title "Tag History"
 
 		params[:limit] ||= 100
+    params[:limit] = params[:limit].to_i
 
     if params[:post_id]
       conditions = ["post_id = ?", params[:post_id]]
