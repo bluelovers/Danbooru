@@ -38,7 +38,7 @@ class PostController < ApplicationController
 		else
 			user_id = nil
 		end
-
+    
     @post = Post.create(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
 
     if @post.errors.empty?

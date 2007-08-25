@@ -20,7 +20,7 @@
 					<th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
 					<td>
 						<%= text_field "post", "tags", :size => 50 %> 
-						<%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
+						<%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
 					</td>
 				</tr>
 				<tr>

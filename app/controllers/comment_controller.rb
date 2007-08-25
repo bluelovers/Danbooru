@@ -20,6 +20,7 @@ class CommentController < ApplicationController
   before_filter :mod_only, :only => [:moderate]
 
   def spam_filter
+    return false unless params[:comment]
     return false if params[:comment][:body].scan(/http/).size > 2
     return true
   end
@@ -86,17 +87,7 @@ class CommentController < ApplicationController
       fmt.js {render :json => @comment.to_json}
     end
   end
-
-	def search
-		if params[:query]
-			hits = COMMENT_INDEX.search("body:#{params[:query]}").hits
-			@pages = Paginator.new(:comment, hits.size, 25, params[:page])
-			@comments = hits.map {|x| Comment.find(COMMENT_INDEX[x.doc][:id])}
-		else
-			@comments = []
-		end
-	end
-
+  
   def index
     set_title "Comments"
 
