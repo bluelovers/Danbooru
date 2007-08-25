@@ -87,7 +87,7 @@ CONFIG["starting_invite_count"] = 0
 # get many users you can probably set this to 0 so that tags
 # with few posts will have their related tags instantly
 # updated.
-CONFIG["min_related_tags_cache_duration"] = 8
+CONFIG["min_related_tags_cache_duration"] = 0
 
 # What method to use to store images.
 # local_flat: Store every image in one directory.

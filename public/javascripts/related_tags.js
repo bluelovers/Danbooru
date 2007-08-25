@@ -1,13 +1,38 @@
-function toggleTag(link, tag_field) {
-  var input = $(tag_field)
-  var tags = input.value.split(" ").select(function(i) {return i.length > 0})
+RelatedTags = {}
+
+RelatedTags.user_tags = []
+
+RelatedTags.recent_tags = []
+
+RelatedTags.recent_search = {}
+
+RelatedTags.init = function(user_tags, artist_url) {
+  RelatedTags.user_tags = user_tags.match(/\S+/g)
+
+  if (readCookie("recent_tags").length > 0) {
+    RelatedTags.recent_tags = readCookie("recent_tags").cgiUnescape().match(/\S+/g).uniq()
+  }
+  
+  if ((artist_url != null) && (artist_url.match(/^http/))) {
+    RelatedTags.find_artist($F("post_source"))
+  } else {
+    RelatedTags.build_all({})
+  }
+}
+
+RelatedTags.toggle = function(link, field) {
+  var field = $(field)
+  var tags = field.value.match(/\S+/g) || []
   var tag = link.innerHTML
 
   if (tags.include(tag)) {
-    input.value = tags.without(tag).join(" ") + " "
+    field.value = tags.without(tag).join(" ") + " "
   } else {
-    input.value = tags.concat([tag]).join(" ") + " "
+    field.value = tags.concat([tag]).join(" ") + " "
   }
+
+  RelatedTags.build_all(RelatedTags.recent_search)
+  return
 
   if (link.style.backgroundColor == "rgb(0, 111, 250)") {
     link.style.backgroundColor = "rgb(255, 255, 255)"
@@ -20,101 +45,84 @@ function toggleTag(link, tag_field) {
   return false
 }
 
-function injectTagsHelper(tags) {
+RelatedTags.build_html = function(key, tags) {
+  if (tags.length == 0) {
+    return ""
+  }
+  
   var html = ""
-  var tag_field = "post_tags"
-  var current = $F(tag_field).split(" ")
+  var current = $F("post_tags").match(/\S+/g) || []
 
-  tags.split(" ").uniq().sort().each(function(tag) {
-    html += '<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="toggleTag(this, \'' + tag_field + '\'); return false"'
-
+  html += '<h6><em>' + key + '</em></h6>'
+  html += '<p>'
+  
+  for (i=0; i<tags.length; ++i) {
+    var tag = tags[i]
+    html += ('<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
+    
     if (current.include(tag)) {
-      html += ' style="background: rgb(0, 111, 250); color: rgb(255, 255, 255)"'
+      html += ' style="background: rgb(0, 111, 250); color: white;"'
     }
-
+    
     html += '>' + tag + '</a> '
-  })
+  }
+  html += '</p>'
 
   return html
 }
 
-function injectTags(related, dest) {
-  if (dest != null) {
-    $(dest).innerHTML = injectTagsHelper(related)
-  } else if (related) {
-    $('related').innerHTML = injectTagsHelper(related)
+RelatedTags.build_all = function(tags) {
+  RelatedTags.recent_search = tags
+  
+  var html = RelatedTags.build_html("My Tags", RelatedTags.user_tags) + RelatedTags.build_html("Recent Tags", RelatedTags.recent_tags)
+  
+  for (key in tags) {
+    html += RelatedTags.build_html(key, tags[key])
   }
-
-  if (readCookie("recent_tags").length > 0) {
-    $('recent').innerHTML = injectTagsHelper(readCookie("recent_tags").cgiUnescape())
-  }
+  
+  $("related").innerHTML = html
 }
 
-function getTextSelection(field) {
-  var text = field.value
-
-  if (field.selectionStart) {
-    if (field.selectionStart < field.textLength) {
-      var start = field.selectionStart
-      var stop = field.selectionStart
-
-      while (field.value[start] != " " && start > 0) {
-        start -= 1
-      }
-
-      while (field.value[stop] != " " && stop < field.textLength) {
-        stop += 1
-      }
-
-      text = field.value.substr(start, (stop - start))
-    }
+RelatedTags.find = function(field, type) {
+  $("related").innerHTML = "<em>Fetching...</em>"
+  var field = $(field)
+  var tags = field.value
+  var type_param = ""
+  
+  if (type != null) {
+    type_param = "&type=" + type
   }
-
-  return text
-}
-
-function romanize(tag_field) {
-  $('related').innerHTML = '<em>Fetching...</em>'
-  var tag_field = $(tag_field)
-  var tags = getTextSelection(tag_field)
-
-  new Ajax.Request('/tag/romanize', {
+  
+  new Ajax.Request("/tag/related.js", {
     method: 'get',
-    parameters: 'tags=' + tags,
+    parameters: "tags=" + tags + type_param,
     onComplete: function(res) {
-      $('related').innerHTML = res.responseText
+      var resp = eval("(" + res.responseText + ")")
+      RelatedTags.build_all(RelatedTags.convert_related_js_response(resp))
     }
   })
 }
 
-function findRelTags(tag_field, tag_type) {
-  $('related').innerHTML = '<em>Fetching...</em>'
-  var tag_field = $(tag_field)
-  var tags = getTextSelection(tag_field)
-  var tag_type_param = ""
-
-  if (tag_type != null) {
-    tag_type_param = "&type=" + tag_type
+RelatedTags.convert_related_js_response = function(resp) {
+  var converted = {}
+  
+  for (k in resp) {
+    var tags = resp[k].map(function(x) {return x[0]})
+    converted[k] = tags
   }
-
-  new Ajax.Request('/tag/related.js', {
-    method: 'get',
-    onComplete:function(req) {
-      var resp = eval("(" + req.responseText + ")").map(function(x) {return x[0]}).join(" ")
-      $('related').innerHTML = injectTagsHelper(resp)
-    },
-    parameters:'tags=' + tags + tag_type_param
-  })
+  
+  return converted
 }
 
-function findArtist() {
-  $('related').innerHTML = '<em>Fetching...</em>'
-  new Ajax.Request('/artist/index.js', {
-    method: 'get',
-    onComplete: function(req) {
-      var resp = eval("(" + req.responseText + ")")
-      $('related').innerHTML = injectTagsHelper(resp.map(function(x) {return x["name"]}).join(" "))
-    },
-    parameters:'name='+$F('post_source')
-  })
+RelatedTags.find_artist = function(url) {
+  if (url.match(/^http/)) {
+    new Ajax.Request("/artist/index.js", {
+      method: "get",
+      parameters: "url=" + url,
+      onComplete: function(res) {
+        var resp = eval(res.responseText)
+        RelatedTags.build_all({"Artist": resp.map(function(x) {return x.name})})
+      }
+    })
+  }
 }

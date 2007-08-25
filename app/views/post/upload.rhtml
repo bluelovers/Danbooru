@@ -14,13 +14,13 @@
 				</tr>
 				<tr>
 					<th><%= content_tag "label", "Source", :for => "post_source" %></th>
-					<td><%= text_field "post", "source", :value => params["url"], :size => 50 %> <%= link_to_function("Find artist", "findArtist()") %></td>
+					<td><%= text_field "post", "source", :value => params["url"], :size => 50 %> <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %></td>
 				</tr>
 				<tr>
 					<th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
 					<td>
 						<%= text_field "post", "tags", :size => 50 %> 
-						<%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %><% if CONFIG["enable_romanizer"] %>/<%= link_to_function "romanize", "romanize('post_tags')" %><% end %>)
+						<%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
 					</td>
 				</tr>
 				<tr>
@@ -38,26 +38,13 @@
 				</tr>
       </table>
 
-      <div>
-        <h6>My Tags</h6>
-				<div id="mytags"><a href="/account/options">Edit</a></div>
-
-        <h6>Recent Tags</h6>
-				<div id="recent"><em>None</em></div>
-
-        <h6>Related Tags</h6>
-				<div id="related"><em>None</em></div>
-      </div>
+			<div id="related"><em>None</em></div>
 
 			<% if @current_user %>
-				<%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
+				<%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', $F('post_source'))" %>
 			<% else %>
-				<%= javascript_tag "injectTags()" %>
+				<%= javascript_tag "RelatedTags.init('', $F('post_source'))" %>
 			<% end %>
-
-      <% if params[:url].to_s =~ /^http/ %>
-      	<%= javascript_tag "findArtist()" %>
-      <% end %>
 		</div>
 
 		<%= submit_tag "Upload" %>

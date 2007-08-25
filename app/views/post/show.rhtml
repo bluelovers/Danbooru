@@ -175,7 +175,7 @@
                 <label class="block" for="post_source">Source</label>
               </th>
               <td>
-                <%= text_field "post", "source", :size => 40 %>  <%= link_to_function("Find artist", "findArtist()") %>
+                <%= text_field "post", "source", :size => 40 %>  <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
               </td>
             </tr>
             <tr>
@@ -183,32 +183,24 @@
                 <label class="block" for="post_tags">Tags</label>
               </th>
               <td>
-                <%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "findRelTags('post_tags')" %> (<%= link_to_function "artists", "findRelTags('post_tags', 'artist')" %>/<%= link_to_function "characters", "findRelTags('post_tags', 'char')" %>/<%= link_to_function "copyrights", "findRelTags('post_tags', 'copyright')" %>)
+                <%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
               </td>
             </tr>
           </table>
-          <div>
-            <h6>Common</h6>
-            <div class="space" id="mytags"><%= link_to "Edit", :controller => "user", :action => "edit" %></div>
-
-            <h6>Recent</h6>
-            <div class="space" id="recent"><em>None</em></div>
-
-            <h6>Related</h6>
+          <div style="display: hidden;">
+            <h6>Related Tags</h6>
             <div class="space" id="related"><em>None</em></div>
-
-            <% if @current_user %>
-              <%= javascript_tag "injectTags('#{escape_javascript(@current_user.my_tags)}', 'mytags')" %>
-              <%= javascript_tag "injectTags()" %>
-            <% else %>
-              <%= javascript_tag "injectTags()" %>
-            <% end %>
           </div>
           <%= submit_tag "Save changes" %>
         <% end %>
       </div>
       <!-- google_ad_section_end -->
       <%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
+			<% if @current_user %>
+				<%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
+			<% else %>
+				<%= javascript_tag "RelatedTags.init('', '')" %>
+			<% end %>
   		<% if @current_user && @current_user.always_resize_images? %>
   			<%= javascript_tag "toggleImageResize()" %>
   		<% end %>

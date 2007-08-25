@@ -1,6 +1,5 @@
 class Tag < ActiveRecord::Base
   serialize :cached_related
-  after_create :update_related_tags!
 
   @@tag_types = {
     :general    => 0,
@@ -49,20 +48,20 @@ class Tag < ActiveRecord::Base
 
       tag_type = @@tag_types[name[/^(.+?):/, 1]]
       if tag_type == nil
-        tag_type = Tag.types[:general]
+        tag_type = @@tag_types[:general]
       else
         name.gsub!(/^.+?:/, "")
       end
 
-      t = Tag.find_by_name(name)
+      t = find_by_name(name)
       if t != nil
-        if t.tag_type == Tag.types[:general] && t.tag_type != tag_type
+        if t.tag_type == @@tag_types[:general] && t.tag_type != tag_type
           t.update_attributes(:tag_type => tag_type, :is_ambiguous => is_amb)
         end
         return t
       end
 
-      Tag.create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday, :is_ambiguous => is_amb)
+      create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday, :is_ambiguous => is_amb)
     end
 
     def calculate_related_by_type(tag, type, limit = 25)
@@ -78,7 +77,7 @@ class Tag < ActiveRecord::Base
         LIMIT #{limit}
       EOS
 
-      return connection.select_all(Tag.sanitize_sql([sql, tag, type]))
+      return connection.select_all(sanitize_sql([sql, tag, type]))
     end
 
     def calculate_related(tags)
@@ -99,7 +98,8 @@ class Tag < ActiveRecord::Base
         sql << " WHERE " << cond.join(" AND ")
         sql << " GROUP BY pt0.tag_id"
         sql << " ORDER BY tag_count DESC LIMIT 25"
-        return connection.select_all(Tag.sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
+
+        return connection.select_all(sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
       else
         return tags.inject([]) do |all, x|
           sql = ""
@@ -110,7 +110,7 @@ class Tag < ActiveRecord::Base
           sql << " GROUP by pt0.tag_id"
           sql << " ORDER BY tag_count DESC"
           sql << " LIMIT 25"
-          all += connection.select_all(Tag.sanitize_sql([sql, x]))
+          all += connection.select_all(sanitize_sql([sql, x]))
         end
       end
     end
@@ -237,8 +237,9 @@ class Tag < ActiveRecord::Base
     end
   end
 
-  def update_related_tags!(length = CONFIG["min_related_tags_cache_duration"])
-    connection.execute(Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).to_yaml, length.hours.from_now]))
+  def update_related_tags(length = CONFIG["min_related_tags_cache_duration"])
+    sql = Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).to_yaml, length.hours.from_now])
+    connection.execute(sql)
   end
 
   def related
@@ -246,7 +247,7 @@ class Tag < ActiveRecord::Base
       length = (self.post_count / 20).to_i
       length = CONFIG["min_related_tags_cache_duration"] if length < CONFIG["min_related_tags_cache_duration"]
 
-      self.update_related_tags!(length)
+      self.update_related_tags(length)
       self.reload
     end
 
