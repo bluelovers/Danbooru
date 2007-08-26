@@ -10,7 +10,7 @@ RelatedTags.init = function(user_tags, artist_url) {
   RelatedTags.user_tags = user_tags.match(/\S+/g)
 
   if (readCookie("recent_tags").length > 0) {
-    RelatedTags.recent_tags = readCookie("recent_tags").cgiUnescape().match(/\S+/g).uniq()
+    RelatedTags.recent_tags = readCookie("recent_tags").cgiUnescape().match(/\S+/g).uniq().sort()
   }
   
   if ((artist_url != null) && (artist_url.match(/^http/))) {
@@ -107,7 +107,7 @@ RelatedTags.convert_related_js_response = function(resp) {
   var converted = {}
   
   for (k in resp) {
-    var tags = resp[k].map(function(x) {return x[0]})
+    var tags = resp[k].map(function(x) {return x[0]}).sort()
     converted[k] = tags
   }
   
