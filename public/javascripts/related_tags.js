@@ -46,7 +46,7 @@ RelatedTags.toggle = function(link, field) {
 }
 
 RelatedTags.build_html = function(key, tags) {
-  if (tags.length == 0) {
+  if (tags == null || tags.length == 0) {
     return ""
   }
 
