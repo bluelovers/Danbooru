@@ -1,19 +1,19 @@
 <% comments.each do |c| %>
 	<div class="comment" id="c<%= c.id %>">
 		<h4><%= link_to(c.author.tr("_", " "), {:controller => "comment", :action => "show", :id => c.id}, :onclick => "Element.show('r#{post_id}'); $('rtxt#{post_id}').value += '>>#{c.id}\\n'; return false") %></h4>
-		<h6 class="comment-header">Posted on <%= c.created_at.strftime("%D %I:%M") %> (<%= link_to_function("Mark as spam", "markcom(#{c.id}); return false") %>)</h6>
+		<h6 class="comment-header">Posted on <%= c.created_at.strftime("%D %I:%M") %> (<%= link_to_function("Mark as spam", "Comment.mark_as_spam(#{c.id}); return false") %>)</h6>
 		<div id="cbody<%= c.id %>"><%= print_comment(c) %></div>
 	</div>
 <% end %>
 
 <% if @current_user || CONFIG["enable_anonymous_comment_responses"] %>
-<p><%= link_to_function "&raquo; Respond", "Element.toggle('r#{post_id}')", :class => "resp-link" %></p>
-<div id="r<%= post_id %>" style="display: none;">
-	<% form_tag(:controller => "comment", :action => "create") do %>
-		<input name="comment[post_id]" type="hidden" value="<%= post_id %>"/>
-		<%= text_area "comment", "body", :rows => 4, :id => "rtxt#{post_id}" %>
-		<%= submit_tag "Post" %>
-		<%= submit_tag "Post as Anonymous" %>
-	<% end %>
-</div>
+	<p><%= link_to_function "&raquo; Respond", "Element.toggle('r#{post_id}')", :class => "resp-link" %></p>
+	<div id="r<%= post_id %>" style="display: none;">
+		<% form_tag(:controller => "comment", :action => "create") do %>
+			<input name="comment[post_id]" type="hidden" value="<%= post_id %>"/>
+			<%= text_area "comment", "body", :rows => 4, :id => "rtxt#{post_id}" %>
+			<%= submit_tag "Post" %>
+			<%= submit_tag "Post as Anonymous" %>
+		<% end %>
+	</div>
 <% end %>

@@ -1,3 +1,6 @@
+<%= javascript_include_tag "post" %>
+<%= javascript_include_tag "comment" %>
+
 <div id="comment-list">
   <% if @posts.empty? %>
   	<h4>No comments.</h4>
@@ -14,7 +17,7 @@
             <div>
   		        <span class="info"><strong>Date</strong> <%= post.created_at.strftime("%D %I:%M") %></span>
   		        <span class="info"><strong>User</strong> <%= link_to post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
-  		        <span class="info"><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "vote(1, #{post.id})") %>/<%= link_to_function("down", "vote(-1, #{post.id})") %>)</span>
+  		        <span class="info"><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
   		        <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
             </div>
             <div>

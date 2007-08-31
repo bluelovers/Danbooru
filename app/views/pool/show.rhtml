@@ -1,3 +1,5 @@
+<%= javascript_include_tag "pool" %>
+
 <div id="pool-show">
 	<h3>Pool: <%= @pool.pretty_name %></h3>
 	<% unless @pool.description.blank? %>
@@ -10,7 +12,7 @@
   <% end %>
 	<div style="margin-top: 1em;">
 		<% @posts.each do |post| %>
-    	<%= print_preview(post, :onclick => "return removePostFromPool(#{post.id}, #{@pool.id})", :user => @current_user) %>
+    	<%= print_preview(post, :onclick => "return Pool.remove_post(#{post.id}, #{@pool.id})", :user => @current_user) %>
 		<% end %>
 	</div>
 </div>

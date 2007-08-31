@@ -9,8 +9,8 @@ RelatedTags.recent_search = {}
 RelatedTags.init = function(user_tags, artist_url) {
   RelatedTags.user_tags = user_tags.match(/\S+/g)
 
-  if (readCookie("recent_tags").length > 0) {
-    RelatedTags.recent_tags = readCookie("recent_tags").cgiUnescape().match(/\S+/g).uniq().sort()
+  if (Cookie.get("recent_tags").length > 0) {
+    RelatedTags.recent_tags = Cookie.get("recent_tags").cgiUnescape().match(/\S+/g).uniq().sort()
   }
 
   if ((artist_url != null) && (artist_url.match(/^http/))) {
@@ -32,16 +32,6 @@ RelatedTags.toggle = function(link, field) {
   }
 
   RelatedTags.build_all(RelatedTags.recent_search)
-  return
-
-  if (link.style.backgroundColor == "rgb(0, 111, 250)") {
-    link.style.backgroundColor = "rgb(255, 255, 255)"
-    link.style.color = "rgb(0, 111, 250)"
-  } else {
-    link.style.backgroundColor = "rgb(0, 111, 250)"
-    link.style.color = "rgb(255, 255, 255)"
-  }
-
   return false
 }
 
@@ -76,9 +66,16 @@ RelatedTags.build_all = function(tags) {
   RelatedTags.recent_search = tags
   
   var html = RelatedTags.build_html("My Tags", RelatedTags.user_tags) + RelatedTags.build_html("Recent Tags", RelatedTags.recent_tags)
+  var keys = []
   
   for (key in tags) {
-    html += RelatedTags.build_html(key, tags[key])
+    keys.push(key)
+  }
+  
+  keys.sort()
+
+  for (i=0; i<keys.size(); ++i) {
+    html += RelatedTags.build_html(keys[i], tags[keys[i]])
   }
   
   $("related").innerHTML = html

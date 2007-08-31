@@ -1,11 +1,15 @@
 <div id="post-list">
-  <script type="text/javascript" src="/javascripts/post_mode_menu.js"></script>
-  <div class="sidebar">
+	<%= javascript_include_tag "post" %>
+	<%= javascript_include_tag "favorite" %>
+	<%= javascript_include_tag "pool" %>
+	<%= javascript_include_tag "post_mode_menu" %>
+  
+	<div class="sidebar">
     <%= render :partial => "search" %>
     <div class="space">
       <h5>Mode</h5>
       <form onsubmit="return false;" action="">
-        <select name="mode" id="mode" onchange="changeMode()" style="width: 13em;">
+        <select name="mode" id="mode" onchange="PostModeMenu.change()" style="width: 13em;">
           <option value="view">View Posts</option>
           <option value="edit">Edit Posts</option>
           <option value="fav">Add to Favorites</option>
@@ -25,7 +29,7 @@
         </select>
       </form>
 
-      <%= javascript_tag "loadMode()" %>
+      <%= javascript_tag "PostModeMenu.init()" %>
     </div>
 
     <%= render :partial => 'tags' %>
@@ -64,7 +68,6 @@
       <%= link_to "Tag History", :controller => "post", :action => "tag_history" %> |
       <%= link_to "Moderate", :controller => "post", :action => "moderate" %> |
       <%= link_to "Help", :controller => "help", :action => "posts" %>
-      
     </div>
   </div>
 </div>

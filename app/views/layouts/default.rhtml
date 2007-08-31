@@ -8,10 +8,11 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
 	<link rel="top" title="<%= CONFIG["app_name"] %>" href="/"/>
 	<%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s"/>' % [type, title, url_for(href)] } %>
-	<link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/default.css" title="default"/>
+	<%= stylesheet_link_tag "default" %>
 	<%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params["tags"] %>
-  <script type="text/javascript" src="/javascripts/prototype.js"></script>
-  <script type="text/javascript" src="/javascripts/common.js"></script>
+	<%= javascript_include_tag "prototype" %>
+	<%= javascript_include_tag "cookie" %>
+	<%= javascript_include_tag "common" %>
 </head>
 <body>
 	<div id="header">

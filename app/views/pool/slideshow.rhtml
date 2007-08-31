@@ -3,7 +3,7 @@
 
   var posts = []
   var i = -1
-  
+
   <% @posts.each do |p| %>
     posts.push([<%= p.id %>, '<%= p.file_url %>', '<%= p.rating %>'])
   <% end %>
@@ -35,7 +35,7 @@
     loadPost()
   }
 
-// ]]>  
+// ]]>
 </script>
 
 <h3>Pool: <%= @pool.pretty_name %></h3>

@@ -1,6 +1,9 @@
-<script src="/javascripts/notes.js" type="text/javascript"></script>
-<script src="/javascripts/related_tags.js" type="text/javascript"></script>
-<script src="/javascripts/image_resize.js" type="text/javascript"></script>
+<%= javascript_include_tag "notes" %>
+<%= javascript_include_tag "related_tags" %>
+<%= javascript_include_tag "image_resize" %>
+<%= javascript_include_tag "favorite" %>
+<%= javascript_include_tag "pool" %>
+<%= javascript_include_tag "comment" %>
 
 <div id="post-view">
   <% if @post.nil? %>
@@ -26,7 +29,7 @@
             <% if @current_user && @current_user.id == @post.user_id %>
               <%= link_to "Delete", :action => "delete", :id => @post.id %>
             <% else %>
-              <%= link_to_function "Flag for deletion", "updatePost(#{@post.id}, 'post[is_flagged]=1')" %>
+              <%= link_to_function "Flag for deletion", "Post.update(#{@post.id}, 'post[is_flagged]=1')" %>
             <% end %>
           </li>
           <% if @post.image? && !@post.is_note_locked? %>
@@ -35,9 +38,9 @@
           <% if @post.image? && @post.notes.empty? %>
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
-          <li><%= link_to_function "Add to favorites", "addFavorite(#{@post.id})", :title => "Add to favorites" %></li>
+          <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
           <% if session[:previous_pool_id] %>
-            <li><%= link_to_function "Add to previous pool", "addPostToPool(#{@post.id}, #{session[:previous_pool_id]})", :title => "Add to pool: #{session[:previous_pool_name]}" %></li>
+            <li><%= link_to_function "Add to previous pool", "Pool.add_post(#{@post.id}, #{session[:previous_pool_id]})", :title => "Add to pool: #{session[:previous_pool_name]}" %></li>
           <% end %>
           <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
         </ul>
