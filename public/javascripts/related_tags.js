@@ -12,7 +12,7 @@ RelatedTags.init = function(user_tags, artist_url) {
   if (readCookie("recent_tags").length > 0) {
     RelatedTags.recent_tags = readCookie("recent_tags").cgiUnescape().match(/\S+/g).uniq().sort()
   }
-  
+
   if ((artist_url != null) && (artist_url.match(/^http/))) {
     RelatedTags.find_artist($F("post_source"))
   } else {
@@ -49,7 +49,8 @@ RelatedTags.build_html = function(key, tags) {
   if (tags.length == 0) {
     return ""
   }
-  
+
+  tags = tags.sort()
   var html = ""
   var current = $F("post_tags").match(/\S+/g) || []
 
