@@ -67,14 +67,14 @@ RelatedTags.build_all = function(tags) {
   
   var html = RelatedTags.build_html("My Tags", RelatedTags.user_tags) + RelatedTags.build_html("Recent Tags", RelatedTags.recent_tags)
   var keys = []
-  
+
   for (key in tags) {
     keys.push(key)
   }
   
   keys.sort()
 
-  for (i=0; i<keys.size(); ++i) {
+  for (var i=0; i<keys.size(); ++i) {
     html += RelatedTags.build_html(keys[i], tags[keys[i]])
   }
   

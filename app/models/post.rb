@@ -146,7 +146,7 @@ class Post < ActiveRecord::Base
           end
         end
       end
-      
+
       tag_string = tag_list.sort.uniq.join(" ")
 
       unless connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == tag_string

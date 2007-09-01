@@ -39,6 +39,8 @@ class PostController < ApplicationController
 			user_id = nil
 		end
     
+    logger.info "COMMIT TAGS: params[:post][:tags]=#{params[:post][:tags]}"
+
     @post = Post.create(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
 
     if @post.errors.empty?
@@ -58,10 +60,11 @@ class PostController < ApplicationController
       end
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
-      p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :rating => params[:post][:rating])
 
 			if p.source.blank? && !@post.source.blank?
-				p.update_attributes(:source => @post.source, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
+				p.update_attributes(:source => @post.source, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => p.cached_tags + " " + params[:post][:tags])
+      else
+        p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :rating => params[:post][:rating])
 			end
 
       respond_to do |fmt|
