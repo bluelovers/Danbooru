@@ -30,6 +30,6 @@ Cookie.get = function(name) {
   return ""
 }
 
-Cookie.delete = function(name) {
+Cookie.remove = function(name) {
   Cookie.put(name, "", -1)
 }
