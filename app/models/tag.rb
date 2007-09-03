@@ -84,7 +84,7 @@ class Tag < ActiveRecord::Base
       tags = [*tags]
       return [] if tags.empty?
 
-      if CONFIG["enable_related_tag_intersection"] == true
+      if !CONFIG["enable_turbo_mode"]
         from = ["posts_tags pt0"]
         cond = ["pt0.post_id = pt1.post_id"]
         sql = ""
@@ -237,15 +237,18 @@ class Tag < ActiveRecord::Base
     end
   end
 
-  def update_related_tags(length = CONFIG["min_related_tags_cache_duration"])
+  def update_related_tags(length = 8)
     sql = Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).to_yaml, length.hours.from_now])
     connection.execute(sql)
   end
 
   def related
     if Time.now > self.cached_related_expires_on
-      length = (self.post_count / 20).to_i
-      length = CONFIG["min_related_tags_cache_duration"] if length < CONFIG["min_related_tags_cache_duration"]
+      length = (self.post_count / 10).to_i
+      
+      if CONFIG["enable_turbo_mode"]
+        length = 12 if length < 12
+      end
 
       self.update_related_tags(length)
       self.reload

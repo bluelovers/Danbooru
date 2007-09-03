@@ -53,7 +53,7 @@ class ForumPost < ActiveRecord::Base
   end
   
   def updated?(user_id)
-    if CONFIG["enable_forum_update_notices"] == false
+    if CONFIG["enable_turbo_mode"]
       return false
     end
     

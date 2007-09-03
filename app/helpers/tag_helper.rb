@@ -45,7 +45,7 @@ module TagHelper
 
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
-		if CONFIG["enable_tag_type_lookups"] && (@current_user || CONFIG["enable_anonymous_post_access"] == false)
+		if !CONFIG["enable_turbo_mode"] && (@current_user || CONFIG["enable_anonymous_post_access"] == false)
 			tag_type = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
 			tag_type = tag_type.tag_type if tag_type
 

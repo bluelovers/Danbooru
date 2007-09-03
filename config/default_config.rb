@@ -1,13 +1,18 @@
 CONFIG = {}
 
 # The version of this Danbooru.
-CONFIG["version"] = "1.7.0"
+CONFIG["version"] = "1.8.0"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"
 
 # Set to true to require an e-mail address to register.
 CONFIG["enable_account_email_validation"] = false
+
+# Enabling this disables: tag type lookup, intersecting related tag search,
+# and forum update notices. It also sets the minimum related tag cache to 
+# 8 hours.
+CONFIG["enable_turbo_mode"] = false
 
 # Set to true to allow Anonymous to access anything under /post/.
 CONFIG["enable_anonymous_post_access"] = false
@@ -57,37 +62,11 @@ CONFIG["enable_anonymous_forum_access"] = false
 # Set to true to allow Anonymous to post to the forum.
 CONFIG["enable_anonymous_forum_posts"] = false
 
-# Set to true to enable the artist/character/copyright descriptors
-# when displaying tag lists. This is informative but adds strain to
-# the database.
-CONFIG["enable_tag_type_lookups"] = false
-
-# Set to true to show only the related tags of the intersection
-# when searching for multiple tags. This relies on an expensive
-# database query and probably shouldn't be enabled if you're
-# expecting more than a dozen concurrent connections.
-CONFIG["enable_related_tag_intersection"] = true
-
 # Set to true to link to the Danbooru Trac on the navigation bar.
 CONFIG["enable_trac_link"] = false
 
-# If this is enabled, whenever a forum topic is posted or
-# updated and the user hasn't seen it yet, that topic's title
-# will be displayed in bold, and the Forum link on the main
-# navigation bar will also be bold. This relies on a nontrivial
-# database call, however. For forums with less than 10,000
-# posts it shouldn't really be an issue, but to squeeze out
-# every ounce of performance you can disable it.
-CONFIG["enable_forum_update_notices"] = true
-
 # Newly created users start out with this many invites.
 CONFIG["starting_invite_count"] = 0
-
-# Minimum number of hours to cache related tags. If you don't
-# get many users you can probably set this to 0 so that tags
-# with few posts will have their related tags instantly
-# updated.
-CONFIG["min_related_tags_cache_duration"] = 0
 
 # What method to use to store images.
 # local_flat: Store every image in one directory.
@@ -109,10 +88,6 @@ CONFIG["amazon_s3_access_key_id"] = ""
 CONFIG["amazon_s3_secret_access_key"] = ""
 CONFIG["amazon_s3_bucket_name"] = ""
 
-# Setting this true will offer the user suggestions if their search brought
-# up no results.
-CONFIG["enable_suggestions_on_no_results"] = true
-
 # If enabled, this setting will cause non-safe posts to be filtered out 
 # for people who don't login.
 CONFIG["enable_anonymous_safe_post_mode"] = false
@@ -132,17 +107,9 @@ CONFIG["memcache_servers"] = ["localhost:4000"]
 # deactivating a few features (such as blacklists).
 CONFIG["cache_level"] = 1
 
-# Set to false to prevent anonymous users from searching for more than one
-# tag at a time. Saves on database queries.
-CONFIG["enable_multi-tag_search_for_anonymous"] = true
-
 # Any post rated safe that has one of the following tags will
 # automatically be rated questionable.
 CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum nipples erect_nipples anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob cameltoe blowjob cunnilingus anal_sex topless)
-
-# This enables a helper action that automatically attempts to romanize
-# Japanese characters. It requires the utf8proc gem, however.
-CONFIG["enable_romanizer"] = false
 
 # After a post receives this many posts, new comments will no longer
 # bump the post in comment/index.

@@ -149,7 +149,7 @@ class PostController < ApplicationController
   def index
     set_title "/#{params[:tags]}"
 
-    if @current_user == nil && CONFIG["enable_multi-tag_search_for_anonymous"] == false && params[:tags].to_s.include?(" ")
+    if @current_user == nil && params[:tags].to_s.include?(" ")
       flash[:notice] = "You must be logged in to search for more than one tag at a time."
       redirect_to :controller => "user", :action => "login"
       return
@@ -164,7 +164,7 @@ class PostController < ApplicationController
     @pages = Paginator.new(self, Post.fast_count(params[:tags], is_safe_mode?), limit, params[:page])
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :safe_mode => is_safe_mode?))
 
-    if @posts.empty? && !params[:tags].blank? && CONFIG["enable_suggestions_on_no_results"]
+    if @posts.empty? && !params[:tags].blank?
       @suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
     else
       @suggestions = []
