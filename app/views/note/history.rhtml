@@ -21,12 +21,10 @@
   <% end %>
 </table>
 
-<% if params[:id] || params[:post_id] %>
-  <div id="footer">
-    <%= link_to "History for all notes", :controller => "note", :action => "history", :id => nil %>
-  </div>
-<% else %>
+<% if @pages %>
   <div id="paginator">
     <%= custom_pagination_links(@pages) %>
   </div>
 <% end %>
+
+<%= render :partial => "footer" %>

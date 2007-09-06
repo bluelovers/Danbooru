@@ -1,17 +1,16 @@
-# For API documentation, consult http://miezaru.donmai.us/help/api
-
 class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :render => {:nothing => true}
-  before_filter :user_only, :only => [:destroy, :create, :upload]
+  before_filter :user_only, :only => [:destroy]
+  before_filter :special_only, :only => [:create, :upload]
+  before_filter :admin_only, :only => [:moderate]
+  after_filter :save_tags_to_cookie, :only => [:update, :create]
 
   if CONFIG["enable_caching"]
     around_filter :cache_action, :only => [:index, :atom]
   end
 
-  before_filter :admin_only, :only => [:moderate]
-  after_filter :save_tags_to_cookie, :only => [:update, :create]
   helper :wiki, :tag, :comment, :pool, :favorite
 
   def create
@@ -72,7 +71,7 @@ class PostController < ApplicationController
     end
   end
 
-  def upload #:nodoc:
+  def upload
     @post = Post.new
   end
 
@@ -174,12 +173,12 @@ class PostController < ApplicationController
     end
   end
 
-  def atom #:nodoc:
+  def atom
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :hide_unsafe_posts => hide_unsafe_posts?))
     render :layout => false
   end
 
-  def show #:nodoc:
+  def show
     begin
       @post = Post.find(params[:id])
       if hide_unsafe_posts? && @post.rating != 's'

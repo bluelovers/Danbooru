@@ -1,12 +1,20 @@
 class NoteController < ApplicationController
-  layout 'default', :only => [:index, :history, :history_for_post]
+  layout 'default', :only => [:index, :history, :history_for_post, :search]
   before_filter :user_only, :only => [:destroy, :update, :revert]
   verify :method => :post, :only => [:update, :revert, :destroy]
   helper :post
 
+  def search
+    if params[:query]
+      hits = NOTE_INDEX.search("body:#{params[:query]}").hits
+		  @pages = Paginator.new(:note, hits.size, 25, params[:page])
+		  @notes = hits.map {|x| Note.find(NOTE_INDEX[x.doc][:id])}
+	  end
+  end
+
   def index
     set_title "Notes"
-
+    
     if params[:post_id]
       @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100
     else

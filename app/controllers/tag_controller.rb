@@ -174,12 +174,6 @@ class TagController < ApplicationController
     end
   end
 
-  def romanize
-    romanji = ROMANIZER.romanize(params[:tags])
-
-    render :text => romanji, :layout => false
-  end
-
   def popular_by_day
     if params["year"] and params["month"] and params["day"]
       @day = Time.gm(params["year"].to_i, params["month"], params["day"])

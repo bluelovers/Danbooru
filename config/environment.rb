@@ -58,7 +58,7 @@ ActionMailer::Base.smtp_settings = {
 
 ExceptionNotifier.exception_recipients = [CONFIG["admin_contact"]]
 ExceptionNotifier.sender_address = CONFIG["admin_contact"]
-ExceptionNotifier.email_prefix = "[Danbooru] "
+ExceptionNotifier.email_prefix = "[" + CONFIG["app_name"] + "] "
 
 require 'base64'
 require 'diff/lcs/array'
@@ -93,15 +93,10 @@ begin
   FileUtils.mkdir_p("#{RAILS_ROOT}/tmp/ferret")
   WIKI_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/wiki_index", :key => :id)
   WikiPage.index_pages() if index_all
+  NOTE_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/note_index", :key => :id)
+  Note.index_notes() if index_all
 rescue LoadError
 	# do nothing
-end
-
-if CONFIG["enable_romanizer"]
-  require 'utf8proc'
-  require 'romanizer'
-  ROMANIZER = Romanizer.new
-  ROMANIZER.packages = "large"
 end
 
 if CONFIG["enable_caching"]
