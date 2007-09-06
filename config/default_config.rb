@@ -10,8 +10,8 @@ CONFIG["default_guest_name"] = "Anonymous"
 CONFIG["enable_account_email_validation"] = false
 
 # Enabling this disables: tag type lookup, intersecting related tag search,
-# and forum update notices. It also sets the minimum related tag cache to 
-# 8 hours.
+# and forum update notices. It also sets the minimum related tag cache duration
+# to 8 hours.
 CONFIG["enable_turbo_mode"] = false
 
 # Set to true to allow new account signups.
@@ -27,6 +27,9 @@ CONFIG["hide_unsafe_posts"] = false
 # Newly created users start at this level. Set this to 3 if you want everyone
 # to start out as a privileged member.
 CONFIG["starting_level"] = 2
+
+# New users will start out with this many invites.
+CONFIG["starting_invite_count"] = 2
 
 # What method to use to store images.
 # local_flat: Store every image in one directory.

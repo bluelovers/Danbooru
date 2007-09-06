@@ -4,6 +4,7 @@ class UserController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
 	before_filter :user_only, :only => [:favorites, :authenticate, :update, :add_favorite, :delete_favorite]
+	before_filter :special_only, :only => [:invites]
   helper :post
   auto_complete_for :user, :name
 
@@ -19,6 +20,28 @@ class UserController < ApplicationController
 	end
 
 	public
+	def invites
+	  if request.post?
+	    if params[:user]
+	      if @current_user.invite_count < 1
+	        flash[:notice] = "You are out of invites"
+        else
+  	      user = User.find(params[:user][:id])
+  	      user.level = User::LEVEL_SPECIAL
+  	      user.invited_by = @current_user.id
+  	      user.save
+  	      @current_user.decrement! :invite_count
+  	      flash[:notice] = "You have invited #{user.name}"
+	      end
+      end
+      
+      redirect_to :action => "invites"
+    else
+	    @nonspecial_users = User.find(:all, :conditions => ["level = ?", User::LEVEL_MEMBER], :order => "lower(name)")
+	    @invited_users = User.find(:all, :conditions => ["invited_by = ?", @current_user.id], :order => "lower(name)")
+    end
+  end
+  
 	def home
 		set_title "My Account"
 	end
