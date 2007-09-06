@@ -1,0 +1,34 @@
+<h4>Invites</h4>
+<p>You can vouch for existing members and invite them to privileged status. This enables them to upload posts and see unsafe posts.</p>
+
+<div style="margin-bottom: 2em">
+	<h6>Invite User</h6>
+	<p>You currently have <%= @current_user.invite_count %> invites available.</p>
+	<% form_tag(:action => "invites") do %>
+		<%= select "user", "id", @nonspecial_users.map {|x| [x.name, x.id]} %> <%= submit_tag "Invite" %>
+	<% end %>
+</div>
+
+<div>
+	<h6>Current Invites</h6>
+	<p>These are the users you have invited so far.</p>
+	
+	<table>
+		<thead>
+			<tr>
+				<th>User</th>
+				<th>Posts</th>
+				<th>Favorites</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @invited_users.each do |user| %>
+				<tr>
+					<td><%= user.name %></td>
+					<td><%= link_to Post.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
+					<td><%= link_to Favorite.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "fav:#{user.name}" %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>
