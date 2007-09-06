@@ -113,7 +113,7 @@ class TagController < ApplicationController
   end
 
   def edit_preview
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC"))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :limit => 500))
     render :layout => false
   end
 
