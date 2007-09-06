@@ -3,12 +3,17 @@ require 'digest/sha1'
 class User < ActiveRecord::Base
   class AlreadyFavoritedError < Exception; end
 
-  before_validation_on_create :validate_name
-  before_save :confirm_password
+	attr_protected :level
+  attr_accessor :password
+  validates_presence_of :password, :on => :create
+  validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
+  validates_length_of :name, :minimum => 2, :on => :create
+  validates_format_of :password, :with => /\d/, :if => lambda {|rec| rec.password}, :message => "must have at least one number"
+  validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
+  validates_uniqueness_of :name, :case_sensitive => false, :on => :create
+  validates_confirmation_of :password
   before_save :encrypt_password
 	before_create :set_role
-	attr_protected :level
-	attr_accessor :password, :password_confirmation
 	
 	# Users are in one of seven possible roles:
 	LEVEL_UNACTIVATED = -1
@@ -43,13 +48,6 @@ class User < ActiveRecord::Base
 		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
 	end
 	
-	def confirm_password
-	  if password != password_confirmation
-      errors.add :password, "does not match confirmation"
-      return false
-    end
-  end
-
 	def set_role
 		if User.fast_count == 0
 			self.level = LEVEL_ADMIN
@@ -60,25 +58,8 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	def validate_name
-		self.errors.add(:name, "too short") if name.size < 2
-		self.errors.add(:name, "cannot have spaces") if name =~ /\s/
-		self.errors.add(:name, "already exists") if User.find(:first, :conditions => ["lower(name) = lower(?)", name])
-	end
-	
 	def encrypt_password
-	  if password
-	    if password.size < 2
-	      errors.add :password, "too short"
-	      return false
-      end
-      
-	    self.password_hash = self.class.sha1(password)
-    elsif password_hash == nil
-      errors.add :password, "missing"
-    end
-    
-    return true
+    self.password_hash = User.sha1(password) if password
   end
 
 	def add_favorite(post_id)

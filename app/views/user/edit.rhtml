@@ -44,28 +44,11 @@
   			    <%= text_field "user", "my_tags", :size => 40 %>
   			  </td>
   			</tr>
-  			<tr>
-  			  <th>
-  			    <label class="block" for="user_password">Change Password</label>
-      			<p>Leave blank to keep your old password.</p>
-      		</th>
-      		<td>
-  			    <%= password_field "user", "password", :size => 40 %>
-  			  </td>
-  			</tr>
-  			<tr>
-  			  <th>
-  			    <label class="block" for="user_password_confirmation">Confirm Password</label>
-  			  </th>
-  			  <td>
-  			    <%= password_field "user", "password_confirmation", :size => 40, :value => "" %>
-  			  </td>
-  			</tr>
 			</tbody>
       <tfoot>
         <tr>
           <td colspan="2">
-			      <%= submit_tag "Save" %>
+			      <%= submit_tag "Save" %> <%= submit_tag "Cancel" %>
 			    </td>
 			  </tr>
 			</tfoot>
