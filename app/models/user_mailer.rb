@@ -22,15 +22,7 @@ class UserMailer < ActionMailer::Base
 		body :user => user, :password => password
 		content_type "text/html"
 	end
-
-	def new_invite(user, email, invite)
-		recipients UserMailer.normalize_address(email)
-		subject "You have been invited to #{CONFIG["app_name"]}"
-		from CONFIG["admin_contact"]
-		body :user => user, :invite => invite
-		content_type "text/html"
-	end
-
+	
 	def self.normalize_address(address)
 		if defined?(IDN)
 			address =~ /\A([^@]+)@(.+)\Z/

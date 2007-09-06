@@ -50,9 +50,6 @@ CONFIG["enable_anonymous_wiki_edits"] = true
 # Set to true to allow new account signups.
 CONFIG["enable_signups"] = true
 
-# Set to true to enable invites (this overrides signups).
-CONFIG["enable_invites"] = true
-
 # Set to true to enable the forum.
 CONFIG["enable_forum"] = true
 
@@ -64,9 +61,6 @@ CONFIG["enable_anonymous_forum_posts"] = false
 
 # Set to true to link to the Danbooru Trac on the navigation bar.
 CONFIG["enable_trac_link"] = false
-
-# Newly created users start out with this many invites.
-CONFIG["starting_invite_count"] = 0
 
 # Newly created users start at this level
 CONFIG["starting_level"] = 2

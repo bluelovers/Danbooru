@@ -6,7 +6,6 @@ class User < ActiveRecord::Base
   before_validation_on_create :validate_name
   before_save :encrypt_password
 	before_create :set_role
-	before_create :set_invite_count
 	attr_protected :level
 	attr_accessor :password
 	
@@ -41,10 +40,6 @@ class User < ActiveRecord::Base
 	
 	def self.sha1(pass)
 		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
-	end
-
-	def set_invite_count
-		self.invite_count = CONFIG["starting_invite_count"]
 	end
 
 	def set_role

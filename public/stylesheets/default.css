@@ -706,13 +706,6 @@ div#forum > div.post div.body {
   width: 40em;
 }
 
-div#invite > div#new {
-}
-
-div#invite > div#current {
-  margin-top: 2em;
-}
-
 p.tn {
   font-size: 0.8em;
   color: gray;

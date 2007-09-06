@@ -3,7 +3,7 @@ require 'digest/sha2'
 class UserController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
-	before_filter :user_only, :only => [:favorites, :authenticate, :update, :invites, :add_favorite, :delete_favorite]
+	before_filter :user_only, :only => [:favorites, :authenticate, :update, :add_favorite, :delete_favorite]
   helper :post
   auto_complete_for :user, :name
 
@@ -54,29 +54,9 @@ class UserController < ApplicationController
 	end
 
 	def create
-		if !CONFIG["enable_signups"] && (!CONFIG["enable_invites"] || (CONFIG["enable_invites"] && !params[:key]))
-			flash[:notice] = "Signups disabled"
-			redirect_to :action => "login"
-			return
-		end
-
-		if CONFIG["enable_invites"] && params[:key]
-			@invite = Invite.find(:first, :conditions => ["email = ? AND activation_key = ?", params[:user][:email], params[:key]])
-
-			if @invite == nil
-				flash[:notice] = "Either the activation key was incorrect or the invite was not found"
-				redirect_to :action => "login"
-				return
-			end
-      inviter_id = @invite.user_id
-    else
-      inviter_id = nil
-		end
-
-		user = User.create(params[:user].merge(:invited_by => inviter_id))
+		user = User.create(params[:user])
 
 		if user.errors.empty?
-			@invite.destroy if @invite
 			save_cookies(user)
 
 			if CONFIG["enable_account_email_activation"]

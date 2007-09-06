@@ -6,9 +6,6 @@
     <ul class="link-page">
       <li><%= link_to "&raquo; Logout", :action => "logout" %></li>
       <li><%= link_to "&raquo; My Favorites", :controller => "favorite", :action => "show", :id => @current_user.id %></li>
-  		<% if CONFIG["enable_invites"] %>
-  			<li><%= link_to "&raquo; Invites", :action => "invites" %></li>
-  		<% end %>
 		  <li><%= link_to "&raquo; Settings", :action => "edit" %></li>
 	<% else %>
 		<h2>You are not logged in.</h2>
