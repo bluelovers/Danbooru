@@ -71,7 +71,7 @@ class UserController < ApplicationController
 		else
 			error = user.errors.full_messages.join(", ")
 			flash[:notice] = "Error: " + error
-			redirect_to :action => "login"
+			redirect_to :action => "signup"
 		end
 	end
 

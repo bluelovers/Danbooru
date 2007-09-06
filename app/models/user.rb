@@ -4,10 +4,11 @@ class User < ActiveRecord::Base
   class AlreadyFavoritedError < Exception; end
 
   before_validation_on_create :validate_name
+  before_save :confirm_password
   before_save :encrypt_password
 	before_create :set_role
 	attr_protected :level
-	attr_accessor :password
+	attr_accessor :password, :password_confirmation
 	
 	# Users are in one of seven possible roles:
 	LEVEL_UNACTIVATED = -1
@@ -41,6 +42,13 @@ class User < ActiveRecord::Base
 	def self.sha1(pass)
 		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
 	end
+	
+	def confirm_password
+	  if password != password_confirmation
+      errors.add :password, "does not match confirmation"
+      return false
+    end
+  end
 
 	def set_role
 		if User.fast_count == 0
@@ -52,7 +60,7 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	def validate_on_create
+	def validate_name
 		self.errors.add(:name, "too short") if name.size < 2
 		self.errors.add(:name, "cannot have spaces") if name =~ /\s/
 		self.errors.add(:name, "already exists") if User.find(:first, :conditions => ["lower(name) = lower(?)", name])
@@ -65,7 +73,7 @@ class User < ActiveRecord::Base
 	      return false
       end
       
-	    self.password_hash = sha1(password)
+	    self.password_hash = self.class.sha1(password)
     elsif password_hash == nil
       errors.add :password, "missing"
     end
