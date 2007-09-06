@@ -93,54 +93,42 @@ class User < ActiveRecord::Base
 	def activated?
 		self.level > LEVEL_UNACTIVATED
 	end
-	
-	def admin?
-		self.level >= LEVEL_ADMIN
+
+	def blocked?
+		self.level <= LEVEL_BLOCKED
 	end
+
+	def view_only?
+		self.level == LEVEL_VIEW_ONLY
+	end
+	
+	def member?
+		self.level >= LEVEL_MEMBER
+	end
+
+	def special?
+	  self.level >= LEVEL_SPECIAL
+  end
 	
 	def mod?
 		self.level >= LEVEL_MOD
 	end
 	
-	def member?
-		self.level >= LEVEL_VIEW_ONLY
+	def admin?
+		self.level >= LEVEL_ADMIN
 	end
 	
-	def view_only?
-		self.level == LEVEL_VIEW_ONLY
-	end
-	
-	def blocked?
-		self.level <= LEVEL_BLOCKED
-	end
-
-	def role?(role)
-		case role
-		when :admin
-			self.level >= LEVEL_ADMIN
-
-		when :mod
-			self.level >= LEVEL_MOD
-
-		when :member
-			self.level >= LEVEL_MEMBER
-
-		else
-			false
-		end
-	end
-
 	def has_permission?(record, foreign_key = :user_id)
 		if self.mod?
 			true
 		elsif record.respond_to?(foreign_key)
-			record[foreign_key] == self.id
+			record.__send__(foreign_key) == self.id
 		else
 			false
 		end
 	end
 
-	def update_forum_view!(forum_post_id)
+	def update_forum_view(forum_post_id)
 		view = ForumPostView.find(:first, :conditions => ["user_id = ? AND forum_post_id = ?", self.id, forum_post_id])
 		if view == nil
 			ForumPostView.create(:user_id => self.id, :forum_post_id => forum_post_id, :last_viewed_at => Time.now)
@@ -149,7 +137,7 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	def reset_password!
+	def reset_password
 		consonants = "bcdfghjklmnpqrstvqxyz"
 		vowels = "aeiou"
 		pass = ""

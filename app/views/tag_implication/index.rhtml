@@ -33,7 +33,7 @@
 		<tr>
 			<td colspan="3">
 				<%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
-				<% if @current_user && @current_user.role?(:admin) %>
+				<% if @current_user && @current_user.admin? %>
 					<%= submit_tag "Approve" %> 
 					<%= submit_tag "Delete" %>
 				<% end %>

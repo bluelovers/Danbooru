@@ -93,7 +93,7 @@ class ForumController < ApplicationController
 		@forum_post = ForumPost.find(params[:id])
 
 		if @current_user != nil
-			@current_user.update_forum_view!(@forum_post.id)
+			@current_user.update_forum_view(@forum_post.id)
 		end
 	end
 

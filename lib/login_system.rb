@@ -38,6 +38,24 @@ module LoginSystem
 		return @current_user
 	end
 
+	def user_only
+		if @current_user && @current_user.member?
+			return true
+		else
+			access_denied
+			return false
+		end
+	end
+	
+	def special_only
+	  if @current_user && @current_user.special?
+	    return true
+    else
+      access_denied()
+      return false
+    end
+  end
+
 	def mod_only
 		if @current_user && @current_user.mod?
 			return true
@@ -52,24 +70,6 @@ module LoginSystem
 			return true
 		else
 			access_denied
-			return false
-		end
-	end
-
-	def user_only
-		if @current_user && @current_user.member?
-			return true
-		else
-			access_denied
-			return false
-		end
-	end
-
-	def user_only_api
-		if (current_user.role?(:member) rescue false)
-			return true
-		else
-			render :text => "Only registered users can use this feature", :status => 403
 			return false
 		end
 	end

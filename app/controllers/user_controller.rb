@@ -125,7 +125,7 @@ class UserController < ApplicationController
 					flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"
 					redirect_to :action => "login"
 				else
-					new_password = @user.reset_password!
+					new_password = @user.reset_password
 					UserMailer.deliver_new_password(@user, new_password)
 
 					flash[:notice] = "Password reset. Check your email in a few minutes"
