@@ -1,12 +1,12 @@
 module TagHelper
-	def tag_link(t, prefix = "", safe_mode = false)
+	def tag_link(t, prefix = "", hide_unsafe_posts = false)
 		html = ""
 
 		begin
 			case t
 			when String
         name = t
-        if safe_mode
+        if hide_unsafe_posts
           count = Tag.find_by_name(name).safe_post_count
         else
           count = Tag.find_by_name(name).post_count
@@ -18,7 +18,7 @@ module TagHelper
 
 			when Tag
         name = t.name
-        if safe_mode
+        if hide_unsafe_posts
           count = t.safe_post_count
         else
           count = t.post_count
@@ -38,14 +38,14 @@ module TagHelper
 
 		html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
 
-		if @current_user || CONFIG["enable_anonymous_post_access"] == false
+		if @current_user
 			html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
 			html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
 		end
 
 		html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
 
-		if !CONFIG["enable_turbo_mode"] && (@current_user || CONFIG["enable_anonymous_post_access"] == false)
+		if !CONFIG["enable_turbo_mode"] && @current_user
 			tag_type = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
 			tag_type = tag_type.tag_type if tag_type
 

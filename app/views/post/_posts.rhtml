@@ -3,7 +3,7 @@
 		<h4>Nobody here but us chickens!</h4>
 	<% else %>
 		<% @posts.each do |post| %>
-			<% unless is_safe_mode? && post.rating != 's' %>
+			<% unless hide_unsafe_posts? && post.rating != 's' %>
       	<%= print_preview(post, :onclick => "return PostModeMenu.click(#{post.id})", :user => @current_user) %>
 			<% end %>
 		<% end %>

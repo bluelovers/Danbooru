@@ -4,7 +4,7 @@ module PostHelper
       return ""
     end
 
-		if is_safe_mode? && post.rating != "s"
+		if hide_unsafe_posts? && post.rating != "s"
 			return ""
 		end
 

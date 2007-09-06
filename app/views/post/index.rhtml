@@ -57,9 +57,7 @@
     </div>
 
     <div id="footer">
-      <% if @current_user || CONFIG["enable_anonymous_post_uploads"] %>
-        <%= link_to "Add", :controller => "post", :action => "upload" %> |
-      <% end %>
+      <%= link_to "Add", :controller => "post", :action => "upload" %> |
       <% if @current_user %>
         <%= link_to "My Favorites", :controller => "favorite", :action => "show", :id => @current_user.id %> |
       <% end %>

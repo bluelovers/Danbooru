@@ -9,7 +9,7 @@
   <% end %>
 
   function loadPost() {
-    if (<%= is_safe_mode? %> && posts[i][2] != 's') {
+    if (<%= hide_unsafe_posts? %> && posts[i][2] != 's') {
       notice("You must be logged in to view this post")
     } else {
       $("img").src = posts[i][1]

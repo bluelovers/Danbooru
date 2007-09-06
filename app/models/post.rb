@@ -27,8 +27,8 @@ class Post < ActiveRecord::Base
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   belongs_to :user
 
-  def self.fast_count(tags = nil, safe = false)
-    if safe
+  def self.fast_count(tags = nil, hide_unsafe_posts = false)
+    if hide_unsafe_posts
       if tags.blank?
         return connection.select_value("SELECT row_count FROM table_data WHERE name = 'safe_posts'").to_i
       else
@@ -413,7 +413,7 @@ class Post < ActiveRecord::Base
       params << q[:exclude]
     end
 
-    if options[:safe_mode]
+    if options[:hide_unsafe_posts]
       conditions << "p.rating = 's'"
     end
 

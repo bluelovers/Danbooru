@@ -2,12 +2,7 @@ class ForumController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:create, :destroy, :update, :stick, :unstick]
   before_filter :mod_only, :only => [:stick, :unstick]
-
-	if CONFIG["enable_anonymous_forum_access"]
-		before_filter :user_only, :only => [:destroy]
-	else
-		before_filter :user_only, :only => [:create, :destroy, :update, :edit, :add, :show, :index]
-	end
+  before_filter :user_only, :only => [:create, :destroy, :update, :edit, :add]
 
   def stick
     @forum_post = ForumPost.find(params[:id])
@@ -22,11 +17,6 @@ class ForumController < ApplicationController
   end
 
 	def create
-		if CONFIG["enable_anonymous_forum_posts"] == false && @current_user == nil
-			access_denied()
-			return
-		end
-
 		@forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
 
 		if @forum_post.errors.empty?

@@ -6,7 +6,7 @@
 	</div>
 <% end %>
 
-<% if @current_user || CONFIG["enable_anonymous_comment_responses"] %>
+<% if @current_user %>
 	<p><%= link_to_function "&raquo; Respond", "Element.toggle('r#{post_id}')", :class => "resp-link" %></p>
 	<div id="r<%= post_id %>" style="display: none;">
 		<% form_tag(:controller => "comment", :action => "create") do %>

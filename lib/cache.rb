@@ -1,6 +1,6 @@
 module Cache
   def self.expire(options = {})
-    if !CONFIG["enable_anonymous_safe_post_mode"] || options[:rating] == 's' || options[:update_post] || options[:destroy_post]
+    if !CONFIG["hide_unsafe_posts"] || options[:rating] == 's' || options[:update_post] || options[:destroy_post]
       # If safe post mode is disabled, then always expire the tag.
       #
       # If we've enabled safe post mode, and if the record is rated safe, 

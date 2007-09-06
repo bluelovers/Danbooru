@@ -7,7 +7,7 @@
   <% end %>
 
   <% @posts.each do |post| %>
-  	<% unless (is_safe_mode? && post.rating != 's') || (post.blacklisted?(@current_user)) %>
+  	<% unless (hide_unsafe_posts? && post.rating != 's') || (post.blacklisted?(@current_user)) %>
   	  <% content_tag(:div, :class => "post", :id => "p#{post.id}") do %>
   		  <div class="col1">
   			  <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>

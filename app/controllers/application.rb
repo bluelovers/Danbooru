@@ -5,13 +5,13 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   local_addresses.clear
   
-  helper_method :is_safe_mode?
+  helper_method :hide_unsafe_posts?
   before_filter :set_title
   before_filter :current_user
 
   protected
-  def is_safe_mode?
-    @current_user == nil && CONFIG["enable_anonymous_safe_post_mode"]
+  def hide_unsafe_posts?
+    CONFIG["hide_unsafe_posts"] && (@current_user == nil || !@current_user.special?)
   end
 
   def render_error(record)
@@ -58,19 +58,7 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    cache = false
-    
-    if CONFIG["cache_level"] == 1
-      cache = (@current_user == nil && request.method == :get)
-    elsif CONFIG["cache_level"] == 2
-      cache = (request.method == :get)
-    end
-
-    if params[:format] == "xml" || params[:format] == "js"
-      cache = false
-    end
-    
-    if cache == true
+    if @current_user == nil && request.method == :get && !%w(xml js).include?(params[:format])
       key = cache_key()
       cached = Cache.get(key)
       if cached != nil

@@ -4,16 +4,7 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :render => {:nothing => true}
-
-  if CONFIG["enable_anonymous_post_access"]
-    if CONFIG["enable_anonymous_post_uploads"]
-      before_filter :user_only, :only => [:destroy]
-    else
-      before_filter :user_only, :only => [:destroy, :create, :upload]
-    end
-  else
-    before_filter :user_only
-  end
+  before_filter :user_only, :only => [:destroy, :create, :upload]
 
   if CONFIG["enable_caching"]
     around_filter :cache_action, :only => [:index, :atom]
@@ -161,8 +152,8 @@ class PostController < ApplicationController
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
-    @pages = Paginator.new(self, Post.fast_count(params[:tags], is_safe_mode?), limit, params[:page])
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :safe_mode => is_safe_mode?))
+    @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_unsafe_posts?), limit, params[:page])
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_unsafe_posts => hide_unsafe_posts?))
 
     if @posts.empty? && !params[:tags].blank?
       @suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
@@ -175,7 +166,7 @@ class PostController < ApplicationController
         if params[:tags]
           @tags = Tag.parse_query(params[:tags])
         else
-          @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :safe_mode => is_safe_mode?)}
+          @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_unsafe_posts => hide_unsafe_posts?)}
         end
       end
       fmt.xml {render :xml => @posts.to_xml}
@@ -184,14 +175,14 @@ class PostController < ApplicationController
   end
 
   def atom #:nodoc:
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :safe_mode => is_safe_mode?))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :hide_unsafe_posts => hide_unsafe_posts?))
     render :layout => false
   end
 
   def show #:nodoc:
     begin
       @post = Post.find(params[:id])
-      if is_safe_mode? && @post.rating != 's'
+      if hide_unsafe_posts? && @post.rating != 's'
         flash[:notice] = "You must be logged in to view this post"
         redirect_to :controller => "user", :action => "login"
         return

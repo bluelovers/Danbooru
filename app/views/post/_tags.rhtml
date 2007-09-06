@@ -3,15 +3,15 @@
 	<!-- google_ad_section_start -->
 	<ul>
 		<% @tags[:exclude].to_a.each do |tt| %>
-			<li><%= tag_link(tt, "-", is_safe_mode?) %></li>
+			<li><%= tag_link(tt, "-", hide_unsafe_posts?) %></li>
 		<% end %>
 
 		<% @tags[:include].to_a.each do |tt| %>
-			<li><%= tag_link(tt, "", is_safe_mode?) %></li>
+			<li><%= tag_link(tt, "", hide_unsafe_posts?) %></li>
 		<% end %>
 
 		<% Tag.find_related(@tags[:related].to_a).each do |tt| %>
-			<li><%= tag_link(tt, "", is_safe_mode?) %></li>
+			<li><%= tag_link(tt, "", hide_unsafe_posts?) %></li>
 		<% end %>
 	</ul>
 	<!-- google_ad_section_end -->

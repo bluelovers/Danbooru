@@ -208,9 +208,7 @@
   		<% if @current_user && @current_user.always_resize_images? %>
   			<%= javascript_tag "toggleImageResize()" %>
   		<% end %>
-      <% if CONFIG["enable_comments"] && (@current_user || CONFIG["enable_anonymous_comment_access"]) %>
-        <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
-      <% end %>
+      <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
     </div>
   <% end %>
 </div>

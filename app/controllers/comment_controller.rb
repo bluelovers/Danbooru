@@ -1,29 +1,9 @@
 class CommentController < ApplicationController
   layout "default"
 
-  verify :method => :post, :only => [:create, :destroy, :update], :render => {:nothing => true}
-
-  if CONFIG["enable_comment_spam_filter"]
-    before_filter :spam_filter, :only => :create
-  end
-
-  if CONFIG["enable_anonymous_comment_access"]
-    if CONFIG["enable_anonymous_comment_responses"]
-      before_filter :user_only, :only => [:destroy, :update]
-    else
-      before_filter :user_only, :only => [:create, :destroy, :update]
-    end
-  else
-    before_filter :user_only
-  end
-
+  verify :method => :post, :only => [:create, :destroy, :update]
+  before_filter :user_only, :only => [:create, :destroy, :update]
   before_filter :mod_only, :only => [:moderate]
-
-  def spam_filter
-    return false unless params[:comment]
-    return false if params[:comment][:body].scan(/http/).size > 2
-    return true
-  end
 
   def update
     comment = Comment.find(params[:id])
@@ -141,4 +121,4 @@ class CommentController < ApplicationController
 			fmt.js {render :json => {:success => true}.to_json}
 		end
 	end
-end if CONFIG["enable_comments"]
+end

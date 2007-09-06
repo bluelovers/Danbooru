@@ -112,6 +112,6 @@ class ArtistController < ApplicationController
 
   def show
     @artist = Artist.find(params[:id])
-		@posts = Post.find_by_tags(@artist.name, :limit => 5, :order => "id desc", :safe_mode => is_safe_mode?)
+		@posts = Post.find_by_tags(@artist.name, :limit => 5, :order => "id desc", :hide_unsafe_posts => hide_unsafe_posts?)
   end
 end

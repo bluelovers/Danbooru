@@ -31,7 +31,7 @@ class Tag < ActiveRecord::Base
 
       cond = ["p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id"]
 
-      if options[:safe_mode]
+      if options[:hide_unsafe_posts]
         cond << "p.rating = 's'"
       end
 
