@@ -3,13 +3,12 @@ require 'digest/sha1'
 class User < ActiveRecord::Base
   class AlreadyFavoritedError < Exception; end
 
+  before_validation_on_create :validate_name
+  before_save :encrypt_password
 	before_create :set_role
 	before_create :set_invite_count
-	before_create :crypt_password
-	before_validation_on_update :crypt_unless_empty
-	validates_confirmation_of :password
-	has_many :invites
 	attr_protected :level
+	attr_accessor :password
 	
 	# Users are in one of seven possible roles:
 	LEVEL_UNACTIVATED = -1
@@ -27,20 +26,26 @@ class User < ActiveRecord::Base
 	def self.fast_count
 		return connection.select_value("SELECT row_count FROM table_data WHERE name = 'users'").to_i
 	end
-
-	def set_invite_count
-		if CONFIG["enable_invites"]
-			self.invite_count = CONFIG["starting_invite_count"]
-		end
+	
+	def self.authenticate(name, pass)
+		authenticate_hash(name, sha1(pass))
 	end
 
-  def new_password=(pass)
-    self.password = pass
-  end
+	def self.authenticate_hash(name, pass)
+		find(:first, :conditions => ["lower(name) = lower(?) AND password_hash = ?", name, pass])
+	end
 
-  def new_password
-    ""
-  end
+	def self.find_people_who_favorited(post_id)
+		User.find(:all, :joins => User.sanitize_sql(["JOIN favorites f ON f.user_id = users.id WHERE f.post_id = ?", post_id]), :order => "lower(name) ASC", :select => "users.*")
+	end
+	
+	def self.sha1(pass)
+		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
+	end
+
+	def set_invite_count
+		self.invite_count = CONFIG["starting_invite_count"]
+	end
 
 	def set_role
 		if User.fast_count == 0
@@ -48,7 +53,7 @@ class User < ActiveRecord::Base
 		elsif CONFIG["enable_account_email_activation"]
 			self.level = LEVEL_UNACTIVATED
 		else
-			self.level = LEVEL_MEMBER
+			self.level = CONFIG["starting_level"]
 		end
 	end
 
@@ -57,6 +62,21 @@ class User < ActiveRecord::Base
 		self.errors.add(:name, "cannot have spaces") if name =~ /\s/
 		self.errors.add(:name, "already exists") if User.find(:first, :conditions => ["lower(name) = lower(?)", name])
 	end
+	
+	def encrypt_password
+	  if password
+	    if password.size < 2
+	      errors.add :password, "too short"
+	      return false
+      end
+      
+	    self.password_hash = sha1(password)
+    elsif password_hash == nil
+      errors.add :password, "missing"
+    end
+    
+    return true
+  end
 
 	def add_favorite(post_id)
 		if connection.select_value("SELECT 1 FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
@@ -145,20 +165,6 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	# Authenticate a user.
-	def self.authenticate(name, pass)
-		authenticate_hash(name, sha1(pass))
-	end
-
-	# Authenticate a user against a hashed password. Note that the password must be salted!
-	def self.authenticate_hash(name, pass)
-		find(:first, :conditions => ["lower(name) = lower(?) AND password = ?", name, pass])
-	end
-
-	def self.find_people_who_favorited(post_id)
-		User.find(:all, :joins => User.sanitize_sql(["JOIN favorites f ON f.user_id = users.id WHERE f.post_id = ?", post_id]), :order => "lower(name) ASC", :select => "users.*")
-	end
-
 	def reset_password!
 		consonants = "bcdfghjklmnpqrstvqxyz"
 		vowels = "aeiou"
@@ -169,7 +175,7 @@ class User < ActiveRecord::Base
 			pass << vowels[rand(5), 1]
 		end
 
-		connection.execute(User.sanitize_sql(["UPDATE users SET password = ? WHERE id = ?", User.sha1(pass), self.id]))
+		connection.execute(User.sanitize_sql(["UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), self.id]))
 		return pass
 	end
 
@@ -179,28 +185,5 @@ class User < ActiveRecord::Base
 
 	def to_json(options = {})
 		{:name => self.name, :id => self.id}.to_json(options)
-	end
-
-	protected
-	# Apply SHA1 encryption to the supplied password. We will additionally surround the password with a salt for additional security.
-	def self.sha1(pass)
-		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
-	end
-
-	# Before saving the record to database we will crypt the password using SHA1. We never store the actual password in the DB.
-	def crypt_password
-		write_attribute :password, self.class.sha1(password)
-	end
-
-	# If the record is updated we will check if the password is empty. If its empty we assume that the user didn't want to change his password and just reset it to the old value.
-	def crypt_unless_empty
-		if self.password.empty?
-			user = self.class.find(self.id)
-			self.password_confirmation = nil
-			self.password = user.password
-		else
-			self.password_confirmation = self.class.sha1(password_confirmation)
-			self.password = self.class.sha1(password)
-		end
 	end
 end

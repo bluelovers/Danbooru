@@ -68,6 +68,9 @@ CONFIG["enable_trac_link"] = false
 # Newly created users start out with this many invites.
 CONFIG["starting_invite_count"] = 0
 
+# Newly created users start at this level
+CONFIG["starting_level"] = 2
+
 # What method to use to store images.
 # local_flat: Store every image in one directory.
 # local_hierarchy: Store every image in a hierarchical directory,
