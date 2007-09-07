@@ -14,24 +14,7 @@ class PostController < ApplicationController
   helper :wiki, :tag, :comment, :pool, :favorite
 
   def create
-		if @current_user && @current_user.view_only?
-			respond_to do |fmt|
-				fmt.html {flash[:notice] = "Your account has been blocked from uploading new posts."; redirect_to(:controller => "post", :action => "index")}
-				fmt.js {render :json => {:success => false, :reason => "account blocked"}.to_json}
-				fmt.xml {render :xml => {:success => false, :reason => "account blocked"}.to_xml(:root => "response")}
-			end
-			return
-		end
-		
-		if @current_user
-			user_id = @current_user.id
-		else
-			user_id = nil
-		end
-    
-    logger.info "COMMIT TAGS: params[:post][:tags]=#{params[:post][:tags]}"
-
-    @post = Post.create(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip))
+    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase

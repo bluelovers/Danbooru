@@ -1,6 +1,27 @@
+<div style="width: 40em;">
+<h4>Signup</h4>
+
 <% if !CONFIG["enable_signups"] %>
-	<h4>Signups are currently disabled.</h4>
+	<p>Signups are currently disabled.</p>
 <% else %>
+	<p>A basic account allows you to keep favorites, post comments, edit the wiki, edit notes, create pools, and post to the forum. You still will not be able to upload posts or see unsafe posts. For that you will need a privileged account.</p>
+	<p>By creating an account, you are agreeing to the following rules:</p>
+	<ul>
+		<li>You will not maliciously delete or deface existing content</li>
+		<li>You will either contribute meaningful content (no frivolous comments or notes) or contribute nothing at all</li>
+		<li>You will not ask or beg for an invite</li>
+		<li>You will not use this site to plan criminal acts</li>
+	</ul>
+	<p>If you become a privileged member, you are bound by these additional rules:</p>
+	<ul>
+		<li>You will not upload illegal content such as real bestiality or real child pornography</li>
+		<li>You will not flood post furry, gay, guro, or poorly drawn art (more than five in a day)</li>
+		<li>You will not upload images that are poorly compressed</li>
+		<li>You will not upload images that have obnoxious watermarks</li>
+		<li>You will not give out invites to people you cannot vouch for</li>
+	</ul>
+	<p>Failure to meet these terms may result in a ban. Any post you upload may also be subject to deletion by a moderator, even those that technically abide by the rules. Do not use this site for archiving critical files.</p>
+	
   <% form_tag(:controller => "user", :action => "create") do %>
     <table class="form">
       <tbody>
@@ -52,3 +73,4 @@
   	</table>
   <% end %>
 <% end %>
+</div>
