@@ -68,11 +68,9 @@ require 'open-uri'
 require 'socket'
 require 'time'
 require 'uri'
-require 'arch'
 require 'acts_as_versioned'
 require 'net/http'
 require 'core_extensions'
-require 'persistent_hash'
 require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
 
 begin

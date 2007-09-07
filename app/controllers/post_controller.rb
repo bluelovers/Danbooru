@@ -1,7 +1,7 @@
 class PostController < ApplicationController
   layout 'default'
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :render => {:nothing => true}
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
   before_filter :member_only, :only => [:destroy]
   before_filter :privileged_only, :only => [:create, :upload]
   before_filter :admin_only, :only => [:moderate]
