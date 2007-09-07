@@ -35,7 +35,7 @@
     <%= render :partial => 'tags' %>
   </div>
   <div class="content">
-    <% unless @current_user && @current_user.special? %>
+    <% unless @current_user && @current_user.privileged? %>
       <%= CONFIG["ad_code_index_top"] %>
     <% end %>
 

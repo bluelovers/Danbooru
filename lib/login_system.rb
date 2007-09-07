@@ -38,17 +38,17 @@ module LoginSystem
 		return @current_user
 	end
 
-	def user_only
+	def member_only
 		if @current_user && @current_user.member?
 			return true
 		else
-			access_denied
+			access_denied()
 			return false
 		end
 	end
 	
-	def special_only
-	  if @current_user && @current_user.special?
+	def privileged_only
+	  if @current_user && @current_user.privileged?
 	    return true
     else
       access_denied()
@@ -60,7 +60,7 @@ module LoginSystem
 		if @current_user && @current_user.mod?
 			return true
 		else
-			access_denied
+			access_denied()
 			return false
 		end
 	end
@@ -69,7 +69,7 @@ module LoginSystem
 		if @current_user && @current_user.admin?
 			return true
 		else
-			access_denied
+			access_denied()
 			return false
 		end
 	end

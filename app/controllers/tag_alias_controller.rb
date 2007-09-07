@@ -1,6 +1,7 @@
 class TagAliasController < ApplicationController
 	layout "default"
 	before_filter :admin_only, :only => [:update]
+	before_filter :member_only, :only => [:create]
 	verify :method => :post, :only => [:create, :update]
 
 	def create
@@ -19,10 +20,6 @@ class TagAliasController < ApplicationController
       fmt.xml {render :xml => @aliases.to_xml}
       fmt.js {render :json => @aliases.to_json}
     end
-	end
-
-	def add
-		@tag_alias = TagAlias.new
 	end
 
 	def update

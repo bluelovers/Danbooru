@@ -1,6 +1,6 @@
 class NoteController < ApplicationController
   layout 'default', :only => [:index, :history, :history_for_post, :search]
-  before_filter :user_only, :only => [:destroy, :update, :revert]
+  before_filter :member_only, :only => [:destroy, :update, :revert]
   verify :method => :post, :only => [:update, :revert, :destroy]
   helper :post
 

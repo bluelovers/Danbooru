@@ -2,8 +2,8 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :render => {:nothing => true}
-  before_filter :user_only, :only => [:destroy]
-  before_filter :special_only, :only => [:create, :upload]
+  before_filter :member_only, :only => [:destroy]
+  before_filter :privileged_only, :only => [:create, :upload]
   before_filter :admin_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 

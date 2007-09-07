@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   protected
   def hide_unsafe_posts?
-    CONFIG["hide_unsafe_posts"] && (@current_user == nil || !@current_user.special?)
+    CONFIG["hide_unsafe_posts"] && (@current_user == nil || !@current_user.privileged?)
   end
 
   def render_error(record)

@@ -1,6 +1,7 @@
 class TagImplicationController < ApplicationController
 	layout "default"
-	before_filter :admin_only, :only => [:approve, :destroy]
+	before_filter :admin_only, :only => [:update, :destroy]
+	before_filter :member_only, :only => [:create]
 	verify :method => :post, :only => [:create, :destroy, :approve]
 
 	def create
@@ -37,9 +38,5 @@ class TagImplicationController < ApplicationController
       fmt.xml {render :xml => @implications.to_xml}
       fmt.js {render :json => @implications.to_json}
     end
-	end
-
-	def add
-		@tag_implication = TagImplication.new
 	end
 end

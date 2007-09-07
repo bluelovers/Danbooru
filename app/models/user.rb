@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
 	LEVEL_BLOCKED = 0
 	LEVEL_VIEW_ONLY = 1
 	LEVEL_MEMBER = 2
-	LEVEL_SPECIAL = 3
+	LEVEL_PRIVILEGED = 3
 	LEVEL_MOD = 10
 	LEVEL_ADMIN = 20
 
@@ -106,8 +106,8 @@ class User < ActiveRecord::Base
 		self.level >= LEVEL_MEMBER
 	end
 
-	def special?
-	  self.level >= LEVEL_SPECIAL
+	def privileged?
+	  self.level >= LEVEL_PRIVILEGED
   end
 	
 	def mod?

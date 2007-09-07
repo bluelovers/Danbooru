@@ -53,13 +53,13 @@
           <li><%= link_to "Notes", :controller => "note", :action => "history", :post_id => @post.id %></li>
         </ul>
       </div>
-      <% unless @current_user && @current_user.special? %>
+      <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_side"] %>
       <% end %>
     </div>
     <!-- google_ad_section_end -->
     <div class="content" id="right-col">
-      <% unless @current_user && @current_user.special? %>
+      <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_top"] %>
       <% end %>
 

@@ -3,8 +3,8 @@ require 'digest/sha2'
 class UserController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
-	before_filter :user_only, :only => [:favorites, :authenticate, :update, :add_favorite, :delete_favorite]
-	before_filter :special_only, :only => [:invites]
+	before_filter :member_only, :only => [:favorites, :authenticate, :update, :add_favorite, :delete_favorite]
+	before_filter :privileged_only, :only => [:invites]
   helper :post
   auto_complete_for :user, :name
 
@@ -27,10 +27,12 @@ class UserController < ApplicationController
 	        flash[:notice] = "You are out of invites"
         else
   	      user = User.find(params[:user][:id])
-  	      user.level = User::LEVEL_SPECIAL
+  	      user.level = User::LEVEL_PRIVILEGED
   	      user.invited_by = @current_user.id
-  	      user.save
-  	      @current_user.decrement! :invite_count
+  	      User.transaction do
+    	      user.save!
+    	      @current_user.decrement! :invite_count
+  	      end
   	      flash[:notice] = "You have invited #{user.name}"
 	      end
       end
