@@ -76,12 +76,18 @@ class TagController < ApplicationController
 
     sql_conds << "TRUE" # for the empty case
 
-    @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => [sql_conds.join(" AND "), *sql_params]
-
     respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @tags.to_xml}
-      fmt.js {render :json => @tags.to_json}
+      fmt.html do
+        @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => [sql_conds.join(" AND "), *sql_params]
+      end
+      fmt.xml do
+        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])
+        render :xml => @tags.to_xml
+      end
+      fmt.js do
+        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])
+        render :json => @tags.to_json
+      end
     end
   end
 
