@@ -2,7 +2,7 @@
   <h1>Help: Bookmarklet</h1>
 
   <div class="section">
-    <p>Bookmark the following link: <a href="javascript:var tags=prompt('Tags');if(tags!=null) location.href='http://danbooru.donmai.us/api/add_post?redirect=1&tags='+encodeURIComponent(tags)+'&source='+encodeURIComponent(location.href);">Post to danbooru</a>.</p>
+    <p>Bookmark the following link: <a href="javascript:location.href='http://<%= CONFIG['server_host'] %>/post/upload?url='+encodeURIComponent(location.href);">Post to danbooru</a>.</p>
   
     <div class="section">
       <h4>How to Use</h4>
