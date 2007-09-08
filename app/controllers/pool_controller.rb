@@ -1,6 +1,6 @@
 class PoolController < ApplicationController
 	layout "default"
-	before_filter :member_only, :only => [:create, :destroy]
+	before_filter :member_only, :only => [:create, :destroy, :update]
 	helper :post
 	
 	def index
@@ -26,6 +26,20 @@ class PoolController < ApplicationController
 		@pool = Pool.find(params[:id])
 		@pages, @posts = paginate :posts, :per_page => 24, :order => "pools_posts.sequence", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*"
 	end
+
+  def update
+    @pool = Pool.find(params[:id])
+
+    if request.post?
+      unless @current_user.has_permission?(@pool)
+        access_denied()
+        return
+      end
+    
+      @pool.update_attributes(params[:pool])
+      redirect_to :action => "show", :id => params[:id]
+    end
+  end
 	
 	def create
 		if request.post?
