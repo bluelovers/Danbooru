@@ -19,12 +19,12 @@ class PoolController < ApplicationController
 
   def slideshow
     @pool = Pool.find(params[:id])
-    @posts = Post.find(:all, :order => "pools_posts.sequence", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", @pool.id], :select => "posts.*")
+    @posts = Post.find(:all, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", @pool.id], :select => "posts.*")
   end
 	
 	def show
 		@pool = Pool.find(params[:id])
-		@pages, @posts = paginate :posts, :per_page => 24, :order => "pools_posts.sequence", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*"
+		@pages, @posts = paginate :posts, :per_page => 24, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*"
 	end
 
   def update
