@@ -13,6 +13,7 @@
     <div class="sidebar">
       <%= render :partial => 'search' %>
       <%= render :partial => 'tags' %>
+      <!-- google_ad_section_start(weight=ignore) -->
       <div id="stats">
         <h5>Statistics</h5>
         <ul>
@@ -22,7 +23,6 @@
 					<li>Pools: <%= pool_list(@post) %></li>
         </ul>
       </div>
-      <!-- google_ad_section_start(weight=ignore) -->
       <div>
         <h5>Options</h5>
         <ul>
@@ -65,6 +65,7 @@
 
       <div>
         <%- if @post.image? -%>
+          <!-- google_ad_section_start -->
           <div id="note-container">
             <%- @post.notes.active.each do |note| -%>
               <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
@@ -75,6 +76,7 @@
             <%- end -%>
           </div>
           <%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
+          <!-- google_ad_section_end -->
         <%- elsif @post.flash? -%>
           <object width="<%= @post.width %>" height="<%= @post.height %>">
             <param name="movie" value="<%= @post.file_url %>"/>
@@ -209,7 +211,9 @@
   		<% if @current_user && @current_user.always_resize_images? %>
   			<%= javascript_tag "toggleImageResize()" %>
   		<% end %>
+      <!-- google_ad_section_start -->
       <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
+      <!-- google_ad_section_end -->
     </div>
   <% end %>
 </div>
