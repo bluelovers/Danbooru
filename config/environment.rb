@@ -80,6 +80,12 @@ rescue LoadError
 end
 
 begin
+  require 'scruffy'
+rescue LoadError
+  # do nothing
+end
+
+begin
 	require 'ferret'
 
   if File.exists?("#{RAILS_ROOT}/tmp/ferret")

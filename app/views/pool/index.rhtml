@@ -26,9 +26,4 @@
   </table>
 </div>
 
-<% content_for("footer") do %>
-  <%= link_to "Order by Name", :action => "index", :query => params[:query], :order => "name" %> |
-  <%= link_to "Order by Date", :action => "index", :query => params[:query], :order => "date" %> | 
-<% end %>
-
 <%= render :partial => "footer" %>

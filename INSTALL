@@ -16,6 +16,7 @@ The following dependencies are optional:
 - ragel (required for superredcloth)
 - superredcloth (gem install superredcloth --source=http://code.whytheluckystiff.net)
 - ferret (required for wiki search, gem install ferret)
+- scruffy (required for report graphs, gem install scruffy)
 
 You will need a C compiler to compile the image resizer and some of the extensions. gcc and its variants will work.
 

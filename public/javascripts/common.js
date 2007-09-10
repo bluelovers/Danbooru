@@ -17,5 +17,6 @@ Object.extend(String.prototype, {
 })
 
 function notice(msg) {
+  $('notice').show()
   $('notice').innerHTML = msg
 }

@@ -4,16 +4,10 @@ class PoolController < ApplicationController
 	helper :post
 	
 	def index
-		if params[:order] == "date"
-			order = "updated_at desc"
-		else
-			order = "name"
-		end
-		
 		if params[:query]
-			@pools = Pool.find(:all, :order => order, :conditions => ["lower(name) like ?", "%" + params[:query] + "%"])
+			@pools = Pool.find(:all, :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query] + "%"])
 		else
-			@pools = Pool.find(:all, :order => order)
+			@pools = Pool.find(:all, :order => "updated_at desc")
 		end
 	end
 

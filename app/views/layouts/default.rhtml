@@ -41,11 +41,11 @@
 				<li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
 			<% end %>
 			<li><a href="/static/more">More &raquo;</a></li>
-			<li id="notice"><%= flash[:notice] %></li>
 		</ul>
     <!-- google_ad_section_end -->
 	</div>
-  <div id="long-notice">
+  <div id="notice" style="display: none;">
+    <%= flash[:notice] %>
   </div>
 	<div id="content">
 		<%= @content_for_layout %>

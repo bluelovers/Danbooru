@@ -11,6 +11,9 @@
 	<script src="/javascripts/common.js" type="text/javascript"></script>
 </head>
 <body>
-<%= @content_for_layout %>
+  <div id="notice" style="display: none;">
+    <%= flash[:notice] %>
+  </div>
+  <%= @content_for_layout %>
 </body>
 </html>
