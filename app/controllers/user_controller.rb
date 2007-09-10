@@ -4,7 +4,7 @@ class UserController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
 	before_filter :member_only, :only => [:favorites, :authenticate, :update, :add_favorite, :delete_favorite]
-	before_filter :privileged_only, :only => [:invites]
+	before_filter :privileged_only, :only => [:invites, :show]
   helper :post
   auto_complete_for :user, :name
 
@@ -20,6 +20,10 @@ class UserController < ApplicationController
 	end
 
 	public
+	def show
+	  @user = User.find(params[:id])
+  end
+  
 	def invites
 	  if request.post?
 	    if params[:user]
@@ -58,6 +62,7 @@ class UserController < ApplicationController
     end
 
     respond_to do |fmt|
+      fmt.html
       fmt.xml {render :xml => @users.to_xml}
       fmt.js {render :json => @users.to_json}
     end

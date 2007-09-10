@@ -48,6 +48,32 @@ class User < ActiveRecord::Base
 		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
 	end
 	
+	def similar_users
+	  sql = <<-EOS
+	    SELECT 
+	      f0.user_id,
+	      ((COUNT(*) ^ 2) / (SELECT COUNT(*) FROM favorites WHERE user_id = f0.user_id)) AS relevancy
+	    FROM
+	      favorites f0,
+	      favorites f1
+	    WHERE
+	      f0.post_id = f1.post_id
+	      AND f1.user_id = #{id}
+	      AND f0.user_id <> #{id}
+	      GROUP BY f0.user_id
+	      ORDER BY relevancy DESC
+	      LIMIT 10
+	  EOS
+	  
+	  users = connection.select_all(sql)
+	  sum = users.inject(0) {|sum, x| sum + x["relevancy"].to_f}
+	  users.each do |x|
+      x["relevancy"] = x["relevancy"].to_f / sum
+    end
+    
+    return users
+  end
+	
 	def set_role
 		if User.fast_count == 0
 			self.level = LEVEL_ADMIN

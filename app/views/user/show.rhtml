@@ -1,0 +1,62 @@
+<h2><%= @user.name %></h2>
+
+<table width="100%">
+	<tr>
+		<th width="10%">Joined</th>
+		<td width="90%"><%= @user.created_at.strftime("%c") %></td>
+	</tr>
+	<tr>
+		<th>Posts</th>
+		<td><%= Post.count("user_id = #{@user.id}") %></td>
+	</tr>
+	<tr>
+		<th>Favorites</th>
+		<td><%= Favorite.count("user_id = #{@user.id}") %></td>
+	</tr>
+	<tr>
+		<th>Comments</th>
+		<td><%= Comment.count("user_id = #{@user.id}") %></td>
+	</tr>
+	<tr>
+		<th>Note Edits</th>
+		<td><%= NoteVersion.count("user_id = #{@user.id}") %></td>
+	</tr>
+	<tr>
+		<th>Wiki Edits</th>
+		<td><%= WikiPageVersion.count("user_id = #{@user.id}") %></td>
+	</tr>
+	<tr>
+		<th>Forum Posts</th>
+		<td><%= ForumPost.count("creator_id = #{@user.id}") %></td>
+	</tr>
+</table>
+
+<div style="clear: both;">
+	<h4>Recently Favorited</h4>
+	<%= render :partial => "post/posts", :locals => {:posts => @user.favorites(0, 6)} %>
+</div>
+
+<div style="clear: both;">
+	<h4>Recently Uploaded</h4>
+	<%= render :partial => "post/posts", :locals => {:posts => Post.find(:all, :conditions => ["user_id = #{@user.id}"], :order => "id desc", :limit => 6)} %>
+</div>
+
+<div style="clear: both;">
+	<h4>Similar Users</h4>
+	<table style="width: 20em;">
+		<thead>
+			<tr>
+				<th width="90%">User</th>
+				<th width="10%">Similarity</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @user.similar_users.each do |u| %>
+				<tr class="<%= cycle 'even', 'odd' %>">
+					<td><%= link_to User.find(u["user_id"]).name, :controller => "favorite", :action => "show", :id => u["user_id"] %></td>
+					<td><%= number_to_percentage(100 * u["relevancy"], :precision => 1) %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>

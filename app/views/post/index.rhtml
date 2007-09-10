@@ -51,7 +51,7 @@
       </div>
     <% end %>
 
-    <%= render :partial => 'posts' %>
+    <%= render :partial => "posts", :locals => {:posts => @posts} %>
 
     <div id="paginator">
       <%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>

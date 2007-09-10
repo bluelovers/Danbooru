@@ -1,8 +1,8 @@
 <div>
-	<% if @posts.empty? %>
+	<% if posts.empty? %>
 		<h4>Nobody here but us chickens!</h4>
 	<% else %>
-		<% @posts.each do |post| %>
+		<% posts.each do |post| %>
 			<% unless hide_unsafe_posts? && post.rating != 's' %>
       	<%= print_preview(post, :onclick => "return PostModeMenu.click(#{post.id})", :user => @current_user) %>
 			<% end %>
@@ -10,7 +10,7 @@
 		<script type="text/javascript">
 		// <![CDATA[
 			var posts = {}
-			<% @posts.each do |post| %>
+			<% posts.each do |post| %>
 				posts[<%= post.id %>] = {tags: [<%= post.cached_tags.split(/ /).map {|x| "'" + escape_javascript(x) + "'"}.join(", ") %>]}
 			<% end %>
 		// ]]>
