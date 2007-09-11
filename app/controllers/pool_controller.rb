@@ -53,10 +53,10 @@ class PoolController < ApplicationController
 	end
 	
 	def destroy
+    @pool = Pool.find(params[:id])
+
 		if request.post?
-			@pool = Pool.find(params[:pool_id])
-			
-			if @pool.user_id == @current_user.id
+			if @current_user.has_permission?(@pool)
 				@pool.destroy
 				flash[:notice] = "Pool deleted"
 				redirect_to :action => "index"
@@ -64,8 +64,6 @@ class PoolController < ApplicationController
 				flash[:notice] = "Access denied"
 				redirect_to :action => "index"
 			end
-		else
-			@pools = Pool.find(:all, :conditions => ["user_id = ?", @current_user.id], :order => "name")
 		end
 	end
 	

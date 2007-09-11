@@ -1,10 +1,8 @@
 <h3>Delete Pool</h3>
 
 <% form_tag(:action => "destroy") do %>
-  <select name="pool_id">
-    <%= options_from_collection_for_select @pools, :id, :pretty_name %>
-  </select>
-  <%= submit_tag "Delete" %> <%= button_to_function "Cancel", "history.back()" %>
+  <p>Are you sure you wish to delete "<%= @pool.pretty_name %>"?</p>
+  <%= submit_tag "Confirm" %> <%= button_to_function "Cancel", "history.back()" %>
 <% end %>
 
 <%= render :partial => "footer" %>

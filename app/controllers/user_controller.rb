@@ -58,7 +58,7 @@ class UserController < ApplicationController
     elsif params[:name]
       @users = User.find(:all, :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"], :order => "lower(name)")
     else
-      @users = User.find(:all, :order => "lower(name)")
+      @pages, @users = paginate :users, :order => "id desc", :per_page => 20
     end
 
     respond_to do |fmt|

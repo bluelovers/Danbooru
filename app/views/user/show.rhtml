@@ -32,13 +32,13 @@
 </table>
 
 <div style="clear: both;">
-	<h4>Recently Favorited</h4>
-	<%= render :partial => "post/posts", :locals => {:posts => @user.favorites(0, 6)} %>
+	<h4><%= link_to "Recent Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h4>
+	<%= render :partial => "post/posts", :locals => {:posts => @user.favorites(0, 5)} %>
 </div>
 
 <div style="clear: both;">
-	<h4>Recently Uploaded</h4>
-	<%= render :partial => "post/posts", :locals => {:posts => Post.find(:all, :conditions => ["user_id = #{@user.id}"], :order => "id desc", :limit => 6)} %>
+	<h4><%= link_to "Recent Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
+	<%= render :partial => "post/posts", :locals => {:posts => Post.find(:all, :conditions => ["user_id = #{@user.id}"], :order => "id desc", :limit => 5)} %>
 </div>
 
 <div style="clear: both;">
@@ -53,7 +53,7 @@
 		<tbody>
 			<% @user.similar_users.each do |u| %>
 				<tr class="<%= cycle 'even', 'odd' %>">
-					<td><%= link_to User.find(u["user_id"]).name, :controller => "favorite", :action => "show", :id => u["user_id"] %></td>
+					<td><%= link_to User.find(u["user_id"]).name, :action => "show", :id => u["user_id"] %></td>
 					<td><%= number_to_percentage(100 * u["relevancy"], :precision => 1) %></td>
 				</tr>
 			<% end %>

@@ -47,6 +47,19 @@ class User < ActiveRecord::Base
 	def self.sha1(pass)
 		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
 	end
+
+  def invited_by_ancestors
+    ancestors = []
+    parent = self.invited_by
+
+    while parent != nil
+      parent = User.find(parent)
+      ancestors << parent
+      parent = parent.invited_by
+    end
+
+    return ancestors
+  end
 	
 	def similar_users
 	  sql = <<-EOS
