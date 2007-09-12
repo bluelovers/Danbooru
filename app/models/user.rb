@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
 	  sql = <<-EOS
 	    SELECT 
 	      f0.user_id,
-	      ((COUNT(*) ^ 2) / (SELECT COUNT(*) FROM favorites WHERE user_id = f0.user_id)) AS relevancy
+	      COUNT(*) AS relevancy
 	    FROM
 	      favorites f0,
 	      favorites f1
@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
 	  users.each do |x|
       x["relevancy"] = x["relevancy"].to_f / sum
     end
-    
+
     return users
   end
 	
@@ -122,7 +122,7 @@ class User < ActiveRecord::Base
 	end
 
 	def favorites(offset, limit)
-		Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} ORDER BY p.id DESC OFFSET #{offset} LIMIT #{limit}")
+		Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} ORDER BY f.id DESC OFFSET #{offset} LIMIT #{limit}")
 	end
 
 	def favorites_count

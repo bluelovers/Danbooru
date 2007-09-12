@@ -90,7 +90,7 @@
 
       <div class="space">
         <p id="poster">
-          Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :action => "index", :tags => "user:#{@post.author}" %>
+          Posted on <%= link_to @post.created_at.strftime("%D %I:%M"), :action => "popular_by_day", :month => @post.created_at.month, :day => @post.created_at.day, :year => @post.created_at.year %> by <%= link_to @post.author, :controller => "user", :action => "show", :id => @post.user_id %>
           <%- unless @post.source.blank? -%>
             <%- if @post.source[/^http/] -%>
               (<%= link_to "source", @post.source %>)

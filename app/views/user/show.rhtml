@@ -32,17 +32,17 @@
 </table>
 
 <div style="clear: both;">
-	<h4><%= link_to "Recent Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h4>
+	<h3><%= link_to "Recent Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h3>
 	<%= render :partial => "post/posts", :locals => {:posts => @user.favorites(0, 5)} %>
 </div>
 
-<div style="clear: both;">
-	<h4><%= link_to "Recent Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
+<div style="clear: both; margin-bottom: 2em;">
+	<h3><%= link_to "Recent Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h3>
 	<%= render :partial => "post/posts", :locals => {:posts => Post.find(:all, :conditions => ["user_id = #{@user.id}"], :order => "id desc", :limit => 5)} %>
 </div>
 
-<div style="clear: both;">
-	<h4>Similar Users</h4>
+<div style="clear: both; margin-bottom: 2em;">
+	<h3>Similar Users</h3>
 	<table style="width: 20em;">
 		<thead>
 			<tr>
