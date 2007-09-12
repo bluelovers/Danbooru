@@ -54,7 +54,7 @@
 			<% @user.similar_users.each do |u| %>
 				<tr class="<%= cycle 'even', 'odd' %>">
 					<td><%= link_to User.find(u["user_id"]).name, :action => "show", :id => u["user_id"] %></td>
-					<td><%= number_to_percentage(100 * u["relevancy"], :precision => 1) %></td>
+					<td><%= number_to_percentage(100 * u["similarity"], :precision => 1) %></td>
 				</tr>
 			<% end %>
 		</tbody>

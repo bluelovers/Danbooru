@@ -87,7 +87,7 @@ class User < ActiveRecord::Base
 	  sql = <<-EOS
 	    SELECT 
 	      f0.user_id,
-	      COUNT(*) AS relevancy
+	      COUNT(*) / (SELECT sqrt((SELECT COUNT(*) FROM favorites WHERE user_id = f0.user_id) * (SELECT COUNT(*) FROM favorites WHERE user_id = #{id}))) AS similarity
 	    FROM
 	      favorites f0,
 	      favorites f1
@@ -95,15 +95,15 @@ class User < ActiveRecord::Base
 	      f0.post_id = f1.post_id
 	      AND f1.user_id = #{id}
 	      AND f0.user_id <> #{id}
-	      GROUP BY f0.user_id
-	      ORDER BY relevancy DESC
-	      LIMIT 50
+	    GROUP BY f0.user_id
+	    ORDER BY similarity DESC
+	    LIMIT 50
 	  EOS
 	  
 	  users = connection.select_all(sql)
-	  sum = users.inject(0) {|sum, x| sum + x["relevancy"].to_f}
+	  sum = users.inject(0) {|sum, x| sum + x["similarity"].to_f}
 	  users.each do |x|
-      x["relevancy"] = x["relevancy"].to_f / sum
+      x["similarity"] = x["similarity"].to_f / sum
     end
 
     return users[0, 10]
