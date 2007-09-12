@@ -62,6 +62,8 @@ class User < ActiveRecord::Base
   end
 
   def favorite_tags
+    popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
+
     sql = <<-EOS
       SELECT
         (SELECT name FROM tags WHERE id = pt.tag_id) as tag,
@@ -72,6 +74,7 @@ class User < ActiveRecord::Base
       WHERE
         f.user_id = #{self.id}
         AND f.post_id = pt.post_id
+        AND pt.tag_id NOT IN (#{popular_tags})
       GROUP BY pt.tag_id
       ORDER BY count DESC
       LIMIT 10
