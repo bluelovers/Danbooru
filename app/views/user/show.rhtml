@@ -60,3 +60,23 @@
 		</tbody>
 	</table>
 </div>
+
+<div style="clear: both; margin-bottom: 2em;">
+  <h3>Favorite Tags</h3>
+  <table style="width: 20em;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @user.favorite_tags.each do |tag| %>
+        <tr class="<%= cycle 'even', 'odd' %>">
+          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+          <td><%= tag["count"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

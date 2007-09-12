@@ -60,6 +60,25 @@ class User < ActiveRecord::Base
 
     return ancestors
   end
+
+  def favorite_tags
+    sql = <<-EOS
+      SELECT
+        (SELECT name FROM tags WHERE id = pt.tag_id) as tag,
+        COUNT(*) as count
+      FROM
+        posts_tags pt,
+        favorites f
+      WHERE
+        f.user_id = #{self.id}
+        AND f.post_id = pt.post_id
+      GROUP BY pt.tag_id
+      ORDER BY count DESC
+      LIMIT 10
+    EOS
+    
+    return connection.select_all(sql)
+  end
 	
 	def similar_users
 	  sql = <<-EOS
@@ -75,7 +94,7 @@ class User < ActiveRecord::Base
 	      AND f0.user_id <> #{id}
 	      GROUP BY f0.user_id
 	      ORDER BY relevancy DESC
-	      LIMIT 10
+	      LIMIT 50
 	  EOS
 	  
 	  users = connection.select_all(sql)
@@ -84,7 +103,7 @@ class User < ActiveRecord::Base
       x["relevancy"] = x["relevancy"].to_f / sum
     end
 
-    return users
+    return users[0, 10]
   end
 	
 	def set_role
