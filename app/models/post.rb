@@ -328,6 +328,8 @@ class Post < ActiveRecord::Base
   end
 
   def self.generate_sql(q, options = {})
+    original_query = q
+    
     unless q.is_a?(Hash)
       q = Tag.parse_query(q)
     end
@@ -447,8 +449,14 @@ class Post < ActiveRecord::Base
       conditions << "p.is_rating_locked = FALSE"
     end
 
-    conditions << "TRUE" if conditions.empty?
-
+    if conditions.empty? 
+      if original_query.blank?
+        conditions << "TRUE" 
+      else
+        conditions << "FALSE"
+      end
+    end
+    
     sql = "SELECT "
     
     if options[:count]
