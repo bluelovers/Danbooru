@@ -93,7 +93,7 @@ class WikiController < ApplicationController
 		@page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 		
 		if @page == nil
-			@page = WikiPage.create(:title => params[:title] || params[:wiki_page][:title])
+			@page = WikiPage.create(:title => params[:title] || params[:wiki_page][:title], :body => params[:wiki_page][:body])
 		end
 
 		if @page.is_locked?
