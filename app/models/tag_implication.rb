@@ -26,15 +26,15 @@ class TagImplication < ActiveRecord::Base
 		self.consequent_id = t.id
 	end
 
-	def approve!(user_id, ip_addr)
+	def approve(user_id, ip_addr)
 		transaction do
+			connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{self.id}")
+
 			p = Tag.find(self.predicate_id)
 			implied_tags = self.class.with_implied(p.name).join(" ")
 			Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", p.id])).each do |tag|
 				tag.update_attributes(:tags => tag.cached_tags + " " + implied_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
 			end
-
-			connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{self.id}")
 		end
 	end
 
