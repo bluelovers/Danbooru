@@ -155,7 +155,7 @@
 	    <tbody>
 	      <% @user.uploaded_tags.each do |tag| %>
 	        <tr class="<%= cycle 'even', 'odd' %>">
-	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
 	          <td><%= tag["count"] %></td>
 	        </tr>
 	      <% end %>
@@ -174,7 +174,7 @@
 	    <tbody>
 	      <% @user.uploaded_tags(:type => Tag.types[:artist]).each do |tag| %>
 	        <tr class="<%= cycle 'even', 'odd' %>">
-	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
 	          <td><%= tag["count"] %></td>
 	        </tr>
 	      <% end %>
@@ -193,7 +193,7 @@
 	    <tbody>
 	      <% @user.uploaded_tags(:type => Tag.types[:character]).each do |tag| %>
 	        <tr class="<%= cycle 'even', 'odd' %>">
-	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
 	          <td><%= tag["count"] %></td>
 	        </tr>
 	      <% end %>
@@ -212,7 +212,7 @@
 	    <tbody>
 	      <% @user.uploaded_tags(:type => Tag.types[:copyright]).each do |tag| %>
 	        <tr class="<%= cycle 'even', 'odd' %>">
-	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
 	          <td><%= tag["count"] %></td>
 	        </tr>
 	      <% end %>

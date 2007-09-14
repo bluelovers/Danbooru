@@ -6,6 +6,7 @@
       <th>Name</th>
       <th>Posts</th>
       <th>Favorites</th>
+      <th>Joined</th>
     </tr>
   </thead>
   <tbody>
@@ -19,6 +20,7 @@
         </td>
         <td><%= link_to Post.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
         <td><%= link_to Favorite.count("user_id = #{user.id}"), :controller => "favorite", :action => "show", :id => user.id %></td>
+        <td><span title="<%= user.created_at %>"><%= time_ago_in_words user.created_at %> ago</span></td>
       </tr>
     <% end %>
   </tbody>
