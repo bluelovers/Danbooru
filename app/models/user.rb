@@ -60,27 +60,95 @@ class User < ActiveRecord::Base
 
     return ancestors
   end
-
-  def favorite_tags
+  
+  def uploaded_tags(options = {})
+    type = options[:type]
+    start_date = options[:start_date]
+    end_date = options[:end_date]
     popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
-
-    sql = <<-EOS
-      SELECT
-        (SELECT name FROM tags WHERE id = pt.tag_id) as tag,
-        COUNT(*) as count
-      FROM
-        posts_tags pt,
-        favorites f
-      WHERE
-        f.user_id = #{self.id}
-        AND f.post_id = pt.post_id
-        AND pt.tag_id NOT IN (#{popular_tags})
-      GROUP BY pt.tag_id
-      ORDER BY count DESC
-      LIMIT 10
-    EOS
     
-    return connection.select_all(sql)
+    if start_date && end_date
+      date_sql = "p.created_at BETWEEN ? AND ?"
+      params = [start_date, end_date]
+    else
+      date_sql = ""
+      params = []
+    end
+
+    if type
+      sql = <<-EOS
+        SELECT (SELECT name FROM tags WHERE id = pt.tag_id) AS tag, COUNT(*) AS count
+        FROM posts_tags pt, tags t, posts p
+        WHERE p.user_id = #{self.id}
+        AND p.id = pt.post_id
+        #{date_sql}
+        AND pt.tag_id = t.id
+        AND pt.tag_id NOT IN (#{popular_tags})
+        AND t.tag_type = #{type.to_i}
+        GROUP BY pt.tag_id
+        ORDER BY count DESC
+        LIMIT 10
+      EOS
+    else
+      sql = <<-EOS
+        SELECT (SELECT name FROM tags WHERE id = pt.tag_id) AS tag, COUNT(*) AS count
+        FROM posts_tags pt, posts p
+        WHERE p.user_id = #{self.id}
+        AND p.id = pt.post_id
+        #{date_sql}
+        AND pt.tag_id NOT IN (#{popular_tags})
+        GROUP BY pt.tag_id
+        ORDER BY count DESC
+        LIMIT 10
+      EOS
+    end
+    
+    return connection.select_all(User.sanitize_sql([sql, *params]))
+  end
+
+  def favorite_tags(options = {})
+    type = options[:type]
+    start_date = options[:start_date]
+    end_date = options[:end_date]
+    popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
+    
+    if start_date && end_date
+      date_sql = "f.created_at BETWEEN ? AND ?"
+      params = [start_date, end_date]
+    else
+      date_sql = ""
+      params = []
+    end
+
+    if type
+      sql = <<-EOS
+        SELECT (SELECT name FROM tags WHERE id = pt.tag_id) AS tag, COUNT(*) AS count
+        FROM posts_tags pt, tags t, favorites f
+        WHERE f.user_id = #{self.id}
+        AND f.post_id = pt.post_id
+        #{date_sql}
+        AND pt.tag_id = t.id
+        AND pt.tag_id NOT IN (#{popular_tags})
+        AND t.tag_type = #{type.to_i}
+        GROUP BY pt.tag_id
+        ORDER BY count DESC
+        LIMIT 10
+      EOS
+    else
+      sql = <<-EOS
+        SELECT (SELECT name FROM tags WHERE id = pt.tag_id) AS tag, COUNT(*) AS count
+        FROM posts_tags pt, favorites f
+        WHERE f.user_id = #{self.id}
+        AND f.post_id = pt.post_id
+        #{date_sql}
+        AND pt.tag_id NOT IN (#{popular_tags})
+        GROUP BY pt.tag_id
+        ORDER BY count DESC
+        LIMIT 10
+      EOS
+    end
+    
+    return connection.select_all(User.sanitize_sql([sql, *params]))
   end
 	
 	def similar_users

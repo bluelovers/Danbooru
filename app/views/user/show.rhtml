@@ -43,7 +43,7 @@
 
 <div style="clear: both; margin-bottom: 2em;">
 	<h3>Similar Users</h3>
-	<table style="width: 20em;">
+	<table style="width: 30em;">
 		<thead>
 			<tr>
 				<th width="90%">User</th>
@@ -62,21 +62,161 @@
 </div>
 
 <div style="clear: both; margin-bottom: 2em;">
-  <h3>Favorite Tags</h3>
-  <table style="width: 20em;">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @user.favorite_tags.each do |tag| %>
-        <tr class="<%= cycle 'even', 'odd' %>">
-          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
-          <td><%= tag["count"] %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <h3>Favorite <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-copys')" %></h3>
+
+	<div id="fav-tags">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.favorite_tags.each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+	
+	<div id="fav-artists" style="display: none;">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.favorite_tags(:type => Tag.types[:artist]).each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+	
+	<div id="fav-chars" style="display: none;">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.favorite_tags(:type => Tag.types[:character]).each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+	
+	<div id="fav-copys" style="display: none;">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.favorite_tags(:type => Tag.types[:copyright]).each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+</div>
+
+<div style="clear: both; margin-bottom: 2em;">
+  <h3>Uploaded <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-copys')" %></h3>
+
+	<div id="upload-tags">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.uploaded_tags.each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+	
+	<div id="upload-artists" style="display: none;">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.uploaded_tags(:type => Tag.types[:artist]).each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+	
+	<div id="upload-chars" style="display: none;">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.uploaded_tags(:type => Tag.types[:character]).each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+	
+	<div id="upload-copys" style="display: none;">
+	  <table style="width: 30em;">
+	    <thead>
+	      <tr>
+	        <th width="80%">Name</th>
+	        <th width="20%">Count</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% @user.uploaded_tags(:type => Tag.types[:copyright]).each do |tag| %>
+	        <tr class="<%= cycle 'even', 'odd' %>">
+	          <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
+	          <td><%= tag["count"] %></td>
+	        </tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
 </div>
