@@ -44,9 +44,15 @@
 		</ul>
     <!-- google_ad_section_end -->
 	</div>
-  <div id="notice" style="display: none;">
-    <%= flash[:notice] %>
-  </div>
+  <% if flash[:notice] %>
+    <div id="notice">
+      <%= flash[:notice] %>
+    </div>
+  <% else %>
+    <div id="notice" style="display: none;">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
 	<div id="content">
 		<%= @content_for_layout %>
 	</div>

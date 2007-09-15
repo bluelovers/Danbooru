@@ -39,7 +39,9 @@
           <% if @post.image? && @post.notes.empty? %>
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
-          <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
+          <% if @current_user %>
+            <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
+          <% end %>
           <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
         </ul>
       </div>
