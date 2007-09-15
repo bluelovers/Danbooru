@@ -45,13 +45,9 @@
     <!-- google_ad_section_end -->
 	</div>
   <% if flash[:notice] %>
-    <div id="notice">
-      <%= flash[:notice] %>
-    </div>
+    <div id="notice"><%= flash[:notice] %></div>
   <% else %>
-    <div id="notice" style="display: none;">
-      <%= flash[:notice] %>
-    </div>
+    <div id="notice" style="display: none;"></div>
   <% end %>
 	<div id="content">
 		<%= @content_for_layout %>

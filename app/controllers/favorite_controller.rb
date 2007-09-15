@@ -7,7 +7,7 @@ class FavoriteController < ApplicationController
 	def show
 		@user = User.find(params[:id])
 		set_title "#{@user.name}'s Favorites"
-		@pages, @posts = paginate :posts, :per_page => 24, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
+		@pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
 
 		respond_to do |fmt|
 			fmt.html

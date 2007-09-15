@@ -13,7 +13,7 @@
 					<td><%= file_field "post", "file", :size => 50 %></td>
 				</tr>
 				<tr>
-					<th><%= content_tag "label", "Source", :for => "post_source" %></th>
+					<th><%= content_tag "label", "Download From", :for => "post_source" %></th>
 					<td><%= text_field "post", "source", :value => params["url"], :size => 50 %> <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %></td>
 				</tr>
 				<tr>
