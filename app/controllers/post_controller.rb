@@ -3,7 +3,7 @@ class PostController < ApplicationController
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
   before_filter :member_only, :only => [:destroy]
-  before_filter :privileged_only, :only => [:create, :upload]
+  before_filter :member_only, :only => [:create, :upload]
   before_filter :admin_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
@@ -14,7 +14,7 @@ class PostController < ApplicationController
   helper :wiki, :tag, :comment, :pool, :favorite
 
   def create
-    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip))
+    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :is_pending => !@current_user.privileged?))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -26,7 +26,15 @@ class PostController < ApplicationController
         end
       else
         respond_to do |fmt|
-          fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
+          fmt.html do
+            if @current_user.privileged?
+              flash[:notice] = "Post successfully uploaded"
+              redirect_to(:controller => "post", :action => "show", :id => @post.id)
+            else
+              flash[:notice] = "Your post has been queued for approval"
+              redirect_to(:controller => "post", :action => "upload")
+            end
+          end
           fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
           fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
         end
@@ -37,11 +45,19 @@ class PostController < ApplicationController
 			if p.source.blank? && !@post.source.blank?
 				p.update_attributes(:source => @post.source, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => p.cached_tags + " " + params[:post][:tags])
       else
-        p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :rating => params[:post][:rating])
+        p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
 			end
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id)}
+        fmt.html do
+          flash[:notice] = "That post already exists"
+
+          if @current_user.privileged?
+            redirect_to(:controller => "post", :action => "show", :id => p.id)
+          else
+            redirect_to(:controller => "post", :action => "upload")
+          end
+        end
         fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
       end
@@ -62,8 +78,8 @@ class PostController < ApplicationController
     if request.post?
       @posts = Post.find(:all, :conditions => ["id in (?)", params[:ids].keys])
       @posts.each do |post|
-        if params[:commit] == "Unflag"
-          post.update_attribute(:is_flagged, false)
+        if params[:commit] == "Accept"
+          post.update_attributes(:is_flagged => false, :is_pending => false)
         else
           post.destroy
         end
@@ -71,7 +87,7 @@ class PostController < ApplicationController
 
       redirect_to :action => "moderate"
     else
-      @posts = Post.find(:all, :conditions => "is_flagged = TRUE", :order => "id")
+      @posts = Post.find(:all, :conditions => "is_flagged = TRUE OR is_pending = TRUE", :order => "id")
     end
   end
 

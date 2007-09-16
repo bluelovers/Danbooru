@@ -10,7 +10,7 @@ module LoginSystem
 		end
 	end
 
-	def current_user
+	def set_current_user
 		if @current_user == nil && session[:user_id]
 			@current_user = User.find(session[:user_id])
 		end
@@ -34,8 +34,6 @@ module LoginSystem
 		if @current_user
 			session[:user_id] = @current_user.id
 		end
-
-		return @current_user
 	end
 
 	def member_only

@@ -17,7 +17,7 @@ class Post < ActiveRecord::Base
     after_update :expire_cache_on_update
     after_destroy :expire_cache_on_destroy
   end
-  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_flagged
+  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_flagged, :is_pending
 
   votable
   image_store
@@ -417,6 +417,7 @@ class Post < ActiveRecord::Base
 
     if options[:hide_unsafe_posts]
       conditions << "p.rating = 's'"
+      conditions << "p.is_pending = FALSE"
     end
 
     if q[:rating].is_a?(String)

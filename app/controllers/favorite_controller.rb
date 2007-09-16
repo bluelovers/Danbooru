@@ -7,7 +7,12 @@ class FavoriteController < ApplicationController
 	def show
 		@user = User.find(params[:id])
 		set_title "#{@user.name}'s Favorites"
-		@pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
+		
+		if hide_unsafe_posts?
+		  @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ? AND posts.rating = 's' AND posts.is_pending = FALSE", params["id"]], :select => "posts.*"
+	  else
+		  @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", params["id"]], :select => "posts.*"
+	  end
 
 		respond_to do |fmt|
 			fmt.html

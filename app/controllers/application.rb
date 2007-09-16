@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   
   helper_method :hide_unsafe_posts?
   before_filter :set_title
-  before_filter :current_user
+  before_filter :set_current_user
 
   protected
   def hide_unsafe_posts?
