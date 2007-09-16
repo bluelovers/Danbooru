@@ -1,6 +1,6 @@
 class ApiController < ApplicationController
 	verify :method => :post, :only => :add_post
-  before_filter :privileged_only, :add_post
+  before_filter :privileged_only, :only => :add_post
 
 	def add_post
 		unless params["tags"]
