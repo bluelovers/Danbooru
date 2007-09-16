@@ -7,8 +7,10 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
 	<link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
 	<%= stylesheet_link_tag "default" %>
-	<script src="/javascripts/prototype.js" type="text/javascript"></script>
-	<script src="/javascripts/common.js" type="text/javascript"></script>
+	<%= javascript_include_tag "prototype" %>
+	<%= javascript_include_tag "effects" %>
+	<%= javascript_include_tag "cookie" %>
+	<%= javascript_include_tag "common" %>
 </head>
 <body>
   <% if flash[:notice] %>
