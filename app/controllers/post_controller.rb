@@ -2,9 +2,8 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
-  before_filter :member_only, :only => [:destroy]
-  before_filter :member_only, :only => [:create, :upload]
-  before_filter :admin_only, :only => [:moderate]
+  before_filter :member_only, :only => [:create, :upload, :destroy]
+  before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
   if CONFIG["enable_caching"]
@@ -146,7 +145,7 @@ class PostController < ApplicationController
 
     limit = params[:limit].to_i
     if limit == 0 || limit > 100
-      limit = 15
+      limit = 16
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
