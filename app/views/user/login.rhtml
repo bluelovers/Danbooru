@@ -4,14 +4,14 @@
 	<table class="form">
     <tr>
       <th><label class="block" for="user_name">Name</label></th>
-      <td><%= text_field "user", "name" %></td>
+      <td><%= text_field "user", "name", :tabindex => 1 %></td>
     </tr>
     <tr>
       <th>
         <label class="block" for="user_password">Password</label>
 		    <p>If you've forgotten your password, you can <%= link_to "reset it", :action => "reset_password" %> (provided you gave an email address during signup).</p>
       </th>
-      <td><%= password_field "user", "password" %></td>
+      <td><%= password_field "user", "password", :tabindex => 1 %></td>
     </tr>
     <tr>
       <td colspan="2"><%= submit_tag "Login" %></td>
