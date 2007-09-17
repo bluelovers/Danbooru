@@ -1,11 +1,16 @@
 <h2>Users</h2>
 
+<% form_tag({:action => "index"}, :method => :get) do %>
+	<%= text_field_tag "name", params[:name] %> <%= submit_tag "Search" %>
+<% end %>
+
 <table> 
   <thead>
     <tr>
       <th>Name</th>
       <th>Posts</th>
       <th>Favorites</th>
+			<th>Level</th>
       <th>Joined</th>
     </tr>
   </thead>
@@ -20,6 +25,7 @@
         </td>
         <td><%= link_to Post.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
         <td><%= link_to Favorite.count("user_id = #{user.id}"), :controller => "favorite", :action => "show", :id => user.id %></td>
+				<td><%= user.pretty_level %></td>
         <td><span title="<%= user.created_at %>"><%= time_ago_in_words user.created_at %> ago</span></td>
       </tr>
     <% end %>

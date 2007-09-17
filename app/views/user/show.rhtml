@@ -6,6 +6,10 @@
 		<td width="90%"><%= @user.created_at.strftime("%c") %></td>
 	</tr>
 	<tr>
+		<th>Level</th>
+		<td><%= @user.pretty_level %></td>
+	</tr>
+	<tr>
 		<th>Posts</th>
 		<td><%= Post.count("user_id = #{@user.id}") %></td>
 	</tr>

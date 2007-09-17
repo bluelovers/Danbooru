@@ -56,7 +56,7 @@ class UserController < ApplicationController
     if params[:id]
       @users = [User.find(:first, :conditions => ["id = ?", params[:id]])]
     elsif params[:name]
-      @users = User.find(:all, :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"], :order => "lower(name)")
+      @pages, @users = paginate :users, :order => "lower(name)", :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"]
     else
       @pages, @users = paginate :users, :order => "id desc", :per_page => 20
     end

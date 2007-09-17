@@ -47,6 +47,31 @@ class User < ActiveRecord::Base
 	def self.sha1(pass)
 		Digest::SHA1.hexdigest("#{salt}--#{pass}--")
 	end
+	
+	def pretty_level
+	  case self.level
+    when LEVEL_UNACTIVATED
+      "Unactivated"
+      
+    when LEVEL_BLOCKED
+      "Blocked"
+      
+    when LEVEL_VIEW_ONLY
+      "View Only"
+      
+    when LEVEL_MEMBER
+      "Member"
+      
+    when LEVEL_PRIVILEGED
+      "Privileged"
+      
+    when LEVEL_MOD
+      "Moderator"
+      
+    when LEVEL_ADMIN
+      "Administrator"
+    end
+  end
 
   def invited_by_ancestors
     ancestors = []
