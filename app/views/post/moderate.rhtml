@@ -6,7 +6,8 @@
       <th width="10%">Author</th>
       <th width="10%">Rating</th>
       <th width="10%">Flagged</th>
-      <th width="40%">Pending</th>
+      <th width="10%">Pending</th>
+      <th width="30%">Tags</th>
   	</tr>
     <% @posts.each do |p| %>
     	<tr class="<%= cycle 'even', 'odd' %>">
@@ -16,6 +17,7 @@
         <td><%= p.pretty_rating %></td>
         <td><%= "Yes" if p.is_flagged? %></td>
         <td><%= "Yes" if p.is_pending? %></td>
+        <td><%= p.cached_tags %></td>
     	</tr>
     <% end %>
   	<tr>
