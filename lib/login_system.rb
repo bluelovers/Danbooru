@@ -36,6 +36,15 @@ module LoginSystem
 		end
 	end
 
+  def view_only_only
+    if @current_user && @current_user.view_only?
+      return true
+    else
+      access_denied()
+      return false
+    end
+  end
+
 	def member_only
 		if @current_user && @current_user.member?
 			return true
