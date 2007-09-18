@@ -68,6 +68,7 @@ class WikiController < ApplicationController
 
   def add
     @wiki_page = WikiPage.new
+    @wiki_page.title = params[:title]
   end
 
 	def create
@@ -91,10 +92,6 @@ class WikiController < ApplicationController
 
 	def update
 		@page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
-		
-		if @page == nil
-			@page = WikiPage.create(:title => params[:title] || params[:wiki_page][:title], :body => params[:wiki_page][:body])
-		end
 
 		if @page.is_locked?
 			respond_to do |fmt|
@@ -146,7 +143,11 @@ class WikiController < ApplicationController
     if params[:title] == nil
       render :text => "no title specified"
     else
-      @wiki_page = WikiPage.find_page(params[:title], params[:version]) || WikiPage.new(:title => params[:title])
+      @wiki_page = WikiPage.find_page(params[:title], params[:version])
+
+      if @wiki_page == nil
+        redirect_to :action => "add", :title => params[:title]
+      end
     end
 	end
 
