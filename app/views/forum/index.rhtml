@@ -24,6 +24,10 @@
 	</tbody>
 </table>
 
+<div id="paginator">
+  <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "index"}) %>
+</div>
+
 <div id="footer">
   <%= link_to_function "New topic", "Element.toggle('reply')" %> |
   <%= link_to "Help", :controller => "help", :action => "forum" %>
