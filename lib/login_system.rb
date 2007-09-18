@@ -37,7 +37,7 @@ module LoginSystem
 	end
 
   def view_only_only
-    if @current_user && @current_user.view_only?
+    if @current_user && @current_user.level >= User::LEVEL_VIEW_ONLY
       return true
     else
       access_denied()
