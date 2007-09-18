@@ -76,7 +76,7 @@ class NoteController < ApplicationController
     end
 
     note.attributes = params[:note]
-    note.user_id = @current_user.id rescue nil
+    note.user_id = @current_user.id
     note.ip_addr = request.remote_ip
 
     if note.save

@@ -1,8 +1,8 @@
 
 class Artist < ActiveRecord::Base
-	before_save :normalize
-	after_save :commit_relations
+	before_validation :normalize
 	validates_uniqueness_of :name
+	after_save :commit_relations
 	belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
 
   def self.normalize_url(url)
