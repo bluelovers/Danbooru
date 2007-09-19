@@ -3,7 +3,7 @@ require 'digest/sha2'
 class UserController < ApplicationController
 	layout "default"
 	verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
-	before_filter :member_only, :only => [:favorites, :authenticate, :update, :add_favorite, :delete_favorite]
+	before_filter :member_only, :only => [:favorites, :authenticate, :update]
 	before_filter :privileged_only, :only => [:invites]
   helper :post
   auto_complete_for :user, :name

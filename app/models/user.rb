@@ -3,7 +3,7 @@ require 'digest/sha1'
 class User < ActiveRecord::Base
   class AlreadyFavoritedError < Exception; end
 
-	attr_protected :level
+	attr_protected :level, :name
   attr_accessor :password
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
 	# Users are in one of seven possible roles:
 	LEVEL_UNACTIVATED = -1
 	LEVEL_BLOCKED = 0
-	LEVEL_VIEW_ONLY = 1
+	LEVEL_JAILED = 1
 	LEVEL_MEMBER = 2
 	LEVEL_PRIVILEGED = 3
 	LEVEL_MOD = 10
@@ -56,8 +56,8 @@ class User < ActiveRecord::Base
     when LEVEL_BLOCKED
       "Blocked"
       
-    when LEVEL_VIEW_ONLY
-      "View Only"
+    when LEVEL_JAILED
+      "Jailed"
       
     when LEVEL_MEMBER
       "Member"
@@ -252,8 +252,8 @@ class User < ActiveRecord::Base
 		self.level <= LEVEL_BLOCKED
 	end
 
-	def view_only?
-		self.level == LEVEL_VIEW_ONLY
+	def jailed?
+		self.level == LEVEL_JAILED
 	end
 	
 	def member?

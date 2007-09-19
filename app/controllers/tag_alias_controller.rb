@@ -13,7 +13,13 @@ class TagAliasController < ApplicationController
 
 	def index
 		set_title "Tag Aliases"
-		@pages, @aliases = paginate :tag_aliases, :order => "is_pending DESC, name", :per_page => 50
+		
+		if params[:query]
+		  name = "%" + params[:query].to_escaped_for_sql_like + "%"
+		  @pages, @aliases = paginate :tag_aliases, :order => "is_pending DESC, name", :per_page => 50, :conditions => ["name LIKE ? ESCAPE '\\\\' OR alias_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\')", name, name]
+	  else
+		  @pages, @aliases = paginate :tag_aliases, :order => "is_pending DESC, name", :per_page => 50
+	  end
 
     respond_to do |fmt|
       fmt.html
