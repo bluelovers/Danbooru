@@ -17,10 +17,9 @@ module ApplicationHelper
   end
 
   def id_to_color(id)
-    crc = Zlib.crc32(id.to_s)
-    r = crc % 255
-    g = (crc >> 8) % 255
-    b = (crc >> 16) % 255
+    r = id % 255
+    g = (id >> 8) % 255
+    b = (id >> 16) % 255
     "rgb(#{r}, #{g}, #{b})"
   end
 

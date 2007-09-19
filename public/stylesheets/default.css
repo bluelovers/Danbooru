@@ -613,6 +613,10 @@ div#post-popular h1 {
   margin-bottom: 1em;
 }
 
+div#post-tag-history tbody tr:hover {
+  background: #FFD;
+}
+
 div#post-tag-history li {
   list-style-type: none;
   margin: 0;
