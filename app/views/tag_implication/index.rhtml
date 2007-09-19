@@ -1,19 +1,5 @@
-<% form_tag(:action => "create") do %>
-	<p>You can suggest a new implication, but they must be approved by an administrator before they are activated.</p>	
-	<p>The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.</p>
-	<table>
-		<tr>
-			<th><label for="tag_implication_predicate">Predicate</label></th>
-			<td><%= text_field "tag_implication", "predicate", :size => 40 %></td>
-		</tr>
-		<tr>
-			<th><label for="tag_implication_consequent">Consequent</label></th>
-			<td><%= text_field "tag_implication", "consequent", :size => 40 %></td>
-		</tr>
-		<tr>
-			<td colspan="2"><%= submit_tag "Submit" %></td>
-		</tr>
-	</table>
+<% form_tag({:action => "index"}, :method => :get) do %>
+	<%= text_field_tag "query", params[:query] %> <%= submit_tag "Search" %>
 <% end %>
 
 <% form_tag(:action => "update") do %>
@@ -45,5 +31,9 @@
 <div id="paginator">
 	<%= custom_pagination_links(@pages, :params => {:controller => "tag_implication", :action => "index"}) %>
 </div>
+
+<% content_for("footer") do %>
+	<p><%= link_to "Add Implication", :action => "add" %>
+<% end %>
 
 <%= render :partial => "/tag/footer" %>

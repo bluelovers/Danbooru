@@ -31,7 +31,13 @@ class TagImplicationController < ApplicationController
 
 	def index
 		set_title "Tag Implications"
-		@pages, @implications = paginate :tag_implications, :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50
+		
+		if params[:query]
+		  name = "%" + params[:query].to_escaped_for_sql_like + "%"
+		  @pages, @implications = paginate :tag_implications, :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50, :conditions => ["predicate_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\') OR consequent_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\')", name, name]
+	  else
+		  @pages, @implications = paginate :tag_implications, :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50
+	  end
 
     respond_to do |fmt|
       fmt.html
