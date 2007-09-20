@@ -84,7 +84,9 @@ class UserController < ApplicationController
 	end
 
 	def create
-		user = User.create(params[:user])
+		user = User.new(params[:user])
+    user.name = params[:user][:name]
+    user.save
 
 		if user.errors.empty?
 			save_cookies(user)

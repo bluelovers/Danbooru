@@ -25,9 +25,9 @@ class ApplicationController < ActionController::Base
 
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
-      tags = params[:tags] || params[:post][:tags]
-      prev_tags = cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|amb|artist):/, "").scan(/\S+/)[0..40].uniq.sort.join(" ")
-      cookies["recent_tags"] = {:value => (tags + " " + prev_tags), :expires => 1.year.from_now}
+      tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).scan(/\S+/))
+      tags += cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|amb|artist):/, "").scan(/\S+/)
+      cookies["recent_tags"] = {:value => tags.slice(0, 30).join(" "), :expires => 1.year.from_now}
     end
   end
   
