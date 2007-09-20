@@ -1,5 +1,8 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-first:
+nishieda:
   id: 1
-another:
-  id: 2
+  created_at: 2007-01-01
+  updated_at: 2007-01-01
+  url_a: http://nishieda.com
+  url_b: http://nishieda.com/images/image.jpg
+  name: nishieda
+  updater_id: 1

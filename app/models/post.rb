@@ -19,7 +19,6 @@ class Post < ActiveRecord::Base
   end
   attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_flagged, :is_pending
 
-  votable
   image_store
   has_and_belongs_to_many :tags, :order => "name"
   has_many :comments, :order => "id"

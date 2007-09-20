@@ -1,4 +1,3 @@
-
 class Artist < ActiveRecord::Base
 	before_validation :normalize
 	validates_uniqueness_of :name

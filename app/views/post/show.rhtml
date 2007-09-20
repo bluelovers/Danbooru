@@ -18,7 +18,7 @@
         <h5>Statistics</h5>
         <ul>
           <li>Rating: <%= @post.pretty_rating %></li>
-          <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
+          <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span></li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
 					<li>Pools: <%= pool_list(@post) %></li>
         </ul>
