@@ -1,0 +1,19 @@
+<div class="post">
+	<div class="author">
+		<h6 class="author"><%= comment.author %></h6>
+		<%= content_tag :span, "Posted #{time_ago_in_words(comment.created_at)} ago", :class => "date", :title => "Posted at #{comment.created_at.strftime('%c')}" %>
+	</div>
+	<div class="content">
+		<div class="body">
+			<%= format_text(h(comment.body), :mode => :comment) %>
+		</div>
+		<div class="footer">
+			<%= link_to_function "Respond", "$('reply-#{comment.post_id}').show(); $('reply-text-#{comment.post_id}').value = '&gt;&gt;#{comment.id}\\n'" %>
+			<% if @current_user && @current_user.has_permission?(comment) %>
+				| <%= link_to "Delete", {:action => "destroy", :id => comment.id}, :confirm => "Are you sure you want to delete this comment?", :method => :post %>
+			<% else %>
+				| <%= link_to_function "Flag for deletion", "Comment.flag(#{comment.id})" %>
+			<% end %>
+		</div>
+	</div>
+</div>

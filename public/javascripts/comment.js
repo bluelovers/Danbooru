@@ -1,7 +1,7 @@
 Comment = {}
 
-Comment.mark_as_spam = function(id) {
-  notice("Marking comment as spam...")
+Comment.flag = function(id) {
+  notice("Flagging comment for deletion...")
 
   new Ajax.Request("/comment/mark_as_spam.js/", {
     asynchronous: true,
@@ -10,7 +10,7 @@ Comment.mark_as_spam = function(id) {
     onComplete: function(req) {
       var resp = eval("(" + req.responseText + ")")
       if (resp["success"]) {
-        notice("Comment #" + id + " marked as spam");
+        notice("Comment flagged for deletion");
       } else {
         notice("Error: " + resp["reason"]);
       }
