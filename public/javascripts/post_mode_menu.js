@@ -27,6 +27,10 @@ PostModeMenu.change = function() {
     document.body.style.background = "#6F6"
   } else if (s == "rating-e") {
     document.body.style.background = "#F66"
+  } else if (s == "vote-down") {
+    document.body.style.background = "#FAA"
+  } else if (s == "vote-up") {
+    document.body.style.background = "#AFA"
   } else if (s == "lock-rating") {
     document.body.style.background = "#AA3"
   } else if (s == "lock-note") {
@@ -68,6 +72,10 @@ PostModeMenu.click = function(post_id) {
 
     newTags = newTags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
     Post.update(post_id, 'post[tags]=' + newTags.join(' '))
+  } else if (s.value == 'vote-down') {
+    Post.vote(-1, post_id)
+  } else if (s.value == 'vote-up') {
+    Post.vote(1, post_id)
   } else if (s.value == 'rating-q') {
     Post.update(post_id, 'post[rating]=questionable')
   } else if (s.value == 'rating-s') {

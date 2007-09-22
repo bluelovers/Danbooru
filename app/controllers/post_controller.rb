@@ -1,7 +1,7 @@
 class PostController < ApplicationController
   layout 'default'
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags]
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote]
   before_filter :member_only, :only => [:create, :upload, :destroy]
   before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
@@ -301,6 +301,34 @@ class PostController < ApplicationController
       fmt.html
       fmt.xml {render :xml => @users.to_xml}
       fmt.js {render :json => @users.to_json}
+    end
+  end
+
+  def vote
+    p = Post.find(params[:id])
+    score = params[:score].to_i
+
+    unless score == 1 || score == -1
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id])}
+        fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml(:root => "response"), :status => 409}
+        fmt.js {render :json => {:success => false, :reason => "invalid score"}.to_json, :status => 409}
+      end
+      return
+    end
+
+    if p.vote!(score, request.remote_ip)
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Vote saved"; redirect_to(:action => "show", :id => params[:id])}
+        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => p.id}.to_xml(:root => "response")}
+        fmt.js {render :json => {:success => true, :score => p.score, :post_id => p.id}.to_json}
+      end
+    else
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:action => "show", :id => params[:id])}
+        fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml(:root => "response"), :status => 409}
+        fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
+      end
     end
   end
 

@@ -13,12 +13,17 @@
           <option value="view">View Posts</option>
           <option value="edit">Edit Posts</option>
           <option value="fav">Add to Favorites</option>
+          <option value="vote-up">Vote Up</option>
+          <option value="vote-down">Vote Down</option>
           <option value="rating-s">Rate Safe</option>
           <option value="rating-q">Rate Questionable</option>
           <option value="rating-e">Rate Explicit</option>
           <option value="lock-rating">Lock Rating</option>
           <option value="lock-note">Lock Notes</option>
           <option value="flag">Flag Post</option>
+          <% if @current_user && session[:previous_pool_id] %>
+            <option value="add-to-pool">Add to Previous Pool</option>
+          <% end %>
           <option value="edit-tag-script">Edit Tag Script</option>
           <option value="apply-tag-script">Apply Tag Script</option>
         </select>
