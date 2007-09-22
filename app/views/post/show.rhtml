@@ -26,6 +26,13 @@
       <div>
         <h5>Options</h5>
         <ul>
+          <li><%= link_to "Edit", "#edit", :onclick => "Element.toggle('edit')" %></li>
+          <% if @post.prev_post_id %>
+            <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %></li>
+          <% end %>
+          <% if @post.next_post_id %>
+            <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %></li>
+          <% end %>
           <li>
             <% if @current_user && @current_user.id == @post.user_id %>
               <%= link_to "Delete", :action => "delete", :id => @post.id %>
@@ -43,6 +50,9 @@
             <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
           <% end %>
           <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
+					<% if @post.is_pending? && @current_user && @current_user.mod? %>
+						<li><%= link_to_function "Approve", "Post.update(#{@post.id}, 'post[is_pending]=0')" %></li>
+					<% end %>
         </ul>
       </div>
       <div>
@@ -114,20 +124,9 @@
           Note.show()
         //]]>
         </script>
-
-        <p id="post_menu">
-          <%= link_to_function "Edit", "Element.toggle('edit')" %>
-          <% if @post.prev_post_id %>
-            <strong class="divider">|</strong>
-            <%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %>
-          <% end %>
-          <% if @post.next_post_id %>
-            <strong class="divider">|</strong>
-            <%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %>
-          <% end %>
-        </p>
       </div>
       <!-- google_ad_section_start(weight=ignore) -->
+			<a name="edit"></a>
       <div id="edit">
         <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
           <table class="form">
