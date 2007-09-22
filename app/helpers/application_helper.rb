@@ -1,5 +1,26 @@
 # The methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  def format_text(text)
+    text = auto_link(simple_format(text))
+    
+    text = text.gsub(/post #(\d+)/i) do
+      number = $1.to_i
+      link_to "post ##{number}", :controller => "post", :action => "show", :id => number
+    end
+    
+    text = text.gsub(/comment #(\d+)/i) do
+      number = $1.to_i
+      link_to "comment ##{number}", :controller => "comment", :action => "show", :id => number
+    end
+    
+    text = text.gsub(/forum #(\d+)/i) do
+      number = $1.to_i
+      link_to "forum ##{number}", :controller => "forum", :action => "show", :id => number
+    end
+    
+    return text
+  end
+  
   def textilize(text)
     if text.blank?
       return ""
