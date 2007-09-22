@@ -14,6 +14,8 @@
 			<%= text_area "comment", "body", :rows => 4, :id => "rtxt#{post_id}" %>
 			<%= submit_tag "Post" %>
 			<%= submit_tag "Post as Anonymous" %>
+			<%= check_box_tag "comment[do_not_bump_post]", "1", false, :id => "comment_#{post_id}_do_not_bump_post" %> 
+			<%= content_tag "label", "Don't bump this post", :for => "comment_#{post_id}_do_not_bump_post" %>
 		<% end %>
 	</div>
 <% end %>

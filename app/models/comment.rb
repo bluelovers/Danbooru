@@ -4,8 +4,11 @@ class Comment < ActiveRecord::Base
 	belongs_to :user
 	after_save :update_last_commented_at
   after_destroy :update_last_commented_at
+  attr_accessor :do_not_bump_post
 
 	def update_last_commented_at
+	  return if self.do_not_bump_post == "1"
+	  
     comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{self.post_id}").to_i
 
     if comment_count < CONFIG["comment_threshold"]
