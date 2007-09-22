@@ -81,7 +81,7 @@ class ForumController < ApplicationController
 
 	def show
 		@forum_post = ForumPost.find(params[:id])
-		@pages, @children = paginate :forum_posts, :order => "id", :per_page => 20, :conditions => ["parent_id = ?", params[:id]]
+		@pages, @children = paginate :forum_posts, :order => "id", :per_page => 10, :conditions => ["parent_id = ?", params[:id]]
 
 		if @current_user != nil
 			@current_user.update_forum_view(@forum_post.id)
