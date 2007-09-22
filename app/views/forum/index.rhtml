@@ -14,7 +14,7 @@
 				<% if (@current_user && fp.updated?(@current_user.id)) || (fp.is_sticky?) %>
 					<td><strong><%= link_to fp.title, :action => "show", :id => fp.id %></strong></td>
 				<% else %>
-					<td><%= link_to fp.title, :action => "show", :id => fp.id %></td>
+					<td><%= link_to fp.title, :action => "show", :id => fp.id %> <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.children_count / 2.0).ceil}, :class => "last-page" %></td>
 				<% end %>
 				<td><%= fp.author %></td>
 				<td><%= time_ago_in_words(fp.updated_at) %> ago by <%= fp.last_updater %></td>

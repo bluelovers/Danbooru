@@ -1,9 +1,15 @@
 <div id="forum">
-	<%= render :partial => "post", :locals => {:post => @forum_post} %>
+	<% unless params[:page].to_i > 1 %>
+		<%= render :partial => "post", :locals => {:post => @forum_post} %>
+	<% end %>
 
-	<% @forum_post.children.each do |c| %>
+	<% @children.each do |c| %>
 		<%= render :partial => "post", :locals => {:post => c} %>
 	<% end %>
+
+	<div id="paginator">
+	  <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "show", :id => params[:id]}) %>
+	</div>
 
   <div id="footer">
     <%= link_to_function "Respond", "Element.toggle('reply')" %> |

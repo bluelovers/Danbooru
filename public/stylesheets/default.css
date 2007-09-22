@@ -67,6 +67,10 @@ a:active {
   text-decoration: none;
 }
 
+a.last-page {
+  color: #CCC;
+}
+
 a.spoilers {
   color: black;
   background: black;

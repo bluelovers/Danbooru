@@ -24,6 +24,7 @@
           | <%= link_to "Stick", {:action => "stick", :id => post.id}, :method => :post %>
         <% end %>
       <% end %>
+			| <%= link_to_function "Quote", "$('reply').show(); $('forum_post_body').value = 'forum ##{post.id}:\\n'" %>
 		</div>
 	</div>
 </div>
