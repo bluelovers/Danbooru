@@ -1,21 +1,29 @@
 # The methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  def format_text(text)
+  def format_text(text, options = {})
     text = auto_link(simple_format(text))
     
     text = text.gsub(/post #(\d+)/i) do
-      number = $1.to_i
-      link_to "post ##{number}", :controller => "post", :action => "show", :id => number
+      id = $1.to_i
+      link_to "post ##{id}", :controller => "post", :action => "show", :id => id
     end
     
     text = text.gsub(/comment #(\d+)/i) do
-      number = $1.to_i
-      link_to "comment ##{number}", :controller => "comment", :action => "show", :id => number
+      id = $1.to_i
+      link_to "comment ##{id}", :controller => "comment", :action => "show", :id => id
     end
     
     text = text.gsub(/forum #(\d+)/i) do
-      number = $1.to_i
-      link_to "forum ##{number}", :controller => "forum", :action => "show", :id => number
+      id = $1.to_i
+      link_to "forum ##{id}", :controller => "forum", :action => "show", :id => id
+    end
+    
+    if options[:mode] == :comment
+      text = text.gsub(/&gt;&gt;(\d+)/) do
+  		  id = $1
+  			content_tag("div", link_to("&gt;&gt;#{id}", :controller => "comment", :action => "show", :id => id))
+  		end
+  		text = text.gsub(/&lt;(?:s|spoilers|spoiler)&gt;(.+?)&lt;\/(?:s|spoilers|spoiler)&gt;/, '<a href="#" class="spoilers">\1</a>')
     end
     
     return text

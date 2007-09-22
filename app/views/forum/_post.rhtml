@@ -3,7 +3,7 @@
 		<h6 class="author"><%= post.author %></h6>
 		<span class="date">Posted <%= time_ago_in_words post.created_at %> ago</span>
 	</div>
-	<div class="post-content">
+	<div class="content">
 		<% if post.parent? %>
 			<h6><%= post.title %></h6>
 		<% else %>
@@ -24,7 +24,7 @@
           | <%= link_to "Stick", {:action => "stick", :id => post.id}, :method => :post %>
         <% end %>
       <% end %>
-			| <%= link_to_function "Quote", "$('reply').show(); $('forum_post_body').value = 'forum ##{post.id}:\\n'" %>
+			| <%= link_to_function "Respond", "$('reply').show(); $('forum_post_body').value = 'forum ##{post.id}:\\n'" %>
 		</div>
 	</div>
 </div>

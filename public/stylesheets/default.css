@@ -197,9 +197,6 @@ div#header {
   margin-bottom: 1em;
 }
 
-div#content {
-}
-
 div#footer {
   margin-top: 1em;
   text-align: center;
@@ -242,48 +239,7 @@ span.thumb {
   vertical-align: middle;
 }
 
-.hidden-comment {
-  background-color: #CCC;
-}
-
-.ignored-comment {
-  background-color: #FEE;
-}
-
-.good-comment {
-  background-color: #EFE;
-}
-
-.ignored-post {
-  background-color: #FEE;
-}
-
 span.date {
-  color: #AAA;
-}
-
-span.comment-info {
-  font-size: 120%;
-}
-
-span.comment-info a {
-  color: #AAA;
-}
-
-span.comment-info a:hover {
-  color: #33CFFF;
-}
-
-a.comment-link:link, a.comment-link:visited {
-  color: black;
-  font-weight: bold;
-}
-
-a.resp-link {
-  font-weight: bold;
-}
-
-span.post-count {
   color: #AAA;
 }
 
@@ -402,16 +358,6 @@ div#user-stats div {
 
 div#user-stats ul {
   margin-top: 2em;
-}
-
-div.comment-quote {
-  padding: 0 1em;
-  margin: 0;
-  background: #EEE;
-}
-
-div.comment-quote div.comment-quote {
-  background: #DDD;
 }
 
 div#comment-list div.col1 {
@@ -682,38 +628,39 @@ div#forum > table th:first-child {
   text-align: left;
 }
 
-div#forum > div.post {
+div.response-list > div.post {
   margin-bottom: 2em;
   float: left;
   clear: both;
 }
 
-div#forum > div.post div.author {
+div.response-list > div.post > div.author {
   float: left;
   width: 10em;
   padding-right: 2em;
 }
 
-div#forum > div.post div.author h6.author {
+div.response-list > div.post > div.author > h6.author {
   font-size: 1.3em;
 }
 
-div#forum > div.post div.post-content {
-  padding-left: 2em;
+div.response-list > div.post > div.content {
   float: left;
+  width: 30em;
+  padding-left: 2em;
   min-height: 4em;
 }
 
-div#forum > div.post div.footer {
+div.response-list > div.post > div.content > div.footer {
   margin-top: 1em;
   color: #CCC;
 }
 
-div#forum > div.post div.footer a {
+div.response-list > div.post > div.content > div.footer a {
   color: #666;
 }
 
-div#forum > div.post div.body {
+div.response-list > div.post > div.content > div.body {
   width: 40em;
 }
 
