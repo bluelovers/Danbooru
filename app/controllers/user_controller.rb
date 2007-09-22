@@ -53,13 +53,41 @@ class UserController < ApplicationController
 	end
 
   def index
-    if params[:id]
-      @users = [User.find(:first, :conditions => ["id = ?", params[:id]])]
-    elsif params[:name]
-      @pages, @users = paginate :users, :order => "lower(name)", :conditions => ["name ilike ? escape '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"]
-    else
-      @pages, @users = paginate :users, :order => "id desc", :per_page => 20
+    conds = []
+    cond_params = []
+    
+    if params[:name]
+      conds << "name ilike ? escape '\\\\'"
+      cond_params << "%" + params[:name].to_escaped_for_sql_like + "%"
     end
+    
+    if params[:id]
+      conds << "id = ?"
+      cond_params << params[:id]
+    end
+    
+    if params[:level] && params[:level] != "any"
+      conds << "level = ?"
+      cond_params << params[:level]
+    end
+    
+    order = case params[:order]
+    when "name"
+      "lower(name)"
+      
+    when "posts"
+      "(select count(*) from posts where user_id = users.id) desc"
+      
+    when "favorites"
+      "(select count(*) from favorites where user_id = users.id) desc"
+      
+    else
+      "created_at desc"
+    end
+    
+    conds << "true" if conds.empty?
+
+    @pages, @users = paginate :users, :order => order, :conditions => [conds.join(" and "), *cond_params], :per_page => 20
 
     respond_to do |fmt|
       fmt.html
