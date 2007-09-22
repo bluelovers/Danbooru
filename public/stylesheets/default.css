@@ -775,3 +775,6 @@ span.tag-list a {
   margin-right: 1em;
 }
 
+span.post-count {
+  color: #AAA;
+}
