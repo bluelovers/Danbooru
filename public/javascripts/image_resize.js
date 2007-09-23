@@ -19,3 +19,4 @@ function toggleImageResize() {
     img.height = img.original_height;
   }
 }
+

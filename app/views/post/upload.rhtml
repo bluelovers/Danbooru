@@ -2,12 +2,18 @@
   <script type="text/javascript" src="/javascripts/related_tags.js"></script>
 	<% form_tag({:controller => "post", :action => "create"}, :multipart => true) do %>
 		<div id="posts">
+			<% if params[:url] %>
+				<%= image_tag(params["url"], :title => "Preview", :id => "image") %>
+				<script type="text/javascript">
+					if ($("image").height > 400) {
+						var ratio = 400.0 / $("image").height
+						$("image").width = $("image").width * ratio
+						$("height") = $("image").height * ratio
+					}
+				</script>
+			<% end %>
+
 			<table class="form">
-				<% if params[:url] %>
-					<tr>
-						<td colspan="2"><%= image_tag(params["url"], :title => "Preview") %></td>
-					</tr>
-				<% end %>
 				<tr>
 					<th><%= content_tag "label", "File", :for => "post_file" %></th>
 					<td><%= file_field "post", "file", :size => 50, :tabindex => 1 %></td>

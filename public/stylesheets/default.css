@@ -437,15 +437,8 @@ div#post-view div.note-body {
   overflow: auto;
 }
 
-div#post-view div#edit-box textarea {
-  width: 90%;
-}
-
-div#post-view div#edit-box {
-  position: absolute;
-  z-index: 100;
-  background: #FFE;
-  border: 1px solid black;
+div#post-view div#edit {
+  margin-bottom: 2em;
   padding: 1em;
 }
 
@@ -455,10 +448,6 @@ div#post-view p {
 
 div#post-view span.radio {
   margin-right: 1em;
-}
-
-div#post-view div.comment {
-  margin-bottom: 1em;
 }
 
 div#tag-list {
@@ -718,6 +707,10 @@ div.help div.code {
 
 a.code {
   font-family: monospace;
+}
+
+table.form {
+  width: 70em;
 }
 
 table.form th {
