@@ -39,7 +39,7 @@
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
           <li>
-            <% if @current_user.has_permission?(@post) %>
+            <% if @current_user && @current_user.has_permission?(@post) %>
               <%= link_to "Delete", :action => "delete", :id => @post.id %>
             <% else %>
               <%= link_to_function "Flag for deletion", "Post.update(#{@post.id}, 'post[is_flagged]=1')" %>
