@@ -81,6 +81,9 @@ class UserController < ApplicationController
     when "favorites"
       "(select count(*) from favorites where user_id = users.id) desc"
       
+    when "notes"
+      "(select count(*) from note_versions where user_id = users.id) desc"
+      
     else
       "created_at desc"
     end
