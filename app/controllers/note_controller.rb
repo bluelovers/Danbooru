@@ -71,7 +71,7 @@ class NoteController < ApplicationController
     end
 
     if note.locked?
-      render :text => "This post is locked and notes cannot be altered.", :status => 500
+      render :json => {:success => false, :reason => "post is locked"}.to_json, :status => 500
       return
     end
 
@@ -80,7 +80,7 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save
-      render :json => {:new_id => note.id, :old_id => params[:id].to_i, :formatted_body => note.formatted_body}.to_json
+      render :json => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => note.formatted_body}.to_json
     else
       render_error(note)
     end

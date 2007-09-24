@@ -339,6 +339,10 @@ Note.prototype = {
 			asynchronous: true,
 			method: 'post',
 			parameters: params.join("&"),
+			onFailure: function(req) {
+			  var response = eval("(" + req.responseText + ")")
+			  notice("Error: " + response.reason)
+			},
 			onSuccess: function(req) {
 				notice("Note saved")
 				var response = eval("(" + req.responseText + ")")
