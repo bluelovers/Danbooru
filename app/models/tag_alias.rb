@@ -20,9 +20,8 @@ class TagAlias < ActiveRecord::Base
     transaction do
       connection.execute("UPDATE tag_aliases SET is_pending = FALSE WHERE id = #{self.id}")
 
-      t = Tag.find_by_name(self.name)
-      Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", t.id])).each do |post|
-        post.update_attributes(:tags => tag.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
+      Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = (SELECT id FROM tags WHERE name = ?))", self.name])).each do |post|
+        post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
       end
     end
   end
