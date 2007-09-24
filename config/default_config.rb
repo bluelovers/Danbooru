@@ -20,9 +20,6 @@ CONFIG["enable_turbo_mode"] = false
 # Set to true to allow new account signups.
 CONFIG["enable_signups"] = true
 
-# Set to true to link to the Danbooru Trac on the navigation bar.
-CONFIG["enable_trac_link"] = false
-
 # Enable this if you want unsafe posts to be hidden from unprivileged members
 # and anonymous visitors.
 CONFIG["hide_unsafe_posts"] = false

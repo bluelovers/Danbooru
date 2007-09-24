@@ -34,9 +34,6 @@
       <% else %>
         <li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
       <% end %>
-      <% if CONFIG["enable_trac_link"] %>
-        <li><a href="http://cart.donmai.us">Trac</a></li>
-      <% end %>
       <li><%= link_to "Help", :controller => "help", :action => "index" %></li>
       <% if @current_user && @current_user.admin? %>
         <li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
