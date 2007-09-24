@@ -235,13 +235,35 @@ class User < ActiveRecord::Base
       end
     end
   end
-
-  def favorites(offset, limit)
-    Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} ORDER BY f.id DESC OFFSET #{offset} LIMIT #{limit}")
+  
+  def uploaded_posts(offset, limit, options = {})
+    extra_sql = ""
+    
+    if options[:hide_unsafe_posts]
+      extra_sql = "AND p.is_pending = FALSE AND p.rating = 's'"
+    end
+    
+    Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} #{extra_sql} ORDER BY p.id DESC OFFSET #{offset} LIMIT #{limit}")
   end
 
-  def favorites_count
-    Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id}")
+  def favorite_posts(offset, limit, options = {})
+    extra_sql = ""
+    
+    if options[:hide_unsafe_posts]
+      extra_sql = "AND p.is_pending = FALSE AND p.rating = 's'"
+    end
+    
+    Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql} ORDER BY f.id DESC OFFSET #{offset} LIMIT #{limit}")
+  end
+
+  def favorite_post_count(options = {})
+    extra_sql = ""
+    
+    if options[:hide_unsafe_posts]
+      extra_sql = "AND p.is_pending = FALSE AND p.rating = 's'"
+    end
+    
+    Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql}")
   end
 
   def activated?
