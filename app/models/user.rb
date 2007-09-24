@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   LEVEL_ADMIN = 20
 
   # Please change the salt to something else, every application should use a different one
-  @@salt = 'choujin-steiner'
+  @@salt = CONFIG["password_salt"]
   cattr_accessor :salt
 
   def self.fast_count

@@ -9,6 +9,9 @@ CONFIG["default_guest_name"] = "Anonymous"
 # Set to true to require an e-mail address to register.
 CONFIG["enable_account_email_validation"] = false
 
+# This is a salt used to make dictionary attacks on account passwords harder.
+CONFIG["password_salt"] = "choujin-steiner"
+
 # Enabling this disables: tag type lookup, intersecting related tag search,
 # and forum update notices. It also sets the minimum related tag cache duration
 # to 8 hours.

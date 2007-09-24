@@ -69,7 +69,7 @@ class Note < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-    {:id => id, created_at => created_at, :updated_at => updated_at, :creator_id => user_id, :x => x, :y => y, :width => width, :height => height, :is_active => is_active, :post_id => post_id, :body => body, :version => version}.to_xml(options.merge(:root => "note"))
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :creator_id => user_id, :x => x, :y => y, :width => width, :height => height, :is_active => is_active, :post_id => post_id, :body => body, :version => version}.to_xml(options.merge(:root => "note"))
   end
 
   def to_json(options = {})
