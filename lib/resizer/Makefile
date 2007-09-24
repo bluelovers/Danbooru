@@ -1,2 +1,2 @@
 resizer:
-	gcc -Wall -lgd resizer.c -O2 -o resizer
+	gcc -Wall resizer.c -lgd -ljpeg -lpng -O2 -o resizer
