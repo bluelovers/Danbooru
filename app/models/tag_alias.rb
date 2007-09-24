@@ -16,18 +16,15 @@ class TagAlias < ActiveRecord::Base
     self.alias_id = tag.id
   end
 
-  def approve!
-    n = Tag.find_or_create_by_name(self.name)
-    a = Tag.find(self.alias_id)
-
+  def approve(user_id, ip_addr)
     transaction do
-      connection.execute(Tag.sanitize_sql(["DELETE FROM posts_tags WHERE tag_id = ? AND post_id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", n.id, a.id]))
-      connection.execute(Tag.sanitize_sql(["UPDATE posts_tags SET tag_id = ? WHERE tag_id = ?", a.id, n.id]))
-      connection.execute(Tag.sanitize_sql(["UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags WHERE tag_id = tags.id) WHERE tags.name IN (?, ?)", n.name, a.name]))
       connection.execute("UPDATE tag_aliases SET is_pending = FALSE WHERE id = #{self.id}")
-    end
 
-    Tag.update_cached_tags([a.name, n.name])
+      t = Tag.find_by_name(self.name)
+      Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", t.id])).each do |post|
+        post.update_attributes(:tags => tag.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
+      end
+    end
   end
 
 # Maps tag synonyms to their preferred names. Returns an array of strings.

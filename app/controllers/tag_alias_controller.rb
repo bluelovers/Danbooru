@@ -39,7 +39,7 @@ class TagAliasController < ApplicationController
       redirect_to :action => "index"
 
     when "Approve"
-      ids.each {|x| TagAlias.find(x).approve!}
+      ids.each {|x| TagAlias.find(x).approve(@current_user.id, request.remote_ip)}
 
       flash[:notice] = "Tag aliases approved"
       redirect_to :action => "index"
