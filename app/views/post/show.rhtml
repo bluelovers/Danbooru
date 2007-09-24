@@ -34,7 +34,7 @@
       <div>
         <h5>Options</h5>
         <ul>
-          <li><%= link_to "Edit", "#edit", :onclick => "Element.toggle('edit')" %></li>
+          <li><%= link_to_function "Edit", "$('edit').show(); $('edit').scrollTo()" %></li>
           <% if @post.image? && @post.notes.empty? && @post.width > 700 %>
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
