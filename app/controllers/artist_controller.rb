@@ -106,7 +106,7 @@ class ArtistController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @artists.to_xml}
+      fmt.xml {render :xml => @artists.to_xml(:root => "artists")}
       fmt.js {render :json => @artists.to_json}
     end
   end

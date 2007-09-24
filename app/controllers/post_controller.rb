@@ -166,7 +166,7 @@ class PostController < ApplicationController
           @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_unsafe_posts => hide_unsafe_posts?)}
         end
       end
-      fmt.xml {render :xml => @posts.to_xml}
+      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
       fmt.js {render :json => @posts.to_json}
     end
   end
@@ -208,7 +208,7 @@ class PostController < ApplicationController
     end
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @posts.to_xml}
+      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
       fmt.js {render :json => @posts.to_json}
     end
   end
@@ -232,7 +232,7 @@ class PostController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @posts.to_xml}
+      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
       fmt.js {render :json => @posts.to_json}
     end
   end
@@ -256,7 +256,7 @@ class PostController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @posts.to_xml}
+      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
       fmt.js {render :json => @posts.to_json}
     end
   end
@@ -287,7 +287,7 @@ class PostController < ApplicationController
 
     respond_to do |fmt|
       fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => params[:limit], :conditions => conditions}
-      fmt.xml {render :xml => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml}
+      fmt.xml {render :xml => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml(:root => "posts")}
       fmt.js {render :json => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_json}
     end
   end
@@ -299,7 +299,7 @@ class PostController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @users.to_xml}
+      fmt.xml {render :xml => @users.to_xml(:root => "users")}
       fmt.js {render :json => @users.to_json}
     end
   end

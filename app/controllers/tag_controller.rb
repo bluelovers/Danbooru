@@ -82,7 +82,7 @@ class TagController < ApplicationController
       end
       fmt.xml do
         @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])
-        render :xml => @tags.to_xml
+        render :xml => @tags.to_xml(:root => "tags")
       end
       fmt.js do
         @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])

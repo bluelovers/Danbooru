@@ -97,7 +97,7 @@ class ForumController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @forum_posts.to_xml}
+      fmt.xml {render :xml => @forum_posts.to_xml(:root => "forum_posts")}
       fmt.js {render :json => @forum_posts.to_json}
     end
   end

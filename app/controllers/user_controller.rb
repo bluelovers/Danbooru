@@ -94,7 +94,7 @@ class UserController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @users.to_xml}
+      fmt.xml {render :xml => @users.to_xml(:root => "users")}
       fmt.js {render :json => @users.to_json}
     end
   end

@@ -57,7 +57,7 @@ class WikiController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @wiki_pages.to_xml}
+      fmt.xml {render :xml => @wiki_pages.to_xml(:root => "wiki_pages")}
       fmt.js {render :json => @wiki_pages.to_json}
     end
   end
@@ -187,7 +187,7 @@ class WikiController < ApplicationController
     
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @wiki_pages.to_xml}
+      fmt.xml {render :xml => @wiki_pages.to_xml(:root => "wiki_pages")}
       fmt.js {render :json => @wiki_pages.to_json}
     end
   end
@@ -199,7 +199,7 @@ class WikiController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @wiki_pages.to_xml}
+      fmt.xml {render :xml => @wiki_pages.to_xml(:root => "wiki_pages")}
       fmt.js {render :json => @wiki_pages.to_json}
     end
   end

@@ -63,7 +63,7 @@ class CommentController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @comment.to_xml}
+      fmt.xml {render :xml => @comment.to_xml(:root => "comments")}
       fmt.js {render :json => @comment.to_json}
     end
   end
@@ -88,7 +88,7 @@ class CommentController < ApplicationController
           @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10
         end
       end
-      fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_xml}
+      fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_xml(:root => "comments")}
       fmt.js {render :json => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_json}
     end
   end

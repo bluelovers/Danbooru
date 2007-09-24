@@ -41,7 +41,7 @@ class TagImplicationController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @implications.to_xml}
+      fmt.xml {render :xml => @implications.to_xml(:root => "implications")}
       fmt.js {render :json => @implications.to_json}
     end
   end

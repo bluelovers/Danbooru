@@ -23,7 +23,7 @@ class TagAliasController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @aliases.to_xml}
+      fmt.xml {render :xml => @aliases.to_xml(:root => "aliases")}
       fmt.js {render :json => @aliases.to_json}
     end
   end

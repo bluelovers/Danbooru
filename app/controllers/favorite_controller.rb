@@ -16,7 +16,7 @@ class FavoriteController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @posts.to_xml}
+      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
       fmt.js {render :json => @posts.to_json}
       fmt.atom {render :action => "show_atom.rxml", :layout => false}
     end
