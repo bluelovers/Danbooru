@@ -10,12 +10,22 @@ module ApplicationHelper
     
     text = text.gsub(/comment #(\d+)/i) do
       id = $1.to_i
-      link_to "comment ##{id}", :controller => "comment", :action => "show", :id => id
+      comment = Comment.find_by_id(id)
+      if comment
+        link_to "comment ##{id} (#{comment.author})", :controller => "comment", :action => "show", :id => id
+      else
+        link_to "comment ##{id}", :controller => "comment", :action => "show", :id => id
+      end
     end
     
     text = text.gsub(/forum #(\d+)/i) do
       id = $1.to_i
-      link_to "forum ##{id}", :controller => "forum", :action => "show", :id => id
+      forum_post = ForumPost.find_by_id(id)
+      if forum_post
+        link_to "forum ##{id} (#{forum_post.author})", :controller => "forum", :action => "show", :id => id
+      else
+        link_to "forum ##{id}", :controller => "forum", :action => "show", :id => id
+      end
     end
     
     if options[:mode] == :comment
