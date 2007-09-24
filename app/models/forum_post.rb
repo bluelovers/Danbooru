@@ -65,6 +65,14 @@ class ForumPost < ActiveRecord::Base
     return self.parent_id == nil
   end
   
+  def root
+    if self.parent?
+      return self
+    else
+      return ForumPost.find(self.parent_id)
+    end
+  end
+  
   def root_id
     if self.parent?
       return self.id

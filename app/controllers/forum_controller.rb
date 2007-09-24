@@ -22,11 +22,11 @@ class ForumController < ApplicationController
     if @forum_post.errors.empty?
       if params[:forum_post][:parent_id] == "0"
         flash[:notice] = "Forum thread created"
+        redirect_to :action => "show", :id => @forum_post.root_id
       else
         flash[:notice] = "Response posted"
+        redirect_to :action => "show", :id => @forum_post.root_id, :page => (@forum_post.root.response_count / 10.0).ceil
       end
-
-      redirect_to :action => "show", :id => @forum_post.root_id
     else
       render_error(@forum_post)
     end
