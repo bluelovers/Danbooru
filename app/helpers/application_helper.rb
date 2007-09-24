@@ -66,7 +66,7 @@ module ApplicationHelper
 
     case distance_in_minutes
     when 0..1
-      return (distance_in_minutes == 0) ? 'less than a minute' : '1 minute'
+      'a minute'
 
     when 2..44
       "#{distance_in_minutes} minutes"
