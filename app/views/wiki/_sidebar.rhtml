@@ -1,10 +1,10 @@
 <div class="sidebar">
-	<div class="space">
-		<h6>Search</h6>
-		<% form_tag({:action => "index"}, :method => "get") do %>
-			<input name="query" size="20" type="text" id="search-box" />
-		<% end %>
-	</div>
+  <div class="space">
+    <h6>Search</h6>
+    <% form_tag({:action => "index"}, :method => "get") do %>
+      <input name="query" size="20" type="text" id="search-box" />
+    <% end %>
+  </div>
 
-	<%= render :partial => "recently_revised" %>
+  <%= render :partial => "recently_revised" %>
 </div>

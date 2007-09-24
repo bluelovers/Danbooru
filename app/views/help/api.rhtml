@@ -18,12 +18,12 @@
       <h4>Responses</h4>
       <p>All API calls that change state will return a single element response (for XML calls). They are formatted like this:</p>
       <div class="code">
-  	    &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br/>
-  	    &lt;response success="false" reason="duplicate"/&gt;
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br/>
+        &lt;response success="false" reason="duplicate"/&gt;
       </div>
       <p>For JSON responses, they'll look like this:</p>
       <div class="code">
-  	    {success: false, reason: "duplicate"}
+        {success: false, reason: "duplicate"}
       </div>
     </div>
   
@@ -31,8 +31,8 @@
       <h4>JSON Responses</h4>
       <p>While you will probably want to work with XML in the majority of cases, if you're writing something in JavaScript then the JSON responses may be preferable. They are much faster to parse and there's less code to write to get your data structure:</p>
       <div class="code">
-  	    var data = eval("(" + responseText + ")")<br/>
-  	    alert(data.response)
+        var data = eval("(" + responseText + ")")<br/>
+        alert(data.response)
       </div>
     </div>
   
@@ -65,20 +65,20 @@
       <h4>Create</h4>
       <p>The base URL is /post/create.xml. There are only two mandatory fields: you need to supply the tags, and you need to supply the file, either through a multipart form or through a source URL.</p>
       <ul>
-  	    <li><strong>post[tags]</strong> A space delimited list of tags.</li>
-  	    <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
-  	    <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
-  	    <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
-  	    <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
-  	    <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
-  	    <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
-  	    <li><strong>md5</strong> Supply an MD5 if you want Danbooru to verify the file after uploading. If the MD5 doesn't match, the post is destroyed.</li>
+        <li><strong>post[tags]</strong> A space delimited list of tags.</li>
+        <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+        <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
+        <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
+        <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
+        <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
+        <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
+        <li><strong>md5</strong> Supply an MD5 if you want Danbooru to verify the file after uploading. If the MD5 doesn't match, the post is destroyed.</li>
       </ul>
       <p>If the call fails, the following response reasons are possible:</p>
       <ul>
-  	    <li><strong>md5 mismatch</strong> This means you supplied an MD5 parameter and what Danbooru got doesn't match. Try uploading the file again.</li>
-  	    <li><strong>duplicate</strong> This post already exists in Danbooru (based on the MD5 hash). An additional attribute called <code>location</code> will be set, pointing to the (relative) URL of the original post.</li>
-  	    <li><strong><em>other</em></strong> Any other error will have its error message printed.</li>
+        <li><strong>md5 mismatch</strong> This means you supplied an MD5 parameter and what Danbooru got doesn't match. Try uploading the file again.</li>
+        <li><strong>duplicate</strong> This post already exists in Danbooru (based on the MD5 hash). An additional attribute called <code>location</code> will be set, pointing to the (relative) URL of the original post.</li>
+        <li><strong><em>other</em></strong> Any other error will have its error message printed.</li>
       </ul>
       <p>If the post upload succeeded, you'll get an attributed called <code>location</code> in the response pointing to the relative URL of your newly uploaded post.</p>
     </div>
@@ -87,13 +87,13 @@
       <p>The base URL is /post/update.xml. Only the <code>id</code> parameter is required. Leave the other parameters blank if you don't want to change them.</p>
       <ul>
         <li><strong>id</strong> The id number of the post to update.</li>
-  	    <li><strong>post[tags]</strong> A space delimited list of tags.</li>
-  	    <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
-  	    <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
-  	    <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
-  	    <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
-  	    <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
-  	    <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
+        <li><strong>post[tags]</strong> A space delimited list of tags.</li>
+        <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+        <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
+        <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
+        <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
+        <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
+        <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
       </ul>
     </div>
     <div class="section">
@@ -146,7 +146,7 @@
     <h2>Tags</h2>
 
     <div class="section">
-  	  <h4>Search</h4>
+      <h4>Search</h4>
       <p>The base URL is /tag/index.xml.</p>
       <ul>
         <li><strong>limit</strong> How many tags to retrieve. Setting this to 0 will return every tag.</li>

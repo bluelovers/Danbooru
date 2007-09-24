@@ -41,11 +41,11 @@ class PostController < ApplicationController
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
 
-			if p.source.blank? && !@post.source.blank?
-				p.update_attributes(:source => @post.source, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => p.cached_tags + " " + params[:post][:tags])
+      if p.source.blank? && !@post.source.blank?
+        p.update_attributes(:source => @post.source, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => p.cached_tags + " " + params[:post][:tags])
       else
         p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
-			end
+      end
 
       respond_to do |fmt|
         fmt.html do
@@ -92,11 +92,11 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-		if @current_user
-    	user_id = @current_user.id
-		else
-			user_id = nil
-		end
+    if @current_user
+      user_id = @current_user.id
+    else
+      user_id = nil
+    end
 
     # Make sure this gets assigned first in case we want to change this and change the post's rating at once.
     @post.is_rating_locked = params[:post][:is_rating_locked] if params[:post][:is_rating_locked]
@@ -117,11 +117,11 @@ class PostController < ApplicationController
   end
 
   def destroy
-		if params[:commit] == "Cancel"
-			redirect_to :action => "show", :id => params[:id]
-			return
-		end
-	
+    if params[:commit] == "Cancel"
+      redirect_to :action => "show", :id => params[:id]
+      return
+    end
+  
     @post = Post.find(params[:id])
     if @current_user.has_permission?(@post)
       @post.destroy
@@ -276,7 +276,7 @@ class PostController < ApplicationController
   def tag_history
     set_title "Tag History"
 
-		params[:limit] ||= 100
+    params[:limit] ||= 100
     params[:limit] = params[:limit].to_i
 
     if params[:post_id]
@@ -332,7 +332,7 @@ class PostController < ApplicationController
     end
   end
 
-	def delete
-		@post = Post.find(params[:id])
-	end
+  def delete
+    @post = Post.find(params[:id])
+  end
 end

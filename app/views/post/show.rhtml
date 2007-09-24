@@ -8,7 +8,7 @@
 
 <div id="post-view">
   <% if @post.nil? %>
-  	<h2>Nobody here but us chickens!</h2>
+    <h2>Nobody here but us chickens!</h2>
   <% else %>
     <div class="sidebar">
       <%= render :partial => 'search' %>
@@ -17,18 +17,18 @@
       <div id="stats">
         <h5>Statistics</h5>
         <ul>
-					<li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to @post.author, :controller => "user", :action => "show", :id => @post.user_id %></li>
-		      <% unless @post.source.blank? %>
-		        <% if @post.source[/^http/] %>
-		          <li>Source: <%= link_to @post.source[7, 20] + "...", @post.source, :target => "_blank" %></li>
-		        <% else %>
-		          <li>Source: <%= @post.source %></li>
-		        <% end %>
-		      <% end %>
+          <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to @post.author, :controller => "user", :action => "show", :id => @post.user_id %></li>
+          <% unless @post.source.blank? %>
+            <% if @post.source[/^http/] %>
+              <li>Source: <%= link_to @post.source[7, 20] + "...", @post.source, :target => "_blank" %></li>
+            <% else %>
+              <li>Source: <%= @post.source %></li>
+            <% end %>
+          <% end %>
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
-					<li>Pools: <%= pool_list(@post) %></li>
+          <li>Pools: <%= pool_list(@post) %></li>
         </ul>
       </div>
       <div>
@@ -52,9 +52,9 @@
             <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
           <% end %>
           <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
-					<% if @post.is_pending? && @current_user && @current_user.mod? %>
-						<li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[is_pending]=0')}" %></li>
-					<% end %>
+          <% if @post.is_pending? && @current_user && @current_user.mod? %>
+            <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[is_pending]=0')}" %></li>
+          <% end %>
         </ul>
       </div>
       <div>
@@ -64,17 +64,17 @@
           <li><%= link_to "Notes", :controller => "note", :action => "history", :post_id => @post.id %></li>
         </ul>
       </div>
-			<div>
-				<h5>Neighbors</h5>
-				<ul>
-					<% if @post.prev_post_id %>
+      <div>
+        <h5>Neighbors</h5>
+        <ul>
+          <% if @post.prev_post_id %>
             <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %></li>
           <% end %>
           <% if @post.next_post_id %>
             <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %></li>
           <% end %>
-				</ul>
-			</div>
+        </ul>
+      </div>
       <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_side"] %>
       <% end %>
@@ -129,7 +129,7 @@
         </script>
       </div>
       <!-- google_ad_section_start(weight=ignore) -->
-			<a name="edit"></a>
+      <a name="edit"></a>
       <div id="edit">
         <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
           <table class="form">
@@ -146,25 +146,25 @@
                 </td>
               </tr>
             <% end %>
-						<% if @current_user && @current_user.privileged? %>
-	            <tr>
-	              <th>
-	                <label class="block" for="post_is_note_locked">Note locked</label>
-	              </th>
-	              <td>
-	                <%= check_box "post", "is_note_locked" %>
-	              </td>
-	            </tr>
-	            <tr>
-	              <th>
-	                <label class="block" for="post_is_rating_locked">Rating locked</label> 
-	              </th>
-	              <td>
-	                <%= check_box "post", "is_rating_locked" %>
-	              </td>
-	            </tr>
-						<% end %>
-						<!--
+            <% if @current_user && @current_user.privileged? %>
+              <tr>
+                <th>
+                  <label class="block" for="post_is_note_locked">Note locked</label>
+                </th>
+                <td>
+                  <%= check_box "post", "is_note_locked" %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  <label class="block" for="post_is_rating_locked">Rating locked</label> 
+                </th>
+                <td>
+                  <%= check_box "post", "is_rating_locked" %>
+                </td>
+              </tr>
+            <% end %>
+            <!--
             <tr>
               <th>
                 <label class="block" for="post_prev_post_id">Previous Post ID</label>
@@ -181,7 +181,7 @@
                 <%= text_field "post", "next_post_id", :size => 5 %>
               </td>
             </tr>
-						-->
+            -->
             <tr>
               <th>
                 <label class="block" for="post_source">Source</label>
@@ -208,14 +208,14 @@
       </div>
       <!-- google_ad_section_end -->
       <%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
-			<% if @current_user %>
-				<%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
-			<% else %>
-				<%= javascript_tag "RelatedTags.init('', '')" %>
-			<% end %>
-  		<% if @current_user && @current_user.always_resize_images? %>
-  			<%= javascript_tag "toggleImageResize()" %>
-  		<% end %>
+      <% if @current_user %>
+        <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
+      <% else %>
+        <%= javascript_tag "RelatedTags.init('', '')" %>
+      <% end %>
+      <% if @current_user && @current_user.always_resize_images? %>
+        <%= javascript_tag "toggleImageResize()" %>
+      <% end %>
       <!-- google_ad_section_start -->
       <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
       <!-- google_ad_section_end -->

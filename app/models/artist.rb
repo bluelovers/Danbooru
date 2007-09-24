@@ -1,8 +1,8 @@
 class Artist < ActiveRecord::Base
-	before_validation :normalize
-	validates_uniqueness_of :name
-	after_save :commit_relations
-	belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
+  before_validation :normalize
+  validates_uniqueness_of :name
+  after_save :commit_relations
+  belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
 
   def self.normalize_url(url)
     if url
@@ -12,14 +12,14 @@ class Artist < ActiveRecord::Base
     end
   end
 
-	def normalize
+  def normalize
     self.name = self.name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
-		self.url_a = self.class.normalize_url(self.url_a)
-		self.url_b = self.class.normalize_url(self.url_b)
-		self.url_c = self.class.normalize_url(self.url_c)
-	end
+    self.url_a = self.class.normalize_url(self.url_a)
+    self.url_b = self.class.normalize_url(self.url_b)
+    self.url_c = self.class.normalize_url(self.url_c)
+  end
 
-	def commit_relations
+  def commit_relations
     transaction do
       connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{self.id}")
       connection.execute("UPDATE artists SET group_id = NULL WHERE group_id = #{self.id}")
@@ -38,77 +38,77 @@ class Artist < ActiveRecord::Base
         end
       end
     end
-	end
+  end
 
-	def aliases=(names)
-		@cached_aliases = names.split(/\s*,\s*/)
-	end
+  def aliases=(names)
+    @cached_aliases = names.split(/\s*,\s*/)
+  end
 
-	def members=(names)
-		@cached_members = names.split(/\s*,\s*/)
-	end
+  def members=(names)
+    @cached_members = names.split(/\s*,\s*/)
+  end
 
-	def aliases
-		if self.new_record?
-			return []
-		else
-			return Artist.find(:all, :conditions => "alias_id = #{self.id}", :order => "name")
-		end
-	end
+  def aliases
+    if self.new_record?
+      return []
+    else
+      return Artist.find(:all, :conditions => "alias_id = #{self.id}", :order => "name")
+    end
+  end
 
-	def alias
-		if self.alias_id
-			return Artist.find(self.alias_id).name
-		else
-			nil
-		end
-	end
+  def alias
+    if self.alias_id
+      return Artist.find(self.alias_id).name
+    else
+      nil
+    end
+  end
 
-	def alias=(n)
-		if n.blank?
-			self.alias_id = nil
-		else
-			a = Artist.find_or_create_by_name(n)
-			self.alias_id = a.id
-		end
-	end
+  def alias=(n)
+    if n.blank?
+      self.alias_id = nil
+    else
+      a = Artist.find_or_create_by_name(n)
+      self.alias_id = a.id
+    end
+  end
 
-	def group
-		if self.group_id
-			return Artist.find(self.group_id).name
-		else
-			nil
-		end
-	end
+  def group
+    if self.group_id
+      return Artist.find(self.group_id).name
+    else
+      nil
+    end
+  end
 
-	def members
-		if self.new_record?
-			return []
-		else
-			Artist.find(:all, :conditions => "group_id = #{self.id}", :order => "name")
-		end
-	end
+  def members
+    if self.new_record?
+      return []
+    else
+      Artist.find(:all, :conditions => "group_id = #{self.id}", :order => "name")
+    end
+  end
 
-	def group=(n)
-		if n.blank?
-			self.group_id = nil
-		else
-			a = Artist.find_or_create_by_name(n)
-			self.group_id = a.id
-		end
-	end
+  def group=(n)
+    if n.blank?
+      self.group_id = nil
+    else
+      a = Artist.find_or_create_by_name(n)
+      self.group_id = a.id
+    end
+  end
 
   def to_xml(options = {})
     {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_xml(options.merge(:root => "artist"))
   end
 
-	def to_json(options = {})
-		{:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_json(options)
-	end
+  def to_json(options = {})
+    {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_json(options)
+  end
 
-	def to_s
-		return self.name
-	end
+  def to_s
+    return self.name
+  end
 
   def self.find_all_by_md5(md5)
     p = Post.find_by_md5(md5)

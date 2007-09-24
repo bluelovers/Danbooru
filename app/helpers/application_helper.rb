@@ -20,10 +20,10 @@ module ApplicationHelper
     
     if options[:mode] == :comment
       text = text.gsub(/&gt;&gt;(\d+)/) do
-  		  id = $1
-  			content_tag("div", link_to("&gt;&gt;#{id}", :controller => "comment", :action => "show", :id => id))
-  		end
-  		text = text.gsub(/&lt;(?:s|spoilers|spoiler)&gt;(.+?)&lt;\/(?:s|spoilers|spoiler)&gt;/, '<a href="#" class="spoilers">\1</a>')
+        id = $1
+        content_tag("div", link_to("&gt;&gt;#{id}", :controller => "comment", :action => "show", :id => id))
+      end
+      text = text.gsub(/&lt;(?:s|spoilers|spoiler)&gt;(.+?)&lt;\/(?:s|spoilers|spoiler)&gt;/, '<a href="#" class="spoilers">\1</a>')
     end
     
     return text

@@ -1,33 +1,33 @@
 <% form_tag(:action => "update_alias") do %>
-	<table>
-		<tr>
-			<th></th>
-			<th>Alias</th>
-			<th>To</th>
-			<th></th>
-		</tr>
-		<tr class="<%= cycle 'even', 'odd' %>">
-			<td></td>
-			<td><%= text_field_tag "name" %></td>
-			<td><%= text_field_tag "alias" %></td>
-			<td><%= submit_tag "Add" %></td>
-		</tr>
-		<% @aliases.each do |@alias| %>
-			<tr class="<%= cycle 'even', 'odd' %> <%= @alias.is_pending? ? 'pending-tag' : '' %>">
-				<td><%= check_box_tag "alias[]" %></td>
-				<td><%= @alias.name %></td>
-				<td><%= Tag.find(@alias.alias_id).name %></td>
-				<td></td>
-			</tr>
-		<% end %>
-		<tr>
-			<td colspan="4"><%= button_to_function "Select Pending", "document.getElementsByClassName('pending-tag').each(function(x) {x.checked = true})" %> <%= submit_tag "Delete" %> <%= submit_tag "Approve" %></tr>
-		</tr>
-	</table>
+  <table>
+    <tr>
+      <th></th>
+      <th>Alias</th>
+      <th>To</th>
+      <th></th>
+    </tr>
+    <tr class="<%= cycle 'even', 'odd' %>">
+      <td></td>
+      <td><%= text_field_tag "name" %></td>
+      <td><%= text_field_tag "alias" %></td>
+      <td><%= submit_tag "Add" %></td>
+    </tr>
+    <% @aliases.each do |@alias| %>
+      <tr class="<%= cycle 'even', 'odd' %> <%= @alias.is_pending? ? 'pending-tag' : '' %>">
+        <td><%= check_box_tag "alias[]" %></td>
+        <td><%= @alias.name %></td>
+        <td><%= Tag.find(@alias.alias_id).name %></td>
+        <td></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="4"><%= button_to_function "Select Pending", "document.getElementsByClassName('pending-tag').each(function(x) {x.checked = true})" %> <%= submit_tag "Delete" %> <%= submit_tag "Approve" %></tr>
+    </tr>
+  </table>
 <% end %>
 
 <div id="paginator">
-	<%= render :partial => "paginator" %>
+  <%= render :partial => "paginator" %>
 </div>
 
 <%= render :partial => "footer" %>

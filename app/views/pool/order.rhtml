@@ -5,13 +5,13 @@
 // <![CDATA[
 
 function orderAutoFill() {
-	var i = 0
-	var step = parseInt(prompt("Enter an interval"))
+  var i = 0
+  var step = parseInt(prompt("Enter an interval"))
 
-	document.getElementsByClassName("pp").each(function(x) {
-		x.value = i
-		i += step
-	})
+  document.getElementsByClassName("pp").each(function(x) {
+    x.value = i
+    i += step
+  })
 }
 
 function orderReverse() {

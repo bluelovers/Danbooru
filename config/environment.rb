@@ -86,7 +86,7 @@ rescue LoadError
 end
 
 begin
-	require 'ferret'
+  require 'ferret'
 
   if File.exists?("#{RAILS_ROOT}/tmp/ferret")
     index_all = false
@@ -100,7 +100,7 @@ begin
   NOTE_INDEX = Ferret::Index::Index.new(:path => "#{RAILS_ROOT}/tmp/ferret/note_index", :key => :id)
   Note.index_notes() if index_all
 rescue LoadError
-	# do nothing
+  # do nothing
 end
 
 if CONFIG["enable_caching"]

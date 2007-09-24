@@ -10,14 +10,14 @@
       <tr>
         <th><label for="wiki_page_body">Body</label></th>
         <td>
-	        <div id="wiki-view">
-	        </div>
-		      <%= text_area("wiki_page", "body", :rows => 25, :cols => 40) %><br />
-		      <%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "history.back()") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
+          <div id="wiki-view">
+          </div>
+          <%= text_area("wiki_page", "body", :rows => 25, :cols => 40) %><br />
+          <%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "history.back()") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
         </td>
       </tr>
     </table>
-	<% end %>
+  <% end %>
 </div>
 
 <%= render :partial => "footer" %>

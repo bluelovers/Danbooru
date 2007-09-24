@@ -3,39 +3,39 @@
 
 <div id="comment-list">
   <% if @posts.empty? %>
-  	<h4>No comments.</h4>
+    <h4>No comments.</h4>
   <% end %>
 
   <% @posts.each do |post| %>
-  	<% unless post.blacklisted?(@current_user) %>
-  	  <% content_tag(:div, :class => "post", :id => "p#{post.id}") do %>
-  		  <div class="col1">
-  			  <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
-  		  </div>
-  		  <% content_tag(:div, :class => "col2", :id => "comments-for-p#{post.id}") do %>
-  		    <div class="post-info">
+    <% unless post.blacklisted?(@current_user) %>
+      <% content_tag(:div, :class => "post", :id => "p#{post.id}") do %>
+        <div class="col1">
+          <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
+        </div>
+        <% content_tag(:div, :class => "col2", :id => "comments-for-p#{post.id}") do %>
+          <div class="post-info">
             <div>
-  		        <span class="info"><strong>Date</strong> <%= post.created_at.strftime("%D %I:%M") %></span>
-  		        <span class="info"><strong>User</strong> <%= link_to post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
-  		        <span class="info"><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
-  		        <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
+              <span class="info"><strong>Date</strong> <%= post.created_at.strftime("%D %I:%M") %></span>
+              <span class="info"><strong>User</strong> <%= link_to post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
+              <span class="info"><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
+              <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
             </div>
             <div>
               <strong>Tags</strong> <span class="tag-list"><%= post.cached_tags.split(/ /).map {|x| link_to(x, :controller => "post", :action => "index", :tags => x)}.join(" ") %></span>
             </div>
             <% if post.comment_count > 6 %>
-            	<p><%= link_to "#{post.comment_count - 6} comments hidden", :controller => "post", :action => "show", :id => post.id %></p>
+              <p><%= link_to "#{post.comment_count - 6} comments hidden", :controller => "post", :action => "show", :id => post.id %></p>
             <% end %>
-  		    </div>
+          </div>
           <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id} %>
-  		  <% end %>
-  	  <% end %>
+        <% end %>
+      <% end %>
     <% end %>
   <% end %>
 
   <div id="paginator">
-  	<%= custom_pagination_links(@pages)  %>
+    <%= custom_pagination_links(@pages)  %>
   </div>
 
-	<%= render :partial => "footer" %>
+  <%= render :partial => "footer" %>
 </div>

@@ -3,35 +3,35 @@
 <p>You can perform a tag search and import all the matching posts into this pool.</p>
 
 <div style="margin-bottom: 1em;">
-	<% form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>
-		<%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag "Search" %>
-	<% end %>
+  <% form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>
+    <%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag "Search" %>
+  <% end %>
 </div>
 
 <div>
-	<% form_tag(:action => "import") do %>
-		<%= hidden_field_tag "id", @pool.id %>
-		
-		<div id="posts">
-		</div>
-		
-		<div style="clear: both;">
-			<%= submit_tag "Import" %> <%= button_to_function "Cancel", "history.back()" %>
-		</div>
-	<% end %>
+  <% form_tag(:action => "import") do %>
+    <%= hidden_field_tag "id", @pool.id %>
+    
+    <div id="posts">
+    </div>
+    
+    <div style="clear: both;">
+      <%= submit_tag "Import" %> <%= button_to_function "Cancel", "history.back()" %>
+    </div>
+  <% end %>
 </div>
 
 <script type="text/javascript">
 // <[CDATA[
 
 function removePost(id) {
-	if ($("delete-mode").checked) {
-		$("posts[" + id + "]").remove()
-		$("p" + id).remove()
-		return false;
-	} else {
-		return true;
-	}
+  if ($("delete-mode").checked) {
+    $("posts[" + id + "]").remove()
+    $("p" + id).remove()
+    return false;
+  } else {
+    return true;
+  }
 }
 
 // ]]>

@@ -1,33 +1,33 @@
 <% form_tag(:action => "update_implication") do %>
-	<table>
-		<tr>
-			<th></th>
-			<th>Expand</th>
-			<th>To</th>
-			<th></th>
-		</tr>
-		<tr class="<%= cycle 'even', 'odd' %>">
-			<td></td>
-			<td><%= text_field_tag "child" %></td>
-			<td><%= text_field_tag "parent" %></td>
-			<td><%= submit_tag "Add" %></td>
-		</tr>
-		<% @implications.each do |r| %>
-			<tr class="<%= cycle 'even', 'odd' %> <%= r.is_pending? ? 'pending-tag' : '' %>">
-				<td><%= check_box_tag "implications[]" %></td>
-				<td><%= Tag.find(r.child_id).name %></td>
-				<td><%= Tag.find(r.parent_id).name %></td>
-				<td></td>
-			</tr>
-		<% end %>
-		<tr>
-			<td colspan="4"><%= button_to_function "Select Pending", "document.getElementsByClassName('pending-tag').each(function(x) {x.checked = true})" %> <%= submit_tag "Delete" %> <%= submit_tag "Approve" %></tr>
-		</tr>
-	</table>
+  <table>
+    <tr>
+      <th></th>
+      <th>Expand</th>
+      <th>To</th>
+      <th></th>
+    </tr>
+    <tr class="<%= cycle 'even', 'odd' %>">
+      <td></td>
+      <td><%= text_field_tag "child" %></td>
+      <td><%= text_field_tag "parent" %></td>
+      <td><%= submit_tag "Add" %></td>
+    </tr>
+    <% @implications.each do |r| %>
+      <tr class="<%= cycle 'even', 'odd' %> <%= r.is_pending? ? 'pending-tag' : '' %>">
+        <td><%= check_box_tag "implications[]" %></td>
+        <td><%= Tag.find(r.child_id).name %></td>
+        <td><%= Tag.find(r.parent_id).name %></td>
+        <td></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="4"><%= button_to_function "Select Pending", "document.getElementsByClassName('pending-tag').each(function(x) {x.checked = true})" %> <%= submit_tag "Delete" %> <%= submit_tag "Approve" %></tr>
+    </tr>
+  </table>
 <% end %>
 
 <div id="paginator">
-	<%= render :partial => "paginator" %>
+  <%= render :partial => "paginator" %>
 </div>
 
 <%= render :partial => "footer" %>

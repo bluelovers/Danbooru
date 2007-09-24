@@ -4,7 +4,7 @@ class ArtistController < ApplicationController
   before_filter :privileged_only, :only => [:destroy]
   before_filter :member_only, :only => [:update, :create]
   verify :method => :post, :only => [:destroy, :update, :create]
-	helper :post
+  helper :post
 
   def destroy
     @artist = Artist.find(params[:id])
@@ -12,7 +12,7 @@ class ArtistController < ApplicationController
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Artist deleted"; redirect_to(:action => "index", :page => params[:page])}
-			fmt.js
+      fmt.js
     end
   end
 
@@ -113,6 +113,6 @@ class ArtistController < ApplicationController
 
   def show
     @artist = Artist.find(params[:id])
-		@posts = Post.find_by_tags(@artist.name, :limit => 5, :order => "id desc", :hide_unsafe_posts => hide_unsafe_posts?)
+    @posts = Post.find_by_tags(@artist.name, :limit => 5, :order => "id desc", :hide_unsafe_posts => hide_unsafe_posts?)
   end
 end

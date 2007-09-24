@@ -1,31 +1,31 @@
 <div id="post-tag-history">
   <table width="100%">
-		<thead>
-	    <tr>
-	      <th width="1%"></th>
-	      <th width="5%">Post</th>
-	      <th width="65%">Tags</th>
-	      <th width="12%">Edited By</th>
-	      <th width="13%">Date</th>
-	      <th width="5%">Options</th>
-	    </tr>			
-		</thead>
-		<tbody>
-	    <% @changes.each do |change| %>
-	      <tr class="<%= cycle 'even', 'odd' %>">
-	        <td style="background: <%= id_to_color(change.post_id) %>;"></td>
-	        <% if params[:post_id] %>
-	          <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
-	        <% else %>
-	          <td><%= link_to change.post_id, :controller => "post", :action => "tag_history", :post_id => change.post_id %></td>
-	        <% end %>
-	        <td><%= change.tags %></td>
-	        <td><%= change.author %></td>
-	        <td><%= change.created_at.strftime("%D %T") %></td>
-	        <td><%= link_to "Revert", {:controller => "post", :action => "revert_tags", :id => change.post_id, :history_id => change.id}, :method => :post %></td>
-	      </tr>
-	    <% end %>			
-		</tbody>
+    <thead>
+      <tr>
+        <th width="1%"></th>
+        <th width="5%">Post</th>
+        <th width="65%">Tags</th>
+        <th width="12%">Edited By</th>
+        <th width="13%">Date</th>
+        <th width="5%">Options</th>
+      </tr>     
+    </thead>
+    <tbody>
+      <% @changes.each do |change| %>
+        <tr class="<%= cycle 'even', 'odd' %>">
+          <td style="background: <%= id_to_color(change.post_id) %>;"></td>
+          <% if params[:post_id] %>
+            <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
+          <% else %>
+            <td><%= link_to change.post_id, :controller => "post", :action => "tag_history", :post_id => change.post_id %></td>
+          <% end %>
+          <td><%= change.tags %></td>
+          <td><%= change.author %></td>
+          <td><%= change.created_at.strftime("%D %T") %></td>
+          <td><%= link_to "Revert", {:controller => "post", :action => "revert_tags", :id => change.post_id, :history_id => change.id}, :method => :post %></td>
+        </tr>
+      <% end %>     
+    </tbody>
   </table>
 
   <div id="paginator">

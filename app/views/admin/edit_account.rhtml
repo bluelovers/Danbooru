@@ -1,27 +1,27 @@
 <%= javascript_include_tag "controls" %>
 
 <div id="admin-edit-account">
-	<% form_tag(:controller => "admin", :action => "edit_account") do %>
-	  <table class="form">
-	    <tr>
-	      <th>
-	        <label class="block" for="user_name">User</label>
-	      </th>
-	      <td>
-			    <%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %>
-			  </td>
-			</tr>
+  <% form_tag(:controller => "admin", :action => "edit_account") do %>
+    <table class="form">
       <tr>
         <th>
-			    <label class="block" for="user_level">Level</label>
-			  </th>
-			  <td>
-			    <%= select "user", "level", [["Administrator", User::LEVEL_ADMIN], ["Moderator", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["Jailed", User::LEVEL_JAILED], ["Blocked", User::LEVEL_BLOCKED]] %>
-			  </td>
-			</tr>
-			<tr>
-			  <td colspan="2"><%= submit_tag "Save" %></td>
-			</tr>
-		</table>
-	<% end %>
+          <label class="block" for="user_name">User</label>
+        </th>
+        <td>
+          <%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label class="block" for="user_level">Level</label>
+        </th>
+        <td>
+          <%= select "user", "level", [["Administrator", User::LEVEL_ADMIN], ["Moderator", User::LEVEL_MOD], ["Member", User::LEVEL_MEMBER], ["Jailed", User::LEVEL_JAILED], ["Blocked", User::LEVEL_BLOCKED]] %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "Save" %></td>
+      </tr>
+    </table>
+  <% end %>
 </div>

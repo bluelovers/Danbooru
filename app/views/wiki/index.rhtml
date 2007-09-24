@@ -1,27 +1,27 @@
 <% if Object.const_defined?(:Ferret) %>
-	<div style="margin-bottom: 1em;">
-		<% form_tag({:action => "index"}, :method => :get) do %>
-			<%= text_field_tag "query", params[:query], :size => 40 %>
-			<%= submit_tag "Search" %>
-		<% end %>
-	</div>
+  <div style="margin-bottom: 1em;">
+    <% form_tag({:action => "index"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search" %>
+    <% end %>
+  </div>
 <% end %>
 
 <table width="100%">
-	<tr>
-		<th width="70%">Title</th>
-		<th width="30%">Last edited</th>
-	</tr>
-	<%- @wiki_pages.each do |wiki_page| -%>
-		<tr class="<%= cycle 'even', 'odd' %>">
-			<td><%= link_to wiki_page.pretty_title, :controller => "wiki", :action => "show", :title => wiki_page.title %></td>
-			<td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= wiki_page.author %></td>
-		</tr>
-	<%- end -%>
+  <tr>
+    <th width="70%">Title</th>
+    <th width="30%">Last edited</th>
+  </tr>
+  <%- @wiki_pages.each do |wiki_page| -%>
+    <tr class="<%= cycle 'even', 'odd' %>">
+      <td><%= link_to wiki_page.pretty_title, :controller => "wiki", :action => "show", :title => wiki_page.title %></td>
+      <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= wiki_page.author %></td>
+    </tr>
+  <%- end -%>
 </table>
 
 <div id="paginator">
-	<%= custom_pagination_links(@pages) %>
+  <%= custom_pagination_links(@pages) %>
 </div>
 
 <%= render :partial => "footer" %>

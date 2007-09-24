@@ -1,7 +1,7 @@
 <form method="post" action="/tag/mass_edit">
-	<%= text_field_tag "start", params[:source], :size => 60 %>
-	<%= text_field_tag "result", params[:name], :size => 60 %>
-	<%= button_to_function "Preview", "$('preview').innerHTML = 'Loading...'; new Ajax.Updater('preview', '/tag/edit_preview', {method: 'get', parameters: 'tags=' + $F('start')})" %><%= submit_tag "Save" %>
+  <%= text_field_tag "start", params[:source], :size => 60 %>
+  <%= text_field_tag "result", params[:name], :size => 60 %>
+  <%= button_to_function "Preview", "$('preview').innerHTML = 'Loading...'; new Ajax.Updater('preview', '/tag/edit_preview', {method: 'get', parameters: 'tags=' + $F('start')})" %><%= submit_tag "Save" %>
 </form>
 
 <%= render :partial => "footer" %>

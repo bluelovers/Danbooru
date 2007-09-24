@@ -213,8 +213,8 @@ class Tag < ActiveRecord::Base
             q[:source] = $2.gsub('\\', '\\\\').gsub('%', '\\%').gsub('_', '\\_').gsub(/\*/, '%') + "%"
           elsif $1 == "date"
             q[:date] = parse_helper($2, :date)
-					elsif $1 == "pool"
-						q[:pool] = $2
+          elsif $1 == "pool"
+            q[:pool] = $2
           end
         elsif token[0] == ?-
           q[:exclude] << token[1..-1]

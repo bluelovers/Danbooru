@@ -71,7 +71,7 @@ class CommentController < ApplicationController
   def index
     set_title "Comments"
 
-		params[:limit] ||= 25
+    params[:limit] ||= 25
     cond = ["TRUE"]
     cond_params = []
 
@@ -116,13 +116,13 @@ class CommentController < ApplicationController
     end
   end
 
-	def mark_as_spam
-		@comment = Comment.find(params[:id])
-		@comment.update_attributes(:is_spam => true)
+  def mark_as_spam
+    @comment = Comment.find(params[:id])
+    @comment.update_attributes(:is_spam => true)
 
-		respond_to do |fmt|
-			fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-			fmt.js {render :json => {:success => true}.to_json}
-		end
-	end
+    respond_to do |fmt|
+      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+      fmt.js {render :json => {:success => true}.to_json}
+    end
+  end
 end

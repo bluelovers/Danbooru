@@ -1,15 +1,15 @@
 <div id="forum" class="response-list">
-	<% unless params[:page].to_i > 1 %>
-		<%= render :partial => "post", :locals => {:post => @forum_post} %>
-	<% end %>
+  <% unless params[:page].to_i > 1 %>
+    <%= render :partial => "post", :locals => {:post => @forum_post} %>
+  <% end %>
 
-	<% @children.each do |c| %>
-		<%= render :partial => "post", :locals => {:post => c} %>
-	<% end %>
+  <% @children.each do |c| %>
+    <%= render :partial => "post", :locals => {:post => c} %>
+  <% end %>
 
-	<div id="paginator">
-	  <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "show", :id => params[:id]}) %>
-	</div>
+  <div id="paginator">
+    <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "show", :id => params[:id]}) %>
+  </div>
 
   <div id="footer">
     <%= link_to_function "Respond", "Element.toggle('reply')" %> |
@@ -18,12 +18,12 @@
   </div>
 
   <div id="reply" style="display: none;">
-	  <% form_tag({:action => "create"}) do %>
-	  	<%= hidden_field "forum_post", "parent_id", :value => @forum_post.id %>
+    <% form_tag({:action => "create"}) do %>
+      <%= hidden_field "forum_post", "parent_id", :value => @forum_post.id %>
       <table>
-	      <tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60, :value => "" %></td></tr>
-	      <tr><td><label for="forum_post_body">Body</label></td><td><%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %></td></tr>
-	      <tr><td colspan="2"><%= submit_tag "Post" %></td></tr>
+        <tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60, :value => "" %></td></tr>
+        <tr><td><label for="forum_post_body">Body</label></td><td><%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %></td></tr>
+        <tr><td colspan="2"><%= submit_tag "Post" %></td></tr>
       </table>
     <% end %>
   </div>

@@ -367,12 +367,12 @@ class Post < ActiveRecord::Base
       params << q[:user]
     end
 
-		if q[:pool].is_a?(String)
-			from << "pools"
-			from << "pools_posts"
-			conditions << "pools.id = pools_posts.pool_id AND pools_posts.post_id = p.id AND pools.name ILIKE ? ESCAPE '\\\\'"
-			params << "%" + q[:pool].to_escaped_for_sql_like + "%"
-		end
+    if q[:pool].is_a?(String)
+      from << "pools"
+      from << "pools_posts"
+      conditions << "pools.id = pools_posts.pool_id AND pools_posts.post_id = p.id AND pools.name ILIKE ? ESCAPE '\\\\'"
+      params << "%" + q[:pool].to_escaped_for_sql_like + "%"
+    end
 
     if q[:related].any? || q[:include].any?
       conditions2 = []
@@ -483,9 +483,9 @@ class Post < ActiveRecord::Base
     return Post.sanitize_sql([sql, *params])
   end
 
-	def self.find_by_tags(tags, options = {})
-		return find_by_sql(Post.generate_sql(tags, options))
-	end
+  def self.find_by_tags(tags, options = {})
+    return find_by_sql(Post.generate_sql(tags, options))
+  end
 
   def pretty_rating
     case rating

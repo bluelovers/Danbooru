@@ -1,13 +1,13 @@
 <% form_tag(:action => "update") do %>
-	<table>
+  <table>
     <tr>
       <th><label for="tag_name">Name</label></th>
       <td><%= text_field_with_auto_complete "tag", "name", {}, :min_chars => 3, :url => {:controller => "tag", :action => "auto_complete_for_tag_name"} %></td>
     </tr>
-		<tr>
-			<th><label for="tag_type">Type</label></th>
-			<td><%= select "tag", "tag_type", [["General", 0], ["Artist", 1], ["Copyright", 3], ["Character", 4]] %></td>
-		</tr>
+    <tr>
+      <th><label for="tag_type">Type</label></th>
+      <td><%= select "tag", "tag_type", [["General", 0], ["Artist", 1], ["Copyright", 3], ["Character", 4]] %></td>
+    </tr>
     <tr>
       <th><label for="tag_is_ambiguous">Ambiguous</label></th>
       <td><%= check_box "tag", "is_ambiguous" %></td>

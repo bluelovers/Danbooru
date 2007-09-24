@@ -3,55 +3,55 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title><%= @page_title %></title>
-	<meta http-equiv="content-type" content="application/xhtml_xml; charset=utf-8"/>
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-	<link rel="top" title="<%= CONFIG["app_name"] %>" href="/"/>
-	<%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s"/>' % [type, title, url_for(href)] } %>
-	<%= stylesheet_link_tag "default" %>
-	<%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params["tags"] %>
-	<%= javascript_include_tag "prototype" %>
-	<%= javascript_include_tag "effects" %>
-	<%= javascript_include_tag "cookie" %>
-	<%= javascript_include_tag "common" %>
+  <title><%= @page_title %></title>
+  <meta http-equiv="content-type" content="application/xhtml_xml; charset=utf-8"/>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+  <link rel="top" title="<%= CONFIG["app_name"] %>" href="/"/>
+  <%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s"/>' % [type, title, url_for(href)] } %>
+  <%= stylesheet_link_tag "default" %>
+  <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params["tags"] %>
+  <%= javascript_include_tag "prototype" %>
+  <%= javascript_include_tag "effects" %>
+  <%= javascript_include_tag "cookie" %>
+  <%= javascript_include_tag "common" %>
 </head>
 <body>
-	<div id="header">
+  <div id="header">
     <!-- google_ad_section_start(weight=ignore) -->
 
-		<h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_links(params['tags']) %></h2>
-		<ul class="flat-list" id="navbar">
-			<li><%= link_to "My Account", :controller => "user", :action => "home" %></li>
-			<li><%= link_to "Posts", :controller => "post", :action => "index" %></li>
-			<li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
-			<li><%= link_to "Notes", :controller => "note", :action => "index" %></li>
-			<li><%= link_to "Pools", :controller => "pool", :action => "index" %></li>
-			<li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
+    <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_links(params['tags']) %></h2>
+    <ul class="flat-list" id="navbar">
+      <li><%= link_to "My Account", :controller => "user", :action => "home" %></li>
+      <li><%= link_to "Posts", :controller => "post", :action => "index" %></li>
+      <li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
+      <li><%= link_to "Notes", :controller => "note", :action => "index" %></li>
+      <li><%= link_to "Pools", :controller => "pool", :action => "index" %></li>
+      <li><%= link_to "Artists", :controller => "artist", :action => "index" %></li>
       <li><%= link_to "Tags", :controller => "tag", :action => "cloud" %></li>
-			<li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
-			<% if @current_user && @current_user.privileged? && ForumPostView.updated?(@current_user.id) %>
-				<li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :class => "forum-update" %></li>
-			<% else %>
-				<li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
-			<% end %>
-			<% if CONFIG["enable_trac_link"] %>
-				<li><a href="http://cart.donmai.us">Trac</a></li>
-			<% end %>
+      <li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
+      <% if @current_user && @current_user.privileged? && ForumPostView.updated?(@current_user.id) %>
+        <li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :class => "forum-update" %></li>
+      <% else %>
+        <li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
+      <% end %>
+      <% if CONFIG["enable_trac_link"] %>
+        <li><a href="http://cart.donmai.us">Trac</a></li>
+      <% end %>
       <li><%= link_to "Help", :controller => "help", :action => "index" %></li>
-			<% if @current_user && @current_user.admin? %>
-				<li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
-			<% end %>
-			<li><a href="/static/more">More &raquo;</a></li>
-		</ul>
+      <% if @current_user && @current_user.admin? %>
+        <li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
+      <% end %>
+      <li><a href="/static/more">More &raquo;</a></li>
+    </ul>
     <!-- google_ad_section_end -->
-	</div>
+  </div>
   <% if flash[:notice] %>
     <div id="notice"><%= flash[:notice] %></div>
   <% else %>
     <div id="notice" style="display: none;"></div>
   <% end %>
-	<div id="content">
-		<%= @content_for_layout %>
-	</div>
+  <div id="content">
+    <%= @content_for_layout %>
+  </div>
 </body>
 </html>

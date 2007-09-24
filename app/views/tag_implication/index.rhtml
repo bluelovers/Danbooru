@@ -1,39 +1,39 @@
 <% form_tag({:action => "index"}, :method => :get) do %>
-	<%= text_field_tag "query", params[:query] %> <%= submit_tag "Search" %>
+  <%= text_field_tag "query", params[:query] %> <%= submit_tag "Search" %>
 <% end %>
 
 <% form_tag(:action => "update") do %>
-	<table>
-		<tr>
-			<th></th>
-			<th>Predicate</th>
-			<th>Consequent</th>
-		</tr>
-		<% @implications.each do |i| %>
-			<tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
-				<td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>/></td>
-				<td><%= i.predicate.name %></td>
-				<td><%= i.consequent.name %></td>
-			</tr>
-		<% end %>
-		<tr>
-			<td colspan="3">
-				<% if @current_user && @current_user.admin? %>
-					<%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
-					<%= submit_tag "Approve" %> 
-					<%= submit_tag "Delete" %>
-				<% end %>
-			</td>
-		</tr>
-	</table>
+  <table>
+    <tr>
+      <th></th>
+      <th>Predicate</th>
+      <th>Consequent</th>
+    </tr>
+    <% @implications.each do |i| %>
+      <tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
+        <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>/></td>
+        <td><%= i.predicate.name %></td>
+        <td><%= i.consequent.name %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="3">
+        <% if @current_user && @current_user.admin? %>
+          <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
+          <%= submit_tag "Approve" %> 
+          <%= submit_tag "Delete" %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
 <% end %>
 
 <div id="paginator">
-	<%= custom_pagination_links(@pages, :params => {:controller => "tag_implication", :action => "index"}) %>
+  <%= custom_pagination_links(@pages, :params => {:controller => "tag_implication", :action => "index"}) %>
 </div>
 
 <% content_for("footer") do %>
-	<p><%= link_to "Add Implication", :action => "add" %>
+  <p><%= link_to "Add Implication", :action => "add" %>
 <% end %>
 
 <%= render :partial => "/tag/footer" %>

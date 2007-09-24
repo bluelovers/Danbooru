@@ -7,9 +7,9 @@ class NoteController < ApplicationController
   def search
     if params[:query]
       hits = NOTE_INDEX.search("body:#{params[:query]}").hits
-		  @pages = Paginator.new(:note, hits.size, 25, params[:page])
-		  @notes = hits.map {|x| Note.find(NOTE_INDEX[x.doc][:id])}
-	  end
+      @pages = Paginator.new(:note, hits.size, 25, params[:page])
+      @notes = hits.map {|x| Note.find(NOTE_INDEX[x.doc][:id])}
+    end
   end
 
   def index

@@ -1,11 +1,11 @@
 <ul>
-	<% @tags.each do |tag| %>
-		<li><%= link_to tag['name'], :controller => "post", :action => "index", :tags => tag['name'] %> (<%= tag['post_count'] %>)</li>
-	<% end %>
+  <% @tags.each do |tag| %>
+    <li><%= link_to tag['name'], :controller => "post", :action => "index", :tags => tag['name'] %> (<%= tag['post_count'] %>)</li>
+  <% end %>
 </ul>
 
 <div id="paginator">
-	<%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type]}) %>
+  <%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type]}) %>
 </div>
 
 <% content_for("footer") do %>

@@ -1,24 +1,24 @@
 <%= javascript_include_tag "pool" %>
 
 <div id="pool-show">
-	<h3>Pool: <%= @pool.pretty_name %></h3>
-	<% unless @pool.description.blank? %>
-	  <div style="margin-bottom: 2em;"><%= @pool.description %></div>
-	<% end %>
-	<% if @current_user && @current_user.has_permission?(@pool) %>
-  	<input type="checkbox" id="del-mode" onclick="Element.toggle('info')"/>
-  	<label for="del-mode">Delete Mode</label>
-  	<div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
+  <h3>Pool: <%= @pool.pretty_name %></h3>
+  <% unless @pool.description.blank? %>
+    <div style="margin-bottom: 2em;"><%= @pool.description %></div>
   <% end %>
-	<div style="margin-top: 1em;">
-		<% @posts.each do |post| %>
-    	<%= print_preview(post, :onclick => "return Pool.remove_post(#{post.id}, #{@pool.id})", :user => @current_user) %>
-		<% end %>
-	</div>
+  <% if @current_user && @current_user.has_permission?(@pool) %>
+    <input type="checkbox" id="del-mode" onclick="Element.toggle('info')"/>
+    <label for="del-mode">Delete Mode</label>
+    <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
+  <% end %>
+  <div style="margin-top: 1em;">
+    <% @posts.each do |post| %>
+      <%= print_preview(post, :onclick => "return Pool.remove_post(#{post.id}, #{@pool.id})", :user => @current_user) %>
+    <% end %>
+  </div>
 </div>
 
 <div id="paginator">
-	<%= custom_pagination_links(@pages) %>
+  <%= custom_pagination_links(@pages) %>
 </div>
 
 <% content_for("footer") do %>
@@ -26,7 +26,7 @@
   <%= link_to "Delete", :action => "destroy", :id => params[:id] %> |
   <%= link_to "Slideshow", :action => "slideshow", :id => params[:id] %> |
   <%= link_to "Order", :action => "order", :id => params[:id] %> |
-	<%= link_to "Import", :action => "import", :id => params[:id] %> |
+  <%= link_to "Import", :action => "import", :id => params[:id] %> |
 <% end %>
 
 <%= render :partial => "footer" %>
