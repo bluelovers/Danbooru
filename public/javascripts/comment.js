@@ -24,6 +24,7 @@ Comment.quote = function(id) {
     onSuccess: function(req) {
       var resp = eval("(" + req.responseText + ")")
       $('reply-' + resp.post_id).show()
+      $('reply-' + resp.post_id).scrollTo()
       $('reply-text-' + resp.post_id).value = '<quote>' + resp.creator + ' said:\n' + resp.body.replace(/<quote>(?:.|\n)+?<\/quote>\n*/gm, "") + '\n</quote>\n\n'
     },
     onFailure: function(req) {
