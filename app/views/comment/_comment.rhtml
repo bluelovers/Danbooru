@@ -8,7 +8,7 @@
       <%= format_text(h(comment.body), :mode => :comment) %>
     </div>
     <div class="footer">
-      <%= link_to_function "Respond", "$('reply-#{comment.post_id}').show(); $('reply-text-#{comment.post_id}').value = '&gt;&gt;#{comment.id}\\n'" %>
+      <%= link_to_function "Respond", "Comment.quote(#{comment.id})" %>
       <% if @current_user && @current_user.has_permission?(comment) %>
         | <%= link_to "Delete", {:controller => "comment", :action => "destroy", :id => comment.id}, :confirm => "Are you sure you want to delete this comment?", :method => :post %>
       <% else %>

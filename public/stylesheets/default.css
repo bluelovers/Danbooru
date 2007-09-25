@@ -71,15 +71,14 @@ a.last-page {
   color: #AAA;
 }
 
-a.spoilers {
+a.spoiler {
   color: black;
   background: black;
   cursor: text;
 }
 
-a.spoilers:hover {
-  color: black;
-  background: white;
+a.spoiler:hover {
+  color: white;
 }
 
 a.help {
@@ -770,4 +769,11 @@ span.tag-list a {
 
 span.post-count {
   color: #AAA;
+}
+
+div.quote {
+  margin: 1em 0;
+  padding: 1em;
+  border: 1px solid #666;
+  background: #EEE;
 }

@@ -86,6 +86,12 @@ class ForumController < ApplicationController
     if @current_user != nil
       @current_user.update_forum_view(@forum_post.id)
     end
+    
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @forum_post.to_xml(:root => "forum_post")}
+      fmt.js {render :json => @forum_post.to_json}
+    end
   end
 
   def index

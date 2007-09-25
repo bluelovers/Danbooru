@@ -25,7 +25,7 @@ class String
   end
 
   def to_escaped_js
-    return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}
+    return self.gsub(/\\/, '\\\\').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\n\r|\r|\n/, '\\\\n')
   end
 end
 
