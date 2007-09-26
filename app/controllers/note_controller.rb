@@ -9,6 +9,12 @@ class NoteController < ApplicationController
       hits = NOTE_INDEX.search("body:#{params[:query]}").hits
       @pages = Paginator.new(:note, hits.size, 25, params[:page])
       @notes = hits.map {|x| Note.find(NOTE_INDEX[x.doc][:id])}
+      
+      respond_to do |fmt|
+        fmt.html
+        fmt.xml {render :xml => @notes.to_xml(:root => "notes")}
+        fmt.js {render :json => @notes.to_json}
+      end
     end
   end
 
@@ -41,14 +47,23 @@ class NoteController < ApplicationController
       @pages = Paginator.new self, NoteVersion.count, 25, params[:page]
       @notes = NoteVersion.find(:all, :order => "id desc", :limit => @pages.items_per_page, :offset => @pages.current.offset)
     end
+    
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @notes.to_xml(:root => "notes")}
+      fmt.js {render :json => @notes.to_json}
+    end
   end
 
   def revert
     note = Note.find(params[:id])
 
     if note.locked?
-      flash[:notice] = "This post is locked and notes cannot be altered"
-      redirect_to :action => "history", :id => note.id
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "This post is locked and notes cannot be altered"; redirect_to(:action => "history", :id => note.id)}
+        fmt.xml {render :xml => {:success => false, :reason => "post is locked"}.to_xml(:root => "response"), :status => 500}
+        fmt.js {render :xml => {:success => false, :reason => "post is locked"}.to_json, :status => 500}
+      end
       return
     end
 
@@ -56,8 +71,11 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save_without_revision
-      flash[:notice] = "Note reverted"
-      redirect_to :action => "history", :id => note.id
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Note reverted"; redirect_to(:action => "history", :id => note.id)}
+        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+        fmt.js {render :json => {:success => true}.to_json}
+      end
     else
       render_error(note)
     end
@@ -71,7 +89,10 @@ class NoteController < ApplicationController
     end
 
     if note.locked?
-      render :json => {:success => false, :reason => "post is locked"}.to_json, :status => 500
+      respond_to do |fmt|
+        fmt.xml {render :xml => {:success => false, :reason => "post is locked"}.to_xml(:root => "response"), :status => 500}
+        fmt.js {render :json => {:success => false, :reason => "post is locked"}.to_json, :status => 500}
+      end
       return
     end
 
@@ -80,7 +101,10 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save
-      render :json => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => note.formatted_body}.to_json
+      respond_to do |fmt|
+        fmt.xml {render :xml => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => note.formatted_body}.to_xml(:root => "response")}
+        fmt.js {render :json => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => note.formatted_body}.to_json}
+      end
     else
       render_error(note)
     end

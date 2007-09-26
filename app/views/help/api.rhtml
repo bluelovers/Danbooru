@@ -1,9 +1,9 @@
 <div class="help">
-  <h1>Help: API</h1>
+  <h1>Help: API v1.8</h1>
 
   <div class="section">
     <p>Danbooru offers a simple <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">REST-based API</a> to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
-    <p style="text-align: center;"><a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a></p>
+    <p style="text-align: center;"><a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a> | <a href="#forum">Forum</a> | <a href="#pools">Pools</a></p>
   </div>
 
   <div class="section">
@@ -47,16 +47,18 @@
     </div>
   </div>
 
+
+
   <div class="section">
     <a name="posts"></a>
     <h2>Posts</h2>
 
     <div class="section">
-      <h4>Search</h4>
+      <h4>List</h4>
       <p>The base URL is /post/index.xml.</p>
       <ul>
-        <li><strong>limit</strong> How many posts you want to retrieve.</li>
-        <li><strong>page</strong> The offset.</li>
+        <li><strong>limit</strong> How many posts you want to retrieve. There is a hard limit of 100 posts per request.</li>
+        <li><strong>page</strong> The page number.</li>
         <li><strong>tags</strong> The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.</li>
       </ul>
     </div>
@@ -67,6 +69,7 @@
       <ul>
         <li><strong>post[tags]</strong> A space delimited list of tags.</li>
         <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+        <li><strong>post[rating]</strong> The rating for the post. Can be: safe, questionable, or explicit.</li>
         <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
         <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
         <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
@@ -80,7 +83,7 @@
         <li><strong>duplicate</strong> This post already exists in Danbooru (based on the MD5 hash). An additional attribute called <code>location</code> will be set, pointing to the (relative) URL of the original post.</li>
         <li><strong><em>other</em></strong> Any other error will have its error message printed.</li>
       </ul>
-      <p>If the post upload succeeded, you'll get an attributed called <code>location</code> in the response pointing to the relative URL of your newly uploaded post.</p>
+      <p>If the post upload succeeded, you'll get an attribute called <code>location</code> in the response pointing to the relative URL of your newly uploaded post.</p>
     </div>
     <div class="section">
       <h4>Update</h4>
@@ -89,11 +92,13 @@
         <li><strong>id</strong> The id number of the post to update.</li>
         <li><strong>post[tags]</strong> A space delimited list of tags.</li>
         <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+        <li><strong>post[rating]</strong> The rating for the post. Can be: safe, questionable, or explicit.</li>
         <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
         <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
         <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
         <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
         <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
+        <li><strong>post[is_flagged]</strong> Set to true to flag the post for deletion.</li>
       </ul>
     </div>
     <div class="section">
@@ -109,7 +114,7 @@
       <ul>
         <li><strong>post_id</strong> Specify if you only want the tag histories for a single post.</li>
         <li><strong>limit</strong> How many histories you want to retrieve.</li>
-        <li><strong>page</strong> The offset.</li>
+        <li><strong>page</strong> The page number.</li>
       </ul>
     </div>
     <div class="section">
@@ -141,16 +146,19 @@
       </ul>
     </div>
   </div>
+  
+  
+  
   <div class="section">
     <a name="tags"></a>
     <h2>Tags</h2>
 
     <div class="section">
-      <h4>Search</h4>
+      <h4>List</h4>
       <p>The base URL is /tag/index.xml.</p>
       <ul>
         <li><strong>limit</strong> How many tags to retrieve. Setting this to 0 will return every tag.</li>
-        <li><strong>page</strong> The offset.</li>
+        <li><strong>page</strong> The page number.</li>
         <li><strong>order</strong> Can be <code>date</code>, <code>count</code>, or <code>name</code>.</li>
         <li><strong>id</strong> The id number of the tag.</li>
         <li><strong>after_id</strong> Return all tags that have an id number greater than this.</li>
@@ -177,19 +185,21 @@
     </div>
   </div>
 
+
+
   <div class="section">
     <a name="artists"></a>
     <h2>Artists</h2>
 
     <div class="section">
-      <h4>Search</h4>
+      <h4>List</h4>
       <p>The base URL is /artist/index.xml.</p>
       <ul>
         <li><strong>name</strong> The name (or a fragment of the name) of the artist.</li>
         <li><strong>url</strong> A URL pointing to the artist's site.</li>
         <li><strong>md5</strong> The MD5 hash of an image created by the artist.</li>
         <li><strong>order</strong> Can be <code>date</code> or <code>name</code>.</li>
-        <li><strong>page</strong> The offset.</li>
+        <li><strong>page</strong> The page number.</li>
       </ul>
     </div>
     <div class="section">
@@ -225,6 +235,8 @@
       </ul>
     </div>
   </div>
+  
+  
 
   <div class="section">
     <a name="comments"></a>
@@ -264,6 +276,8 @@
       </ul>
     </div>
   </div>
+  
+  
 
   <div class="section">
     <a name="wiki"></a>
@@ -276,7 +290,8 @@
       <ul>
         <li><strong>order</strong> How you want the pages ordered. Can be: <code>title</code>, <code>date</code>.</li>
         <li><strong>limit</strong> The number of pages to retrieve.</li>
-        <li><strong>page</strong> The offset.</li>
+        <li><strong>page</strong> The page number.</li>
+        <li><strong>query</strong> A word or phrase to search for.</li>
       </ul>
     </div>
   
@@ -291,7 +306,7 @@
   
     <div class="section">
       <h4>Update</h4>
-      <p>The base URL is /wiki/update.xml.</p>
+      <p>The base URL is /wiki/update.xml. Potential error reasons: "page locked"</p>
       <ul>
         <li><strong>title</strong> The title of the wiki page to update.</li>
         <li><strong>wiki_page[title]</strong> The new title of the wiki page.</li>
@@ -301,7 +316,7 @@
   
     <div class="section">
       <h4>Show</h4>
-      <p>The base URL is /wiki/show.xml.</p>
+      <p>The base URL is /wiki/show.xml. Potential error reasons: "artist type"</p>
       <ul>
         <li><strong>title</strong> The title of the wiki page to retrieve.</li>
         <li><strong>version</strong> The version of the page to retrieve.</li>
@@ -334,7 +349,7 @@
   
     <div class="section">
       <h4>Revert</h4>
-      <p>The base URL is /wiki/revert.xml.</p>
+      <p>The base URL is /wiki/revert.xml. Potential error reasons: "page locked"</p>
       <ul>
         <li><strong>title</strong> The title of the wiki page to update.</li>
         <li><strong>version</strong> The version to revert to.</li>
@@ -350,6 +365,8 @@
     </div>
   </div>
 
+
+
   <div class="section">
     <a name="notes"></a>
     <h2>Notes</h2>
@@ -361,7 +378,15 @@
         <li><strong>post_id</strong> The post id number to retrieve notes for.</li>
       </ul>
     </div>
-
+    
+    <div class="section">
+      <h4>Search</h4>
+      <p>The base URL is /note/search.xml.</p>
+      <ul>
+        <li><strong>query</strong> A word or phrase to search for.</li>
+      </ul>
+    </div>
+    
     <div class="section">
       <h4>History</h4>
       <p>The base URL is /note/history.xml. You can either specify <code>id</code>, <code>post_id</code>, or nothing. Specifying nothing will give you a list of every note verison.</p>
@@ -375,7 +400,7 @@
 
     <div class="section">
       <h4>Revert</h4>
-      <p>The base URL is /note/revert.xml.</p>
+      <p>The base URL is /note/revert.xml. Potential error reasons: "post is locked"</p>
       <ul>
         <li><strong>id</strong> The note id to update.</li>
         <li><strong>version</strong> The version to revert to.</li>
@@ -384,7 +409,7 @@
 
     <div class="section">
       <h4>Create/Update</h4>
-      <p>The base URL is /note/update.xml. Notes differ from the other controllers in that the interface for creation and updates is the same. If you supply an <code>id</code> parameter, then Danbooru will assume you're updating an existing note. Otherwise, it will create a new note.</p>
+      <p>The base URL is /note/update.xml. Notes differ from the other controllers in that the interface for creation and updates is the same. If you supply an <code>id</code> parameter, then Danbooru will assume you're updating an existing note. Otherwise, it will create a new note. Potential error reasons: "post is locked"</p>
       <ul>
         <li><strong>id</strong> If you are updating a note, this is the note id number to update.</li>
         <li><strong>note[post_id]</strong> The post id number this note belongs to.</li>
@@ -398,6 +423,8 @@
     </div>
   </div>
 
+
+
   <div class="section">
     <a name="users"></a>
     <h2>Users</h2>
@@ -408,6 +435,46 @@
       <ul>
         <li><strong>id</strong> The id number of the user.</li>
         <li><strong>name</strong> The name of the user.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="forum"></a>
+    <h2>Forum</h2>
+    
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /forum/index.xml. If you don't specify any parameters you'll get a list of all the parent topics.</p>
+      <ul>
+        <li><strong>parent_id</strong> The parent ID number. You'll return all the responses to that forum post.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="pools"></a>
+    <h2>Pools</h2>
+    
+    <div class="section">
+      <h4>Add Post</h4>
+      <p>The base URL is /pool/add_post.xml. Potential error reasons: "already exists", "access denied"</p>
+      <ul>
+        <li><strong>pool_id</strong> The pool to add the post to.</li>
+        <li><strong>post_id</strong> The post to add.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>Remove Post</h4>
+      <p>The base URL is /pool/remove_post.xml. Potential error reasons: "access denied"</p>
+      <ul>
+        <li><strong>pool_id</strong> The pool to remove the post from.</li>
+        <li><strong>post_id</strong> The post to remove.</li>
       </ul>
     </div>
   </div>

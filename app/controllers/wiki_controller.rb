@@ -6,7 +6,6 @@ class WikiController < ApplicationController
 
   def destroy
     page = WikiPage.find_page(params[:title])
-    WikiPageVersion.destroy_all("wiki_page_id = #{page.id}")
     page.destroy
 
     respond_to do |fmt|
@@ -129,9 +128,17 @@ class WikiController < ApplicationController
       artist = Artist.find_by_name(params[:title])
 
       if artist == nil
-        redirect_to :controller => "artist", :action => "add", :name => params[:title]
+        respond_to do |fmt|
+          fmt.html {redirect_to :controller => "artist", :action => "add", :name => params[:title]}
+          fmt.xml {render :xml => {:success => false, :reason => "artist type"}.to_xml(:root => "response"), :status => 500}
+          fmt.js {render :json => {:success => false, :reason => "artist type"}.to_json, :status => 500}
+        end
       else
-        redirect_to :controller => "artist", :action => "show", :id => artist.id
+        respond_to do |fmt|
+          fmt.html {redirect_to :controller => "artist", :action => "show", :id => artist.id}
+          fmt.xml {render :xml => {:success => false, :reason => "artist type", :artist_id => artist.id}.to_xml(:root => "response"), :status => 500}
+          fmt.js {render :json => {:success => false, :reason => "artist type", :artist_id => artist.id}.to_json, :status => 500}
+        end
       end
     end
 

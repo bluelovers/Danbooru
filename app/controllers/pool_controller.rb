@@ -69,7 +69,6 @@ class PoolController < ApplicationController
   
   def add_post
     if request.post?
-      params[:pool_id] = session[:previous_pool_id] if params[:pool_id].to_i == 0
       @pool = Pool.find(params[:pool_id])
       
       if !@pool.is_public? && (@current_user == nil || @current_user.id != @pool.user_id)
@@ -81,9 +80,6 @@ class PoolController < ApplicationController
         
         return
       end
-      
-      session[:previous_pool_id] = @pool.id
-      session[:previous_pool_name] = @pool.name
       
       begin
         @pool.add_post(params[:post_id])
