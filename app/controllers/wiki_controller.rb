@@ -47,7 +47,7 @@ class WikiController < ApplicationController
     end
 
     if params[:query] && Object.const_defined?(:Ferret)
-      hits = WIKI_INDEX.search("title|body:#{params[:query]}").hits
+      hits = WIKI_INDEX.search("title|body:#{params[:query]}", :limit => 50).hits
       @pages = Paginator.new(:wiki, hits.size, 25, params[:page])
       @wiki_pages = hits.map {|x| WikiPage.find(WIKI_INDEX[x.doc][:id])}
     else
