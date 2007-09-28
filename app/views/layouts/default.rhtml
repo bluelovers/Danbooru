@@ -22,7 +22,7 @@
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_links(params['tags']) %></h2>
     <ul class="flat-list" id="navbar">
       <li><%= link_to "My Account", :controller => "user", :action => "home" %></li>
-      <li><%= link_to "Posts", :controller => "post", :action => "index" %></li>
+      <li><%= link_to "Posts", :controller => "post", :action => "index", :tags => nil %></li>
       <li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
       <li><%= link_to "Notes", :controller => "note", :action => "index" %></li>
       <li><%= link_to "Pools", :controller => "pool", :action => "index" %></li>

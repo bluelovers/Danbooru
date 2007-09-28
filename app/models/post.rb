@@ -83,6 +83,11 @@ class Post < ActiveRecord::Base
     @comment_count ||= Comment.count_by_sql("SELECT COUNT(*) FROM comments WHERE post_id = #{self.id}")
     return @comment_count
   end
+  
+  # Returns the tags in a URL suitable string
+  def tag_title
+    return cached_tags.gsub(/[^a-z0-9]/, "-")[0, 100]
+  end
 
   def append_tags(t)
     @tag_cache = self.cached_tags + " " + t
