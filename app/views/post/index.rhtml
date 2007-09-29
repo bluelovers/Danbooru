@@ -1,7 +1,6 @@
 <div id="post-list">
   <%= javascript_include_tag "post" %>
   <%= javascript_include_tag "favorite" %>
-  <%= javascript_include_tag "pool" %>
   <%= javascript_include_tag "post_mode_menu" %>
   
   <div class="sidebar">
@@ -21,9 +20,6 @@
           <option value="lock-rating">Lock Rating</option>
           <option value="lock-note">Lock Notes</option>
           <option value="flag">Flag Post</option>
-          <% if @current_user && session[:previous_pool_id] %>
-            <option value="add-to-pool">Add to Previous Pool</option>
-          <% end %>
           <option value="edit-tag-script">Edit Tag Script</option>
           <option value="apply-tag-script">Apply Tag Script</option>
         </select>
