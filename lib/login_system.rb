@@ -36,8 +36,8 @@ module LoginSystem
     end
   end
 
-  def limited_only
-    if @current_user && @current_user.level >= User::LEVEL_LIMITED
+  def restricted_only
+    if @current_user && @current_user.level >= User::LEVEL_RESTRICTED
       return true
     else
       access_denied()

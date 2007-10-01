@@ -1,6 +1,6 @@
 class FavoriteController < ApplicationController
   layout "default"
-  before_filter :limited_only, :only => [:create, :destroy]
+  before_filter :restricted_only, :only => [:create, :destroy]
   verify :method => :post, :only => [:create, :destroy]
   helper :post
   
