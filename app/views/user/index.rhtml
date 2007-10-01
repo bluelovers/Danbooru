@@ -9,7 +9,7 @@
       </tr>
       <tr>
         <th>Level</th>
-        <td><%= select_tag "level", options_for_select([["Any", "any"], ["Blocked", User::LEVEL_BLOCKED.to_s], ["Jailed", User::LEVEL_JAILED.to_s], ["Member", User::LEVEL_MEMBER.to_s], ["Privileged", User::LEVEL_PRIVILEGED.to_s], ["Moderator", User::LEVEL_MOD.to_s], ["Administrator", User::LEVEL_ADMIN.to_s]], params[:level]) %></td>
+        <td><%= select_tag "level", options_for_select([["Any", "any"], ["Blocked", User::LEVEL_BLOCKED.to_s], ["Limited", User::LEVEL_LIMITED.to_s], ["Member", User::LEVEL_MEMBER.to_s], ["Privileged", User::LEVEL_PRIVILEGED.to_s], ["Moderator", User::LEVEL_MOD.to_s], ["Administrator", User::LEVEL_ADMIN.to_s]], params[:level]) %></td>
       </tr>
       <tr>
         <th>Order</th>

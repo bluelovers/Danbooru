@@ -36,8 +36,8 @@ module LoginSystem
     end
   end
 
-  def jailed_only
-    if @current_user && @current_user.level >= User::LEVEL_JAILED
+  def limited_only
+    if @current_user && @current_user.level >= User::LEVEL_LIMITED
       return true
     else
       access_denied()
