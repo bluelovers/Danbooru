@@ -86,7 +86,7 @@ class Post < ActiveRecord::Base
   
   # Returns the tags in a URL suitable string
   def tag_title
-    return cached_tags.gsub(/[^a-z0-9]/, "-")[0, 100]
+    return cached_tags.gsub(/[^a-z0-9]/, "-")[0, 50]
   end
 
   def append_tags(t)
@@ -453,6 +453,10 @@ class Post < ActiveRecord::Base
 
     if q[:unlocked_rating] == true
       conditions << "p.is_rating_locked = FALSE"
+    end
+
+    if options[:pending]
+      conditions << "(p.is_pending = TRUE OR p.is_flagged = TRUE)"
     end
 
     if conditions.empty? 
