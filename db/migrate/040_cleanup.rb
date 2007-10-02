@@ -1,6 +1,5 @@
 class Cleanup < ActiveRecord::Migration
   def self.up
-    remove_column :forum_posts, :category
     remove_column :forum_posts, :reply_count
     remove_column :users, :user_blacklist
     remove_column :users, :post_threshold
@@ -9,7 +8,6 @@ class Cleanup < ActiveRecord::Migration
   end
 
   def self.down
-    add_column :forum_posts, :category, :integer, :null => false, :default => 1
     add_column :forum_posts, :reply_count, :integer, :null => false, :default => 0
     add_column :users, :user_blacklist, :text, :null => false, :default => ""
     add_column :users, :post_threshold, :integer, :null => false, :default => -100
