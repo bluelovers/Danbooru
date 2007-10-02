@@ -146,6 +146,14 @@
                 </td>
               </tr>
             <% end %>
+            <tr>
+              <th><label>Prev Post</label></th>
+              <td><%= text_field "post", "prev_post_id", :size => 5 %></td>
+            </tr>
+            <tr>
+              <th><label>Next Post</label></th>
+              <td><%= text_field "post", "next_post_id", :size => 5 %></td>
+            </tr>
             <% if @current_user && @current_user.privileged? %>
               <tr>
                 <th>
