@@ -777,3 +777,11 @@ div.quote {
   border: 1px solid #666;
   background: #EEE;
 }
+
+img.pending {
+  border: 3px solid blue;
+}
+
+img.flagged {
+  border: 3px solid red;
+}
