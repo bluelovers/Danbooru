@@ -19,9 +19,10 @@ module FavoriteHelper
       :joins => "JOIN favorites ON favorites.user_id = users.id", 
       :conditions => ["favorites.post_id IN (?) AND users.id <> ?", post_ids, user.id], 
       :order => "lower(name)", 
-      :select => "users.*"
+      :select => "users.name, users.id"
     )
     s = users.map {|x| link_to(x.name, :controller => "favorite", :action => "show", :id => x.id)}.uniq.to_sentence
+
     if s.empty?
       return "no one"
     else

@@ -66,7 +66,7 @@ class Post < ActiveRecord::Base
   end
 
   def favorited_by
-    User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.*", :conditions => ["f.post_id = ?", self.id], :order => "lower(users.name)")
+    User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", self.id], :order => "lower(users.name)")
   end
 
   def blank_image_board_sources
