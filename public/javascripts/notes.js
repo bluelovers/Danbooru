@@ -149,7 +149,7 @@ Note.prototype = {
 		var top = Position.deltaY
 		var left = Position.deltaX + 25
 
-		inject += '<div id="edit-box" style="width: 375px; height: 120px; top: '+top+'px; left: '+left+'px; position: absolute; z-index: 100; background: white; border: 1px solid black; padding: 1em;">'
+		inject += '<div id="edit-box" style="width: 375px; height: 150px; top: '+top+'px; left: '+left+'px; position: absolute; z-index: 100; background: white; border: 1px solid black; padding: 1em;">'
 		inject += '<form onsubmit="return false;">'
 		inject += '<textarea rows="6" id="edit-box-text" style="width: 95%; margin-bottom: 1em;">' + this.textValue() + '</textarea>'
 		inject += '<input type="submit" value="Save" name="save" id="note-save-' + this.id + '" />'

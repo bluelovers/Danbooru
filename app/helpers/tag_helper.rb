@@ -1,67 +1,72 @@
 module TagHelper
-  def tag_link(t, prefix = "", hide_unsafe_posts = false)
+  def tag_links(tags, options = {})
+    return "" if tags.blank?
+    prefix = options[:prefix] || ""
+    hide_unsafe_posts = options[:hide_unsafe_posts]
+    count_field = hide_unsafe_posts ? "safe_post_count" : "post_count"        
+    
     html = ""
-
-    begin
+    tags = tags.map do |t|
       case t
       when String
-        name = t
-        if hide_unsafe_posts
-          count = Tag.find_by_name(name).safe_post_count
+        tag = Tag.find(:first, :conditions => ["name = ?", t], :select => "name, #{count_field}")
+        
+        if tag
+          [tag.name, tag.__send__(count_field)]
         else
-          count = Tag.find_by_name(name).post_count
+          [tag.name, 0]
         end
 
       when Hash
-        name = t["name"].to_s
-        count = t["post_count"].to_i
+        [t["name"], t["post_count"]]
 
       when Tag
-        name = t.name
-        if hide_unsafe_posts
-          count = t.safe_post_count
-        else
-          count = t.post_count
-        end
+        [t.name, t.__send__(count_field)]
         
       when Array
-        name = t[0].to_s
-        count = t[1].to_i
+        t
 
       else
         raise
-
       end
-    rescue Exception
-      return ""
     end
-
-    html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
 
     if @current_user
-      html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
-      html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
-    end
-
-    html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
-
-    if !CONFIG["enable_turbo_mode"] && @current_user
-      tag_type = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
-      tag_type = tag_type.tag_type if tag_type
-
-      case tag_type
-      when Tag.types[:artist]
-        html << '<span class="artist-tag">(artist)</span> '
-
-      when Tag.types[:character]
-        html << '<span class="character-tag">(character)</span> '
-
-      when Tag.types[:copyright]
-        html << '<span class="copyright-tag">(copyright)</span> '
+      type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec| 
+        h[rec.name] = case rec.tag_type
+        when Tag.types[:artist]
+          "artist"
+          
+        when Tag.types[:character]
+          "character"
+          
+        when Tag.types[:copyright]
+          "copyright"
+          
+        else
+          nil
+        end
+        
+        h
       end
+    else
+      type_map = {}
     end
 
-    html << content_tag("span", count.to_s, :class => "post-count")
+    tags.each do |name, count|
+      html << '<li>'
+      html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
+      
+      if @current_user
+        html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
+        html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
+      end
+
+      html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
+      html << content_tag("span", count.to_i, :class => "post-count") << " "
+      html << content_tag("span", "(" + type_map[name] + ")", :class => type_map[name] + "-tag")
+      html << '</li>'
+    end
 
     return html
   end

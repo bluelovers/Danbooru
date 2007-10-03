@@ -34,7 +34,7 @@ module ApplicationHelper
     "rgb(#{r}, #{g}, #{b})"
   end
 
-  def tag_links(tags)
+  def tag_header(tags)
     if tags
       '/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
     end

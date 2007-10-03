@@ -6,6 +6,7 @@ class UserController < ApplicationController
   before_filter :member_only, :only => [:favorites, :authenticate, :update]
   before_filter :privileged_only, :only => [:invites]
   helper :post
+  filter_parameter_logging :password
   auto_complete_for :user, :name
 
   protected
