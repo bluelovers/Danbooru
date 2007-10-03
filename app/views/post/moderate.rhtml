@@ -18,7 +18,7 @@
       <tr class="<%= cycle 'even', 'odd' %>">
         <td><input type="checkbox" class="p" name="ids[<%= p.id %>]"/></td>
         <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-        <td><%= p.author %></td>
+        <td><%= link_to p.author, :action => "moderate", :query => "user:#{p.author}" %></td>
         <td><%= p.pretty_rating %></td>
         <td><%= "Yes" if p.is_flagged? %></td>
         <td><%= "Yes" if p.is_pending? %></td>
