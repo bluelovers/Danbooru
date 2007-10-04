@@ -64,7 +64,9 @@ module TagHelper
 
       html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
       html << content_tag("span", count.to_i, :class => "post-count") << " "
-      html << content_tag("span", "(" + type_map[name] + ")", :class => type_map[name] + "-tag")
+      if type_map[name]
+        html << content_tag("span", "(" + type_map[name] + ")", :class => type_map[name] + "-tag")
+      end
       html << '</li>'
     end
 
