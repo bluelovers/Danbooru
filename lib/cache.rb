@@ -1,5 +1,16 @@
 module Cache
-  def self.expire(options = {})
+  def get_or_set(key, expire)
+    data = CACHE.get(key, true)
+    
+    if data == nil
+      data = yield()
+      CACHE.set(key, data, expire)
+    end
+    
+    return data
+  end
+  
+  def expire(options = {})
     if !CONFIG["hide_unsafe_posts"] || options[:rating] == 's' || options[:update_post] || options[:destroy_post]
       # If safe post mode is disabled, then always expire the tag.
       #
@@ -37,4 +48,7 @@ module Cache
       CACHE.set("$cache_version", $cache_version)
     end
   end
+  
+  module_function :expire
+  module_function :get_or_set
 end
