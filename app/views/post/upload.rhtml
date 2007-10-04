@@ -5,11 +5,15 @@
       <% if params[:url] %>
         <%= image_tag(params["url"], :title => "Preview", :id => "image") %>
         <script type="text/javascript">
+          // <![CDATA[
           if ($("image").height > 400) {
-            var ratio = 400.0 / $("image").height
-            $("image").width = $("image").width * ratio
-            $("image").height = $("image").height * ratio
+            var width = $("image").width
+            var height = $("image").height
+            var ratio = 400.0 / height
+            $("image").width = width * ratio
+            $("image").height = height * ratio
           }
+          // ]]>
         </script>
       <% end %>
 
