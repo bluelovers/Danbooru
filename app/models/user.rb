@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   # Users are in one of seven possible roles:
   LEVEL_UNACTIVATED = -1
   LEVEL_BLOCKED = 0
-  LEVEL_RESTRICTED = 1
+  LEVEL_JAILED = 1
   LEVEL_MEMBER = 2
   LEVEL_PRIVILEGED = 3
   LEVEL_MOD = 10
@@ -56,8 +56,8 @@ class User < ActiveRecord::Base
     when LEVEL_BLOCKED
       "Blocked"
       
-    when LEVEL_RESTRICTED
-      "Restricted"
+    when LEVEL_JAILED
+      "Jailed"
       
     when LEVEL_MEMBER
       "Member"
@@ -274,8 +274,8 @@ class User < ActiveRecord::Base
     self.level <= LEVEL_BLOCKED
   end
 
-  def restricted?
-    self.level == LEVEL_RESTRICTED
+  def jailed?
+    self.level == LEVEL_JAILED
   end
   
   def member?

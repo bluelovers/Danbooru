@@ -30,14 +30,22 @@ module LoginSystem
     if @current_user && @current_user.blocked?
       @current_user = nil
     end
-
+    
     if @current_user
+      if @current_user.ip_addr != request.remote_ip
+        @current_user.update_attribute(:ip_addr, request.remote_ip)
+      end
+      
+      if @current_user.last_logged_in_at < 1.week.ago
+        @current_user.update_attribute(:last_logged_in_at, Time.now)
+      end
+      
       session[:user_id] = @current_user.id
     end
   end
 
-  def restricted_only
-    if @current_user && @current_user.level >= User::LEVEL_RESTRICTED
+  def jailed_only
+    if @current_user && @current_user.level >= User::LEVEL_JAILED
       return true
     else
       access_denied()
