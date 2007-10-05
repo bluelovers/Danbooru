@@ -23,7 +23,7 @@
   </tr>
   <tr>
     <th>Note Edits</th>
-    <td><%= NoteVersion.count("user_id = #{@user.id}") %></td>
+    <td><%= link_to NoteVersion.count("user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
   </tr>
   <tr>
     <th>Wiki Edits</th>

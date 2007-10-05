@@ -9,15 +9,15 @@ class NoteController < ApplicationController
       hits = NOTE_INDEX.search("body:#{params[:query]}", :limit => 50).hits
       @pages = Paginator.new(:note, hits.size, 25, params[:page])
       @notes = hits.map {|x| Note.find(NOTE_INDEX[x.doc][:id])}
-      
+
       respond_to do |fmt|
         fmt.html
         fmt.xml {render :xml => @notes.to_xml(:root => "notes")}
         fmt.js {render :json => @notes.to_json}
       end
-    end
+    end    
   end
-
+  
   def index
     set_title "Notes"
     
@@ -43,6 +43,9 @@ class NoteController < ApplicationController
     elsif params[:post_id]
       @pages = Paginator.new self, NoteVersion.count(["post_id = ?", params[:post_id]]), 50, params[:page]
       @notes = NoteVersion.find(:all, :order => "id desc", :conditions => ["post_id = ?", params[:post_id]])
+    elsif params[:user_id]
+      @pages = Paginator.new self, NoteVersion.count(["user_id = ?", params[:post_id]]), 50, params[:page]
+      @notes = NoteVersion.find(:all, :order => "notes.post_id desc, note_versions.id desc", :joins => "JOIN notes ON notes.id = note_versions.note_id", :select => "note_versions.*", :conditions => ["notes.user_id = ?", params[:user_id]])
     else
       @pages = Paginator.new self, NoteVersion.count, 25, params[:page]
       @notes = NoteVersion.find(:all, :order => "id desc", :limit => @pages.items_per_page, :offset => @pages.current.offset)
