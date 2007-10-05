@@ -210,6 +210,9 @@ class User < ActiveRecord::Base
     else
       self.level = CONFIG["starting_level"]
     end
+    
+    self.ip_addr = ''
+    self.last_logged_in_at = Time.now
   end
 
   def encrypt_password

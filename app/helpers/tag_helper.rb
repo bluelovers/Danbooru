@@ -14,7 +14,7 @@ module TagHelper
         if tag
           [tag.name, tag.__send__(count_field)]
         else
-          [tag.name, 0]
+          [t, 0]
         end
 
       when Hash

@@ -219,6 +219,12 @@ class WikiController < ApplicationController
       return
     end
 
+    if params[:title] == nil
+      flash[:notice] = "No title was specificed"
+      redirect_to :action => "index"
+      return
+    end
+
     @oldpage = WikiPage.find_page(params[:title], params[:from])
     @difference = @oldpage.diff(params[:to])
   end
