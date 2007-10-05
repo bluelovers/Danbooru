@@ -54,6 +54,7 @@ module TagHelper
     end
 
     tags.each do |name, count|
+      name = name || "UNKNOWN"
       html << '<li>'
       html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
       

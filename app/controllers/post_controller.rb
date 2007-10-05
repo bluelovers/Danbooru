@@ -168,7 +168,7 @@ class PostController < ApplicationController
           @tags = Tag.parse_query(params[:tags])
         else
           if CONFIG["enable_caching"]
-            @tags = CACHE.get_or_set("poptags:#{hide_unsafe_posts?}", 86400) do
+            @tags = Cache.get("poptags:#{hide_unsafe_posts?}", 60) do
               {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_unsafe_posts => hide_unsafe_posts?)}
             end
           else
