@@ -9,8 +9,7 @@ VALUE danbooru_module;
 
 /*
  * PRE-CONDITIONS:
- * 1) mime_type is one of three possible strings: image/jpeg, image/gif, 
- *    or image/png.
+ * 1) file_ext is one of three possible strings: jpg, gif, or png.
  *
  * 2) read_path is an absolute file path readable by Ruby, pointing to an 
  *    image of one of the above three mime types.
@@ -27,16 +26,16 @@ VALUE danbooru_module;
  *    returned.
  */
 
-static VALUE danbooru_resize_image(VALUE module, VALUE mime_type, VALUE read_path, VALUE write_path) {
-  VALUE mime_type_string = StringValue(mime_type);
+static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path, VALUE write_path) {
+  VALUE file_ext_string = StringValue(file_ext);
   VALUE read_path_string = StringValue(read_path);
   VALUE write_path_string = StringValue(write_path);
   
-  const char * mime_type_cstr = RSTRING(mime_type_string)->ptr;
+  const char * file_ext_cstr = RSTRING(file_ext_string)->ptr;
   const char * read_path_cstr = RSTRING(read_path_string)->ptr;
   const char * write_path_cstr = RSTRING(write_path_string)->ptr;
 
-  if (mime_type_cstr == NULL || read_path_cstr == NULL || write_path_cstr == NULL) {
+  if (file_ext_cstr == NULL || read_path_cstr == NULL || write_path_cstr == NULL) {
     return Qfalse;
   }
   
@@ -55,11 +54,11 @@ static VALUE danbooru_resize_image(VALUE module, VALUE mime_type, VALUE read_pat
   
   gdImagePtr img = NULL;
   
-  if (!strcmp(mime_type_cstr, "image/jpeg")) {
+  if (!strcmp(file_ext_cstr, "jpg")) {
     img = gdImageCreateFromJpeg(read_file);
-  } else if (!strcmp(mime_type_cstr, "image/gif")) {
+  } else if (!strcmp(file_ext_cstr, "gif")) {
     img = gdImageCreateFromGif(read_file);
-  } else if (!strcmp(mime_type_cstr, "image/png")) {
+  } else if (!strcmp(file_ext_cstr, "png")) {
     img = gdImageCreateFromPng(read_file);
   }
   

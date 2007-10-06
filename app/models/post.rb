@@ -186,11 +186,13 @@ class Post < ActiveRecord::Base
       delete_tempfile
       errors.add "md5", "already exists"
       return false
+    else
+      return true
     end
   end
 
   def generate_preview
-    return unless image?
+    return true unless image?
 
     unless Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
       errors.add 'preview', "couldn't be generated"
@@ -211,6 +213,7 @@ class Post < ActiveRecord::Base
       File.open(tempfile_path, 'wb') do |out|
         out.write(res.body)
       end
+      return true
     rescue Exception => x
       delete_tempfile
       errors.add "source", "couldn't be opened: #{x}"
