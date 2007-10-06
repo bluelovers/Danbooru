@@ -192,13 +192,8 @@ class Post < ActiveRecord::Base
   def generate_preview
     return unless image?
 
-    begin
-      unless system("#{RAILS_ROOT}/lib/resizer/resizer #{tempfile_path} #{tempfile_preview_path} #{file_ext}")
-        errors.add 'preview', "couldn't be generated"
-        return false
-      end
-    rescue Exception => x
-      errors.add 'preview', "couldn't be generated: #{x}"
+    unless Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
+      errors.add 'preview', "couldn't be generated"
       return false
     end
   end
