@@ -7,7 +7,7 @@
   <h6>Invite User</h6>
   <p>You currently have <%= @current_user.invite_count %> invites available.</p>
   <% form_tag({:action => "invites"}, :onsubmit => "return confirm('Are you sure you want to invite ' + $F('user_name') + '?')") do %>
-    <%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %> <%= submit_tag "Invite" %>
+    <%= text_field_with_auto_complete "member", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_member_name"} %> <%= submit_tag "Invite" %>
   <% end %>
 </div>
 

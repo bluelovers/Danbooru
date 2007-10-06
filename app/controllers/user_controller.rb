@@ -21,6 +21,11 @@ class UserController < ApplicationController
   end
 
   public
+  def auto_complete_for_member_name
+    @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ilike ? escape '\\\\'", User::LEVEL_MEMBER, params[:member][:name] + "%"])
+    render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
+  end
+
   def show
     @user = User.find(params[:id])
   end
