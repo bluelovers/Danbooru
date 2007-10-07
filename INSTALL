@@ -24,7 +24,7 @@ Installing the postgres gem might be tricky because the gem looks for PostgreSQL
 
 Once you've downloaded and installed everything, get the latest copy of Danbooru through Subversion:
 
->> svn checkout svn://donmai.us/danbooru/tags/danbooru-1.6.0 danbooru
+>> svn checkout svn://donmai.us/danbooru/trunk danbooru
 
 Now it's time to configure your copy. Change into the config directory and edit the following files: database.yml, local_config.rb. Example files are provided.
 
