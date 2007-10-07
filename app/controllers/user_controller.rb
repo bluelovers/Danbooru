@@ -36,7 +36,7 @@ class UserController < ApplicationController
         if @current_user.invite_count < 1
           flash[:notice] = "You are out of invites"
         else
-          user = User.find(params[:user][:id])
+          user = User.find(:first, :conditions => ["lower(name) = lower(?)", params[:member][:name]])
           user.level = User::LEVEL_PRIVILEGED
           user.invited_by = @current_user.id
           User.transaction do

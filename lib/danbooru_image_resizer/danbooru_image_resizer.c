@@ -5,8 +5,6 @@
 
 #define DANBOORU_PREVIEW_SIZE 150
 
-VALUE danbooru_module;
-
 /*
  * PRE-CONDITIONS:
  * 1) file_ext is one of three possible strings: jpg, gif, or png.
@@ -87,6 +85,8 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
 	
   return Qtrue;
 }
+
+static VALUE danbooru_module;
 
 void Init_danbooru_image_resizer() {
   danbooru_module = rb_define_module("Danbooru");
