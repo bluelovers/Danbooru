@@ -12,4 +12,6 @@ have_library("gd", "gdImageCreateTrueColor", "gd.h")
 have_library("gd", "gdImageCopyResampled", "gd.h")
 have_library("gd", "gdImageJpeg", "gd.h")
 
+with_cflags("-O2") {true}
+
 create_makefile("danbooru_image_resizer")
