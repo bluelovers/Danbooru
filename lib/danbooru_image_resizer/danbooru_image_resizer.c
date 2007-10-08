@@ -6,7 +6,6 @@
 #define DANBOORU_PREVIEW_SIZE 150
 
 static VALUE danbooru_module;
-static FILE * resizer_log = NULL;
 
 /*
  * PRE-CONDITIONS:
@@ -21,15 +20,21 @@ static FILE * resizer_log = NULL;
  * POST-CONDITIONS:
  * 1) If no errors were encountered, a JPEG image will be written to the 
  *    write_path. This image will represent a thumbnail view of the file 
- *    given in read_path. The Ruby global constant true will be returned.
+ *    given in read_path. A value of 0 will be returned.
  *
- * 2) If any error occurred, the Ruby global constant false will be
+ * 2) If any of the parameters could not be converted into a String type,
+ *    a value of 1 will be returned.
+ *
+ * 3) If the image file could not be opened, a value of 2 will be
  *    returned.
+ *
+ * 4) If the preview file could not be opened, a value of 3 will be
+ *    returned.
+ *
+ * 5) If GD could not open the image file, a value of 4 will be returned.
  */
 
 static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path, VALUE write_path) {
-  fprintf(resizer_log, "Entering danbooru_resize_image\n");
-
   VALUE file_ext_string = StringValue(file_ext);
   VALUE read_path_string = StringValue(read_path);
   VALUE write_path_string = StringValue(write_path);
@@ -39,25 +44,21 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
   const char * write_path_cstr = RSTRING(write_path_string)->ptr;
 
   if (file_ext_cstr == NULL || read_path_cstr == NULL || write_path_cstr == NULL) {
-    return Qfalse;
+    return INT2FIX(1);
   }
-
-  fprintf(resizer_log, "ext=%s read=%s write=%s\n", file_ext_cstr, read_path_cstr, write_path_cstr);
   
   FILE * read_file = fopen(read_path_cstr, "rb");
   
   if (read_file == NULL) {
-    return Qfalse;
+    return INT2FIX(2);
   }
   
   FILE * write_file = fopen(write_path_cstr, "wb");
   
   if (write_file == NULL) {
     fclose(read_file);
-    return Qfalse;
+    return INT2FIX(3);
   }
-
-  fprintf(resizer_log, "Opened image files\n");
   
   gdImagePtr img = NULL;
   
@@ -70,13 +71,9 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
   }
 
   if (img == NULL) {
-    fprintf(resizer_log, "Error loading image\n");
     fclose(read_file);
     fclose(write_file);
-    fflush(resizer_log);
-    return Qfalse;
-  } else {
-    fprintf(resizer_log, "Loaded image\n");
+    return INT2FIX(4);
   }
 
   size_t width = img->sx;
@@ -88,24 +85,15 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
 
 	gdImagePtr preview = gdImageCreateTrueColor(width, height);
 	gdImageCopyResampled(preview, img, 0, 0, 0, 0, width, height, img->sx, img->sy);
-  fprintf(resizer_log, "Generated preview\n");
-
 	gdImageJpeg(preview, write_file, 95);
-  fprintf(resizer_log, "Wrote preview file\n");
-
 	gdImageDestroy(img);
 	gdImageDestroy(preview);
 	fclose(read_file);
 	fclose(write_file);
-	
-  fprintf(resizer_log, "Cleaning up\n");
-  fprintf(resizer_log, "-----\n");
-  fflush(resizer_log);
-  return Qtrue;
+  return INT2FIX(0);
 }
 
 void Init_danbooru_image_resizer() {
-  resizer_log = fopen("resizer.log", "w");
   danbooru_module = rb_define_module("Danbooru");
   rb_define_module_function(danbooru_module, "resize_image", danbooru_resize_image, 3);
 }

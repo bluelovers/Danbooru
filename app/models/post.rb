@@ -194,8 +194,12 @@ class Post < ActiveRecord::Base
   def generate_preview
     return true unless image?
 
-    unless Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
-      errors.add 'preview', "couldn't be generated"
+    retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
+    
+    if retcode == 0
+      return true
+    else
+      errors.add "preview", "couldn't be generated (error code #{retcode})"
       return false
     end
   end
