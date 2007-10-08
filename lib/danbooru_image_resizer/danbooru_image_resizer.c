@@ -9,7 +9,8 @@ static VALUE danbooru_module;
 
 /*
  * PRE-CONDITIONS:
- * 1) file_ext is one of three possible strings: jpg, gif, or png.
+ * 1) file_ext is one of four possible case-sensitive strings: jpg, jpeg, 
+ *    gif, or png.
  *
  * 2) read_path is an absolute file path readable by Ruby, pointing to an 
  *    image of one of the above three mime types.
