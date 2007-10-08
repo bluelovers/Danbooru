@@ -32,7 +32,7 @@ class UserController < ApplicationController
   
   def invites
     if request.post?
-      if params[:user]
+      if params[:member]
         if @current_user.invite_count < 1
           flash[:notice] = "You are out of invites"
         else
