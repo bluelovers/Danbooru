@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "gheap.h"
 
 /* This is a naive implementation of the fast multiresolution image
  * querying algorithm explained by Jacobs, Finkelstein, and Salesin
@@ -11,19 +12,32 @@
 #define DANBOORU_SQRT2 1.4142135623731
 #define DANBOORU_M 8
 
+static gint compare_floats(gconstpointer a, gconstpointer b) {
+  float fa = *((float *)a);
+  float fb = *((float *)b);
+  
+  if (fa > fb) {
+    return 1;
+  } else if (fa == fb) {
+    return 0;
+  } 
+
+  return -1;
+}
+
 struct danbooru_matrix {
   int len;
   float * data;
 };
 
-struct danbooru_matrix * danbooru_matrix_create() {
+static struct danbooru_matrix * danbooru_matrix_create() {
   struct danbooru_matrix * m = malloc(sizeof(struct danbooru_matrix));
   m->len = 0;
   m->data = NULL;
   return m;
 }
 
-void danbooru_matrix_destroy(struct danbooru_matrix * m) {
+static void danbooru_matrix_destroy(struct danbooru_matrix * m) {
   free(m->data);
   m->len = 0;
   m->data = NULL;
@@ -37,7 +51,7 @@ void danbooru_matrix_destroy(struct danbooru_matrix * m) {
  * POST:
  * 1) <a> will be decomposed.
  */
-void danbooru_array_decompose(float * a, int size) {
+static void danbooru_array_decompose(float * a, int size) {
   int i;
   
   for (i=0; i<size; ++i) {
@@ -71,7 +85,7 @@ void danbooru_array_decompose(float * a, int size) {
  * POST:
  * 1) <a> will be transposed.
  */
-void danbooru_matrix_transpose(float * a, int n) {
+static void danbooru_matrix_transpose(float * a, int n) {
   int size = n * n;
   float * ap = malloc(sizeof(float) * size);
   int i, x, y;
@@ -97,7 +111,7 @@ void danbooru_matrix_transpose(float * a, int n) {
  * POST:
  * 1) <a> will be decomposed.
  */
-void danbooru_matrix_decompose(float * a, int n) {
+static void danbooru_matrix_decompose(float * a, int n) {
   int i;
   float * ap;
   
@@ -116,7 +130,7 @@ void danbooru_matrix_decompose(float * a, int n) {
   danbooru_matrix_transpose(a, n);
 }
 
-struct danbooru_matrix * danbooru_matrix_normalize(int * a, int width, int height) {
+static struct danbooru_matrix * danbooru_matrix_normalize(int * a, int width, int height) {
   struct danbooru_matrix * m = danbooru_matrix_create();
   int max = (width > height) ? width : height;
 
@@ -142,11 +156,13 @@ struct danbooru_matrix * danbooru_matrix_normalize(int * a, int width, int heigh
   return m;
 }
 
-float * danbooru_matrix_find_largest_positive_coefficients(struct danbooru_matrix * m) {
+static float * danbooru_matrix_find_largest_positive_coefficients(struct danbooru_matrix * m) {
+  GHeap * heap = g_heap_new(m->len * m->len, compare_floats);
+  g_heap_destroy(heap);
   return NULL;
 }
 
-float * danbooru_matrix_find_largest_negative_coefficients(struct danbooru_matrix * m) {
+static float * danbooru_matrix_find_largest_negative_coefficients(struct danbooru_matrix * m) {
   return NULL;
 }
 

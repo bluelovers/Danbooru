@@ -2,15 +2,16 @@
 
 require 'mkmf'
 
+dir_config("gd")
+
 have_header("gd.h")
 
-have_library("gd", "gdImageCreateFromJpeg", "gd.h")
-have_library("gd", "gdImageCreateFromGif", "gd.h")
-have_library("gd", "gdImageCreateFromPng", "gd.h")
-have_library("gd", "gdImageDestroy", "gd.h")
-have_library("gd", "gdImageCreateTrueColor", "gd.h")
-have_library("gd", "gdImageCopyResampled", "gd.h")
-have_library("gd", "gdImageJpeg", "gd.h")
+have_library("gd")
+
+have_func("gdImageCreateFromJpeg", "gd.h")
+have_func("gdImageCreateFromGif", "gd.h")
+have_func("gdImageCreateFromPng", "gd.h")
+have_func("gdImageJpeg", "gd.h")
 
 with_cflags("-O2") {true}
 
