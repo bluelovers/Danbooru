@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "gheap.h"
 
 /* This is a naive implementation of the fast multiresolution image
@@ -11,29 +12,36 @@
 #define DANBOORU_SQRT2 1.4142135623731
 #define DANBOORU_M 40
 #define DANBOORU_BIN_SIZE 8
+#define DANBOORU_FLOAT_SCALE 255
 
-static float weights = {1, 1, 1, 1, 1, 1};
+struct coefficient {
+  int x;
+  int y;
+  float v;
+};
 
-static gint compare_floats(gconstpointer a, gconstpointer b) {
-  float fa = *((float *)a);
-  float fb = *((float *)b);
+static float g_weights[DANBOORU_BIN_SIZE];
+
+static gint compare_coefficients(gconstpointer a, gconstpointer b) {
+  struct coefficient * ca = (struct coefficient *)a;
+  struct coefficient * cb = (struct coefficient *)b;
   
-  if (fa > fb) {
+  if (ca->v > cb->v) {
     return -1;
-  } else if (fa == fb) {
+  } else if (ca->v == cb->v) {
     return 0;
   } 
 
   return 1;
 }
 
-static gint reverse_compare_floats(gconstpointer a, gconstpointer b) {
-  float fa = *((float *)a);
-  float fb = *((float *)b);
+static gint reverse_compare_coefficients(gconstpointer a, gconstpointer b) {
+  struct coefficient * ca = (struct coefficient *)a;
+  struct coefficient * cb = (struct coefficient *)b;
   
-  if (fa > fb) {
+  if (ca->v > cb->v) {
     return 1;
-  } else if (fa == fb) {
+  } else if (ca->v == cb->v) {
     return 0;
   } 
 
@@ -69,7 +77,7 @@ static void danbooru_array_decompose(float * a, int size) {
   int i;
   
   for (i=0; i<size; ++i) {
-    a[i] = a[i] / DANBOORU_SQRT2;
+    a[i] = a[i] / sqrt((float)size);
   }
   
   float * ap = malloc(sizeof(float) * size);
@@ -77,7 +85,7 @@ static void danbooru_array_decompose(float * a, int size) {
   while (size > 1) {
     size = size / 2;
     
-    for (i=0; i<=size-1; ++i) {
+    for (i=0; i<size; ++i) {
       ap[i] = (a[2 * i] + a[1 + (2 * i)]) / DANBOORU_SQRT2;
       ap[size + i] = (a[2 * i] - a[1 + (2 * i)]) / DANBOORU_SQRT2;
     }
@@ -147,65 +155,47 @@ static void danbooru_matrix_decompose(struct danbooru_matrix * m) {
 
 /* PRE:
  * 1) <m> is a matrix that has at least DANBOORU_M elements.
+ * 2) <positive> is 1 if the largest positive coefficients are desired,
+ *    0 otherwise.
  *
  * POST:
- * 1) Returns an array of floating point numbers of size DANBOORU_M containing
- *    the DANBOORU_M largest positive coefficients found in <m>.
+ * 1) Returns an array of size DANBOORU_M containing the DANBOORU_M 
+ *    largest positive coefficients found in <m>.
  * 2) The caller is responsible for deallocating the returned array.
  */
-static float * danbooru_matrix_find_largest_positive_coefficients(struct danbooru_matrix * m) {
-  GHeap * heap = g_heap_new(m->n * m->n, compare_floats);
+static struct coefficient * danbooru_matrix_find_largest_coefficients(struct danbooru_matrix * m, int positive) {
+  GHeap * heap = NULL;
+  if (positive) {
+    heap = g_heap_new(m->n * m->n, compare_coefficients);
+  } else {
+    heap = g_heap_new(m->n * m->n, reverse_compare_coefficients);
+  }
+  struct coefficient * coefficients = malloc(sizeof(struct coefficient) * m->n * m->n);
   int i, x, y;
-  
-  for (y=0; y<m->n; ++y) {
+
+  for (i=0, y=0; y<m->n; ++y) {
     for (x=0; x<m->n; ++x) {
-      if (y != 0 || x != 0 && m->data[(y * m->n) + x] != 0) {
-        g_heap_insert(heap, (gpointer)(&(m->data[(y * m->n) + x])));
+      if ((y != 0 || x != 0) && m->data[(y * m->n) + x] != 0) {
+        coefficients[i].x = x;
+        coefficients[i].y = y;
+        coefficients[i].v = m->data[(y * m->n) + x];
+        g_heap_insert(heap, (gpointer)(coefficients + i));
+        i += 1;
       }
     }
   }
   
-  float * largest = malloc(sizeof(float) * DANBOORU_M);
+  struct coefficient * largest = malloc(sizeof(struct coefficient) * DANBOORU_M);
   for (i=0; i<DANBOORU_M; ++i) {
-    largest[i] = *((float *)g_heap_remove(heap));
+    struct coefficient * c = (struct coefficient *)g_heap_remove(heap);
+    largest[i].x = c->x;
+    largest[i].y = c->y;
+    largest[i].v = c->v;
   }
 
   g_heap_destroy(heap);
+  free(coefficients);
     
-  return largest;
-}
-
-/* PRE:
- * 1) <m> is a matrix containing at least DANBOORU_M elements.
- *
- * POST:
- * 1) Returns an array of floating point numbers of size DANBOORU_M containing
- *    the DANBOORU_M largest negative coefficients found in <m>.
- * 2) The caller is responsible for deallocating the returned array.
- */
-static float * danbooru_matrix_find_largest_negative_coefficients(struct danbooru_matrix * m) {
-  GHeap * heap = g_heap_new(m->n * m->n, reverse_compare_floats);
-  int i, j;
-  
-  for (i=0; i<m->n; ++i) {
-    if (i == 0) {
-      j = 1;
-    } else {
-      j = 0;
-    }
-    
-    for (; j<m->n; ++j) {
-      g_heap_insert(heap, (gpointer)(&(m->data[(i * m->n) + j])));
-    }
-  }
-  
-  float * largest = malloc(sizeof(float) * DANBOORU_M);
-  for (i=0; i<DANBOORU_M; ++i) {
-    largest[i] = *((float *)g_heap_remove(heap));
-  }
-
-  g_heap_destroy(heap);
-  
   return largest;
 }
 
@@ -326,25 +316,30 @@ static int rank_query() {
   // between images O and T.
 }
 
+static int select_bin(int x, int y) {
+  int max = (x > y) ? x : y;
+  return (max > 5) ? 5 : max;
+}
+
 int main() {
-  struct danbooru_image * img = danbooru_image_load("jpg", "ff762c08286035b25202f78485f13725.jpg");
+  struct danbooru_image * img = danbooru_image_load("jpg", "24ad95fd3b39c2631d4976977d4da1b8.jpg");
   danbooru_image_decompose(img);
 
-  float * lrpos = danbooru_matrix_find_largest_positive_coefficients(img->r);
-  float * lgpos = danbooru_matrix_find_largest_positive_coefficients(img->g);
-  float * lbpos = danbooru_matrix_find_largest_positive_coefficients(img->b);
+  struct coefficient * lrpos = danbooru_matrix_find_largest_coefficients(img->r, 1);
+  struct coefficient * lgpos = danbooru_matrix_find_largest_coefficients(img->g, 1);
+  struct coefficient * lbpos = danbooru_matrix_find_largest_coefficients(img->b, 1);
   
   int i;
   for (i=0; i<DANBOORU_M; ++i) {
-    printf("R%d: %f\n", i, lrpos[i]);
+    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'r', %d, %d, %d, %d)\n", select_bin(lrpos[i].x, lrpos[i].y), (int)round(DANBOORU_FLOAT_SCALE * lrpos[i].v), lrpos[i].x, lrpos[i].y);
   }
 
   for (i=0; i<DANBOORU_M; ++i) {
-    printf("G%d: %f\n", i, lgpos[i]);
+    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'g', %d, %d, %d, %d)\n", select_bin(lgpos[i].x, lgpos[i].y), (int)round(DANBOORU_FLOAT_SCALE * lgpos[i].v), lgpos[i].x, lgpos[i].y);
   }
 
   for (i=0; i<DANBOORU_M; ++i) {
-    printf("G%d: %f\n", i, lgpos[i]);
+    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'b', %d, %d, %d, %d)\n", select_bin(lbpos[i].x, lbpos[i].y), (int)round(DANBOORU_FLOAT_SCALE * lbpos[i].v), lbpos[i].x, lbpos[i].y);
   }
   
   free(lrpos);
