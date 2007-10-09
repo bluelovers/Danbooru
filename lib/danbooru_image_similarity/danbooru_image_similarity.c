@@ -10,8 +10,8 @@
  */
 
 #define DANBOORU_SQRT2 1.4142135623731
-#define DANBOORU_M 40
-#define DANBOORU_BIN_SIZE 8
+#define DANBOORU_M 10
+#define DANBOORU_BIN_SIZE 5
 #define DANBOORU_FLOAT_SCALE 255
 
 struct coefficient {
@@ -311,18 +311,22 @@ static void danbooru_image_decompose(struct danbooru_image * img) {
   danbooru_matrix_decompose(img->b);
 }
 
-static int rank_query() {
+static int danbooru_rank_query() {
   // For the given combination of weights, m, and bin size, find the ranking
   // between images O and T.
 }
 
-static int select_bin(int x, int y) {
+static int danbooru_select_bin(int x, int y) {
   int max = (x > y) ? x : y;
-  return (max > 5) ? 5 : max;
+  return (max > DANBOORU_BIN_SIZE) ? DANBOORU_BIN_SIZE : max;
 }
 
-int main() {
-  struct danbooru_image * img = danbooru_image_load("jpg", "24ad95fd3b39c2631d4976977d4da1b8.jpg");
+static int danbooru_normalize_float(float f) {
+  return (int)(round(f * DANBOORU_FLOAT_SCALE));
+}
+
+static void danbooru_generate_coefficient_sql(const char * filename) {
+  struct danbooru_image * img = danbooru_image_load("jpg", filename);
   danbooru_image_decompose(img);
 
   struct coefficient * lrpos = danbooru_matrix_find_largest_coefficients(img->r, 1);
@@ -331,15 +335,15 @@ int main() {
   
   int i;
   for (i=0; i<DANBOORU_M; ++i) {
-    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'r', %d, %d, %d, %d)\n", select_bin(lrpos[i].x, lrpos[i].y), (int)round(DANBOORU_FLOAT_SCALE * lrpos[i].v), lrpos[i].x, lrpos[i].y);
+    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'r', %d, %d, %d, %d)\n", danbooru_select_bin(lrpos[i].x, lrpos[i].y), danbooru_normalize_float(lrpos[i].v), lrpos[i].x, lrpos[i].y);
   }
 
   for (i=0; i<DANBOORU_M; ++i) {
-    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'g', %d, %d, %d, %d)\n", select_bin(lgpos[i].x, lgpos[i].y), (int)round(DANBOORU_FLOAT_SCALE * lgpos[i].v), lgpos[i].x, lgpos[i].y);
+    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'g', %d, %d, %d, %d)\n", danbooru_select_bin(lgpos[i].x, lgpos[i].y), danbooru_normalize_float(lgpos[i].v), lgpos[i].x, lgpos[i].y);
   }
 
   for (i=0; i<DANBOORU_M; ++i) {
-    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'b', %d, %d, %d, %d)\n", select_bin(lbpos[i].x, lbpos[i].y), (int)round(DANBOORU_FLOAT_SCALE * lbpos[i].v), lbpos[i].x, lbpos[i].y);
+    printf("insert into coefficients (post_id, color, bin, v, x, y) values (1, 'b', %d, %d, %d, %d)\n", danbooru_select_bin(lbpos[i].x, lbpos[i].y), danbooru_normalize_float(lbpos[i].v), lbpos[i].x, lbpos[i].y);
   }
   
   free(lrpos);
@@ -347,6 +351,19 @@ int main() {
   free(lbpos);
     
   danbooru_image_destroy(img);
+}
+
+int main() {
+  danbooru_generate_coefficient_sql("00c89641fcccf41d56eb18dfc7304526.jpg");
+  danbooru_generate_coefficient_sql("24ad95fd3b39c2631d4976977d4da1b8.jpg");
+  danbooru_generate_coefficient_sql("831b0978067fc083903a57234f1778b0.jpg");
+  danbooru_generate_coefficient_sql("863d441fd97af493b8bf1dc1cde8dd71.jpg");
+  danbooru_generate_coefficient_sql("93f1fb09b52e6c36b57373ca2ebb8907.jpg");
+  danbooru_generate_coefficient_sql("d4e4e383b534a859d9740a5d960242b1.jpg");
+  danbooru_generate_coefficient_sql("da255509b24a493d37fb1d6a60d944eb.jpg");
+  danbooru_generate_coefficient_sql("e363c31266e5a447a13ad677369d6d91.jpg");
+  danbooru_generate_coefficient_sql("f272e5e32e029698f9ea02b9b2ff7077.jpg");
+  danbooru_generate_coefficient_sql("ff762c08286035b25202f78485f13725.jpg");
   
   return 0;
 }
