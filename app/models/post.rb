@@ -17,7 +17,7 @@ class Post < ActiveRecord::Base
     after_update :expire_cache_on_update
     after_destroy :expire_cache_on_destroy
   end
-  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_flagged, :is_pending
+  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_pending
 
   votable
   image_store
@@ -29,28 +29,27 @@ class Post < ActiveRecord::Base
 
   def self.fast_count(tags = nil, hide_unsafe_posts = false)
     if hide_unsafe_posts
-      if tags.blank?
-        return connection.select_value("SELECT row_count FROM table_data WHERE name = 'safe_posts'").to_i
-      else
-        c = connection.select_value(sanitize_sql(["SELECT safe_post_count FROM tags WHERE name = ?", tags])).to_i
-        if c == 0
-          return Post.count_by_sql(Post.generate_sql(tags, :count => true, :safe_mode => true))
-        else
-          return c
-        end
-      end
+      prefix = "safe_"
     else
-      if tags.blank?
-        return connection.select_value("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
+      prefix = ""
+    end
+    
+    if tags.blank?
+      return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
+    else
+      c = connection.select_value(sanitize_sql(["SELECT #{prefix}post_count FROM tags WHERE name = ?", tags])).to_i
+      if c == 0
+        return Post.count_by_sql(Post.generate_sql(tags, :count => true, :safe_mode => hide_unsafe_posts))
       else
-        c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-        if c == 0
-          return Post.count_by_sql(Post.generate_sql(tags, :count => true))
-        else
-          return c
-        end
+        return c
       end
     end
+  end
+  
+  def self.unflag(post_id)
+    post_id = post_id.to_i
+    connection.execute("delete from flagged_posts where post_id = #{post_id}")
+    connection.execute("update posts set is_pending = false where id = #{post_id}")
   end
 
   def expire_cache_on_create
@@ -86,7 +85,7 @@ class Post < ActiveRecord::Base
   
   # Returns the tags in a URL suitable string
   def tag_title
-    return cached_tags.gsub(/[^a-z0-9]/, "-")[0, 50]
+    return cached_tags.gsub(/[^a-z0-9]+/, "-")[0, 50]
   end
 
   def append_tags(t)
@@ -124,8 +123,6 @@ class Post < ActiveRecord::Base
         return
       end
     end
-
-    raise "IP address not set" if self.updater_ip_addr == nil
 
     @tag_cache = Tag.scan_tags(@tag_cache)
     @tag_cache = ["tagme"] if @tag_cache.empty?
@@ -468,7 +465,7 @@ class Post < ActiveRecord::Base
     end
 
     if options[:pending]
-      conditions << "(p.is_pending = TRUE OR p.is_flagged = TRUE)"
+      conditions << "(p.is_pending = TRUE OR p.id in (select post_id from flagged_posts))"
     end
 
     if conditions.empty? 
@@ -561,5 +558,13 @@ class Post < ActiveRecord::Base
     else
       nil
     end
+  end
+  
+  def is_flagged?
+    return nil != connection.select_value("select 1 from flagged_posts where post_id = #{self.id}")
+  end
+  
+  def reason_for_flag
+    connection.select_value("select reason from flagged_posts where post_id = #{self.id}")
   end
 end

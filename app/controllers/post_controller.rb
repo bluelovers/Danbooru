@@ -75,10 +75,9 @@ class PostController < ApplicationController
 
   def moderate
     if request.post?
-      @posts = Post.find(:all, :conditions => ["id in (?)", params[:ids].keys])
-      @posts.each do |post|
+      params[:ids].keys.each do |post_id|
         if params[:commit] == "Accept"
-          post.update_attributes(:is_flagged => false, :is_pending => false)
+          Post.unflag(post_id)
         else
           post.destroy
         end
@@ -89,7 +88,7 @@ class PostController < ApplicationController
       if params[:query]
         @posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
       else
-        @posts = Post.find(:all, :conditions => "is_flagged = TRUE OR is_pending = TRUE", :order => "id")
+        @posts = Post.find(:all, :conditions => "id in (select post_id from flagged_posts) OR is_pending = TRUE", :order => "id")
       end
     end
   end

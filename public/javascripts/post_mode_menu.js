@@ -87,7 +87,7 @@ PostModeMenu.click = function(post_id) {
   } else if (s.value == 'lock-note') {
     Post.update(post_id, 'post[is_note_locked]=1')
   } else if (s.value == 'flag') {
-    Post.update(post_id, 'post[is_flagged]=1')
+    Post.flag(post_id)
 	} else if (s.value == 'add-to-pool') {
 		Pool.add_post(post_id, 0)
 	} else if (s.value == "apply-tag-script") {

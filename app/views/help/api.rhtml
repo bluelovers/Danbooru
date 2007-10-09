@@ -1,9 +1,9 @@
 <div class="help">
-  <h1>Help: API v1.8</h1>
+  <h1>Help: API v1.8.1</h1>
 
   <div class="section">
     <p>Danbooru offers a simple <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">REST-based API</a> to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
-    <p style="text-align: center;"><a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a> | <a href="#forum">Forum</a> | <a href="#pools">Pools</a></p>
+    <p style="text-align: center;"><a href="#changelog">Change Log</a> | <a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a> | <a href="#forum">Forum</a> | <a href="#pools">Pools</a></p>
   </div>
 
   <div class="section">
@@ -98,7 +98,6 @@
         <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
         <li><strong>post[next_post_id]</strong> The ID of the next post (if this post is part of an out-of-order sequence)</li>
         <li><strong>post[prev_post_id]</strong> The ID of the previous post (if this post is part of an out-of-order sequence)</li>
-        <li><strong>post[is_flagged]</strong> Set to true to flag the post for deletion.</li>
       </ul>
     </div>
     <div class="section">
@@ -475,6 +474,19 @@
       <ul>
         <li><strong>pool_id</strong> The pool to remove the post from.</li>
         <li><strong>post_id</strong> The post to remove.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="changelog"></a>
+    <h2>Change Log</h2>
+    <div class="section">
+      <h4>1.8.1</h4>
+      <ul>
+        <li>Removed post[is_flagged] attribute</li>
       </ul>
     </div>
   </div>
