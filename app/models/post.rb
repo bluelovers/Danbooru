@@ -180,6 +180,11 @@ class Post < ActiveRecord::Base
 
 # Generates a MD5 hash for the file
   def generate_hash
+    unless File.exists?(tempfile_path)
+      errors.add(:file, "not found")
+      return false
+    end
+    
     self.md5 = File.open(tempfile_path, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}
 
     if connection.select_value("SELECT 1 FROM posts WHERE md5 = '#{md5}'")
@@ -193,6 +198,11 @@ class Post < ActiveRecord::Base
 
   def generate_preview
     return true unless image?
+    
+    unless File.exists?(tempfile_path)
+      errors.add(:file, "not found")
+      return false
+    end
 
     retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
     

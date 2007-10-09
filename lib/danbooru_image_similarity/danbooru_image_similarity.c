@@ -5,12 +5,12 @@
 #include "gheap.h"
 
 /* This is a naive implementation of the fast multiresolution image
- * querying algorithm explained by Jacobs, Finkelstein, and Salesin
- * in their paper of the same name.
+ * querying algorithm explained by Jacobs et al.
  */
 
 #define DANBOORU_SQRT2 1.4142135623731
-#define DANBOORU_M 8
+#define DANBOORU_M 60
+#define DANBOORU_BIN_SIZE 8
 
 static gint compare_floats(gconstpointer a, gconstpointer b) {
   float fa = *((float *)a);
@@ -23,6 +23,19 @@ static gint compare_floats(gconstpointer a, gconstpointer b) {
   } 
 
   return -1;
+}
+
+static gint reverse_compare_floats(gconstpointer a, gconstpointer b) {
+  float fa = *((float *)a);
+  float fb = *((float *)b);
+  
+  if (fa > fb) {
+    return -1;
+  } else if (fa == fb) {
+    return 0;
+  } 
+
+  return 1;
 }
 
 struct danbooru_matrix {
@@ -130,9 +143,18 @@ static void danbooru_matrix_decompose(float * a, int n) {
   danbooru_matrix_transpose(a, n);
 }
 
-static struct danbooru_matrix * danbooru_matrix_normalize(int * a, int width, int height) {
+/* PRE:
+ * 1) <a> points to an array of floating point numbers. This array is a linear
+ *    representation of a <cols> by <rows> matrix.
+ *
+ * POST:
+ * 1) An n by n matrix is returned, where n is a power-of-two number nearest to
+ *    and greater than the maximum of <cols> and <rows>.
+ * 2) The caller is responsible for deallocating the returned matrix.
+ */
+static struct danbooru_matrix * danbooru_matrix_normalize(int * a, int cols, int rows) {
   struct danbooru_matrix * m = danbooru_matrix_create();
-  int max = (width > height) ? width : height;
+  int max = (cols > rows) ? cols : rows;
 
   m->len = 1;
   
@@ -145,10 +167,10 @@ static struct danbooru_matrix * danbooru_matrix_normalize(int * a, int width, in
   
   for (y=0; y<m->len; ++y) {
     for (x=0; x<m->len; ++x) {
-      if (x >= width || y >= height) {
+      if (x >= cols || y >= rows) {
         m->data[(y * m->len) + x] = 0;
       } else {
-        m->data[(y * m->len) + x] = (float)(a[(y * height) + x]) / 255.0;
+        m->data[(y * m->len) + x] = (float)(a[(y * rows) + x]) / 255.0;
       }
     }
   }
@@ -156,14 +178,77 @@ static struct danbooru_matrix * danbooru_matrix_normalize(int * a, int width, in
   return m;
 }
 
+/* PRE:
+ * 1) <m> is a matrix that has at least DANBOORU_M elements.
+ *
+ * POST:
+ * 1) Returns an array of floating point numbers of size DANBOORU_M containing
+ *    the DANBOORU_M largest positive coefficients found in <m>.
+ * 2) The caller is responsible for deallocating the returned array.
+ */
 static float * danbooru_matrix_find_largest_positive_coefficients(struct danbooru_matrix * m) {
   GHeap * heap = g_heap_new(m->len * m->len, compare_floats);
+  int i, j;
+  
+  for (i=0; i<m->len; ++i) {
+    if (i == 0) {
+      j = 1;
+    } else {
+      j = 0;
+    }
+    
+    for (; j<m->len; ++j) {
+      g_heap_insert(heap, (gpointer)(&(m->data[(i * m->len) + j])));
+    }
+  }
+  
+  float * largest = malloc(sizeof(float) * DANBOORU_M);
+  for (i=0; i<DANBOORU_M; ++i) {
+    largest[i] = *((float *)g_heap_remove(heap));
+  }
+
   g_heap_destroy(heap);
-  return NULL;
+    
+  return largest;
 }
 
+/* PRE:
+ * 1) <m> is a matrix containing at least DANBOORU_M elements.
+ *
+ * POST:
+ * 1) Returns an array of floating point numbers of size DANBOORU_M containing
+ *    the DANBOORU_M largest negative coefficients found in <m>.
+ * 2) The caller is responsible for deallocating the returned array.
+ */
 static float * danbooru_matrix_find_largest_negative_coefficients(struct danbooru_matrix * m) {
-  return NULL;
+  GHeap * heap = g_heap_new(m->len * m->len, reverse_compare_floats);
+  int i, j;
+  
+  for (i=0; i<m->len; ++i) {
+    if (i == 0) {
+      j = 1;
+    } else {
+      j = 0;
+    }
+    
+    for (; j<m->len; ++j) {
+      g_heap_insert(heap, (gpointer)(&(m->data[(i * m->len) + j])));
+    }
+  }
+  
+  float * largest = malloc(sizeof(float) * DANBOORU_M);
+  for (i=0; i<DANBOORU_M; ++i) {
+    largest[i] = *((float *)g_heap_remove(heap));
+  }
+
+  g_heap_destroy(heap);
+  
+  return largest;
+}
+
+static int rank_query() {
+  // For the given combination of weights, m, and bin size, find the ranking
+  // between images O and T.
 }
 
 int main() {

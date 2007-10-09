@@ -7,14 +7,11 @@
 
 static VALUE danbooru_module;
 
-/*
- * PRE-CONDITIONS:
+/* PRE-CONDITIONS:
  * 1) file_ext is one of four possible case-sensitive strings: jpg, jpeg, 
  *    gif, or png.
- *
  * 2) read_path is an absolute file path readable by Ruby, pointing to an 
  *    image of one of the above three mime types.
- *
  * 3) write_path is an absolute file path writable by Ruby, where the
  *    generated preview file will be written.
  *
@@ -22,16 +19,12 @@ static VALUE danbooru_module;
  * 1) If no errors were encountered, a JPEG image will be written to the 
  *    write_path. This image will represent a thumbnail view of the file 
  *    given in read_path. A value of 0 will be returned.
- *
  * 2) If any of the parameters could not be converted into a String type,
  *    a value of 1 will be returned.
- *
  * 3) If the image file could not be opened, a value of 2 will be
  *    returned.
- *
  * 4) If the preview file could not be opened, a value of 3 will be
  *    returned.
- *
  * 5) If GD could not open the image file, a value of 4 will be returned.
  */
 
