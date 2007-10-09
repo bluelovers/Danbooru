@@ -45,12 +45,6 @@ class Post < ActiveRecord::Base
       end
     end
   end
-  
-  def self.unflag(post_id)
-    post_id = post_id.to_i
-    connection.execute("delete from flagged_posts where post_id = #{post_id}")
-    connection.execute("update posts set is_pending = false where id = #{post_id}")
-  end
 
   def expire_cache_on_create
     Cache.expire(:create_post => self.id, :tags => self.cached_tags, :rating => self.rating)
@@ -561,10 +555,16 @@ class Post < ActiveRecord::Base
   end
   
   def is_flagged?
-    return nil != connection.select_value("select 1 from flagged_posts where post_id = #{self.id}")
+    FlaggedPost.find_by_post_id(self.id) != nil
   end
   
   def reason_for_flag
-    connection.select_value("select reason from flagged_posts where post_id = #{self.id}")
+    fp = FlaggedPost.find_by_post_id(self.id)
+    
+    if fp
+      return fp.reason
+    else
+      return ""
+    end
   end
 end
