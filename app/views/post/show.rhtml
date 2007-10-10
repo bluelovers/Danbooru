@@ -34,8 +34,7 @@
       <div>
         <h5>Options</h5>
         <ul>
-          <li><%= link_to_function "Edit", "$('edit').show(); $('edit').scrollTo()" %></li>
-          <% if @post.image? && @post.notes.empty? && @post.width > 700 %>
+          <% if @post.image? && @post.width > 700 %>
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
           <li>
@@ -129,8 +128,11 @@
         </script>
       </div>
       <!-- google_ad_section_start(weight=ignore) -->
-      <a name="edit"></a>
-      <div id="edit">
+      <h4>
+        <%= link_to_function "Edit", "Element.hide('comments'); Element.show('edit'); Element.scrollTo('edit')" %> |
+        <%= link_to_function "Respond", "Element.hide('edit'); Element.show('comments'); Element.scrollTo('comments')" %>
+      </h4>
+      <div id="edit" style="display: none;">
         <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
           <table class="form">
             <% unless @post.is_rating_locked? %>
@@ -189,7 +191,7 @@
               </td>
             </tr>
           </table>
-          <div style="display: hidden;">
+          <div style="display: none;">
             <h5>Related Tags</h5>
             <div class="space" id="related"><em>None</em></div>
           </div>
@@ -197,7 +199,7 @@
         <% end %>
       </div>
       <!-- google_ad_section_end -->
-      <%= javascript_tag "Element.hide('edit'); posts = {}; posts[#{@post.id}] = {}" %>
+      <%= javascript_tag "posts = {}; posts[#{@post.id}] = {}" %>
       <% if @current_user %>
         <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
       <% else %>
@@ -207,7 +209,9 @@
         <%= javascript_tag "toggleImageResize()" %>
       <% end %>
       <!-- google_ad_section_start -->
-      <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id} %>
+      <div id="comments" style="display: none; margin-top: 1em;">
+        <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
+      </div>
       <!-- google_ad_section_end -->
     </div>
   <% end %>
