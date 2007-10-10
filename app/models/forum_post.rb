@@ -5,8 +5,24 @@ class ForumPost < ActiveRecord::Base
   after_create :initialize_last_updated_by
   after_create :update_parent_on_create
   before_destroy :update_parent_on_destroy
+  before_validation :validate_lock
   before_validation :validate_title
   validates_length_of :body, :minimum => 1, :message => "You need to enter a message"
+  
+  def self.updated?(user)
+    newest_topic = ForumPost.find(:first, :order => "updated_at desc", :limit => 1, :select => "updated_at")
+    return false if newest_topic == nil
+    return newest_topic.updated_at > user.last_forum_topic_read_at
+  end
+  
+  def validate_lock
+    if self.root.is_locked?
+      self.errors.add_to_base("Thread is locked")
+      return false
+    end
+    
+    return true
+  end
   
   def validate_title
     if self.parent?
@@ -23,7 +39,7 @@ class ForumPost < ActiveRecord::Base
     
     return true
   end
-  
+    
   def initialize_last_updated_by
     if self.parent?
       update_attribute(:last_updated_by, self.creator_id)
@@ -52,15 +68,6 @@ class ForumPost < ActiveRecord::Base
     end
   end
   
-  def updated?(user_id)
-    if CONFIG["enable_turbo_mode"]
-      return false
-    end
-    
-    fpv = ForumPostView.find(:first, :conditions => ["user_id = ? AND forum_post_id = ?", user_id, self.id])
-    return fpv == nil || fpv.last_viewed_at < self.updated_at
-  end
-  
   def parent?
     return self.parent_id == nil
   end
@@ -87,20 +94,5 @@ class ForumPost < ActiveRecord::Base
     else
       CONFIG["default_guest_name"]
     end
-  end
-  
-  def self.updated_since?(user_id)
-    return false
-    
-    fp = ForumPostView.find(:first, :conditions => ["forum_posts_user_views.user_id = ? AND forum_posts_user_views.last_viewed_at < forum_posts.updated_at AND forum"])
-    return fp != nil
-  end
-
-  def to_xml(options = {})
-    {:id => id, :created_at => created_at, :updated_at => updated_at, :parent_id => parent_id, :creator_id => creator_id, :creator => self.author, :response_count => response_count, :title => title, :last_updated_by => last_updated_by, :body => body}.to_xml(options.merge(:root => "forum_post"))
-  end
-
-  def to_json(options = {})
-    {:id => id, :created_at => created_at, :updated_at => updated_at, :parent_id => parent_id, :creator_id => creator_id, :creator => self.author, :response_count => response_count, :title => title, :last_updated_by => last_updated_by, :body => body}.to_json(options)
   end
 end

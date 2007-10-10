@@ -14,19 +14,23 @@
   </div>
 
   <div id="footer">
-    <%= link_to_function "Respond", "Element.toggle('reply')" %> |
+    <% unless @forum_post.is_locked? %>
+      <%= link_to_function "Respond", "Element.toggle('reply')" %> |
+    <% end %>
     <%= link_to "New Topic", :action => "add" %> |
     <%= link_to "Help", :controller => "help", :action => "forum" %>
   </div>
 
-  <div id="reply" style="display: none;">
-    <% form_tag({:action => "create"}) do %>
-      <%= hidden_field "forum_post", "parent_id", :value => @forum_post.id %>
-      <table>
-        <tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60, :value => "" %></td></tr>
-        <tr><td><label for="forum_post_body">Body</label></td><td><%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %></td></tr>
-        <tr><td colspan="2"><%= submit_tag "Post" %></td></tr>
-      </table>
-    <% end %>
-  </div>
+  <% unless @forum_post.is_locked? %>
+    <div id="reply" style="display: none;">
+      <% form_tag({:action => "create"}) do %>
+        <%= hidden_field "forum_post", "parent_id", :value => @forum_post.id %>
+        <table>
+          <tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60, :value => "" %></td></tr>
+          <tr><td><label for="forum_post_body">Body</label></td><td><%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %></td></tr>
+          <tr><td colspan="2"><%= submit_tag "Post" %></td></tr>
+        </table>
+      <% end %>
+    </div>
+  <% end %>
 </div>

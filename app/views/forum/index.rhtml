@@ -13,7 +13,7 @@
   <tbody>
     <% @forum_posts.each do |fp| %>
       <% content_tag :tr, :class => cycle('even', 'odd') do %>
-        <% if (@current_user && fp.updated?(@current_user.id)) || (fp.is_sticky?) %>
+        <% if @current_user && fp.updated_at > @current_user.last_forum_topic_read_at %>
           <td>
             <strong><%= link_to fp.title, :action => "show", :id => fp.id %></strong>
             <% if fp.children_count > 10 %>

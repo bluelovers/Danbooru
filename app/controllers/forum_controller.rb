@@ -17,10 +17,11 @@ class ForumController < ApplicationController
   end
 
   def create
+    puts params.inspect
     @forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
 
     if @forum_post.errors.empty?
-      if params[:forum_post][:parent_id] == "0"
+      if params[:forum_post][:parent_id].to_i == 0
         flash[:notice] = "Forum thread created"
         redirect_to :action => "show", :id => @forum_post.root_id
       else
@@ -84,7 +85,7 @@ class ForumController < ApplicationController
     @pages, @children = paginate :forum_posts, :order => "id", :per_page => 10, :conditions => ["parent_id = ?", params[:id]]
 
     if @current_user != nil
-      @current_user.update_forum_view(@forum_post.id)
+      @current_user.update_attribute(:last_forum_topic_read_at, @forum_post.updated_at)
     end
     
     respond_to do |fmt|
