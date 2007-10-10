@@ -78,7 +78,7 @@ class TagController < ApplicationController
 
     respond_to do |fmt|
       fmt.html do
-        @pages, @tags = paginate :tags, :order => order, :per_page => limit, :conditions => [sql_conds.join(" AND "), *sql_params]
+        @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => [sql_conds.join(" AND "), *sql_params]
       end
       fmt.xml do
         @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])

@@ -37,6 +37,12 @@ class UserController < ApplicationController
           flash[:notice] = "You are out of invites"
         else
           user = User.find(:first, :conditions => ["lower(name) = lower(?)", params[:member][:name]])
+          if user == nil
+            flash[:notice] = "User #{params[:member][:name]} was not found"
+            redirect_to :action => "invites"
+            return
+          end
+
           user.level = User::LEVEL_PRIVILEGED
           user.invited_by = @current_user.id
           User.transaction do
