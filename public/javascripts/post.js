@@ -39,6 +39,10 @@ Post.vote = function(score, id) {
 
 Post.flag = function(id) {
   var reason = prompt("Why should this post be flagged for deletion?")
+
+  if (!reason) {
+    return false
+  }
   
   new Ajax.Request("/post/flag.js", {
     asynchronous: true,

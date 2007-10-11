@@ -95,4 +95,12 @@ class ForumPost < ActiveRecord::Base
       CONFIG["default_guest_name"]
     end
   end
+
+  def to_json
+    {:body => self.body, :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_json
+  end
+
+  def to_xml
+    {:body => self.body, :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_xml(:root => "forum_post")
+  end
 end

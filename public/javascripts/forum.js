@@ -3,6 +3,7 @@ Forum = {}
 Forum.quote = function(id) {
   new Ajax.Request("/forum/show/" + id + ".js", {
     asynchronous: true,
+    method: 'get',
     onSuccess: function(req) {
       var resp = eval("(" + req.responseText + ")")
       $('reply').show()

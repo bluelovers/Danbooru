@@ -36,7 +36,7 @@ PostModeMenu.change = function() {
   } else if (s == "lock-note") {
     document.body.style.background = "#3AA"
   } else if (s == "flag") {
-    document.body.style.background = "#F00"
+    document.body.style.background = "#F66"
 	} else if (s == "add-to-pool") {
 		document.body.style.background = "#26A"
 	} else if (s == "apply-tag-script") {
