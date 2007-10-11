@@ -1,6 +1,6 @@
 <div class="post">
   <div class="author">
-    <h6 class="author"><%= post.author %></h6>
+    <h6 class="author"><%= link_to post.author, :controller => "user", :action => "show", :id => post.creator_id %></h6>
     <span class="date">Posted <%= time_ago_in_words post.created_at %> ago</span>
   </div>
   <div class="content">
