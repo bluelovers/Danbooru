@@ -131,7 +131,7 @@ class UserController < ApplicationController
       save_cookies(user)
 
       if CONFIG["enable_account_email_activation"]
-        UserMailer::deliver_confirmation_email(user, confirmation_hash(user.name))
+        UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
         notice = "New account created. Confirmation email sent to #{user.email}"
       else
         notice = "New account created"
