@@ -5,12 +5,15 @@ class User < ActiveRecord::Base
 
   attr_protected :level, :name
   attr_accessor :password
-  validates_presence_of :password, :on => :create
+  if CONFIG["enable_account_email_activation"]
+    validates_presence_of :email, :on => :create
+  end
   validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
   validates_length_of :name, :minimum => 2, :on => :create
   validates_format_of :password, :with => /\d/, :if => lambda {|rec| rec.password}, :message => "must have at least one number"
   validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
   validates_uniqueness_of :name, :case_sensitive => false, :on => :create
+  validates_uniqueness_of :email, :case_sensitive => false, :on => :create
   validates_confirmation_of :password
   before_save :encrypt_password
   before_create :set_role
