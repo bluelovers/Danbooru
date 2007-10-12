@@ -77,8 +77,8 @@
       <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_side"] %>
       <% end %>
+      <!-- google_ad_section_end -->
     </div>
-    <!-- google_ad_section_end -->
     <div class="content" id="right-col">
       <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_top"] %>
@@ -206,7 +206,7 @@
         <% else %>
           <%= javascript_tag "RelatedTags.init('', '')" %>
         <% end %>
-        <% if @current_user && @current_user.always_resize_images? %>
+        <% if @current_user && @current_user.always_resize_images? && @post.notes.empty? %>
           <%= javascript_tag "toggleImageResize()" %>
         <% end %>
         <!-- google_ad_section_start -->

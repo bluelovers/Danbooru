@@ -17,6 +17,6 @@ have_func("gdImageCreateFromGif", "gd.h")
 have_func("gdImageCreateFromPng", "gd.h")
 have_func("gdImageJpeg", "gd.h")
 
-with_cflags("-O2") {true}
+with_cflags("-Wall") {true}
 
 create_makefile("danbooru_image_similarity")
