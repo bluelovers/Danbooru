@@ -42,6 +42,12 @@ class User < ActiveRecord::Base
   def self.authenticate_hash(name, pass)
     find(:first, :conditions => ["lower(name) = lower(?) AND password_hash = ?", name, pass])
   end
+  
+  if CONFIG["enable_account_email_activation"]
+    def self.confirmation_hash(name)
+      Digest::SHA256.hexdigest("~-#{name}-~#{User.salt}")
+    end
+  end
 
   def self.find_people_who_favorited(post_id)
     User.find(:all, :joins => User.sanitize_sql(["JOIN favorites f ON f.user_id = users.id WHERE f.post_id = ?", post_id]), :order => "lower(name) ASC", :select => "users.*")

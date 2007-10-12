@@ -16,10 +16,6 @@ class UserController < ApplicationController
     session[:user_id] = user.id
   end
 
-  def confirmation_hash(name)
-    Digest::SHA256.hexdigest("~-#{name}-~#{User.salt}")
-  end
-
   public
   def auto_complete_for_member_name
     @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ilike ? escape '\\\\'", User::LEVEL_MEMBER, params[:member][:name] + "%"])
@@ -224,7 +220,7 @@ class UserController < ApplicationController
         return
       end
 
-      UserMailer::deliver_confirmation_email(user, confirmation_hash(user.name))
+      UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
       flash[:notice] = "Confirmation email sent to #{user.email}"
       redirect_to :action => "home"
     end
@@ -239,7 +235,7 @@ class UserController < ApplicationController
       users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
 
       users.each do |user|
-        if confirmation_hash(user.name) == params["hash"]
+        if User.confirmation_hash(user.name) == params["hash"]
           user.update_attribute(:level, User::LEVEL_MEMBER)
   
           flash[:notice] = "Account has been activated"
