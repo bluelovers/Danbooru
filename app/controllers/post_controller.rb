@@ -26,13 +26,8 @@ class PostController < ApplicationController
       else
         respond_to do |fmt|
           fmt.html do
-            if @current_user.privileged?
-              flash[:notice] = "Post successfully uploaded"
-              redirect_to(:controller => "post", :action => "show", :id => @post.id)
-            else
-              flash[:notice] = "Your post has been queued for approval"
-              redirect_to(:controller => "post", :action => "upload")
-            end
+            flash[:notice] = "Post successfully uploaded"
+            redirect_to(:controller => "post", :action => "show", :id => @post.id)
           end
           fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
           fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
@@ -50,12 +45,7 @@ class PostController < ApplicationController
       respond_to do |fmt|
         fmt.html do
           flash[:notice] = "That post already exists"
-
-          if @current_user.privileged?
-            redirect_to(:controller => "post", :action => "show", :id => p.id)
-          else
-            redirect_to(:controller => "post", :action => "upload")
-          end
+          redirect_to(:controller => "post", :action => "show", :id => p.id)
         end
         fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
@@ -188,11 +178,6 @@ class PostController < ApplicationController
   def show
     begin
       @post = Post.find(params[:id])
-      if hide_unsafe_posts? && @post.rating != 's'
-        flash[:notice] = "You must be logged in to view this post"
-        redirect_to :controller => "user", :action => "login"
-        return
-      end
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags
     rescue ActiveRecord::RecordNotFound
