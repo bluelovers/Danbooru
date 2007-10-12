@@ -34,6 +34,7 @@
       <div>
         <h5>Options</h5>
         <ul>
+          <li><%= link_to_function "Edit", "Element.hide('comments'); Element.show('edit'); Element.scrollTo('edit')" %></li>
           <% if @post.image? && @post.width > 700 %>
             <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
           <% end %>
