@@ -1,1 +1,1 @@
-<p>Hello, <%= @user.name %>. You need to confirm your account by visiting <%= "this link", :controller => "user", :action => "activate_user", :hash => @hash, :id => User.confirmation_hash(@user.name), :only_path => false, :host => CONFIG["server_host"] %></p>.
+<p>Hello, <%= @user.name %>. You need to activate your account by visiting <%= link_to "this link", :controller => "user", :action => "activate_user", :hash => @hash, :id => User.confirmation_hash(@user.name), :only_path => false, :host => CONFIG["server_host"] %></p>.
