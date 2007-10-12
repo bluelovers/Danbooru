@@ -232,19 +232,17 @@ class UserController < ApplicationController
         return
       end
 
+      flash[:notice] = "Invalid confirmation code"
+      
       users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
-
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
           user.update_attribute(:level, User::LEVEL_MEMBER)
-  
           flash[:notice] = "Account has been activated"
-          redirect_to :action => "home"
           break
         end
       end
 
-      flash[:notice] = "Invalid confirmation code"
       redirect_to :action => "home"
     end
   end
