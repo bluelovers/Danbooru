@@ -129,93 +129,93 @@
           //]]>
           </script>
         </div>
-
-        <!-- google_ad_section_start(weight=ignore) -->
-        <h4>
-          <%= link_to_function "Edit", "Element.hide('comments'); Element.show('edit'); Element.scrollTo('edit')" %> |
-          <%= link_to_function "Respond", "Element.hide('edit'); Element.show('comments'); Element.scrollTo('comments')" %>
-        </h4>
-        <div id="edit" style="display: none;">
-          <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
-            <table class="form">
-              <% unless @post.is_rating_locked? %>
-                <tr>
-                  <th><label class="block" for="post_rating_questionable">Rating</label></th>
-                  <td>
-                    <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> 
-                    <label for="post_rating_explicit">Explicit</label> 
-                    <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %>  
-                    <label for="post_rating_questionable">Questionable</label>
-                    <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> 
-                    <label for="post_rating_safe">Safe</label>
-                  </td>
-                </tr>
-              <% end %>
-              <tr>
-                <th><label>Prev Post</label></th>
-                <td><%= text_field "post", "prev_post_id", :size => 5 %></td>
-              </tr>
-              <tr>
-                <th><label>Next Post</label></th>
-                <td><%= text_field "post", "next_post_id", :size => 5 %></td>
-              </tr>
-              <% if @current_user && @current_user.privileged? %>
-                <tr>
-                  <th>
-                    <label class="block" for="post_is_note_locked">Note locked</label>
-                  </th>
-                  <td>
-                    <%= check_box "post", "is_note_locked" %>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <label class="block" for="post_is_rating_locked">Rating locked</label> 
-                  </th>
-                  <td>
-                    <%= check_box "post", "is_rating_locked" %>
-                  </td>
-                </tr>
-              <% end %>
-              <tr>
-                <th>
-                  <label class="block" for="post_source">Source</label>
-                </th>
-                <td>
-                  <%= text_field "post", "source", :size => 40 %>  <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <label class="block" for="post_tags">Tags</label>
-                </th>
-                <td>
-                  <%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
-                </td>
-              </tr>
-            </table>
-            <div>
-              <h5>Related Tags</h5>
-              <div class="space" id="related"><em>None</em></div>
-            </div>
-            <%= submit_tag "Save changes" %>
-          <% end %>
-        </div>
-        <!-- google_ad_section_end -->
-        <% if @current_user %>
-          <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
-        <% else %>
-          <%= javascript_tag "RelatedTags.init('', '')" %>
-        <% end %>
-        <% if @current_user && @current_user.always_resize_images? && @post.notes.empty? %>
-          <%= javascript_tag "toggleImageResize()" %>
-        <% end %>
-        <!-- google_ad_section_start -->
-        <div id="comments" style="margin-top: 1em;">
-          <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
-        </div>
-        <!-- google_ad_section_end -->
       <% end %>
+
+      <!-- google_ad_section_start(weight=ignore) -->
+      <h4>
+        <%= link_to_function "Edit", "Element.hide('comments'); Element.show('edit')" %> |
+        <%= link_to_function "Respond", "Element.hide('edit'); Element.show('comments')" %>
+      </h4>
+      <div id="edit" style="display: none;">
+        <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
+          <table class="form">
+            <% unless @post.is_rating_locked? %>
+              <tr>
+                <th><label class="block" for="post_rating_questionable">Rating</label></th>
+                <td>
+                  <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit" %> 
+                  <label for="post_rating_explicit">Explicit</label> 
+                  <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable" %>  
+                  <label for="post_rating_questionable">Questionable</label>
+                  <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe" %> 
+                  <label for="post_rating_safe">Safe</label>
+                </td>
+              </tr>
+            <% end %>
+            <tr>
+              <th><label>Prev Post</label></th>
+              <td><%= text_field "post", "prev_post_id", :size => 5 %></td>
+            </tr>
+            <tr>
+              <th><label>Next Post</label></th>
+              <td><%= text_field "post", "next_post_id", :size => 5 %></td>
+            </tr>
+            <% if @current_user && @current_user.privileged? %>
+              <tr>
+                <th>
+                  <label class="block" for="post_is_note_locked">Note locked</label>
+                </th>
+                <td>
+                  <%= check_box "post", "is_note_locked" %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  <label class="block" for="post_is_rating_locked">Rating locked</label> 
+                </th>
+                <td>
+                  <%= check_box "post", "is_rating_locked" %>
+                </td>
+              </tr>
+            <% end %>
+            <tr>
+              <th>
+                <label class="block" for="post_source">Source</label>
+              </th>
+              <td>
+                <%= text_field "post", "source", :size => 40 %>  <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <label class="block" for="post_tags">Tags</label>
+              </th>
+              <td>
+                <%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
+              </td>
+            </tr>
+          </table>
+          <div>
+            <h5>Related Tags</h5>
+            <div class="space" id="related"><em>None</em></div>
+          </div>
+          <%= submit_tag "Save changes" %>
+        <% end %>
+      </div>
+      <!-- google_ad_section_end -->
+      <% if @current_user %>
+        <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
+      <% else %>
+        <%= javascript_tag "RelatedTags.init('', '')" %>
+      <% end %>
+      <% if @current_user && @current_user.always_resize_images? && @post.notes.empty? %>
+        <%= javascript_tag "toggleImageResize()" %>
+      <% end %>
+      <!-- google_ad_section_start -->
+      <div id="comments" style="margin-top: 1em;">
+        <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
+      </div>
+      <!-- google_ad_section_end -->
     </div>
   <% end %>
 </div>
