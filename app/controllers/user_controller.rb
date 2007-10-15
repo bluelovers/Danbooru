@@ -51,7 +51,6 @@ class UserController < ApplicationController
       
       redirect_to :action => "invites"
     else
-      @nonspecial_users = User.find(:all, :conditions => ["level = ?", User::LEVEL_MEMBER], :order => "lower(name)")
       @invited_users = User.find(:all, :conditions => ["invited_by = ?", @current_user.id], :order => "lower(name)")
     end
   end
