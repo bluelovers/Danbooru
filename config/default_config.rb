@@ -61,7 +61,7 @@ CONFIG["memcache_servers"] = ["localhost:4000"]
 
 # Any post rated safe that has one of the following tags will
 # automatically be rated questionable.
-CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum nipples erect_nipples anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob cameltoe blowjob cunnilingus anal_sex topless)
+CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob cameltoe blowjob cunnilingus anal_sex topless)
 
 # After a post receives this many posts, new comments will no longer
 # bump the post in comment/index.

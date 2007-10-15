@@ -172,16 +172,18 @@ class PoolController < ApplicationController
     end
     
     if request.post?
-      PoolPost.transaction do
-        params[:posts].keys.each do |post_id|
-          begin
-            @pool.add_post(post_id)
-          rescue Pool::PostAlreadyExistsError
-            # ignore
+      if params[:posts].is_a?(Hash)
+        PoolPost.transaction do
+          params[:posts].keys.each do |post_id|
+            begin
+              @pool.add_post(post_id)
+            rescue Pool::PostAlreadyExistsError
+              # ignore
+            end
           end
+          
+          @pool.update_attribute(:post_count, Post.count_by_sql(["SELECT COUNT(*) FROM pools_posts WHERE pool_id = ?", @pool.id]))
         end
-        
-        @pool.update_attribute(:post_count, Post.count_by_sql(["SELECT COUNT(*) FROM pools_posts WHERE pool_id = ?", @pool.id]))
       end
       
       redirect_to :action => "show", :id => @pool.id
@@ -189,7 +191,7 @@ class PoolController < ApplicationController
       respond_to do |fmt|
         fmt.html
         fmt.js do
-          @posts = Post.find_by_tags(params[:query], :order => "id desc")
+          @posts = Post.find_by_tags(params[:query], :order => "id desc", :limit => 100)
           render :action => "import.rjs"
         end
       end
