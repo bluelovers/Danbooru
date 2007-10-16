@@ -10,6 +10,18 @@
   <% if @post.nil? %>
     <h2>Nobody here but us chickens!</h2>
   <% else %>
+    <% if @post.is_flagged? %>
+      <div class="status-notice">
+        This post was flagged for deletion. Reason: <%= @post.reason_for_flag %>
+      </div>
+    <% end %>
+
+    <% if @post.is_pending? %>
+      <div class="status-notice">
+        This post is pending moderator approval.
+      </div>
+    <% end %>
+
     <div class="sidebar">
       <%= render :partial => 'search' %>
       <%= render :partial => 'tags' %>

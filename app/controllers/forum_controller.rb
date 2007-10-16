@@ -1,28 +1,29 @@
 class ForumController < ApplicationController
   layout "default"
-  verify :method => :post, :only => [:create, :destroy, :update, :stick, :unstick]
-  before_filter :mod_only, :only => [:stick, :unstick]
+  verify :method => :post, :only => [:create, :destroy, :update, :stick, :unstick, :lock, :unlock]
+  before_filter :mod_only, :only => [:stick, :unstick, :lock, :unlock]
   before_filter :member_only, :only => [:create, :destroy, :update, :edit, :add]
 
   def stick
     @forum_post = ForumPost.find(params[:id])
     @forum_post.update_attributes(:is_sticky => true, :last_updated_by => @current_user.id)
+    flash[:notice] = "Topic stickied"
     redirect_to :action => "show", :id => params[:id]
   end
 
   def unstick
     @forum_post = ForumPost.find(params[:id])
     @forum_post.update_attributes(:is_sticky => false, :last_updated_by => @current_user.id)
+    flash[:notice] = "Topic unstickied"
     redirect_to :action => "show", :id => params[:id]
   end
 
   def create
-    puts params.inspect
     @forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
 
     if @forum_post.errors.empty?
       if params[:forum_post][:parent_id].to_i == 0
-        flash[:notice] = "Forum thread created"
+        flash[:notice] = "Forum topic created"
         redirect_to :action => "show", :id => @forum_post.root_id
       else
         flash[:notice] = "Response posted"
@@ -107,5 +108,19 @@ class ForumController < ApplicationController
       fmt.xml {render :xml => @forum_posts.to_xml(:root => "forum_posts")}
       fmt.js {render :json => @forum_posts.to_json}
     end
+  end
+
+  def lock
+    @forum_post = ForumPost.find(params[:id])
+    @forum_post.update_attribute_with_validation_skipping(:is_locked, true)
+    flash[:notice] = "Topic locked"
+    redirect_to :action => "show", :id => params[:id]    
+  end
+
+  def unlock
+    @forum_post = ForumPost.find(params[:id])
+    @forum_post.update_attribute_with_validation_skipping(:is_locked, false)
+    flash[:notice] = "Topic unlocked"
+    redirect_to :action => "show", :id => params[:id]    
   end
 end

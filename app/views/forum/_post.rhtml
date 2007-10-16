@@ -23,6 +23,11 @@
         <% else %>
           | <%= link_to "Stick", {:action => "stick", :id => post.id}, :method => :post %>
         <% end %>
+        <% if post.is_locked? %>
+          | <%= link_to "Unlock", {:action => "unlock", :id => post.id}, :method => :post %>
+        <% else %>
+          | <%= link_to "Lock", {:action => "lock", :id => post.id}, :method => :post %>
+        <% end %>
       <% end %>
       | <%= link_to_function "Respond", "Forum.quote(#{post.id})" %>
     </div>

@@ -68,7 +68,11 @@ a:active {
 }
 
 a.last-page {
-  color: #AAA;
+  color: #666;
+}
+
+span.locked-topic {
+  color: #666;
 }
 
 a.spoiler {
@@ -780,4 +784,15 @@ img.pending {
 
 img.flagged {
   border: 3px solid red;
+}
+
+div.status-notice {
+  border: 2px solid #666;
+  padding: 1em;
+  margin: 1em;
+  background: #EEE;
+}
+
+div.status-notice p {
+  margin: 0;
 }

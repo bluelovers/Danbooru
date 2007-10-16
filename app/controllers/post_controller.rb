@@ -13,6 +13,16 @@ class PostController < ApplicationController
   helper :wiki, :tag, :comment, :pool, :favorite
 
   def create
+    if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) > CONFIG["member_post_limit"]
+      respond_to do |fmt|
+        fmt.html {flash["notice"] = "You cannot upload more than #{CONFIG['member_post_limit']} posts in a day"; redirect_to(:action => "upload")}
+        fmt.xml {render :xml => {:success => false, :reason => "daily limit exceeded"}.to_xml(:root => "response"), :status => 500}
+        fmt.js {render :json => {:success => false, :reason => "daily limit exceeded"}.to_json, :status => 500}
+      end
+
+      return
+    end
+
     @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :is_pending => !@current_user.privileged?))
 
     if @post.errors.empty?
@@ -66,10 +76,12 @@ class PostController < ApplicationController
   def moderate
     if request.post?
       params[:ids].keys.each do |post_id|
-        if params[:commit] == "Accept"
+        if params[:commit] == "Unflag"
           FlaggedPost.unflag(post_id)
-        else
+        elsif params[:commit] == "Delete"
           Post.destroy(post_id)
+        elsif params[:commit] == "Approve"
+          Post.update(post_id, :is_pending => false)
         end
       end
 
