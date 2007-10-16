@@ -15,7 +15,7 @@ class PostController < ApplicationController
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to do |fmt|
-        fmt.html {flash["notice"] = "You cannot upload more than #{CONFIG['member_post_limit']} posts in a day"; redirect_to(:action => "upload")}
+        fmt.html {flash[:notice] = "You cannot upload more than #{CONFIG['member_post_limit']} posts in a day"; redirect_to(:action => "upload")}
         fmt.xml {render :xml => {:success => false, :reason => "daily limit exceeded"}.to_xml(:root => "response"), :status => 500}
         fmt.js {render :json => {:success => false, :reason => "daily limit exceeded"}.to_json, :status => 500}
       end
