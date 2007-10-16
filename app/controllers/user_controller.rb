@@ -33,14 +33,15 @@ class UserController < ApplicationController
           flash[:notice] = "You are out of invites"
         else
           user = User.find(:first, :conditions => ["lower(name) = lower(?)", params[:member][:name]])
+
           if user == nil
             flash[:notice] = "User #{params[:member][:name]} was not found"
             redirect_to :action => "invites"
             return
           end
           
-          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", user.id]) > 0 && !@current_user.mod?
-            flash[:notice] = "This user has negative feedback on his record and can only be invited by a moderator"
+          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", user.id]) > 0 && !@current_user.admin?
+            flash[:notice] = "This user has negative feedback on his record and can only be invited by an administrator"
             redirect_to :action => "invites"
             return
           end
