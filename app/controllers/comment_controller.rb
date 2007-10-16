@@ -34,9 +34,9 @@ class CommentController < ApplicationController
   end
 
   def create
-    if @current_user.level == User::LEVEL_MEMBER && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) > CONFIG["member_comment_limit"]
+    if @current_user.level == User::LEVEL_MEMBER && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) >= CONFIG["member_comment_limit"]
       respond_to do |fmt|
-        fmt.html {flash["notice"] = "You cannot post more than #{CONFIG['member_post_limit']} comments in a day"; redirect_to(:action => "index")}
+        fmt.html {flash[:notice] = "You cannot post more than #{CONFIG['member_comment_limit']} comments in a day"; redirect_to(:action => "index")}
         fmt.xml {render :xml => {:success => false, :reason => "daily limit exceeded"}.to_xml(:root => "response"), :status => 500}
         fmt.js {render :json => {:success => false, :reason => "daily limit exceeded"}.to_json, :status => 500}
       end

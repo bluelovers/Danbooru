@@ -3,6 +3,18 @@
   <%= javascript_include_tag "favorite" %>
   <%= javascript_include_tag "post_mode_menu" %>
   
+  <% if @ambiguous.any? %>
+    <div class="status-notice">
+      <%= link_to_amb_tags(@ambiguous) %>
+    </div>
+  <% end %>
+  
+  <% if @suggestions.any? %>
+    <div class="status-notice">
+      <p>Maybe you meant: <%= @suggestions.map {|x| link_to x, :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
+    </div>
+  <% end %>
+  
   <div class="sidebar">
     <%= render :partial => "search" %>
     <div class="space">
@@ -33,18 +45,6 @@
   <div class="content">
     <% unless @current_user && @current_user.privileged? %>
       <%= CONFIG["ad_code_index_top"] %>
-    <% end %>
-
-    <% if @ambiguous.any? %>
-      <div id="amb-content" style="margin-bottom: 1em;">
-        <%= link_to_amb_tags(@ambiguous) %>
-      </div>
-    <% end %>
-
-    <% if @suggestions.any? %>
-      <div id="suggestions">
-        <p>Maybe you meant: <%= @suggestions.map {|x| link_to x, :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
-      </div>
     <% end %>
 
     <%= render :partial => "posts", :locals => {:posts => @posts} %>

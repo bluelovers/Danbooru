@@ -15,6 +15,12 @@ class ForumPost < ActiveRecord::Base
     return newest_topic.updated_at > user.last_forum_topic_read_at
   end
   
+  def self.lock(id, status)
+    status = status ? true : false
+    id = id.to_i
+    connection.execute("update forum_posts set is_locked = #{status} where id = #{id}")
+  end
+  
   def validate_lock
     if self.root.is_locked?
       self.errors.add_to_base("Thread is locked")

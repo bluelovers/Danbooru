@@ -111,15 +111,13 @@ class ForumController < ApplicationController
   end
 
   def lock
-    @forum_post = ForumPost.find(params[:id])
-    @forum_post.update_attribute_with_validation_skipping(:is_locked, true)
+    ForumPost.lock(params[:id], true)
     flash[:notice] = "Topic locked"
     redirect_to :action => "show", :id => params[:id]    
   end
 
   def unlock
-    @forum_post = ForumPost.find(params[:id])
-    @forum_post.update_attribute_with_validation_skipping(:is_locked, false)
+    ForumPost.lock(params[:id], false)
     flash[:notice] = "Topic unlocked"
     redirect_to :action => "show", :id => params[:id]    
   end

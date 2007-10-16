@@ -13,7 +13,7 @@ class PostController < ApplicationController
   helper :wiki, :tag, :comment, :pool, :favorite
 
   def create
-    if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) > CONFIG["member_post_limit"]
+    if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to do |fmt|
         fmt.html {flash["notice"] = "You cannot upload more than #{CONFIG['member_post_limit']} posts in a day"; redirect_to(:action => "upload")}
         fmt.xml {render :xml => {:success => false, :reason => "daily limit exceeded"}.to_xml(:root => "response"), :status => 500}
@@ -157,8 +157,8 @@ class PostController < ApplicationController
     @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_unsafe_posts?), limit, params[:page])
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_unsafe_posts => hide_unsafe_posts?))
 
-    if @posts.empty? && !params[:tags].blank?
-      @suggestions = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
+    if @posts.size < 6 && !params[:tags].blank? && params[:page].to_i < 2
+      @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
     else
       @suggestions = []
     end
