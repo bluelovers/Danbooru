@@ -1,7 +1,7 @@
 # The methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   def format_text(text, options = {})
-    text = auto_link(simple_format(text))    
+    text = auto_link(simple_format(text)) unless options[:skip_simple_format]
     text = text.gsub(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
     text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">post #\1</a>')
     text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">post #\1</a>')

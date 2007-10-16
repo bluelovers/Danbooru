@@ -22,7 +22,7 @@
         <td><%= p.pretty_rating %></td>
         <td>
           <% if p.is_flagged? %>
-            Yes (<%= p.reason_for_flag %>)
+            Yes (<%= format_text(p.reason_for_flag, :skip_simple_format => true) %>)
           <% end %>
         </td>
         <td><%= "Yes" if p.is_pending? %></td>
