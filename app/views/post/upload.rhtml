@@ -1,5 +1,6 @@
 <div id="post-add">
-  <script type="text/javascript" src="/javascripts/related_tags.js"></script>
+  <%= javascript_include_tag "related_tags" %>
+
   <% form_tag({:controller => "post", :action => "create"}, :multipart => true) do %>
     <div id="posts">
       <% if params[:url] %>
