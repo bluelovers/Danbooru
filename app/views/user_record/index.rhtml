@@ -1,0 +1,24 @@
+<h4>Record</h4>
+
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="15%">User</th>
+      <th width="15%">Reporter</th>
+      <th width="20%">When</th>
+      <th width="50%">Body</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @user_records.each do |rec| %>
+      <tr style="background: <%= rec.is_positive? ? '#EFE' : 'FEE' %>">
+        <td><%= link_to rec.user.name, :action => "index", :user_id => rec.user_id %></td>
+        <td><%= rec.reporter.name %></td>
+        <td><%= time_ago_in_words(rec.created_at) %> ago</td>
+        <td><%= format_text(rec.body) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render :partial => "footer" %>

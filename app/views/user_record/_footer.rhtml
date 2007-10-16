@@ -1,0 +1,7 @@
+<% if @user %>
+  <div id="footer">
+    <%= link_to "Add", :action => "create", :user_id => @user.id %> |
+    <%= link_to "List", :action => "index", :user_id => @user.id %> | 
+    <%= link_to "List All", :action => "index", :user_id => nil %>
+  </div>
+<% end %>

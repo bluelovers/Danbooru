@@ -33,6 +33,15 @@
     <th>Forum Posts</th>
     <td><%= ForumPost.count("creator_id = #{@user.id}") %></td>
   </tr>
+  <tr>
+    <th>Record</th>
+    <td>
+      <span style="color: green;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = true", @user.id]) %></span>
+      /
+      <span style="color: red;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", @user.id]) %></span>
+      (<%= link_to "see all", :controller => "user_record", :action => "index", :user_id => @user.id %>)
+    </td>
+  </tr>
 </table>
 
 <div style="clear: both;">
