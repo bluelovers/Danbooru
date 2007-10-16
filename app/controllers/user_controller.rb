@@ -38,6 +38,12 @@ class UserController < ApplicationController
             redirect_to :action => "invites"
             return
           end
+          
+          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", user.id]) > 0 && !@current_user.mod?
+            flash[:notice] = "This user has negative feedback on his record and can only be invited by a moderator"
+            redirect_to :action => "invites"
+            return
+          end
 
           user.level = User::LEVEL_PRIVILEGED
           user.invited_by = @current_user.id

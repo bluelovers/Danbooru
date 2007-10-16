@@ -34,6 +34,10 @@
     <td><%= ForumPost.count("creator_id = #{@user.id}") %></td>
   </tr>
   <tr>
+    <th>Invites</th>
+    <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "lower(name)", :select => "name, id").map {|x| link_to(x.name, :action => "show", :id => x.id)}.join(", ") %></td>
+  </tr>
+  <tr>
     <th>Record</th>
     <td>
       <span style="color: green;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = true", @user.id]) %></span>
