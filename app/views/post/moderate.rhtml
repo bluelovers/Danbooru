@@ -3,40 +3,63 @@
   <%= submit_tag "Search" %>
 </form>
 
+<script type="text/javascript">
+// <![CDATA[
+  function highlight_row(checkbox) {
+    var row = checkbox.parentNode.parentNode
+    if (row.original_class == null) {
+      row.original_class = row.className
+    }
+    
+    if (checkbox.checked) {
+      row.className = "highlight"
+    } else {
+      row.className = row.original_class
+    }
+  }
+// ]]>
+</script>
+
 <form method="post" action="/post/moderate">
   <table width="100%">
-    <tr>
-      <th width="10%"></th>
-      <th width="20%"></th>
-      <th width="10%">Author</th>
-      <th width="10%">Rating</th>
-      <th width="10%">Flagged</th>
-      <th width="10%">Pending</th>
-      <th width="30%">Tags</th>
-    </tr>
-    <% @posts.each do |p| %>
-      <tr class="<%= cycle 'even', 'odd' %>">
-        <td><input type="checkbox" class="p" name="ids[<%= p.id %>]"/></td>
-        <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-        <td><%= link_to p.author, :action => "moderate", :query => "user:#{p.author}" %></td>
-        <td><%= p.pretty_rating %></td>
-        <td>
-          <% if p.is_flagged? %>
-            Yes (<%= format_text(p.reason_for_flag, :skip_simple_format => true) %>)
-          <% end %>
+    <thead>
+      <tr>
+        <th width="10%"></th>
+        <th width="20%"></th>
+        <th width="10%">Author</th>
+        <th width="10%">Rating</th>
+        <th width="10%">Flagged</th>
+        <th width="10%">Pending</th>
+        <th width="30%">Tags</th>
+      </tr>      
+    </thead>
+    <tbody>
+      <% @posts.each do |p| %>
+        <tr class="<%= cycle 'even', 'odd' %>">
+          <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
+          <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
+          <td><%= link_to p.author, :action => "moderate", :query => "user:#{p.author}" %></td>
+          <td><%= p.pretty_rating %></td>
+          <td>
+            <% if p.is_flagged? %>
+              Yes (<%= format_text(p.reason_for_flag, :skip_simple_format => true) %>)
+            <% end %>
+          </td>
+          <td><%= "Yes" if p.is_pending? %></td>
+          <td><%= p.cached_tags %></td>
+        </tr>
+      <% end %>      
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">
+          <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+          <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+          <%= submit_tag "Unflag" %> 
+          <%= submit_tag "Approve" %> 
+          <%= submit_tag "Delete" %>
         </td>
-        <td><%= "Yes" if p.is_pending? %></td>
-        <td><%= p.cached_tags %></td>
-      </tr>
-    <% end %>
-    <tr>
-      <td colspan="3">
-        <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true})" %> 
-        <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked})" %> 
-        <%= submit_tag "Unflag" %> 
-        <%= submit_tag "Approve" %> 
-        <%= submit_tag "Delete" %>
-      </td>
-    </tr>
+      </tr>      
+    </tfoot>
   </table>
 </form>

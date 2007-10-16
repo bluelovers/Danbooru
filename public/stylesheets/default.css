@@ -796,3 +796,7 @@ div.status-notice {
 div.status-notice p {
   margin: 0;
 }
+
+tr.highlight {
+  background: #FFD;
+}

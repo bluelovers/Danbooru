@@ -1,19 +1,47 @@
+<script type="text/javascript">
+// <![CDATA[
+  function highlight_row(checkbox) {
+    var row = checkbox.parentNode.parentNode
+    if (row.original_class == null) {
+      row.original_class = row.className
+    }
+    
+    if (checkbox.checked) {
+      row.className = "highlight"
+    } else {
+      row.className = row.original_class
+    }
+  }
+// ]]>
+</script>
+
 <form method="post" action="/comment/moderate">
   <table>
-    <tr>
-      <th></th>
-      <th>Author</th>
-      <th>Body</th>
-    </tr>
-    <% @comments.each do |c| %>
+    <thead>
       <tr>
-        <td><input type="checkbox" class="c" name="c[<%= c.id %>]"/></td>
-        <td><%= link_to c.author, :controller => "post", :action => "show", :id => c.post_id %></td>
-        <td><%= h(c.body) %></td>
-      </tr>
-    <% end %>
-    <tr>
-      <td colspan="3"><%= button_to_function "Select all", "document.getElementsByClassName('c').each(function (i) {i.checked = true}); return false" %> <%= button_to_function "Invert selection", "document.getElementsByClassName('c').each(function (i) {i.checked = !i.checked}); return false" %> <%= submit_tag "Accept" %> <%= submit_tag "Delete" %></td>
-    </tr>
+        <th></th>
+        <th>Author</th>
+        <th>Body</th>
+      </tr>      
+    </thead>
+    <tbody>
+      <% @comments.each do |c| %>
+        <tr>
+          <td><input type="checkbox" class="c" name="c[<%= c.id %>]" onclick="highlight_row(this)"/></td>
+          <td><%= link_to c.author, :controller => "post", :action => "show", :id => c.post_id %></td>
+          <td><%= h(c.body) %></td>
+        </tr>
+      <% end %>      
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">
+          <%= button_to_function "Select all", "document.getElementsByClassName('c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %> 
+          <%= button_to_function "Invert selection", "document.getElementsByClassName('c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %> 
+          <%= submit_tag "Approve" %> 
+          <%= submit_tag "Delete" %>
+        </td>
+      </tr>      
+    </tfoot>
   </table>
 </form>
