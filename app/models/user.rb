@@ -105,7 +105,7 @@ class User < ActiveRecord::Base
       date_sql = "p.created_at BETWEEN ? AND ?"
       params = [start_date, end_date]
     else
-      date_sql = ""
+      date_sql = "true"
       params = []
     end
 
@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, tags t, posts p
         WHERE p.user_id = #{self.id}
         AND p.id = pt.post_id
-        #{date_sql}
+        AND #{date_sql}
         AND pt.tag_id = t.id
         AND pt.tag_id NOT IN (#{popular_tags})
         AND t.tag_type = #{type.to_i}
@@ -129,7 +129,7 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, posts p
         WHERE p.user_id = #{self.id}
         AND p.id = pt.post_id
-        #{date_sql}
+        AND #{date_sql}
         AND pt.tag_id NOT IN (#{popular_tags})
         GROUP BY pt.tag_id
         ORDER BY count DESC
@@ -150,7 +150,7 @@ class User < ActiveRecord::Base
       date_sql = "f.created_at BETWEEN ? AND ?"
       params = [start_date, end_date]
     else
-      date_sql = ""
+      date_sql = "true"
       params = []
     end
 
@@ -160,7 +160,7 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, tags t, favorites f
         WHERE f.user_id = #{self.id}
         AND f.post_id = pt.post_id
-        #{date_sql}
+        AND #{date_sql}
         AND pt.tag_id = t.id
         AND pt.tag_id NOT IN (#{popular_tags})
         AND t.tag_type = #{type.to_i}
@@ -174,7 +174,7 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, favorites f
         WHERE f.user_id = #{self.id}
         AND f.post_id = pt.post_id
-        #{date_sql}
+        AND #{date_sql}
         AND pt.tag_id NOT IN (#{popular_tags})
         GROUP BY pt.tag_id
         ORDER BY count DESC

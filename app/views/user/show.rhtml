@@ -79,7 +79,7 @@
 </div>
 
 <div style="clear: both; margin-bottom: 2em;">
-  <h3>Favorite <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-copys')" %></h3>
+  <h3>Recent Favorite <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-copys')" %></h3>
 
   <div id="fav-tags">
     <table style="width: 30em;">
@@ -90,7 +90,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.favorite_tags.each do |tag| %>
+        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -109,7 +109,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.favorite_tags(:type => Tag.types[:artist]).each do |tag| %>
+        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:artist]).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -128,7 +128,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.favorite_tags(:type => Tag.types[:character]).each do |tag| %>
+        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:character]).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -147,7 +147,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.favorite_tags(:type => Tag.types[:copyright]).each do |tag| %>
+        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:copyright]).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -159,7 +159,7 @@
 </div>
 
 <div style="clear: both; margin-bottom: 2em;">
-  <h3>Uploaded <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-copys')" %></h3>
+  <h3>Recent Uploaded <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-copys')" %></h3>
 
   <div id="upload-tags">
     <table style="width: 30em;">
@@ -170,7 +170,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.uploaded_tags.each do |tag| %>
+        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -189,7 +189,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.uploaded_tags(:type => Tag.types[:artist]).each do |tag| %>
+        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:artist]).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -208,7 +208,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.uploaded_tags(:type => Tag.types[:character]).each do |tag| %>
+        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:character]).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
@@ -227,7 +227,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @user.uploaded_tags(:type => Tag.types[:copyright]).each do |tag| %>
+        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:copyright]).each do |tag| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= link_to tag["tag"], :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
             <td><%= tag["count"] %></td>
