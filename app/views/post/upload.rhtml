@@ -1,5 +1,19 @@
 <div id="post-add">
   <%= javascript_include_tag "related_tags" %>
+  
+  <% if Post.count(["user_id = ?", @current_user.id]) < 50 %>
+    <div style="margin-bottom: 2em;">
+      <h4>Upload Guidelines</h4>
+      <p>Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.</p>
+      <ul>
+        <li>Do not upload furry, yaoi, guro, or poorly drawn art</li>
+        <li>Do not upload things with compression artifacts</li>
+        <li>Do not upload things with obnoxious watermarks</li>
+        <li>Do not upload game CGs</li>
+        <li>Do not upload entire doujinshi or manga chapters</li>
+      </ul>
+    </div>
+  <% end %>
 
   <% form_tag({:controller => "post", :action => "create"}, :multipart => true) do %>
     <div id="posts">

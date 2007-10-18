@@ -114,7 +114,7 @@ class CommentController < ApplicationController
         coms.each do |c|
           c.destroy
         end
-      elsif params["commit"] == "Accept"
+      elsif params["commit"] == "Approve"
         coms.each do |c|
           c.update_attribute(:is_spam, false)
         end
