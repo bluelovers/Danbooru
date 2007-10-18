@@ -1,6 +1,8 @@
 <h3>Add to Pool</h3>
 
-<%= link_to(image_tag(@post.preview_url), :controller => "post", :action => "show", :id => @post.id) %>
+<% unless hide_unsafe_posts? && (@post.is_pending? || @post.rating != 's') %>
+  <%= link_to(image_tag(@post.preview_url), :controller => "post", :action => "show", :id => @post.id) %>
+<% end %>
 
 <p>Select a pool to add this post to:</p>
 
