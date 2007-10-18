@@ -7,9 +7,9 @@
     <table width="100%">
       <thead>
         <tr>
-          <th width="10%">From</th>
-          <th width="10%">To</th>
-          <th width="40%">Last edited</th>
+          <th width="5%">From</th>
+          <th width="5%">To</th>
+          <th width="90%">Last edited</th>
         </tr>       
       </thead>
       <tbody>
@@ -17,7 +17,7 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= radio_button_tag "from", wiki_page.version, i==1, :id => "from_#{wiki_page.version}" %></td>
             <td><%= radio_button_tag "to", wiki_page.version, i==0, :id => "to_#{wiki_page.version}" %></td>
-            <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= wiki_page.author %></td>
+            <td><%= link_to wiki_page.updated_at.strftime("%m/%d %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %> by <%= wiki_page.author %></td>
           </tr>
         <% end %>       
       </tbody>

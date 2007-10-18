@@ -169,6 +169,7 @@ class WikiController < ApplicationController
       end
     else
       @page.ip_addr = request.remote_ip
+      @page.user_id = @current_user.id
 
       if @page.revert_to!(params[:version])
         respond_to do |fmt|
