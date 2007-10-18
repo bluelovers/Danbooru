@@ -68,7 +68,7 @@ CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum anal vibrator d
 CONFIG["comment_threshold"] = 40
 
 # Members cannot post more than X posts in a day.
-CONFIG["member_post_limit"] = 10
+CONFIG["member_post_limit"] = 16
 
-# Members cannot post more than X comments in a day.
+# Members cannot post more than X comments in an hour.
 CONFIG["member_comment_limit"] = 2

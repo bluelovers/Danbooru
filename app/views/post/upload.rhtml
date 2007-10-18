@@ -65,11 +65,7 @@
 
       <div id="related"><em>None</em></div>
 
-      <% if @current_user %>
-        <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', $F('post_source'))" %>
-      <% else %>
-        <%= javascript_tag "RelatedTags.init('', $F('post_source'))" %>
-      <% end %>
+      <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', $F('post_source'))" %>
     </div>
 
     <%= submit_tag "Upload", :tabindex => 1 %>
