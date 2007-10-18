@@ -12,6 +12,7 @@
         <li>Do not upload game CGs</li>
         <li>Do not upload entire doujinshi or manga chapters</li>
       </ul>
+      <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
     </div>
   <% end %>
 
