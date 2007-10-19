@@ -157,8 +157,8 @@ class PostController < ApplicationController
     @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_unsafe_posts?), limit, params[:page])
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_unsafe_posts => hide_unsafe_posts?))
 
-    if @posts.size < 6 && !params[:tags].blank? && params[:page].to_i < 2
-      @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name").map {|x| x.name}
+    if @posts.empty? && !params[:tags].blank?
+      @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name", :limit => 10).map {|x| x.name}
     else
       @suggestions = []
     end
