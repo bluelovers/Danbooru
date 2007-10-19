@@ -195,7 +195,7 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
+    retcode = Danbooru.resize_image(file_ext.downcase, tempfile_path, tempfile_preview_path)
     
     if retcode == 0
       return true
