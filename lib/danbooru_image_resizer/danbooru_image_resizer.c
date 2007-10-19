@@ -56,7 +56,7 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
   
   gdImagePtr img = NULL;
   
-  if (!strcmp(file_ext_cstr, "jpg")) {
+  if (!strcmp(file_ext_cstr, "jpg") || !strcmp(file_ext_cstr, "jpeg")) {
     img = gdImageCreateFromJpeg(read_file);
   } else if (!strcmp(file_ext_cstr, "gif")) {
     img = gdImageCreateFromGif(read_file);
