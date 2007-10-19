@@ -168,10 +168,11 @@ class WikiController < ApplicationController
         fmt.js {render :json => {:success => false, :reason => "page locked"}.to_json, :status => 409}
       end
     else
+      @page.revert_to(params[:version])
       @page.ip_addr = request.remote_ip
       @page.user_id = @current_user.id
 
-      if @page.revert_to!(params[:version])
+      if @page.save
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Wiki page was reverted"; redirect_to(:action => "show", :title => @page.title)}
           fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}

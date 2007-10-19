@@ -195,7 +195,7 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    retcode = Danbooru.resize_image(file_ext.downcase, tempfile_path, tempfile_preview_path)
+    retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
     
     if retcode == 0
       return true
@@ -536,6 +536,8 @@ class Post < ActiveRecord::Base
   end
 
   def content_type_to_file_ext(content_type)
+    content_type = content_type.chomp
+
     case content_type
     when "image/jpeg"
       return "jpg"

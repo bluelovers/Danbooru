@@ -72,8 +72,9 @@ class NoteController < ApplicationController
 
     note.revert_to(params[:version])
     note.ip_addr = request.remote_ip
+    note.user_id = @current_user.id
 
-    if note.save_without_revision
+    if note.save
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Note reverted"; redirect_to(:action => "history", :id => note.id)}
         fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
