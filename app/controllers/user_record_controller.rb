@@ -1,7 +1,7 @@
 class UserRecordController < ApplicationController
   layout "default"
-  before_filter :mod_only => [:create]
-  before_filter :admin_only => [:destroy]
+  before_filter :mod_only, :only => [:create]
+  before_filter :admin_only, :only => [:destroy]
   
   def index
     if params[:user_id]

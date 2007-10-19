@@ -190,7 +190,7 @@ class Tag < ActiveRecord::Base
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(user|fav|md5|-rating|rating|width|height|score|source|id|date|pool):(.+)$/
+        if token =~ /^(user|fav|md5|-rating|rating|width|height|score|source|id|date|pool|parent):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "fav"
@@ -215,6 +215,8 @@ class Tag < ActiveRecord::Base
             q[:date] = parse_helper($2, :date)
           elsif $1 == "pool"
             q[:pool] = $2
+          elsif $1 == "parent"
+            q[:parent_id] = $2.to_i
           end
         elsif token[0] == ?-
           q[:exclude] << token[1..-1]

@@ -37,6 +37,9 @@
               <li>Source: <%= @post.source %></li>
             <% end %>
           <% end %>
+          <% unless @post.parent_id %>
+            <li>Parent: <%= link_to :action => "list", :action => "index", :tags => "parent:#{@post.parent_id}" %></li>
+          <% end %>
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
@@ -166,6 +169,10 @@
                 </td>
               </tr>
             <% end %>
+            <tr>
+              <th><label>Parent Post</label></th>
+              <td><%= text_field "post", "parent_id", :size => 5 %></td>
+            </tr>
             <tr>
               <th><label>Prev Post</label></th>
               <td><%= text_field "post", "prev_post_id", :size => 5 %></td>

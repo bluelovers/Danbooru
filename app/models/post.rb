@@ -17,7 +17,7 @@ class Post < ActiveRecord::Base
     after_update :expire_cache_on_update
     after_destroy :expire_cache_on_destroy
   end
-  attr_accessible :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_pending
+  attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_pending
 
   votable
   image_store
@@ -356,7 +356,13 @@ class Post < ActiveRecord::Base
       conditions << "p.md5 = ?"
       params << q[:md5]
     end
-
+    
+    if q[:parent_id].is_a?(Integer)
+      conditions << "(p.parent_id = ? or p.id = ?)"
+      params << q[:parent_id]
+      params << q[:parent_id]
+    end
+    
     if q[:source].is_a?(String)
       conditions << "p.source ILIKE ? ESCAPE '\\\\'"
       params << q[:source]
@@ -462,6 +468,10 @@ class Post < ActiveRecord::Base
       conditions << "(p.is_pending = TRUE OR p.id in (select post_id from flagged_posts))"
     end
 
+    if original_query.blank?
+      conditions << "p.parent_id is null"
+    end
+    
     if conditions.empty? 
       if original_query.blank?
         conditions << "TRUE" 
