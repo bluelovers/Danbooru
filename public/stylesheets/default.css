@@ -778,6 +778,10 @@ div.quote {
   background: #EEE;
 }
 
+img.has-children {
+  border: 3px solid brown;
+}
+
 img.pending {
   border: 3px solid blue;
 }

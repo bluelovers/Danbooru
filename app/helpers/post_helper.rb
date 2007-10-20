@@ -11,6 +11,7 @@ module PostHelper
     image_class = "preview"
     image_class += " pending" if post.is_pending?
     image_class += " flagged" if post.is_flagged?
+    image_class += " has-children" if post.has_children?
 
     image = image_tag(post.preview_url, :alt => post.cached_tags, :class => image_class, :title => post.cached_tags, :id => options[:image_id])
     link = link_to(image, {:controller => "post", :action => "show", :id => post.id, :tag_title => post.tag_title}, :onclick => options[:onclick])
