@@ -52,7 +52,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="3">
+        <td colspan="7">
           <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
           <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
           <%= submit_tag "Unflag" %> 

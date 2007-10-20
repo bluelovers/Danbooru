@@ -6,11 +6,11 @@
       <h4>Upload Guidelines</h4>
       <p>Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.</p>
       <ul>
-        <li>Do not upload furry, yaoi, guro, or poorly drawn art</li>
-        <li>Do not upload things with compression artifacts</li>
-        <li>Do not upload things with obnoxious watermarks</li>
-        <li>Do not upload game CGs</li>
-        <li>Do not upload entire doujinshi or manga chapters</li>
+        <li>Do not upload <%= link_to "furry", :controller => "wiki", :action => "show", :title => "furry" %>, <%= link_to "yaoi", :controller => "wiki", :action => "show", :title => "yaoi" %>, <%= link_to "guro", :controller => "wiki", :action => "show", :title => "guro" %>, <%= link_to "toon", :controller => "wiki", :action => "show", :title => "toon" %>, or <%= link_to "poorly drawn", :controller => "wiki", :action => "show", :title => "poorly_drawn" %> art</li>
+        <li>Do not upload things with <%= link_to "compression artifacts", :controller => "wiki", :action => "show", :title => "compression_artifacts" %></li>
+        <li>Do not upload things with <%= link_to "obnoxious watermarks", :controller => "wiki", :action => "show", :title => "watermark" %></li>
+        <li><%= link_to "Group doujinshi and manga pages together", :controller => "help", :action => "post_relationships" %></li>
+        <li>Read the <%= link_to "tagging guidelines", :controller => "help", :action => "tags" %></li>
       </ul>
       <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
     </div>

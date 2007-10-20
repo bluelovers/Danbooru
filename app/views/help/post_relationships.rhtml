@@ -1,0 +1,6 @@
+<div class="help">
+  <h1>Help: Post Relationships</h1>
+
+  <p>Every post can have a parent. Any post that has a parent will not show up in the <%= link_to "main listing", :controller => "post", :action => "index" %>. However, the post will appear again if a user does any kind of tag search. This makes it useful for things like doujinshi or manga pages, since now you can upload entire chapters without cluttering up the listing.</p>
+  <p>To use this field, simply enter the id number of the parent post when you upload or edit a post. To search for all the children of a parent post, you can do a tag search for <code>post:nnnn</code>, where <code>nnnn</code> is the id number of the parent post.</p>
+</div>
