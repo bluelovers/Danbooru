@@ -12,7 +12,9 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
-  before_save :update_parent
+  before_create :update_parent_on_create
+  before_update :update_parent_on_update
+  after_destroy :update_parent_on_destroy
 
   if CONFIG["enable_caching"]
     after_create :expire_cache_on_create
@@ -48,14 +50,31 @@ class Post < ActiveRecord::Base
     end
   end
 
-  def update_parent
+  def parent_id=(id)
+    @old_parent_id = self.parent_id.to_i
+    write_attribute(:parent_id, id)
+  end
+
+  def update_parent_on_create
     if self.parent_id
-      has_kids = true
-    else
-      has_kids = false
+      connection.execute("update posts set has_children = true where id = #{self.parent_id.to_i}")
     end
-    
-    connection.execute("update posts set has_children = #{has_kids} where id = (select parent_id from posts where id = #{self.id})")
+  end
+
+  def update_parent_on_update
+    if @old_parent_id.to_i > 0 && !Post.exists?("parent_id = #{@old_parent_id}")
+      connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+    end
+
+    if self.parent_id
+      connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+    end
+  end
+  
+  def update_parent_on_destroy
+    if self.parent_id && !Post.exists?("parent_id = #{self.parent_id.to_i}")
+      connection.execute("update posts set has_children = false where id = #{self.parent_id.to_i}")
+    end
   end
 
   def expire_cache_on_create

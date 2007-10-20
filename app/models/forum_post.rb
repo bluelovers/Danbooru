@@ -106,7 +106,7 @@ class ForumPost < ActiveRecord::Base
     {:body => self.body, :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_json
   end
 
-  def to_xml
-    {:body => self.body, :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_xml(:root => "forum_post")
+  def to_xml(options = {})
+    {:body => self.body.gsub(/\r\n|\r|\n/, '\\n'), :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_xml(options.merge(:root => "forum_post"))
   end
 end
