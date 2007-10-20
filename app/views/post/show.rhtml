@@ -10,6 +10,12 @@
   <% if @post.nil? %>
     <h2>Nobody here but us chickens!</h2>
   <% else %>
+    <% if @post.has_children? %>
+      <div class="status-notice">
+        This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+      </div>
+    <% end %>
+
     <% if @post.is_flagged? %>
       <div class="status-notice">
         This post was flagged for deletion. Reason: <%= @post.reason_for_flag %>
@@ -36,11 +42,6 @@
             <% else %>
               <li>Source: <%= @post.source %></li>
             <% end %>
-          <% end %>
-          <% if @post.parent_id %>
-            <li>Parent: <%= link_to @post.parent_id, :controller => "post", :action => "index", :tags => "parent:#{@post.parent_id}" %></li>
-          <% elsif @post.has_children? %>
-            <li>Children: <%= link_to @post.id, :controller => "post", :action => "index", :tags => "parent:#{@post.id}" %></li>
           <% end %>
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>

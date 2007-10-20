@@ -57,23 +57,25 @@ class Post < ActiveRecord::Base
 
   def update_parent_on_create
     if self.parent_id
-      connection.execute("update posts set has_children = true where id = #{self.parent_id.to_i}")
+      connection.execute("update posts set has_children = TRUE where id = #{self.parent_id.to_i}")
     end
   end
 
   def update_parent_on_update
-    if @old_parent_id.to_i > 0 && !Post.exists?("parent_id = #{@old_parent_id}")
-      connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+    @old_parent_id = @old_parent_id.to_i
+
+    if @old_parent_id > 0 && connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1") == nil
+      connection.execute("update posts set has_children = FALSE where id = #{@old_parent_id}")
     end
 
-    if self.parent_id
-      connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+    if self.parent_id.to_i > 0
+      connection.execute("update posts set has_children = TRUE where id = #{self.parent_id}")
     end
   end
   
   def update_parent_on_destroy
-    if self.parent_id && !Post.exists?("parent_id = #{self.parent_id.to_i}")
-      connection.execute("update posts set has_children = false where id = #{self.parent_id.to_i}")
+    if self.parent_id && connection.select_value("select 1 from posts where parent_id = #{self.parent_id.to_i} limit 1") == nil
+      connection.execute("update posts set has_children = FALSE where id = #{self.parent_id.to_i}")
     end
   end
 
@@ -165,6 +167,8 @@ class Post < ActiveRecord::Base
       @tag_cache.each do |t|
         if t =~ /^rating:([qse])/
           connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
+        elsif t =~ /^parent:(\d+)/
+          connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
         else
           record = Tag.find_or_create_by_name(t)
           unless tag_list.include?(record.name)
