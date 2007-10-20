@@ -50,6 +50,10 @@
           </td>
         </tr>
         <tr>
+          <th><label for="post_parent_id">Parent</label></th>
+          <td><%= text_field "post", "parent_id", :size => 5 %></td>
+        </tr>
+        <tr>
           <th><%= content_tag "label", "Rating", :for => "post_rating_questionable" %></th>
           <td>
             <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" tabindex="1"/>

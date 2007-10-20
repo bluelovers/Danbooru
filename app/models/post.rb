@@ -12,6 +12,8 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
+  before_save :update_parent
+
   if CONFIG["enable_caching"]
     after_create :expire_cache_on_create
     after_update :expire_cache_on_update
@@ -44,6 +46,16 @@ class Post < ActiveRecord::Base
         return c
       end
     end
+  end
+
+  def update_parent
+    if self.parent_id
+      has_kids = true
+    else
+      has_kids = false
+    end
+    
+    connection.execute("update posts set has_children = #{has_kids} where id = (select parent_id from posts where id = #{self.id})")
   end
 
   def expire_cache_on_create

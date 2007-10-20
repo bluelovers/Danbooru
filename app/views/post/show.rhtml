@@ -37,8 +37,10 @@
               <li>Source: <%= @post.source %></li>
             <% end %>
           <% end %>
-          <% unless @post.parent_id %>
-            <li>Parent: <%= link_to :action => "list", :action => "index", :tags => "parent:#{@post.parent_id}" %></li>
+          <% if @post.parent_id %>
+            <li>Parent: <%= link_to @post.parent_id, :controller => "post", :action => "index", :tags => "parent:#{@post.parent_id}" %></li>
+          <% elsif @post.has_children? %>
+            <li>Parent: <%= link_to @post.id, :controller => "post", :action => "index", :tags => "parent:#{@post.id}" %></li>
           <% end %>
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
