@@ -10,7 +10,7 @@ class ForumPost < ActiveRecord::Base
   validates_length_of :body, :minimum => 1, :message => "You need to enter a message"
   
   def self.updated?(user)
-    newest_topic = ForumPost.find(:first, :order => "updated_at desc", :limit => 1, :select => "updated_at")
+    newest_topic = ForumPost.find(:first, :order => "updated_at desc", :limit => 1, :select => "updated_at", :conditions => ["parent_id is null"])
     return false if newest_topic == nil
     return newest_topic.updated_at > user.last_forum_topic_read_at
   end
