@@ -8,6 +8,16 @@ module ApplicationHelper
     text = text.gsub(/&lt;quote&gt;(.+?)&lt;\/quote&gt;/m, '<div class="quote">\1</div>')
     text = text.gsub(/&lt;s&gt;(.+?)&lt;\/s&gt;/m, '<a href="#" class="spoiler">\1</a>')
     text = text.gsub(/(\w+ said:)/, '<em>\1</em>')
+    text = text.gsub(/\[\[(.+?)\]\]/) do
+      match = $1
+
+      if match =~ /(.+?)\|(.+)/
+        link_to $2, :controller => "wiki", :action => "show", :title => $1.gsub(/\s/, '_').downcase
+      else
+        link_to match, :controller => "wiki", :action => "show", :title => match.gsub(/\s/, '_').downcase
+      end
+    end
+
     return text
   end
   
