@@ -75,13 +75,16 @@ class PostController < ApplicationController
 
   def moderate
     if request.post?
-      params[:ids].keys.each do |post_id|
-        if params[:commit] == "Unflag"
-          FlaggedPost.unflag(post_id)
-        elsif params[:commit] == "Delete"
-          Post.destroy(post_id)
-        elsif params[:commit] == "Approve"
-          Post.update(post_id, :is_pending => false)
+      Post.transaction do
+        params[:ids].keys.each do |post_id|
+          if params[:commit] == "Unflag"
+            FlaggedPost.unflag(post_id)
+          elsif params[:commit] == "Delete"
+            FlaggedPost.flag(post_id, params[:reason])
+            Post.destroy(post_id)
+          elsif params[:commit] == "Approve"
+            Post.update(post_id, :is_pending => false)
+          end
         end
       end
 
@@ -130,6 +133,10 @@ class PostController < ApplicationController
     @post = Post.find(params[:id])
     if @current_user.has_permission?(@post)
       @post.destroy
+    end
+    
+    unless params[:reason].blank?
+      FlaggedPost.flag(params[:id], params[:reason])
     end
 
     respond_to do |fmt|
@@ -193,8 +200,8 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags
     rescue ActiveRecord::RecordNotFound
-      flash.now[:notice] = "That post ID was not found"
-      @post = nil
+      @flagged_post = FlaggedPost.find_by_post_id(params[:id])
+      flash.now[:notice] = "That post ID was not found" unless @flagged_post
     end
   end
 

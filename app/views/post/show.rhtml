@@ -8,7 +8,13 @@
 
 <div id="post-view">
   <% if @post.nil? %>
-    <h2>Nobody here but us chickens!</h2>
+    <% if @flagged_post %>
+      <div class="status-notice">
+        This post was deleted. Reason: <%= @flagged_post.reason %>
+      </div>
+    <% else %>
+      <h2>Nobody here but us chickens!</h2>
+    <% end %>
   <% else %>
     <% if @post.has_children? %>
       <div class="status-notice">

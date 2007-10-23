@@ -21,6 +21,8 @@
 </script>
 
 <form method="post" action="/post/moderate">
+  <%= hidden_field_tag "reason", "" %>
+  
   <table width="100%">
     <thead>
       <tr>
@@ -48,7 +50,7 @@
           <td><%= "Yes" if p.is_pending? %></td>
           <td><%= p.cached_tags %></td>
         </tr>
-      <% end %>      
+      <% end %>
     </tbody>
     <tfoot>
       <tr>
@@ -57,7 +59,7 @@
           <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
           <%= submit_tag "Unflag" %> 
           <%= submit_tag "Approve" %> 
-          <%= submit_tag "Delete" %>
+          <%= submit_tag "Delete", :onclick => "$('reason').value = prompt('Enter a reason')" %>
         </td>
       </tr>      
     </tfoot>
