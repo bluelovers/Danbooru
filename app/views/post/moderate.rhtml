@@ -48,7 +48,12 @@
             <% end %>
           </td>
           <td><%= "Yes" if p.is_pending? %></td>
-          <td><%= p.cached_tags %></td>
+          <td>
+            <% if p.parent_id %>
+              parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
+            <% end %>
+            <%= p.cached_tags %>
+          </td>
         </tr>
       <% end %>
     </tbody>
