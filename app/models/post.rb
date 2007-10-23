@@ -47,6 +47,31 @@ class Post < ActiveRecord::Base
     end
   end
   
+  def parent_id=(pid)
+    @old_parent_id = self.parent_id
+    write_attribute(:parent_id, pid)
+  end
+  
+  def update_parent_on_create
+    connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+  end
+  
+  def update_parent_on_update
+    if @old_parent_id && !connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
+      connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+    end
+    
+    if self.parent_id
+      connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+    end
+  end
+  
+  def update_parent_on_destroy
+    if self.parent_id && !connection.select_value("select 1 from posts where parent_id = #{self.parent_id} limit 1")
+      connection.execute("update posts set has_children = false where id = #{self.parent_id}")
+    end
+  end
+  
   def has_children?
     return nil != connection.select_value("select 1 from posts where parent_id = #{self.id} limit 1")
   end
