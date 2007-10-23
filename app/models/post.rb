@@ -169,6 +169,12 @@ class Post < ActiveRecord::Base
           connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
         elsif t =~ /^parent:(\d+)/
           connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
+        elsif t =~ /^pool:(\S+)/
+          begin
+            pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
+            pool.add_post(self.id) if pool
+          rescue Pool::PostAlreadyExistsError
+          end
         else
           record = Tag.find_or_create_by_name(t)
           unless tag_list.include?(record.name)
