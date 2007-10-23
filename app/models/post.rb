@@ -12,9 +12,6 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
-  before_create :update_parent_on_create
-  before_update :update_parent_on_update
-  after_destroy :update_parent_on_destroy
 
   if CONFIG["enable_caching"]
     after_create :expire_cache_on_create
@@ -49,34 +46,9 @@ class Post < ActiveRecord::Base
       end
     end
   end
-
-  def parent_id=(id)
-    @old_parent_id = self.parent_id.to_i
-    write_attribute(:parent_id, id)
-  end
-
-  def update_parent_on_create
-    if self.parent_id
-      connection.execute("update posts set has_children = TRUE where id = #{self.parent_id.to_i}")
-    end
-  end
-
-  def update_parent_on_update
-    @old_parent_id = @old_parent_id.to_i
-
-    if @old_parent_id > 0 && connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1") == nil
-      connection.execute("update posts set has_children = FALSE where id = #{@old_parent_id}")
-    end
-
-    if self.parent_id.to_i > 0
-      connection.execute("update posts set has_children = TRUE where id = #{self.parent_id}")
-    end
-  end
   
-  def update_parent_on_destroy
-    if self.parent_id && connection.select_value("select 1 from posts where parent_id = #{self.parent_id.to_i} limit 1") == nil
-      connection.execute("update posts set has_children = FALSE where id = #{self.parent_id.to_i}")
-    end
+  def has_children?
+    return nil != connection.select_value("select 1 from posts where parent_id = #{self.id} limit 1")
   end
 
   def expire_cache_on_create
