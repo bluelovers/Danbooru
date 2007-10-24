@@ -1,0 +1,14 @@
+#!/bin/env ruby
+
+require File.dirname(__FILE__) + '/../config/environment'
+
+sql = <<EOS
+delete from tags where post_count = 0 and id not in (select alias_id from tag_aliases union select predicate_id from tag_implications union select consequent_id from tag_implications)
+update table_data set row_count = (select count(*) from posts where parent_id is null) where name = 'posts'
+update table_data set row_count = (select count(*) from posts where parent_id is null and rating = 's') where name = 'safe_posts'
+vacuum analyze
+EOS
+
+sql.split(/\n/).each do |l|
+  ActiveRecord::Base.connection.execute(l)
+end

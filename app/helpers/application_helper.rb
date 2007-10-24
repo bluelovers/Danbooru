@@ -6,6 +6,8 @@ module ApplicationHelper
     text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">post #\1</a>')
     text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">post #\1</a>')
     text = text.gsub(/&lt;quote&gt;(.+?)&lt;\/quote&gt;/m, '<div class="quote">\1</div>')
+    text = text.gsub(/<p><div>/, "<div>")
+    text = text.gsub(/<\/div><\/p>/, "</div>")
     text = text.gsub(/&lt;s&gt;(.+?)&lt;\/s&gt;/m, '<a href="#" class="spoiler">\1</a>')
     text = text.gsub(/(\w+ said:)/, '<em>\1</em>')
     text = text.gsub(/\[\[(.+?)\]\]/) do
