@@ -4,7 +4,7 @@
   <% else %>
     <% posts.each do |post| %>
       <% unless hide_unsafe_posts? && post.rating != 's' %>
-        <%= print_preview(post, :onclick => "return PostModeMenu.click(#{post.id})", :user => @current_user) %>
+        <%= print_preview(post, :onclick => "return typeof(PostModeMenu) == 'undefined' || PostModeMenu.click(#{post.id})", :user => @current_user) %>
       <% end %>
     <% end %>
     <script type="text/javascript">
