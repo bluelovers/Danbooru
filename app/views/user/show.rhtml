@@ -14,6 +14,10 @@
     <td><%= Post.count("user_id = #{@user.id}") %></td>
   </tr>
   <tr>
+    <th>Deleted Posts</th>
+    <td><%= link_to FlaggedPost.count("user_id = #{@user.id}"), :controller => "flagged_post", :action => "index", :user_id => @user.id %></td>
+  </tr>
+  <tr>
     <th>Favorites</th>
     <td><%= Favorite.count("user_id = #{@user.id}") %></td>
   </tr>

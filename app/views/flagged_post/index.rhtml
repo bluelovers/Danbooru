@@ -1,0 +1,16 @@
+<table width="100%" class="row-highlight">
+  <thead>
+    <tr>
+      <th width="10%">Post</th>
+      <th width="90%">Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @flagged_posts.each do |fp| %>
+      <tr class="<%= cycle 'even', 'odd' %>">
+        <td><%= fp.post_id %></td>
+        <td><%= format_text(fp.reason, :skip_simple_format => true) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

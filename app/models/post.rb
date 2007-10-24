@@ -503,7 +503,7 @@ class Post < ActiveRecord::Base
     end
 
     if options[:pending]
-      conditions << "(p.is_pending = TRUE OR p.id in (select post_id from flagged_posts))"
+      conditions << "(p.is_pending = TRUE OR p.id in (select post_id from flagged_posts where is_resolved = false))"
     end
 
     if original_query.blank?

@@ -80,7 +80,7 @@ class PostController < ApplicationController
           if params[:commit] == "Unflag"
             FlaggedPost.unflag(post_id)
           elsif params[:commit] == "Delete"
-            FlaggedPost.flag(post_id, params[:reason])
+            FlaggedPost.flag(post_id, params[:reason], true)
             Post.destroy(post_id)
           elsif params[:commit] == "Approve"
             Post.update(post_id, :is_pending => false)
@@ -93,7 +93,7 @@ class PostController < ApplicationController
       if params[:query]
         @posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
       else
-        @posts = Post.find(:all, :conditions => "id in (select post_id from flagged_posts) OR is_pending = TRUE", :order => "id")
+        @posts = Post.find(:all, :conditions => "id in (select post_id from flagged_posts where is_resolved = false) OR is_pending = TRUE", :order => "id")
       end
     end
   end
