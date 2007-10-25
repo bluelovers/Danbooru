@@ -1,7 +1,7 @@
 <h3>Create Pool</h3>
 
 <% form_tag(:action => "create") do %>
-  <%= hidden_field "pool", "is_public", "0" %>
+  <%= hidden_field_tag "pool[is_public]", "0" %>
 
   <table class="form">
     <tbody>

@@ -5,9 +5,9 @@ class PoolController < ApplicationController
   
   def index
     if params[:query]
-      @pools = Pool.find(:all, :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query] + "%"])
+      @pages, @pools = paginate :pools, :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query].to_escaped_for_sql_like + "%"], :per_page => 20
     else
-      @pools = Pool.find(:all, :order => "updated_at desc")
+      @pages, @pools = paginate :pools, :order => "updated_at desc", :per_page => 20
     end
   end
 
