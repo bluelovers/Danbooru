@@ -12,10 +12,11 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
-  after_create :update_parent_on_create
-  after_update :update_parent_on_update
-  after_destroy :update_parent_on_destroy
-
+  if CONFIG["enable_parent_posts"]
+    after_create :update_parent_on_create
+    after_update :update_parent_on_update
+    after_destroy :update_parent_on_destroy
+  end
   if CONFIG["enable_caching"]
     after_create :expire_cache_on_create
     after_update :expire_cache_on_update
@@ -50,30 +51,32 @@ class Post < ActiveRecord::Base
     end
   end
   
-  def parent_id=(pid)
-    @old_parent_id = self.parent_id
-    write_attribute(:parent_id, pid)
-  end
-  
-  def update_parent_on_create
-    if self.parent_id
-      connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+  if CONFIG["enable_parent_posts"]
+    def parent_id=(pid)
+      @old_parent_id = self.parent_id
+      write_attribute(:parent_id, pid)
     end
-  end
-  
-  def update_parent_on_update
-    if @old_parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
-      connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+
+    def update_parent_on_create
+      if self.parent_id
+        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+      end
     end
+  
+    def update_parent_on_update
+      if @old_parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
+        connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+      end
     
-    if self.parent_id
-      connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+      if self.parent_id
+        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+      end
     end
-  end
   
-  def update_parent_on_destroy
-    if self.parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{self.parent_id} limit 1")
-      connection.execute("update posts set has_children = false where id = #{self.parent_id}")
+    def update_parent_on_destroy
+      if self.parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{self.parent_id} limit 1")
+        connection.execute("update posts set has_children = false where id = #{self.parent_id}")
+      end
     end
   end
   
@@ -165,7 +168,7 @@ class Post < ActiveRecord::Base
       @tag_cache.each do |t|
         if t =~ /^rating:([qse])/
           connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
-        elsif t =~ /^parent:(\d+)/
+        elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
           connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
         elsif t =~ /^pool:(\S+)/
           begin

@@ -72,3 +72,8 @@ CONFIG["member_post_limit"] = 16
 
 # Members cannot post more than X comments in an hour.
 CONFIG["member_comment_limit"] = 2
+
+# This allows posts to have parent-child relationships. However, this 
+# requires manually updating the post counts stored in table_data by
+# periodically running the script/maintenance script.
+CONFIG["enable_parent_posts"] = false

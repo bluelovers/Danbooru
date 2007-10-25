@@ -16,16 +16,18 @@
       <h2>Nobody here but us chickens!</h2>
     <% end %>
   <% else %>
-    <% if @post.parent_id %>
-      <div class="status-notice">
-        This post belongs to a <%= link_to "parent post", :action => "index", :tags => "parent:#{@post.parent_id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
-      </div>
-    <% end %>
+    <% if CONFIG["enable_parent_posts"] %>
+      <% if @post.parent_id %>
+        <div class="status-notice">
+          This post belongs to a <%= link_to "parent post", :action => "index", :tags => "parent:#{@post.parent_id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+        </div>
+      <% end %>
 
-    <% if @post.has_children? %>
-      <div class="status-notice">
-        This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
-      </div>
+      <% if @post.has_children? %>
+        <div class="status-notice">
+          This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+        </div>
+      <% end %>
     <% end %>
 
     <% if @post.is_flagged? %>
@@ -189,10 +191,12 @@
                 </td>
               </tr>
             <% end %>
-            <tr>
-              <th><label>Parent Post</label></th>
-              <td><%= text_field "post", "parent_id", :size => 10 %></td>
-            </tr>
+            <% if CONFIG["enable_parent_posts"] %>
+              <tr>
+                <th><label>Parent Post</label></th>
+                <td><%= text_field "post", "parent_id", :size => 10 %></td>
+              </tr>
+            <% end %>
             <tr>
               <th><label>Prev Post</label></th>
               <td><%= text_field "post", "prev_post_id", :size => 10 %></td>

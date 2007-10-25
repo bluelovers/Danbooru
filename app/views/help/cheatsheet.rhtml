@@ -58,8 +58,10 @@
       <dt>date:2007-01-01</dt>
       <dd>Search for posts uploaded on a certain date (uses same syntax as id search).</dd>
       
-      <dt>parent:1234</dt>
-      <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
+      <% if CONFIG["enable_parent_posts"] %>
+        <dt>parent:1234</dt>
+        <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
+      <% end %>
 
       <dt>@unlockedrating</dt>
       <dd>Search for posts that have unlocked ratings.</dd>
@@ -108,9 +110,11 @@
 
       <dt>rating:questionable</dt>
       <dd>Rates a post as questionable. This tag is discarded after the rating is changed.</dd>
-
-      <dt>parent:1234</dt>
-      <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed.</dd>
+      
+      <% if CONFIG["enable_parent_posts"] %>
+        <dt>parent:1234</dt>
+        <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed.</dd>
+      <% end %>
 
       <dt>pool:maria-sama_ga_miteru_manga</dt>
       <dd>Adds the post to the "Maria-sama ga Miteru Manga" pool. This tag is discarded after the post is added to the pool. Make sure to replace spaces with underscores.</dd>
