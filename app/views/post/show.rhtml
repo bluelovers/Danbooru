@@ -34,6 +34,12 @@
       </div>
     <% end %>
 
+    <% if @pools.any? %>
+      <div class="status-notice">
+        This post belongs to the following pools: <%= @pools.map {|x| link_to(x.pretty_name, :action => "show", :id => x.id)}.join(", ") %>
+      </div>
+    <% end %>
+
     <div class="sidebar">
       <%= render :partial => 'search' %>
       <%= render :partial => 'tags' %>
@@ -52,7 +58,6 @@
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
-          <li>Pools: <%= pool_list(@post) %></li>
         </ul>
       </div>
       <div>
@@ -74,8 +79,8 @@
           <% end %>
           <% if @current_user %>
             <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
+            <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
           <% end %>
-          <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
           <% if @post.is_pending? && @current_user && @current_user.mod? %>
             <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[is_pending]=0')}" %></li>
           <% end %>
