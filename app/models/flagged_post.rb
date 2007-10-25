@@ -11,6 +11,6 @@ class FlaggedPost < ActiveRecord::Base
   end
   
   def uploader_name
-    connection.select_value("select name from users where is = #{self.user_id}")
+    connection.select_value("select name from users where id = #{self.user_id}")
   end
 end

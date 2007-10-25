@@ -9,7 +9,7 @@
   <tbody>
     <% @flagged_posts.each do |fp| %>
       <tr class="<%= cycle 'even', 'odd' %>">
-        <td><%= fp.uploader_name %></td>
+        <td><%= link_to fp.uploader_name, :controller => "user", :action => "show", :id => fp.user_id %></td>
         <td><%= fp.post_id %></td>
         <td><%= format_text(fp.reason, :skip_simple_format => true) %></td>
       </tr>

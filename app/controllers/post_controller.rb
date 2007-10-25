@@ -131,14 +131,15 @@ class PostController < ApplicationController
     end
   
     @post = Post.find(params[:id])
-    if @current_user.has_permission?(@post)
-      @post.destroy
-    end
-    
+
     unless params[:reason].blank?
       FlaggedPost.flag(params[:id], params[:reason])
     end
 
+    if @current_user.has_permission?(@post)
+      @post.destroy
+    end
+    
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "index")}
       fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
