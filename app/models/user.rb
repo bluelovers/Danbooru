@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
     start_date = options[:start_date]
     end_date = options[:end_date]
     popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
+    popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
     
     if start_date && end_date
       date_sql = "p.created_at BETWEEN ? AND ?"
@@ -117,7 +118,7 @@ class User < ActiveRecord::Base
         AND p.id = pt.post_id
         AND #{date_sql}
         AND pt.tag_id = t.id
-        AND pt.tag_id NOT IN (#{popular_tags})
+        #{popular_tags}
         AND t.tag_type = #{type.to_i}
         GROUP BY pt.tag_id
         ORDER BY count DESC
@@ -130,7 +131,7 @@ class User < ActiveRecord::Base
         WHERE p.user_id = #{self.id}
         AND p.id = pt.post_id
         AND #{date_sql}
-        AND pt.tag_id NOT IN (#{popular_tags})
+        #{popular_tags}
         GROUP BY pt.tag_id
         ORDER BY count DESC
         LIMIT 10
@@ -145,6 +146,7 @@ class User < ActiveRecord::Base
     start_date = options[:start_date]
     end_date = options[:end_date]
     popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
+    popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
     
     if start_date && end_date
       date_sql = "f.created_at BETWEEN ? AND ?"
@@ -162,7 +164,7 @@ class User < ActiveRecord::Base
         AND f.post_id = pt.post_id
         AND #{date_sql}
         AND pt.tag_id = t.id
-        AND pt.tag_id NOT IN (#{popular_tags})
+        #{popular_tags}
         AND t.tag_type = #{type.to_i}
         GROUP BY pt.tag_id
         ORDER BY count DESC
@@ -175,7 +177,7 @@ class User < ActiveRecord::Base
         WHERE f.user_id = #{self.id}
         AND f.post_id = pt.post_id
         AND #{date_sql}
-        AND pt.tag_id NOT IN (#{popular_tags})
+        #{popular_tags}
         GROUP BY pt.tag_id
         ORDER BY count DESC
         LIMIT 10
