@@ -12,7 +12,7 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
-  after_save :update_parent_on_create
+  after_create :update_parent_on_create
   after_update :update_parent_on_update
   after_destroy :update_parent_on_destroy
 
