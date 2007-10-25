@@ -16,6 +16,12 @@
       <h2>Nobody here but us chickens!</h2>
     <% end %>
   <% else %>
+    <% if @post.parent_id %>
+      <div class="status-notice">
+        This post belongs to a <%= link_to "parent post", :action => "index", :tags => "parent:#{@post.parent_id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+      </div>
+    <% end %>
+
     <% if @post.has_children? %>
       <div class="status-notice">
         This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
@@ -185,15 +191,15 @@
             <% end %>
             <tr>
               <th><label>Parent Post</label></th>
-              <td><%= text_field "post", "parent_id", :size => 5 %></td>
+              <td><%= text_field "post", "parent_id", :size => 10 %></td>
             </tr>
             <tr>
               <th><label>Prev Post</label></th>
-              <td><%= text_field "post", "prev_post_id", :size => 5 %></td>
+              <td><%= text_field "post", "prev_post_id", :size => 10 %></td>
             </tr>
             <tr>
               <th><label>Next Post</label></th>
-              <td><%= text_field "post", "next_post_id", :size => 5 %></td>
+              <td><%= text_field "post", "next_post_id", :size => 10 %></td>
             </tr>
             <% if @current_user && @current_user.privileged? %>
               <tr>

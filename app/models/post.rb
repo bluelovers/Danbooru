@@ -62,7 +62,7 @@ class Post < ActiveRecord::Base
   end
   
   def update_parent_on_update
-    if @old_parent_id && !connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
+    if @old_parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
       connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
     end
     
@@ -72,7 +72,7 @@ class Post < ActiveRecord::Base
   end
   
   def update_parent_on_destroy
-    if self.parent_id && !connection.select_value("select 1 from posts where parent_id = #{self.parent_id} limit 1")
+    if self.parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{self.parent_id} limit 1")
       connection.execute("update posts set has_children = false where id = #{self.parent_id}")
     end
   end
