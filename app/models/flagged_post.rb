@@ -9,4 +9,8 @@ class FlaggedPost < ActiveRecord::Base
   def self.unflag(post_id)
     connection.execute("update flagged_posts set is_resolved = true where post_id = #{post_id.to_i}")
   end
+  
+  def uploader_name
+    connection.select_value("select name from users where is = #{self.user_id}")
+  end
 end

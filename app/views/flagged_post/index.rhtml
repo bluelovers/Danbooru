@@ -1,6 +1,7 @@
 <table width="100%" class="row-highlight">
   <thead>
     <tr>
+      <th width="10%">Uploader</th>
       <th width="10%">Post</th>
       <th width="90%">Reason</th>
     </tr>
@@ -8,9 +9,14 @@
   <tbody>
     <% @flagged_posts.each do |fp| %>
       <tr class="<%= cycle 'even', 'odd' %>">
+        <td><%= fp.uploader_name %></td>
         <td><%= fp.post_id %></td>
         <td><%= format_text(fp.reason, :skip_simple_format => true) %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+
+<div id="paginator">
+  <%= custom_pagination_links(@pages, :params => {:user_id => params[:user_id], :controller => "flagged_post", :action => "index"}) %>
+</div>

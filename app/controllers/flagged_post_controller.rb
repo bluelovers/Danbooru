@@ -3,9 +3,9 @@ class FlaggedPostController < ApplicationController
 
   def index
     if params[:user_id]
-      @flagged_posts = FlaggedPost.find(:all, :conditions => ["user_id = ?", params[:user_id]], :order => "created_at desc")
+      @pages, @flagged_posts = paginate :flagged_posts, :order => "created_at desc", :conditions => ["user_id = ?", params[:user_id]], :per_page => 20
     else
-      @flagged_posts = FlaggedPost.find(:all, :order => "created_at desc", :limit => 50)
+      @pages, @flagged_posts = paginate :flagged_posts, :order => "created_at desc", :per_page => 20
     end
   end
 end
