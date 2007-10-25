@@ -312,7 +312,7 @@ class Post < ActiveRecord::Base
   end
 
   def update_neighbor_links_on_create
-    prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC")
+    prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC", :select => "id")
 
     if prev_post != nil
       # should only be nil for very first post created
@@ -322,8 +322,8 @@ class Post < ActiveRecord::Base
   end
 
   def update_neighbor_links_on_destroy
-    prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC")
-    next_post = Post.find(:first, :conditions => ["id > ?", id], :order => "id ASC")
+    prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC", :select => "id")
+    next_post = Post.find(:first, :conditions => ["id > ?", id], :order => "id ASC", :select => "id")
 
     if prev_post == nil && next_post == nil
       # do nothing

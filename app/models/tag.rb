@@ -39,7 +39,7 @@ class Tag < ActiveRecord::Base
     end
 
     def find_or_create_by_name(name)
-      if name =~ /^ambiguous:|^amb:(.+)/
+      if name =~ /^ambiguous:(.+)/
         is_amb = true
         name = $1
       else
