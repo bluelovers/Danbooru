@@ -609,7 +609,8 @@ class Post < ActiveRecord::Base
   end
   
   def is_flagged?
-    FlaggedPost.find_by_post_id(self.id) != nil
+    fp = FlaggedPost.find_by_post_id(self.id)
+    return fp != nil && !fp.is_resolved?
   end
   
   def reason_for_flag
