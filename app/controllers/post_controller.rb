@@ -279,7 +279,7 @@ class PostController < ApplicationController
   def revert_tags
     user_id = @current_user.id rescue nil
     @post = Post.find(params[:id])
-    @post.update_attributes(:tags => @post.tag_history.find(params[:history_id]).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
+    @post.update_attributes(:tags => @post.tag_history.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "show", :id => @post.id)}
