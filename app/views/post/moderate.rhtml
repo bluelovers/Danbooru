@@ -64,7 +64,7 @@
           <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
           <%= submit_tag "Unflag" %> 
           <%= submit_tag "Approve" %> 
-          <%= submit_tag "Delete", :onclick => "$('reason').value = prompt('Enter a reason')" %>
+          <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason) {$('reason').value = reason; return true} else {return false}" %>
         </td>
       </tr>      
     </tfoot>
