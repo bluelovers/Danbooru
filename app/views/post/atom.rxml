@@ -17,8 +17,8 @@ xml.feed("xmlns" => "http://www.w3.org/2005/Atom") do
 			end
 			xml.id(url_for(:only_path => false, :controller => "post", :action => "show", :id => post.id))
 			xml.updated(post.created_at.gmtime.xmlschema)
-			xml.author { xml.name(h(post.author)) }
-			xml.summary(h(post.cached_tags))
+			xml.author { xml.name(post.author) }
+			xml.summary(post.cached_tags)
 			xml.content("type" => "xhtml") do
 				xml.div("xmlns" => "http://www.w3.org/1999/xhtml") do
 					xml.a("href" => url_for(:only_path => false, :controller => "post", :action => "show", :id => post.id)) do

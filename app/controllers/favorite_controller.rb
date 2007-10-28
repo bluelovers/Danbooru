@@ -6,7 +6,7 @@ class FavoriteController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    set_title "#{@user.name}'s Favorites"
+    set_title "#{@user.pretty_name}'s Favorites"
     
     if hide_unsafe_posts?
       @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ? AND posts.rating = 's' AND posts.is_pending = FALSE", params["id"]], :select => "posts.*"
@@ -34,7 +34,7 @@ class FavoriteController < ApplicationController
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:id])}
         fmt.js do
-          favorited_users = p.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, x.name]}
+          favorited_users = p.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, ERB::Util.h(x.name)]}
           if favorited_users.empty?
             favorited_users = "Favorited by: no one"
           else

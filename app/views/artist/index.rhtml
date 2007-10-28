@@ -28,22 +28,22 @@
               <% end %>
             </td>
             <td>
-              <%= link_to artist.name, {:action => "show", :id => artist.id} %>
+              <%= link_to h(artist.name), {:action => "show", :id => artist.id} %>
               <% if artist.alias_id %>
-                &rarr; <%= link_to artist.alias, {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
+                &rarr; <%= link_to h(artist.alias), {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
               <% end %>
               <% if artist.group_id %>
-                [<%= link_to artist.group, {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
+                [<%= link_to h(artist.group), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
               <% end %>             
             </td>
             <% if artist.updater %>
-              <td><%= artist.updater.name %></td>
+              <td><%= artist.updater.pretty_name %></td>
             <% else %>
               <td></td>
             <% end %>
-            <td><%= link_to_unless artist.url_a.nil?, artist.url_a.to_s.gsub(/http:\/\//, ""), artist.url_a %></td>
-            <td><%= link_to_unless artist.url_b.nil?, artist.url_b.to_s.gsub(/http:\/\//, ""), artist.url_b %></td>
-            <td><%= link_to_unless artist.url_c.nil?, artist.url_c.to_s.gsub(/http:\/\//, ""), artist.url_c %></td>
+            <td><%= link_to_unless artist.url_a.nil?, h(artist.url_a.to_s.gsub(/http:\/\//, "")), u(artist.url_a) %></td>
+            <td><%= link_to_unless artist.url_b.nil?, h(artist.url_b.to_s.gsub(/http:\/\//, "")), u(artist.url_b) %></td>
+            <td><%= link_to_unless artist.url_c.nil?, h(artist.url_c.to_s.gsub(/http:\/\//, "")), u(artist.url_c) %></td>
           <% end %>
         <% end %>
       </tbody>

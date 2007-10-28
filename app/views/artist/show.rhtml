@@ -1,8 +1,8 @@
 <div id="artist">
-  <h3>Artist: <%= @artist.name %></h3>
+  <h3>Artist: <%= h @artist.name %></h3>
   <% unless @artist.notes.blank? %>
     <div style="margin-bottom: 1em;">
-      <%= simple_format(@artist.notes) %>
+      <%= simple_format(h(@artist.notes)) %>
     </div>
   <% end %>
   <div style="margin-bottom: 1em; clear: both;">
@@ -11,43 +11,43 @@
       <% unless @artist.url_a.blank? %>
         <tr>
           <th>URL #1</th>
-          <td><%= link_to @artist.url_a, @artist.url_a %></td>
+          <td><%= link_to h(@artist.url_a), u(@artist.url_a) %></td>
         </tr>
       <% end %>
       <% unless @artist.url_b.blank? %>
         <tr>
           <th>URL #2</th>
-          <td><%= link_to @artist.url_b, @artist.url_b %></td>
+          <td><%= link_to h(@artist.url_b), u(@artist.url_b) %></td>
         </tr>     
       <% end %>
       <% unless @artist.url_c.blank? %>
         <tr>
           <th>URL #3</th>
-          <td><%= link_to @artist.url_c, @artist.url_c %></td>
+          <td><%= link_to h(@artist.url_c), u(@artist.url_c) %></td>
         </tr>       
       <% end %>
       <% if @artist.alias_id %>
         <tr>
           <th>Alias for</th>
-          <td><%= link_to @artist.alias, :action => "show", :id => @artist.alias_id %></td>
+          <td><%= link_to h(@artist.alias), :action => "show", :id => @artist.alias_id %></td>
         </tr>
       <% end %>
       <% if @artist.aliases.any? %>
         <tr>
           <th>Aliases</th>
-          <td><%= @artist.aliases.map {|x| link_to(x.name, :action => "show", :id => x.id)}.join(", ") %></td>
+          <td><%= @artist.aliases.map {|x| link_to(h(x.name), :action => "show", :id => x.id)}.join(", ") %></td>
         </tr>
       <% end %>
       <% if @artist.group %>
         <tr>
           <th>Member of</th>
-          <td><%= link_to @artist.group, :action => "show", :id => @artist.group_id %></td>
+          <td><%= link_to h(@artist.group), :action => "show", :id => @artist.group_id %></td>
         </tr>
       <% end %>
       <% if @artist.members.any? %>
         <tr>
           <th>Members</th>
-          <td><%= @artist.members.map {|x| link_to(x.name, :action => "show", :id => x.id)}.join(", ") %></td>
+          <td><%= @artist.members.map {|x| link_to(h(x.name), :action => "show", :id => x.id)}.join(", ") %></td>
         </tr>
       <% end %>
      </tbody>

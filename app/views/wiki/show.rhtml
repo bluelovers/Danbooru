@@ -2,7 +2,7 @@
 
 <div class="content">
   <%- if @page.nil? -%>
-    <h2 class="wiki-title"><%= params[:title].tr("_", " ") %></h2>
+    <h2 class="wiki-title"><%= h params[:title].tr("_", " ") %></h2>
 
     <p>No page currently exists.</p>
 
@@ -36,7 +36,7 @@
 <%- end %>
       <li><%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %></li>
     </ul>
-    <p class="linked-from"><strong>Edited by: </strong><%= @page.author %></p>
+    <p class="linked-from"><strong>Edited by: </strong><%= h @page.author %></p>
   <%- end -%>
 </div>
 

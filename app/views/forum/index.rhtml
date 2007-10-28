@@ -15,9 +15,9 @@
       <% content_tag :tr, :class => cycle('even', 'odd') do %>
         <td>
           <% if @current_user && fp.updated_at > @current_user.last_forum_topic_read_at %>
-            <strong><% if fp.is_sticky? %>Sticky: <% end %><%= link_to fp.title, :action => "show", :id => fp.id %></strong>
+            <strong><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></strong>
           <% else %>
-            <% if fp.is_sticky? %>Sticky: <% end %><%= link_to fp.title, :action => "show", :id => fp.id %> 
+            <% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %> 
           <% end %>
 
           <% if fp.children_count > 10 %>
@@ -28,7 +28,7 @@
             <span class="locked-topic">(locked)</span>
           <% end %>
         </td>
-        <td><%= fp.author %></td>
+        <td><%= h fp.author %></td>
         <td><%= time_ago_in_words(fp.updated_at) %> ago by <%= fp.last_updater %></td>
         <td><%= fp.response_count %></td>
       <% end %>

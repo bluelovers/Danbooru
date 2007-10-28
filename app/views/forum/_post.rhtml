@@ -1,13 +1,13 @@
 <div class="post">
   <div class="author">
-    <h6 class="author"><%= link_to post.author, :controller => "user", :action => "show", :id => post.creator_id %></h6>
+    <h6 class="author"><%= link_to h(post.author), :controller => "user", :action => "show", :id => post.creator_id %></h6>
     <span class="date">Posted <%= time_ago_in_words post.created_at %> ago</span>
   </div>
   <div class="content">
     <% if post.parent? %>
-      <h6><%= post.title %></h6>
+      <h6><%= h post.title %></h6>
     <% else %>
-      <h6 class="response-title"><%= post.title %></h6>
+      <h6 class="response-title"><%= h post.title %></h6>
     <% end %>
     <div class="body">
       <%= format_text(h(post.body)) %>

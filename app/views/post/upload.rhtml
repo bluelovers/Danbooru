@@ -73,7 +73,7 @@
 
       <div id="related"><em>None</em></div>
 
-      <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', $F('post_source'))" %>
+      <%= javascript_tag "RelatedTags.init('#{escape_javascript(@current_user.my_tags.to_s)}', $F('post_source'))" %>
     </div>
 
     <%= submit_tag "Upload", :tabindex => 1 %>

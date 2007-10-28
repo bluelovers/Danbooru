@@ -57,6 +57,10 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest("#{salt}--#{pass}--")
   end
   
+  def pretty_name
+    ERB::Util.h(self.name.tr("_", " "))
+  end
+
   def pretty_level
     case self.level
     when LEVEL_UNACTIVATED

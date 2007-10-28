@@ -51,11 +51,14 @@
     <div class="sidebar">
       <%= render :partial => 'search' %>
       <%= render :partial => 'tags' %>
+      <% unless @current_user && @current_user.privileged? %>
+        <%= CONFIG["ad_code_show_side"] %>
+      <% end %>
       <!-- google_ad_section_start(weight=ignore) -->
       <div id="stats">
         <h5>Statistics</h5>
         <ul>
-          <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to @post.author, :controller => "user", :action => "show", :id => @post.user_id %></li>
+          <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
           <% unless @post.source.blank? %>
             <% if @post.source[/^http/] %>
               <li>Source: <%= link_to @post.source[7, 20] + "...", @post.source, :target => "_blank" %></li>
@@ -112,9 +115,6 @@
           <% end %>
         </ul>
       </div>
-      <% unless @current_user && @current_user.privileged? %>
-        <%= CONFIG["ad_code_show_side"] %>
-      <% end %>
       <!-- google_ad_section_end -->
     </div>
     <div class="content" id="right-col">
@@ -248,7 +248,7 @@
         <% end %>
       </div>
       <% if @current_user %>
-        <%= javascript_tag "RelatedTags.init('#{@current_user.my_tags.to_s}', '')" %>
+        <%= javascript_tag "RelatedTags.init('#{escape_javascript(@current_user.my_tags.to_s)}', '')" %>
       <% else %>
         <%= javascript_tag "RelatedTags.init('', '')" %>
       <% end %>

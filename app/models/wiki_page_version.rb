@@ -8,7 +8,7 @@ class WikiPageVersion < ActiveRecord::Base
   end
 
   def pretty_title
-    self.title.tr("_", " ")
+    ERB::Util.h(self.title.tr("_", " "))
   end
 
   def to_xml(options = {})

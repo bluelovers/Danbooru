@@ -52,7 +52,7 @@ class UserController < ApplicationController
             user.save!
             @current_user.decrement! :invite_count
           end
-          flash[:notice] = "You have invited #{user.name}"
+          flash[:notice] = "You have invited #{user.pretty_name}"
         end
       end
       

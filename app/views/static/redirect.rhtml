@@ -2,11 +2,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Redirecting to <%= params['url'] %>...</title>
+  <title>Redirecting to <%= h params['url'] %>...</title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-  <meta http-equiv="refresh" content="0; url=<%= params['url'] %>"/>
+  <% if params['url'].starts_with? "http://" %>
+    <meta http-equiv="refresh" content="0; url=<%= h params['url'] %>"/>
+  <% end %>
 </head>
 <body>
-<h1>Redirecting to <%= params['url'] %></h1>
+<h1>Redirecting to <%= link_to h(params['url']), h(params['url']) %></h1>
 </body>
 </html>

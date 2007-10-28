@@ -1,6 +1,6 @@
 <ul>
   <% @tags.each do |tag| %>
-    <li><%= link_to tag['name'], :controller => "post", :action => "index", :tags => tag['name'] %> (<%= tag['post_count'] %>)</li>
+    <li><%= link_to h(tag['name']), :controller => "post", :action => "index", :tags => tag['name'] %> (<%= tag['post_count'] %>)</li>
   <% end %>
 </ul>
 

@@ -1,7 +1,7 @@
 xml.instruct!
 
 xml.feed("xmlns" => "http://www.w3.org/2005/Atom") do
-	xml.title("#{CONFIG['app_name']}: Favorite posts for #{@user.name}")
+	xml.title("#{CONFIG['app_name']}: Favorite posts for #{@user.pretty_name}")
 	xml.link("rel" => "self", "href" => url_for(:only_path => false, :controller => "user", :action => "favorites_atom"))
 	xml.link("rel" => "alternate", "href" => url_for(:only_path => false, :controller => "user", :action => "favorites"))
 	xml.id(url_for(:only_path => false, :controller => "user", :action => "favorites_atom"))
@@ -17,7 +17,7 @@ xml.feed("xmlns" => "http://www.w3.org/2005/Atom") do
 			end
 			xml.id(url_for(:only_path => false, :controller => "post", :action => "show", :id => post.id))
 			xml.updated(post.created_at.gmtime.xmlschema)
-			xml.author { xml.name post.author }
+			xml.author { xml.name h(post.author) }
 			xml.summary(post.cached_tags)
 			xml.content("type" => "xhtml") do
 				xml.div("xmlns" => "http://www.w3.org/1999/xhtml") do

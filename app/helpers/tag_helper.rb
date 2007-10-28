@@ -63,7 +63,7 @@ module TagHelper
         html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
       end
 
-      html << link_to(name.tr("_", " "), :controller => "post", :action => "index", :tags => name) << " "
+      html << link_to(h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name) << " "
       html << content_tag("span", count.to_i, :class => "post-count") << " "
       if type_map[name]
         html << content_tag("span", "(" + type_map[name] + ")", :class => type_map[name] + "-tag")
@@ -80,7 +80,7 @@ module TagHelper
     tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
       size = Math.log(tag["post_count"].to_i) / divisor
       size = 0.8 if size < 0.8
-      html << link_to(tag["name"].tr("_", " "), {:controller => "post", :action => "index", :tags => tag["name"]}, :style => "font-size:#{size}em", :title => "#{tag['post_count']} posts") << " "
+      html << link_to(h(tag["name"].tr("_", " ")), {:controller => "post", :action => "index", :tags => tag["name"]}, :style => "font-size:#{size}em", :title => "#{tag['post_count']} posts") << " "
     end
 
     return html

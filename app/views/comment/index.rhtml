@@ -16,12 +16,12 @@
           <div class="post-info">
             <div>
               <span class="info"><strong>Date</strong> <%= post.created_at.strftime("%D %I:%M") %></span>
-              <span class="info"><strong>User</strong> <%= link_to post.author, :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
+              <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
               <span class="info"><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
               <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
             </div>
             <div>
-              <strong>Tags</strong> <span class="tag-list"><%= post.cached_tags.split(/ /).map {|x| link_to(x, :controller => "post", :action => "index", :tags => x)}.join(" ") %></span>
+              <strong>Tags</strong> <span class="tag-list"><%= post.cached_tags.split(/ /).map {|x| link_to(h(x), :controller => "post", :action => "index", :tags => x)}.join(" ") %></span>
             </div>
             <% if post.comment_count > 6 %>
               <p><%= link_to "#{post.comment_count - 6} comments hidden", :controller => "post", :action => "show", :id => post.id %></p>

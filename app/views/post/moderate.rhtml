@@ -40,7 +40,7 @@
         <tr class="<%= cycle 'even', 'odd' %>">
           <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
           <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-          <td><%= link_to p.author, :action => "moderate", :query => "user:#{p.author}" %></td>
+          <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
           <td><%= p.pretty_rating %></td>
           <td>
             <% if p.is_flagged? %>
@@ -52,7 +52,7 @@
             <% if p.parent_id %>
               parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
             <% end %>
-            <%= p.cached_tags %>
+            <%= h p.cached_tags %>
           </td>
         </tr>
       <% end %>

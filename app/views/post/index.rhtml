@@ -11,7 +11,7 @@
   
   <% if @suggestions.any? %>
     <div class="status-notice">
-      <p>Maybe you meant: <%= @suggestions.map {|x| link_to x, :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
+      <p>Maybe you meant: <%= @suggestions.map {|x| link_to h(x), :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
     </div>
   <% end %>
   

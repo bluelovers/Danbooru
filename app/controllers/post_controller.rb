@@ -148,7 +148,7 @@ class PostController < ApplicationController
   end
 
   def index
-    set_title "/#{params[:tags]}"
+    set_title ERB::Util.h("/#{params[:tags]}")
 
     if @current_user == nil && params[:tags].to_s.include?(" ")
       flash[:notice] = "You must be logged in to search for more than one tag at a time."
@@ -200,7 +200,7 @@ class PostController < ApplicationController
       @post = Post.find(params[:id])
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
-      set_title @post.cached_tags
+      set_title ERB::Util.h(@post.cached_tags)
     rescue ActiveRecord::RecordNotFound
       @flagged_post = FlaggedPost.find_by_post_id(params[:id])
       flash.now[:notice] = "That post ID was not found" unless @flagged_post

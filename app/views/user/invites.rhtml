@@ -26,7 +26,7 @@
     <tbody>
       <% @invited_users.each do |user| %>
         <tr>
-          <td><%= user.name %></td>
+          <td><%= user.pretty_name %></td>
           <td><%= link_to Post.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
           <td><%= link_to Favorite.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "fav:#{user.name}" %></td>
         </tr>

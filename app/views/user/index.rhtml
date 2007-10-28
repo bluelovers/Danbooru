@@ -39,9 +39,9 @@
     <% @users.each do |user| %>
       <tr class="<%= cycle 'even', 'odd' %>">
         <td>
-          <%= link_to user.name, :action => "show", :id => user.id %>
+          <%= link_to user.pretty_name, :action => "show", :id => user.id %>
           <% user.invited_by_ancestors.each do |anc| %>
-            &larr; <%= link_to anc.name, :action => "show", :id => anc.id %>
+            &larr; <%= link_to anc.pretty_name, :action => "show", :id => anc.id %>
           <% end %>
         </td>
         <td><%= link_to Post.count("user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
