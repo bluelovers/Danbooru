@@ -32,7 +32,7 @@
 
     <% if @post.is_flagged? %>
       <div class="status-notice">
-        This post was flagged for deletion. Reason: <%= @post.reason_for_flag %>
+        This post was flagged for deletion. Reason: <%= format_text(@post.reason_for_flag, :skip_simple_format => true) %>
       </div>
     <% end %>
 
