@@ -47,7 +47,7 @@ module ApplicationHelper
   end
 
   def tag_header(tags)
-    if tags
+    unless tags.blank?
       '/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
     end
   end
