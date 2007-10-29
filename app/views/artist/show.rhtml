@@ -67,6 +67,10 @@
       <%= link_to "Wiki", :controller => "wiki", :action => "show", :title => @artist.name %> |
       <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
     <% end %>
-    <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "source:" + File.dirname(@artist.url_b.to_s), :name => @artist.name %>
+    <% if !@artist.url_b.blank? %>
+      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "source:" + File.dirname(@artist.url_b.to_s), :name => @artist.name %>
+    <% else %>
+      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "source:" + @artist.url_a.to_s, :name => @artist.name %>
+    <% end %>
   </div>
 </div>
