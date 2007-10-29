@@ -2,6 +2,7 @@ class WikiPage < ActiveRecord::Base
   acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
   before_save :make_title_canonical
   belongs_to :user
+  validates_uniqueness_of :title, :case_sensitive => false
   
   TAG_DEL = '<del>'
   TAG_INS = '<ins>'
@@ -32,7 +33,7 @@ class WikiPage < ActiveRecord::Base
   end
   
   def make_title_canonical
-    self.title = title.tr(" ", "_")
+    self.title = title.tr(" ", "_").downcase
   end
 
   def last_version?
