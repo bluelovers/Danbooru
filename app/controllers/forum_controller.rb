@@ -85,7 +85,7 @@ class ForumController < ApplicationController
     @forum_post = ForumPost.find(params[:id])
     @pages, @children = paginate :forum_posts, :order => "id", :per_page => 10, :conditions => ["parent_id = ?", params[:id]]
 
-    if @current_user != nil && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 3.seconds.ago
+    if @current_user != nil && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 6.seconds.ago
       @current_user.update_attribute(:last_forum_topic_read_at, @forum_post.updated_at)
     end
     
