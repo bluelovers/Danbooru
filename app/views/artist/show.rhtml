@@ -68,9 +68,9 @@
       <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
     <% end %>
     <% if !@artist.url_b.blank? %>
-      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "source:" + File.dirname(@artist.url_b.to_s), :name => @artist.name %>
+      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(@artist.url_b.to_s), :name => @artist.name %>
     <% else %>
-      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "source:" + @artist.url_a.to_s, :name => @artist.name %>
+      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + @artist.url_a.to_s, :name => @artist.name %>
     <% end %>
   </div>
 </div>
