@@ -41,9 +41,9 @@
             <% else %>
               <td></td>
             <% end %>
-            <td><%= link_to_unless artist.url_a.nil?, h(artist.url_a.to_s.gsub(/http:\/\//, "")), u(artist.url_a) %></td>
-            <td><%= link_to_unless artist.url_b.nil?, h(artist.url_b.to_s.gsub(/http:\/\//, "")), u(artist.url_b) %></td>
-            <td><%= link_to_unless artist.url_c.nil?, h(artist.url_c.to_s.gsub(/http:\/\//, "")), u(artist.url_c) %></td>
+            <td><%= link_to_unless artist.url_a.nil?, h(artist.url_a.to_s.gsub(/http:\/\//, "")), artist.url_a %></td>
+            <td><%= link_to_unless artist.url_b.nil?, h(artist.url_b.to_s.gsub(/http:\/\//, "")), artist.url_b %></td>
+            <td><%= link_to_unless artist.url_c.nil?, h(artist.url_c.to_s.gsub(/http:\/\//, "")), artist.url_c %></td>
           <% end %>
         <% end %>
       </tbody>
