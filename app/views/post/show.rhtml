@@ -49,11 +49,11 @@
     <% end %>
 
     <div class="sidebar">
-      <%= render :partial => 'search' %>
-      <%= render :partial => 'tags' %>
       <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_side"] %>
       <% end %>
+      <%= render :partial => 'search' %>
+      <%= render :partial => 'tags' %>
       <!-- google_ad_section_start(weight=ignore) -->
       <div id="stats">
         <h5>Statistics</h5>

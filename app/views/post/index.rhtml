@@ -16,6 +16,9 @@
   <% end %>
   
   <div class="sidebar">
+    <% unless @current_user && @current_user.privileged? %>
+      <%= CONFIG["ad_code_index_side"] %>
+    <% end %>
     <%= render :partial => "search" %>
     <div class="space">
       <h5>Mode</h5>

@@ -61,7 +61,7 @@ class ApplicationController < ActionController::Base
     if @current_user == nil && request.method == :get && !%w(xml js).include?(params[:format])
       key = cache_key()
       cached = Cache.get(key)
-      if cached != nil
+      unless cached.blank?
         render :text => cached, :layout => false
         return false
       end
