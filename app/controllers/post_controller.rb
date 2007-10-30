@@ -197,7 +197,7 @@ class PostController < ApplicationController
 
   def show
     begin
-      @post = Post.find(params[:id])
+      @post = Post.find(params[:id].to_i)
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title ERB::Util.h(@post.cached_tags)
