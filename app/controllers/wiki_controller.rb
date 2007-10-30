@@ -107,7 +107,7 @@ class WikiController < ApplicationController
         end
       else
         respond_to do |fmt|
-          error = page.errors.full_messages.join(", ")
+          error = @page.errors.full_messages.join(", ")
           fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
           fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml(:root => "response"), :status => 500}
           fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
