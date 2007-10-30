@@ -104,19 +104,23 @@ Note.prototype = {
 			formatted_body: this.elements.body.innerHTML
 		}
 
+		// IE opacity
+		if(/MSIE/.test(navigator.userAgent) && !window.opera)
+			Element.setStyle(this.elements.box, {opacity: 0.5})
+
 		// reposition the box to be relative to the image
 
 		this.elements.box.style.top = this.elements.box.offsetTop + "px"
 		this.elements.box.style.left = this.elements.box.offsetLeft + "px"
 
 		// attach the event listeners
-		Event.observe(this.elements.box, "mousedown", this.bind("dragStart"), true)
-		Event.observe(this.elements.box, "mouseout", this.bind("bodyHideTimer"), true)
-		Event.observe(this.elements.box, "mouseover", this.bind("bodyShow"), true)
-		Event.observe(this.elements.corner, "mousedown", this.bind("resizeStart"), true)
-		Event.observe(this.elements.body, "mouseover", this.bind("bodyShow"), true)
-		Event.observe(this.elements.body, "mouseout", this.bind("bodyHideTimer"), true)
-		Event.observe(this.elements.body, "click", this.bind("showEditBox"), true)
+		Event.observe(this.elements.box, "mousedown", this.bind("dragStart"), false)
+		Event.observe(this.elements.box, "mouseout", this.bind("bodyHideTimer"), false)
+		Event.observe(this.elements.box, "mouseover", this.bind("bodyShow"), false)
+		Event.observe(this.elements.corner, "mousedown", this.bind("resizeStart"), false)
+		Event.observe(this.elements.body, "mouseover", this.bind("bodyShow"), false)
+		Event.observe(this.elements.body, "mouseout", this.bind("bodyHideTimer"), false)
+		Event.observe(this.elements.body, "click", this.bind("showEditBox"), false)
 	},
 
 	textValue: function() {
@@ -127,11 +131,14 @@ Note.prototype = {
 		var editBox = $('edit-box')
 
 		if (editBox != null) {
+			var boxid = editBox.noteid
 			// redundant?
-			Event.stopObserving('note-save-' + this.id, 'click', this.bind("save"), true)
-			Event.stopObserving('note-cancel-' + this.id, 'click', this.bind("cancel"), true)
-			Event.stopObserving('note-remove-' + this.id, 'click', this.bind("remove"), true)
-			Event.stopObserving('note-history-' + this.id, 'click', this.bind("history"), true)
+			Event.stopObserving('edit-box', 'mousedown', this.bind("editDragStart"), false)
+			Event.stopObserving('note-save-' + boxid, 'click', this.bind("save"), false)
+			Event.stopObserving('note-cancel-' + boxid, 'click', this.bind("cancel"), false)
+			Event.stopObserving('note-remove-' + boxid, 'click', this.bind("remove"), false)
+			Event.stopObserving('note-history-' + boxid, 'click', this.bind("history"), false)
+			this.elements.editBox = null
 
 			Element.remove('edit-box')
 		}
@@ -139,8 +146,6 @@ Note.prototype = {
 	},
 
 	showEditBox: function(e) {
-		var editBox = $('edit-box')
-
 		this.hideEditBox(e)
 
 		var inject = ''
@@ -161,10 +166,14 @@ Note.prototype = {
 
 		new Insertion.Bottom('note-container', inject)
 
-		Event.observe('note-save-' + this.id, 'click', this.bind("save"), true)
-		Event.observe('note-cancel-' + this.id, 'click', this.bind("cancel"), true)
-		Event.observe('note-remove-' + this.id, 'click', this.bind("remove"), true)
-		Event.observe('note-history-' + this.id, 'click', this.bind("history"), true)
+		$('edit-box').noteid = this.id
+
+		Event.observe('edit-box', 'mousedown', this.bind("editDragStart"), false)
+
+		Event.observe('note-save-' + this.id, 'click', this.bind("save"), false)
+		Event.observe('note-cancel-' + this.id, 'click', this.bind("cancel"), false)
+		Event.observe('note-remove-' + this.id, 'click', this.bind("remove"), false)
+		Event.observe('note-history-' + this.id, 'click', this.bind("history"), false)
 		$("edit-box-text").focus()
 	},
 
@@ -202,8 +211,8 @@ Note.prototype = {
 	},
 
 	dragStart: function(e) {
-		Event.observe(document.documentElement, 'mousemove', this.bind("drag"), true)
-		Event.observe(document.documentElement, 'mouseup', this.bind("dragStop"), true)
+		Event.observe(document.documentElement, 'mousemove', this.bind("drag"), false)
+		Event.observe(document.documentElement, 'mouseup', this.bind("dragStop"), false)
 		document.onselectstart = function() {return false}
 
 		this.cursorStartX = Event.pointerX(e)
@@ -216,8 +225,8 @@ Note.prototype = {
 	},
 
 	dragStop: function(e) {
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), true)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("dragStop"), true)
+		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), false)
+		Event.stopObserving(document.documentElement, 'mouseup', this.bind("dragStop"), false)
 		document.onselectstart = function() {return true}
 
 		this.cursorStartX = null
@@ -265,17 +274,19 @@ Note.prototype = {
 		this.boxStartY = this.elements.box.offsetTop
 		this.dragging = true
 
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), true)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("dragStop"), true)
-		Event.observe(document.documentElement, 'mousemove', this.bind("resize"), true)
-		Event.observe(document.documentElement, 'mouseup', this.bind("resizeStop"), true)
+		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), false)
+		Event.stopObserving(document.documentElement, 'mouseup', this.bind("dragStop"), false)
+		Event.observe(document.documentElement, 'mousemove', this.bind("resize"), false)
+		Event.observe(document.documentElement, 'mouseup', this.bind("resizeStop"), false)
+
+		Event.stop(e)
 
 		this.bodyHide()
 	},
 
 	resizeStop: function(e) {
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("resize"), true)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("resizeStop"), true)
+		Event.stopObserving(document.documentElement, 'mousemove', this.bind("resize"), false)
+		Event.stopObserving(document.documentElement, 'mouseup', this.bind("resizeStop"), false)
 
 		this.boxCursorStartX = null
 		this.boxCursorStartY = null
@@ -284,6 +295,8 @@ Note.prototype = {
 		this.boxStartX = null
 		this.boxStartY = null
 		this.dragging = false
+
+		Event.stop(e)
 	},
 
 	resize: function(e) {
@@ -309,6 +322,47 @@ Note.prototype = {
 		this.elements.box.style.height = h + "px"
 		this.elements.box.style.left = this.boxStartX + "px"
 		this.elements.box.style.top = this.boxStartY + "px"
+
+		Event.stop(e)
+	},
+
+	editDragStart: function(e) {
+		var node = Event.element(e).nodeName
+		if (node != 'FORM' && node != 'DIV')
+			return
+
+		Event.observe(document.documentElement, 'mousemove', this.bind("editDrag"), false)
+		Event.observe(document.documentElement, 'mouseup', this.bind("editDragStop"), false)
+		document.onselectstart = function() {return false}
+
+		this.elements.editBox = $('edit-box');
+		this.cursorStartX = Event.pointerX(e)
+		this.cursorStartY = Event.pointerY(e)
+		this.editStartX = this.elements.editBox.offsetLeft
+		this.editStartY = this.elements.editBox.offsetTop
+		this.dragging = true
+	},
+
+	editDragStop: function(e) {
+		Event.stopObserving(document.documentElement, 'mousemove', this.bind("editDrag"), false)
+		Event.stopObserving(document.documentElement, 'mouseup', this.bind("editDragStop"), false)
+		document.onselectstart = function() {return true}
+
+		this.cursorStartX = null
+		this.cursorStartY = null
+		this.editStartX = null
+		this.editStartY = null
+		this.dragging = false
+	},
+
+	editDrag: function(e) {
+		var left = this.editStartX + Event.pointerX(e) - this.cursorStartX
+		var top = this.editStartY + Event.pointerY(e) - this.cursorStartY
+
+		this.elements.editBox.style.left = left + 'px'
+		this.elements.editBox.style.top = top + 'px'
+
+		Event.stop(e)
 	},
 
 	save: function(e) {
@@ -340,8 +394,17 @@ Note.prototype = {
 			method: 'post',
 			parameters: params.join("&"),
 			onFailure: function(req) {
-			  var response = eval("(" + req.responseText + ")")
-			  notice("Error: " + response.reason)
+				if (req.responseText) {
+					var response = eval("(" + req.responseText + ")")
+					notice("Error: " + response.reason)
+				} else if (req.status) {
+					notice("Error: " + req.status + " " + req.statusText)
+				} else {
+					notice("Error: unknown")
+				}
+			},
+			onException: function(req,exc) {
+				notice("Exception: <pre>"+exc+"</pre>")
 			},
 			onSuccess: function(req) {
 				notice("Note saved")
@@ -405,7 +468,7 @@ Note.prototype = {
 				method: 'post',
 				postBody: 'note[is_active]=0',
 				onComplete: function(req) {
-          var resp = eval("(" + req.responseText + ")")
+					var resp = eval("(" + req.responseText + ")")
 					if (req.status == 403) {
 						notice("Access denied")
 					} else if (req.status == 500) {
