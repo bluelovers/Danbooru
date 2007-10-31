@@ -202,7 +202,7 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title ERB::Util.h(@post.cached_tags)
     rescue ActiveRecord::RecordNotFound
-      @flagged_post = FlaggedPost.find_by_post_id(params[:id])
+      @flagged_post = FlaggedPost.find_by_post_id(params[:id].to_i)
       flash.now[:notice] = "That post ID was not found" unless @flagged_post
     end
   end
