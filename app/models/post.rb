@@ -1,31 +1,33 @@
 class Post < ActiveRecord::Base
+  votable
+  image_store
+  
+  if CONFIG["enable_caching"]
+    after_create :expire_cache_on_create
+    after_update :expire_cache_on_update
+    before_destroy :expire_cache_on_destroy
+  end
+
+  if CONFIG["enable_parent_posts"]
+    after_create :update_parent_on_create
+    after_update :update_parent_on_update
+  end
+
   before_validation_on_create :auto_download
   before_validation_on_create :generate_hash
   before_validation_on_create :generate_preview
   before_validation_on_create :get_image_dimensions
   before_validation_on_create :move_file
   before_destroy :delete_file
+  before_destroy :update_status_on_destroy
   after_create :update_neighbor_links_on_create
-  before_destroy :update_neighbor_links_on_destroy
   after_update :update_neighbor_links_on_update
   attr_accessor :updater_ip_addr
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
-  if CONFIG["enable_parent_posts"]
-    after_create :update_parent_on_create
-    after_update :update_parent_on_update
-    after_destroy :update_parent_on_destroy
-  end
-  if CONFIG["enable_caching"]
-    after_create :expire_cache_on_create
-    after_update :expire_cache_on_update
-    after_destroy :expire_cache_on_destroy
-  end
-  attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :is_pending
+  attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status
 
-  votable
-  image_store
   has_and_belongs_to_many :tags, :order => "name"
   has_many :comments, :order => "id"
   has_many :notes, :order => "id desc"
@@ -72,12 +74,11 @@ class Post < ActiveRecord::Base
         connection.execute("update posts set has_children = true where id = #{self.parent_id}")
       end
     end
+  end
   
-    def update_parent_on_destroy
-      if self.parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{self.parent_id} limit 1")
-        connection.execute("update posts set has_children = false where id = #{self.parent_id}")
-      end
-    end
+  def update_status_on_destroy
+    self.update_attribute(:status, "deleted")
+    return false
   end
   
   def expire_cache_on_create
@@ -324,25 +325,6 @@ class Post < ActiveRecord::Base
     end
   end
 
-  def update_neighbor_links_on_destroy
-    prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC", :select => "id")
-    next_post = Post.find(:first, :conditions => ["id > ?", id], :order => "id ASC", :select => "id")
-
-    if prev_post == nil && next_post == nil
-      # do nothing
-    elsif prev_post != nil && next_post != nil
-      # deleted post is in middle
-      connection.execute("UPDATE posts SET next_post_id = #{next_post.id} WHERE id = #{prev_post.id}")
-      connection.execute("UPDATE posts SET prev_post_id = #{prev_post.id} WHERE id = #{next_post.id}")
-    elsif prev_post == nil
-      # no previous post, therefore deleted post is first post
-      connection.execute("UPDATE posts SET prev_post_id = NULL WHERE id = #{next_post.id}")
-    elsif next_post == nil
-      # no next post, therefore deleted post is last post
-      connection.execute("UPDATE posts SET next_post_id = NULL WHERE id = #{prev_post.id}")
-    end
-  end
-
   def update_neighbor_links_on_update
     if next_post_id
       connection.execute("UPDATE posts SET prev_post_id = #{id} WHERE id = #{next_post_id}")
@@ -384,7 +366,7 @@ class Post < ActiveRecord::Base
       q = Tag.parse_query(q)
     end
 
-    conditions = []
+    conditions = ["status > 'deleted'"]
     from = ["posts p"]
     params = []
 
@@ -473,7 +455,7 @@ class Post < ActiveRecord::Base
 
     if options[:hide_unsafe_posts]
       conditions << "p.rating = 's'"
-      conditions << "p.is_pending = FALSE"
+      conditions << "p.status = 'active'"
     end
 
     if q[:rating].is_a?(String)
@@ -507,19 +489,11 @@ class Post < ActiveRecord::Base
     end
 
     if options[:pending]
-      conditions << "(p.is_pending = TRUE OR p.id in (select post_id from flagged_posts where is_resolved = false))"
+      conditions << "p.status < 'active'"
     end
 
     if original_query.blank?
       conditions << "p.parent_id is null"
-    end
-    
-    if conditions.empty? 
-      if original_query.blank?
-        conditions << "TRUE" 
-      else
-        conditions << "FALSE"
-      end
     end
     
     sql = "SELECT "
@@ -609,17 +583,18 @@ class Post < ActiveRecord::Base
   end
   
   def is_flagged?
-    fp = FlaggedPost.find_by_post_id(self.id)
-    return fp != nil && !fp.is_resolved?
+    self.status == "flagged"
   end
   
-  def reason_for_flag
-    fp = FlaggedPost.find_by_post_id(self.id)
-    
-    if fp
-      return fp.reason
-    else
-      return ""
-    end
+  def is_pending?
+    self.status == "pending"
+  end
+  
+  def is_deleted?
+    self.status == "deleted"
+  end
+  
+  def is_active?
+    self.status == "active"
   end
 end

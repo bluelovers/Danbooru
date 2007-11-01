@@ -23,7 +23,13 @@ class PostController < ApplicationController
       return
     end
 
-    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :is_pending => !@current_user.privileged?))
+    if @current_user.privileged?
+      status = "active"
+    else
+      status = "pending"
+    end
+
+    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :status => status))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -77,13 +83,11 @@ class PostController < ApplicationController
     if request.post?
       Post.transaction do
         params[:ids].keys.each do |post_id|
-          if params[:commit] == "Unflag"
-            FlaggedPost.unflag(post_id)
+          if params[:commit] == "Approve"
+            Post.update(post_id, :status => "active")
           elsif params[:commit] == "Delete"
-            FlaggedPost.flag(post_id, params[:reason], true)
+            Post.update(post_id, :deletion_reason => params[:reason]) unless params[:reason].blank?
             Post.destroy(post_id)
-          elsif params[:commit] == "Approve"
-            Post.update(post_id, :is_pending => false)
           end
         end
       end
@@ -93,7 +97,7 @@ class PostController < ApplicationController
       if params[:query]
         @posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
       else
-        @posts = Post.find(:all, :conditions => "id in (select post_id from flagged_posts where is_resolved = false) OR is_pending = TRUE", :order => "id desc")
+        @posts = Post.find(:all, :conditions => "status = 'flagged' or status = 'pending'", :order => "id desc")
       end
     end
   end
@@ -132,18 +136,24 @@ class PostController < ApplicationController
   
     @post = Post.find(params[:id])
 
-    unless params[:reason].blank?
-      FlaggedPost.flag(params[:id], params[:reason])
-    end
-
     if @current_user.has_permission?(@post)
+      unless params[:reason].blank?
+        @post.update_attribute(:deletion_reason, params[:reason])
+      end
+
       @post.destroy
-    end
-    
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "index")}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
+
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "show", :id => @post.id)}
+        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+        fmt.js {render :json => {:success => true}.to_json}
+      end
+    else
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Access denied"; redirect_to(:action => "show", :id => @post.id)}
+        fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
+        fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
+      end
     end
   end
 
@@ -197,13 +207,12 @@ class PostController < ApplicationController
 
   def show
     begin
-      @post = Post.find(params[:id].to_i)
+      @post = Post.find(params[:id])
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title ERB::Util.h(@post.cached_tags)
     rescue ActiveRecord::RecordNotFound
-      @flagged_post = FlaggedPost.find_by_post_id(params[:id].to_i)
-      flash.now[:notice] = "That post ID was not found" unless @flagged_post
+      flash.now[:notice] = "That post ID was not found"
     end
   end
 
@@ -352,7 +361,10 @@ class PostController < ApplicationController
   end
   
   def flag
-    FlaggedPost.flag(params[:id], params[:reason])
+    @post = Post.find(params[:id])
+    @post.status = 'flagged'
+    @post.deletion_reason = params[:reason]
+    @post.save
     
     respond_to do |fmt|
       fmt.js {render :json => {:success => true}.to_json}
