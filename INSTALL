@@ -1,7 +1,7 @@
 Danbooru has the following general dependencies:
 - ruby-1.8.6
 - libgd
-- PostgreSQL 8.2
+- PostgreSQL 8.3
 
 Danbooru also has the following Ruby dependencies:
 - rubygems
@@ -15,8 +15,6 @@ The following dependencies are optional:
 - aws/s3 (required for Amazon S3 support, gem install aws-s3)
 - ragel (required for superredcloth)
 - superredcloth (gem install superredcloth --source=http://code.whytheluckystiff.net)
-- ferret (required for wiki search, gem install ferret)
-- scruffy (required for report graphs, gem install scruffy)
 
 You will need a C compiler to compile the image resizer and some of the extensions. gcc and its variants will work.
 

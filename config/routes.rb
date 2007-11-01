@@ -4,4 +4,5 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ":controller/:action/:id.:format", :requirements => {:id => /\d+/}
   map.connect ":controller/:action/:id", :requirements => {:id => /\d+/}
   map.connect ":controller/:action.:format"
+  map.connect ":controller/:action"
 end

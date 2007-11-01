@@ -109,6 +109,16 @@ class ForumController < ApplicationController
       fmt.js {render :json => @forum_posts.to_json}
     end
   end
+  
+  def search
+    @pages, @forum_posts = paginate :forum_posts, :order => "id desc", :per_page => 25, :conditions => ["text_search_index @@ to_tsquery(?)", params[:query]]
+    
+    respond_to do |fmt|
+      fmt.html
+      fmt.xml {render :xml => @forum_posts.to_xml(:root => "forum_posts", :dasherize => false)}
+      fmt.js {render :json => @forum_posts.to_json}
+    end
+  end
 
   def lock
     ForumPost.lock(params[:id], true)

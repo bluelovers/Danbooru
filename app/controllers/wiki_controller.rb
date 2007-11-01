@@ -45,13 +45,13 @@ class WikiController < ApplicationController
     else
       order = "lower(title)"
     end
+    
+    limit = params[:limit] || 25
 
-    if params[:query] && Object.const_defined?(:Ferret)
-      hits = WIKI_INDEX.search("title|body:#{params[:query]}", :limit => 50).hits
-      @pages = Paginator.new(:wiki, hits.size, 25, params[:page])
-      @wiki_pages = hits.map {|x| WikiPage.find(WIKI_INDEX[x.doc][:id])}
+    if params[:query]
+      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit, :conditions => ["text_search_index @@ to_tsquery(?)", params[:query]]
     else
-      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => (params[:limit] || 25)
+      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit
     end
 
     respond_to do |fmt|
