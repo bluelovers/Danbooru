@@ -161,6 +161,7 @@ class Post < ActiveRecord::Base
     transaction do
       if (@tag_cache & CONFIG["questionable_tags"]).any? && self.rating == 's'
         connection.execute("UPDATE posts SET rating = 'q' WHERE id = #{self.id}")
+        Cache.expire(:update_post => self.id, :tags => @tag_cache.join(" "), :rating => "q") if CONFIG["enable_caching"]
       end
 
       connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
