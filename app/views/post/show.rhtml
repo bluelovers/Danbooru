@@ -40,7 +40,7 @@
 
     <% if @pools.any? %>
       <div class="status-notice">
-        This post belongs to the following pools: <%= @pools.map {|x| link_to(x.pretty_name, :controller => "pool", :action => "show", :id => x.id)}.join(", ") %>
+        This post belongs to the following pools: <%= @pools.map {|x| link_to(h(x.pretty_name), :controller => "pool", :action => "show", :id => x.id)}.join(", ") %>
       </div>
     <% end %>
 

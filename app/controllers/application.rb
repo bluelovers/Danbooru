@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_title(title = CONFIG["app_name"])
-    @page_title = title
+    @page_title = CGI.escapeHTML(title)
   end
 
   def save_tags_to_cookie

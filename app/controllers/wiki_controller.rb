@@ -143,7 +143,7 @@ class WikiController < ApplicationController
     end
 
     @page = WikiPage.find_page(params[:title], params[:version])
-    set_title ERB::Util.h(params[:title].tr("_", " "))
+    set_title params[:title].tr("_", " ")
   end
 
   def edit

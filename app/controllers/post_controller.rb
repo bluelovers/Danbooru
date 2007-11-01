@@ -11,6 +11,8 @@ class PostController < ApplicationController
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
+  
+  @@recent_searches = []
 
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
@@ -156,9 +158,21 @@ class PostController < ApplicationController
       end
     end
   end
+  
+  def recent_searches
+    @recent_searches = @@recent_searches
+  end
+  
+  def deleted_index
+    if params[:user_id]
+      @pages, @posts = paginate :posts, :order => "updated_at desc", :per_page => 25, :select => "deletion_reason, cached_tags, id", :conditions => ["status = 'deleted' and user_id = ?", params[:user_id]]
+    else
+      @pages, @posts = paginate :posts, :order => "updated_at desc", :per_page => 25, :select => "deletion_reason, cached_tags, id", :conditions => ["status = 'deleted'"]
+    end
+  end
 
   def index
-    set_title ERB::Util.h("/#{params[:tags]}")
+    set_title "/#{params[:tags]}"
 
     if @current_user == nil && params[:tags].to_s.include?(" ")
       flash[:notice] = "You must be logged in to search for more than one tag at a time."
@@ -169,6 +183,14 @@ class PostController < ApplicationController
     limit = params[:limit].to_i
     if limit == 0 || limit > 100
       limit = 16
+    end
+    
+    if params[:tags]
+      @@recent_searches << params[:tags]
+      
+      if @@recent_searches.size > 50
+        @@recent_searches.shift
+      end
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
@@ -210,7 +232,7 @@ class PostController < ApplicationController
       @post = Post.find(params[:id])
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
-      set_title ERB::Util.h(@post.cached_tags)
+      set_title @post.cached_tags
     rescue ActiveRecord::RecordNotFound
       flash.now[:notice] = "That post ID was not found"
     end

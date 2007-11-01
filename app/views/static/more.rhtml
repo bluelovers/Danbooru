@@ -4,14 +4,14 @@
     <ul>
       <li><h4>Posts</h4></li>
       <li><a href="/help/posts">Help</a></li>
+      <li><a href="/post/atom">Atom Feed</a></li>
       <li><a href="/post/index">List</a></li>
-      <li><a href="/post/upload">Upload</a></li>
       <li><a href="/post/popular_by_day">Popular (by day)</a></li>
       <li><a href="/post/popular_by_week">Popular (by week)</a></li>
       <li><a href="/post/popular_by_month">Popular (by month)</a></li>
-      <li><a href="/post/atom">Atom Feed</a></li>
+      <li><a href="/post/recent_searches">Recent Searches</a></li>
       <li><a href="/post/tag_history">Tag History</a></li>
-      <li><a href="/flagged_post/index">Flagged Posts</a></li>
+      <li><a href="/post/upload">Upload</a></li>
     </ul>
     <ul>
       <li><h4>Tools</h4></li>
@@ -28,12 +28,42 @@
     <ul>
       <li><h4>Tags</h4></li>
       <li><a href="/help/tags">Help</a></li>
-      <li><a href="/tag/cloud">List (cloud view)</a></li>
-      <li><a href="/tag/index">List (all)</a></li>
       <li><a href="/tag_alias/index">Aliases</a></li>
       <li><a href="/tag_implication/index">Implications</a></li>
-      <li><a href="/tag/mass_edit">Mass Edit</a></li>
       <li><a href="/tag/edit">Edit</a></li>
+      <li><a href="/tag/cloud">List (cloud view)</a></li>
+      <li><a href="/tag/index">List (all)</a></li>
+      <li><a href="/tag/mass_edit">Mass Edit</a></li>
+    </ul>
+    <ul>
+      <li><h4>Notes</h4></li>
+      <li><a href="/help/notes">Help</a></li>
+      <li><a href="/note/history">History</a></li>
+      <li><a href="/note/index">List</a></li>
+    </ul>
+    <ul>
+      <li><h4>Artists</h4></li>
+      <li><a href="/help/artists">Help</a></li>
+      <li><a href="/artist/index">List</a></li>
+    </ul>
+    <ul>
+      <li><h4>Pools</h4></li>
+      <li><a href="/help/pools">Help</a></li>
+      <li><a href="/pool/index">List</a></li>
+    </ul>
+  </div>
+  <div>
+    <ul>
+      <li><h4>Comments</h4></li>
+      <li><a href="/help/comments">Help</a></li>
+      <li><a href="/comment/index">List</a></li>
+      <li><a href="/comment/moderate">Moderate</a></li>
+      <li><a href="http://cart.donmai.us">Trac</a></li>
+    </ul>
+    <ul>
+      <li><h4>Forum</h4></li>
+      <li><a href="/help/forum">Help</a></li>
+      <li><a href="/forum/index">List</a></li>
     </ul>
     <ul>
       <li><h4>Wiki</h4></li>
@@ -44,35 +74,28 @@
   </div>
   <div>
     <ul>
-      <li><h4>Community</h4></li>
-      <li><a href="/comment/index">Comments</a></li>
-      <li><a href="/comment/moderate">Moderate Comments</a></li>
-      <li><a href="/forum/index">Forum</a></li>
-      <li><a href="/user/index">Users</a></li>
-      <li><a href="/user_record/index">User Records</a></li>
-      <li><a href="http://cart.donmai.us">Trac</a></li>
-    </ul>
-    <ul>
-      <li><h4>Notes</h4></li>
-      <li><a href="/help/notes">Help</a></li>
-      <li><a href="/note/index">Notes</a></li>
-      <li><a href="/note/history">History</a></li>
-      <li><a href="/wiki/show?title=Help%3ANotes">Help</a></li>
-    </ul>
-    <ul>
-      <li><h4>Artists</h4></li>
-      <li><a href="/help/artists">Help</a></li>
-      <li><a href="/artist/index">List</a></li>
-    </ul>
-  </div>
-  <div>
-    <ul>
-      <li><h4>My User</h4></li>
-      <li><a href="/user/home">Home</a></li>
-      <li><a href="/user/signup">Signup</a></li>
-      <li><a href="/user/login">Login</a></li>
-      <li><a href="/user/edit">Settings</a></li>
+      <li><h4>Users</h4></li>
+      <li><a href="/help/users">Help</a></li>
       <li><a href="/user/change_password">Change Password</a></li>
+      <li><a href="/user/home">Home</a></li>
+      <li><a href="/user/index">List</a></li>
+      <li><a href="/user/login">Login</a></li>
+      <li><a href="/usr/logout">Logout</a></li>
+      <% if @current_user %>
+        <li><a href="/user/show/<%= @current_user.id %>">My Profile</a></li>
+      <% end %>
+      <li><a href="/user_record/index">Records</a></li>
+      <li><a href="/user/reset_password">Reset Password</a></li>
+      <li><a href="/user/edit">Settings</a></li>
+      <li><a href="/user/signup">Signup</a></li>
+      <li><a href="/user/invites">Invites</a></li>
     </ul>
+    <% if @current_user && @current_user.admin? %>
+      <ul>
+        <li><h4>Admin</h4></li>
+        <li><a href="/admin/cache_stats">Cache Stats</a></li>
+        <li><a href="/admin/edit_account">Edit Account</a></li>        
+      </ul>
+    <% end %>
   </div>
 </div>

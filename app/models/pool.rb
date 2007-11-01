@@ -10,7 +10,7 @@ class Pool < ActiveRecord::Base
   end
   
   def pretty_name
-    ERB::Util.h(self.name.gsub(/_/, " "))
+    self.name.gsub(/_/, " ")
   end
   
   def add_post(post_id)

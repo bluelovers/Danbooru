@@ -23,7 +23,7 @@
 </script>
 
 <div id="user-favorites">
-  <h3><%= @user.pretty_name %>'s Favorites</h3>
+  <h3><%= h(@user.pretty_name) %>'s Favorites</h3>
   <p>Some of these posts were also favorited by: <%= print_also_favorited_by(@posts, @user) %>.</p>
   <% if @current_user && @current_user.id == @user.id %>
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')"/>

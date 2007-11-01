@@ -37,7 +37,7 @@
               <% end %>             
             </td>
             <% if artist.updater %>
-              <td><%= artist.updater.pretty_name %></td>
+              <td><%= h(artist.updater.pretty_name) %></td>
             <% else %>
               <td></td>
             <% end %>

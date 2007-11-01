@@ -1,7 +1,7 @@
 <%= javascript_include_tag "pool" %>
 
 <div id="pool-show">
-  <h3>Pool: <%= @pool.pretty_name %></h3>
+  <h4>Pool: <%= h(@pool.pretty_name) %></h4>
   <% unless @pool.description.blank? %>
     <div style="margin-bottom: 2em;"><%= @pool.description %></div>
   <% end %>

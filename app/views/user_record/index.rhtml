@@ -14,12 +14,12 @@
       <tr style="background: <%= rec.is_positive? ? '#EFE' : '#FEE' %>">
         <td>
           <% if @user %>
-            <%= link_to rec.user.pretty_name, :controller => "user", :action => "show", :id => rec.user_id %>
+            <%= link_to h(rec.user.pretty_name), :controller => "user", :action => "show", :id => rec.user_id %>
           <% else %>
-            <%= link_to rec.user.pretty_name, :action => "index", :user_id => rec.user_id %>
+            <%= link_to h(rec.user.pretty_name), :action => "index", :user_id => rec.user_id %>
           <% end %>
         </td>
-        <td><%= rec.reporter.pretty_name %></td>
+        <td><%= h(rec.reporter.pretty_name) %></td>
         <td><%= time_ago_in_words(rec.created_at) %> ago</td>
         <td><%= format_text(rec.body, :skip_simple_format => true) %></td>
       </tr>

@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
   end
   
   def pretty_name
-    ERB::Util.h(self.name.tr("_", " "))
+    self.name.tr("_", " ")
   end
 
   def pretty_level
@@ -337,9 +337,11 @@ class User < ActiveRecord::Base
     pass = ""
 
     4.times do
-      pass << consonants[rand(21).to_i, 1]
+      pass << consonants[rand(21), 1]
       pass << vowels[rand(5), 1]
     end
+    
+    pass << rand(100).to_s
 
     connection.execute(User.sanitize_sql(["UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), self.id]))
     return pass

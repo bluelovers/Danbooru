@@ -17,8 +17,8 @@
     <tbody>
       <% @pools.each do |p| %>
         <tr>
-          <td><%= link_to p.pretty_name, :action => "show", :id => p.id %></td>
-          <td><%= p.user.pretty_name %></td>
+          <td><%= link_to h(p.pretty_name), :action => "show", :id => p.id %></td>
+          <td><%= h(p.user.pretty_name) %></td>
           <td><%= p.post_count %></td>
         </tr>
       <% end %>

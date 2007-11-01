@@ -1,8 +1,0 @@
-xml.instruct!
-
-xml.tags do
-	for tag in @tags
-		xml.tag(:name => h(tag.name), :count => tag.post_count, :id => tag.id, :type => tag.tag_type)
-	end
-end
-
