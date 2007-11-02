@@ -10,15 +10,10 @@
   <%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s"/>' % [type, title, url_for(href)] } %>
   <%= stylesheet_link_tag "default" %>
   <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params["tags"] %>
-  <%= javascript_include_tag "prototype" %>
-  <%= javascript_include_tag "effects" %>
-  <%= javascript_include_tag "cookie" %>
-  <%= javascript_include_tag "common" %>
+  <%= javascript_include_tag "application" %>
 </head>
 <body>
   <div id="header">
-    <!-- google_ad_section_start(weight=ignore) -->
-
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_header(h(params['tags'])) %></h2>
     <ul class="flat-list" id="navbar">
       <li><%= link_to "My Account", :controller => "user", :action => "home" %></li>
@@ -35,12 +30,8 @@
         <li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>
       <% end %>
       <li><%= link_to "Help", :controller => "help", :action => "index" %></li>
-      <% if @current_user && @current_user.admin? %>
-        <li><%= link_to "Admin", :controller => "admin", :action => "index" %></li>
-      <% end %>
       <li><a href="/static/more">More &raquo;</a></li>
     </ul>
-    <!-- google_ad_section_end -->
   </div>
   <% if flash[:notice] %>
     <div id="notice"><%= flash[:notice] %></div>

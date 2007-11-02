@@ -1,5 +1,3 @@
-<%= javascript_include_tag "forum" %>
-
 <div id="forum">
   <% form_tag({:action => "search"}, :method => :get) do %>
     <%= text_field_tag "query", params[:query] %>

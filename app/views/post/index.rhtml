@@ -1,8 +1,4 @@
 <div id="post-list">
-  <%= javascript_include_tag "post" %>
-  <%= javascript_include_tag "favorite" %>
-  <%= javascript_include_tag "post_mode_menu" %>
-  
   <% if @ambiguous.any? %>
     <div class="status-notice">
       <%= link_to_amb_tags(@ambiguous) %>
