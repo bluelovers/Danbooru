@@ -4522,7 +4522,8 @@ Comment.quote = function(id) {
       notice("Error quoting comment")
     }
   })
-}Favorite = {}
+}
+Favorite = {}
 
 Favorite.create = function(post_id) {
   notice('Adding post #' + post_id)
@@ -5124,7 +5125,8 @@ Pool.remove_post = function(post_id, pool_id) {
   } else {
     return true
   }
-}Post = {}
+}
+Post = {}
 
 Post.update = function(post_id, params) {
   notice('Updating post #' + post_id)
