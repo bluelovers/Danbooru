@@ -131,6 +131,7 @@ class UserController < ApplicationController
   def create
     user = User.new(params[:user])
     user.name = params[:user][:name]
+    user.ip_addr = request.remote_ip
     user.save
 
     if user.errors.empty?

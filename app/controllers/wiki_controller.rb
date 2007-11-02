@@ -49,7 +49,8 @@ class WikiController < ApplicationController
     limit = params[:limit] || 25
 
     if params[:query]
-      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit, :conditions => ["text_search_index @@ to_tsquery(?)", params[:query]]
+      query = params[:query].scan(/\S+/).join(" & ")
+      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit, :conditions => ["text_search_index @@ to_tsquery(?)", query]
     else
       @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit
     end

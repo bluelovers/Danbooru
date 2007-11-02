@@ -52,7 +52,7 @@
   </tr>
 </table>
 
-<div style="clear: both;">
+<div style="clear: both; margin-bottom: 2em;">
   <h3><%= link_to "Recent Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h3>
   <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5, :hide_unsafe_posts => hide_unsafe_posts?)} %>
 </div>

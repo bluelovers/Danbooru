@@ -165,9 +165,9 @@ class PostController < ApplicationController
   
   def deleted_index
     if params[:user_id]
-      @pages, @posts = paginate :posts, :order => "updated_at desc", :per_page => 25, :select => "deletion_reason, cached_tags, id", :conditions => ["status = 'deleted' and user_id = ?", params[:user_id]]
+      @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted' and user_id = ?", params[:user_id]]
     else
-      @pages, @posts = paginate :posts, :order => "updated_at desc", :per_page => 25, :select => "deletion_reason, cached_tags, id", :conditions => ["status = 'deleted'"]
+      @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted'"]
     end
   end
 
