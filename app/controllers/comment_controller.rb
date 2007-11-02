@@ -36,7 +36,7 @@ class CommentController < ApplicationController
   def create
     if @current_user.level == User::LEVEL_MEMBER && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "You cannot post more than #{CONFIG['member_comment_limit']} comments in an hour"; redirect_to(:action => "index")}
+        fmt.html {flash[:notice] = "You cannot post more than #{CONFIG['member_comment_limit']} comments in an hour"; redirect_to(:controller => "comment", :action => "index")}
         fmt.xml {render :xml => {:success => false, :reason => "hourly limit exceeded"}.to_xml(:root => "response"), :status => 500}
         fmt.js {render :json => {:success => false, :reason => "hourly limit exceeded"}.to_json, :status => 500}
       end
@@ -53,14 +53,14 @@ class CommentController < ApplicationController
     comment = Comment.create(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if comment.errors.empty?
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Comment added"; redirect_to(:action => "index")}
+        fmt.html {flash[:notice] = "Comment added"; redirect_to(:controller => "comment", :action => "index")}
         fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
     else
       error_messages = comment.errors.full_messages.join(", ")
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: #{error_messages}"; redirect_to(:action => "show", :id => comment.post_id)}
+        fmt.html {flash[:notice] = "Error: #{error_messages}"; redirect_to(:controller => "post", :action => "show", :id => comment.post_id)}
         fmt.xml {render :xml => {:success => false, :reason => error_messages}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => false, :reason => error_messages}.to_json}
       end
