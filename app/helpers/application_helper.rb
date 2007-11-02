@@ -8,8 +8,8 @@ module ApplicationHelper
     end
     
     text = text.gsub(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
-    text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">post #\1</a>')
-    text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">post #\1</a>')
+    text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
+    text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
     text = text.gsub(/&lt;quote&gt;(.+?)&lt;\/quote&gt;/m, '<div class="quote">\1</div>')
     text = text.gsub(/<p><div>/, "<div>")
     text = text.gsub(/<\/div><\/p>/, "</div>")

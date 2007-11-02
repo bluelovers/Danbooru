@@ -112,7 +112,7 @@ class ForumController < ApplicationController
   
   def search
     query = params[:query].scan(/\S+/).join(" & ")
-    @pages, @forum_posts = paginate :forum_posts, :order => "id desc", :per_page => 25, :conditions => ["text_search_index @@ to_tsquery(?)", query]
+    @pages, @forum_posts = paginate :forum_posts, :order => "id desc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
     
     respond_to do |fmt|
       fmt.html
