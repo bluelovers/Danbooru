@@ -258,7 +258,7 @@ class User < ActiveRecord::Base
     extra_sql = ""
     
     if options[:hide_unsafe_posts]
-      extra_sql = "AND p.is_pending = FALSE AND p.rating = 's'"
+      extra_sql = "AND p.status = 'active' AND p.rating = 's'"
     end
     
     Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} #{extra_sql} ORDER BY p.id DESC OFFSET #{offset} LIMIT #{limit}")
@@ -268,7 +268,7 @@ class User < ActiveRecord::Base
     extra_sql = ""
     
     if options[:hide_unsafe_posts]
-      extra_sql = "AND p.is_pending = FALSE AND p.rating = 's'"
+      extra_sql = "AND p.status = 'active' AND p.rating = 's'"
     end
     
     Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql} ORDER BY f.id DESC OFFSET #{offset} LIMIT #{limit}")
@@ -278,7 +278,7 @@ class User < ActiveRecord::Base
     extra_sql = ""
     
     if options[:hide_unsafe_posts]
-      extra_sql = "AND p.is_pending = FALSE AND p.rating = 's'"
+      extra_sql = "AND p.status = 'active' AND p.rating = 's'"
     end
     
     Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql}")
