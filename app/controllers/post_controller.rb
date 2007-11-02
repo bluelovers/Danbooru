@@ -186,10 +186,10 @@ class PostController < ApplicationController
     end
     
     if params[:tags]
-      @@recent_searches << params[:tags]
+      @@recent_searches.unshift(params[:tags])
       
       if @@recent_searches.size > 50
-        @@recent_searches.shift
+        @@recent_searches.pop
       end
     end
 
