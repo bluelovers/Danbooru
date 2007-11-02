@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).scan(/\S+/))
-      tags += cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|amb|artist):/, "").scan(/\S+/)
+      tags += cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|amb|artist|parent|pool):/, "").scan(/\S+/)
       cookies["recent_tags"] = {:value => tags.slice(0, 30).join(" "), :expires => 1.year.from_now}
     end
   end
@@ -40,15 +40,26 @@ class ApplicationController < ActionController::Base
 
     case a
     when "post/index"
+      page = params[:page].to_i
+      page = 1 if page == 0
+
       if tags.empty?
-        key = "p/i/p=#{params[:page].to_i}&v=#{$cache_version}"
+        key = "p/i/p=#{page}&v=#{$cache_version}"
+      elsif tags.include?(":")
+        # The presence of a colon implies a meta-tag, which won't be
+        # expired automatically.
+        key = "p/i/t=#{tags}&p=#{page}&v=#{$cache_version}"
       else
-        key = "p/i/t=#{tags}&p=#{params[:page].to_i}"
+        key = "p/i/t=#{tags}&p=#{page}"
       end
       
     when "post/atom"
       if tags.empty?
         key = "p/a/v=#{$cache_version}"
+      elsif tags.include?(":")
+        # The presence of a colon implies a meta-tag, which won't be
+        # expired automatically.
+        key = "p/a/t=#{tags}&v=#{$cache_version}"
       else
         key = "p/a/t=#{tags}"
       end
