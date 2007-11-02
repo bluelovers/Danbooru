@@ -39,7 +39,9 @@ class TagAliasController < ApplicationController
       redirect_to :action => "index"
 
     when "Approve"
+      PostTagHistory.disable_versioning = true
       ids.each {|x| TagAlias.find(x).approve(@current_user.id, request.remote_ip)}
+      PostTagHistory.disable_versioning = false
 
       flash[:notice] = "Tag aliases approved"
       redirect_to :action => "index"

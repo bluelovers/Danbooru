@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   if CONFIG["enable_account_email_activation"]
     validates_presence_of :email, :on => :create
   end
+  validates_presence_of :ip_addr, :on => :create
   validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
   validates_length_of :name, :minimum => 2, :on => :create
   validates_format_of :password, :with => /\d/, :if => lambda {|rec| rec.password}, :message => "must have at least one number"
@@ -226,7 +227,6 @@ class User < ActiveRecord::Base
       self.level = CONFIG["starting_level"]
     end
     
-    self.ip_addr = ''
     self.last_logged_in_at = Time.now
   end
 

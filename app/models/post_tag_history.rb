@@ -1,4 +1,7 @@
 class PostTagHistory < ActiveRecord::Base
+  @@disable_versioning = false
+  cattr_accessor :disable_versioning
+
   def author
     if user_id
       connection.select_value("SELECT name FROM users WHERE id = #{self.user_id}")
