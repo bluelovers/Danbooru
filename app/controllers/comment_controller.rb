@@ -93,7 +93,7 @@ class CommentController < ApplicationController
     respond_to do |fmt|
       fmt.html do
         if hide_unsafe_posts?
-          @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND rating = 's' AND is_pending = FALSE", :per_page => 10
+          @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND rating = 's' AND status = 'active'", :per_page => 10
         else
           @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10
         end
