@@ -19,6 +19,7 @@
     <% unless @current_user && @current_user.privileged? %>
       <%= CONFIG["ad_code_index_side"] %>
     <% end %>
+
     <%= render :partial => "search" %>
     <div class="space">
       <h5>Mode</h5>
@@ -51,6 +52,10 @@
     <% end %>
 
     <%= render :partial => "posts", :locals => {:posts => @posts} %>
+
+    <% unless @current_user && @current_user.privileged? %>
+      <%= CONFIG["ad_code_index_bottom"] %>
+    <% end %>
 
     <div id="paginator">
       <%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>

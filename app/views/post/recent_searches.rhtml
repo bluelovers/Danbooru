@@ -1,0 +1,7 @@
+<h4>Recent Searches</h4>
+
+<ul>
+  <% @recent_searches.each do |s| %>
+    <li><%= link_to h(s), :action => "index", :tags => s %></li>
+  <% end %>
+</ul>

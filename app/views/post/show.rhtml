@@ -48,8 +48,10 @@
       <% unless @current_user && @current_user.privileged? %>
         <%= CONFIG["ad_code_show_side"] %>
       <% end %>
+
       <%= render :partial => 'search' %>
       <%= render :partial => 'tags' %>
+
       <div id="stats">
         <h5>Statistics</h5>
         <ul>
@@ -157,6 +159,10 @@
           //]]>
           </script>
         </div>
+      <% end %>
+
+      <% unless @current_user && @current_user.privileged? %>
+        <%= CONFIG["ad_code_show_bottom"] %>
       <% end %>
 
       <% unless @post.is_deleted? %>
