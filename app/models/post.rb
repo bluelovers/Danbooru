@@ -26,7 +26,7 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
-  attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status
+  attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status, :deletion_reason
 
   has_and_belongs_to_many :tags, :order => "name"
   has_many :comments, :order => "id"
