@@ -63,9 +63,9 @@
           <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
           <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
           <%= submit_tag "Approve" %> 
-          <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason) {$('reason').value = reason; return true} else {return false}" %>
+          <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
         </td>
-      </tr>      
+      </tr>
     </tfoot>
   </table>
 </form>
