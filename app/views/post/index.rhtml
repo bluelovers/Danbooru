@@ -37,10 +37,14 @@
     </div>
 
     <%= render :partial => 'tags' %>
+    
+    <% unless @current_user && @current_user.privileged? %>
+      <%= CONFIG["ad_code_index_side"] %>
+    <% end %>
   </div>
   <div class="content">
     <% unless @current_user && @current_user.privileged? %>
-      <%= CONFIG["ad_code_top"] %>
+      <%= CONFIG["ad_code_index_top"] %>
     <% end %>
 
     <%= render :partial => "posts", :locals => {:posts => @posts} %>

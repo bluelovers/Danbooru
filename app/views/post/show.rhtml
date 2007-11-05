@@ -55,6 +55,10 @@
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
         </ul>
+        
+        <% unless @current_user && @current_user.privileged? %>
+          <%= CONFIG["ad_code_show_side"] %>
+        <% end %>
       </div>
       <% unless @post.is_deleted? %>
         <div>
@@ -104,7 +108,7 @@
     </div>
     <div class="content" id="right-col">
       <% unless @current_user && @current_user.privileged? %>
-        <%= CONFIG["ad_code_top"] %>
+        <%= CONFIG["ad_code_show_top"] %>
       <% end %>
 
       <% unless @post.is_deleted? %>
