@@ -216,7 +216,11 @@ class Tag < ActiveRecord::Base
           elsif $1 == "pool"
             q[:pool] = $2
           elsif $1 == "parent"
-            q[:parent_id] = $2.to_i
+            if $2 == "none"
+              q[:parent_id] = false
+            else
+              q[:parent_id] = $2.to_i
+            end
           end
         elsif token[0] == ?-
           q[:exclude] << token[1..-1]

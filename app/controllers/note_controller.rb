@@ -23,7 +23,7 @@ class NoteController < ApplicationController
     if params[:post_id]
       @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100
     else
-      @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 12
+      @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 16
     end
 
     respond_to do |fmt|

@@ -61,11 +61,11 @@
       <% if CONFIG["enable_parent_posts"] %>
         <dt>parent:1234</dt>
         <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
+        
+        <dt>parent:none</dt>
+        <dd>Search for posts that have no parent.</dd>
       <% end %>
-
-      <dt>@unlockedrating</dt>
-      <dd>Search for posts that have unlocked ratings.</dd>
-
+      
       <dt class="bad">gun* dress</dt>
       <dd>Pattern searches do not work well with other tags.</dd>
       
@@ -122,16 +122,25 @@
   </div>
 
   <div class="section">
-    <h4>Comments</h4>
+    <h4>Comments &amp; Forum</h4>
     <dl>
-      <dt>&gt;&gt;1000</dt>
-      <dd>Respond to comment #1000.</dd>
-      
       <dt>post #1000</dt>
       <dd>Creates a link to post #1000.</dd>
+
+      <dt>comment #1000</dt>
+      <dd>Creates a link to comment #1000.</dd>
+
+      <dt>forum #1000</dt>
+      <dd>Creates a link to forum post #1000.</dd>
     
       <dt>&lt;s&gt;spoiler text&lt;/s&gt;</dt>
       <dd>Marks "spoiler text" as a spoiler.</dd>
+      
+      <dt>[[link to this page]]</dt>
+      <dd>Creates an internal link to the wiki page with title "link to this page".</dd>
+      
+      <dt>[[my wiki page|click this]]</dt>
+      <dd>Creates an internal link to the wiki page with title "my wiki page", using "click this" for the link text.</dd>      
     </dl>
   </div>
 

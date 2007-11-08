@@ -386,6 +386,8 @@ class Post < ActiveRecord::Base
       conditions << "(p.parent_id = ? or p.id = ?)"
       params << q[:parent_id]
       params << q[:parent_id]
+    elsif q[:parent_id] == false
+      conditions << "p.parent_id is null"
     end
     
     if q[:source].is_a?(String)
