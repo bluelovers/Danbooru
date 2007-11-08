@@ -606,11 +606,6 @@ div#forum > table {
   width: 100%;
 }
 
-div#forum > table td,
-div#forum > table th {
-  text-align: center;
-}
-
 div#forum > table td:first-child,
 div#forum > table th:first-child {
   text-align: left;
