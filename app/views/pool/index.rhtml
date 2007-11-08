@@ -6,17 +6,17 @@
     <% end %>
   </div>
   
-  <table>
+  <table style="width: 60em;">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Creator</th>
-        <th>Posts</th>
+        <th width="70%">Name</th>
+        <th width="20%">Creator</th>
+        <th width="10%">Posts</th>
       </tr>
     </thead>
     <tbody>
       <% @pools.each do |p| %>
-        <tr>
+        <tr class="<%= cycle 'even', 'odd' %>">
           <td><%= link_to h(p.pretty_name), :action => "show", :id => p.id %></td>
           <td><%= h(p.user.pretty_name) %></td>
           <td><%= p.post_count %></td>
