@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JS=/home/albert/miezaru/public/javascripts
+JS=public/javascripts
 
 echo "" > $JS/application.js
 

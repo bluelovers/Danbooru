@@ -64,14 +64,10 @@ PostModeMenu.click = function(post_id) {
     Favorite.create(post_id)
   } else if (s.value == "edit") {
     var post = posts[post_id]
-    var newTags = prompt('Change tags', post.tags.join(" "))
-
-    if (!newTags) {
-      return false
-    }
-
-    newTags = newTags.split(/ /g).map(function(i) {return encodeURIComponent(i)}).sort()
-    Post.update(post_id, 'post[tags]=' + newTags.join(' '))
+    $("edit_post_id").value = post_id
+    $("edit_tags").value = post.tags.join(" ")
+    $("edit-panel").show()
+    $("edit_tags").focus()
   } else if (s.value == 'vote-down') {
     Post.vote(-1, post_id)
   } else if (s.value == 'vote-up') {

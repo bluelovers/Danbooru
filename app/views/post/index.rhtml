@@ -25,8 +25,10 @@
           <option value="rating-s">Rate Safe</option>
           <option value="rating-q">Rate Questionable</option>
           <option value="rating-e">Rate Explicit</option>
-          <option value="lock-rating">Lock Rating</option>
-          <option value="lock-note">Lock Notes</option>
+          <% if @current_user && @current_user.privileged? %>
+            <option value="lock-rating">Lock Rating</option>
+            <option value="lock-note">Lock Notes</option>
+          <% end %>
           <option value="flag">Flag Post</option>
           <option value="edit-tag-script">Edit Tag Script</option>
           <option value="apply-tag-script">Apply Tag Script</option>
@@ -46,6 +48,14 @@
     <% unless @current_user && @current_user.privileged? %>
       <%= CONFIG["ad_code_index_top"] %>
     <% end %>
+    
+    <div id="edit-panel" style="display: none; margin-bottom: 1em;">
+      <h4>Edit Tags</h4>
+      <%= hidden_field_tag "edit_post_id", "" %>
+      <%= text_area_tag "edit_tags", "", :size => "40x3" %> 
+      <%= button_to_function "Update", "$('edit-panel').hide(); Post.update($F('edit_post_id'), 'post[tags]=' + $F('edit_tags'))" %>
+      <%= button_to_function "Cancel", "$('edit-panel').hide()" %>
+    </div>
 
     <%= render :partial => "posts", :locals => {:posts => @posts} %>
 
