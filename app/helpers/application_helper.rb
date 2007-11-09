@@ -2,11 +2,16 @@
 module ApplicationHelper
   def format_text(text, options = {})
     if options[:skip_simple_format]
-      text = auto_link(CGI.escapeHTML(text))
+      text = CGI.escapeHTML(text)
     else
-      text = auto_link(simple_format(text))
+      text = simple_format(text)
     end
     
+    text = text.gsub(/(http:\S+)/) do
+      link = $1
+      url = link.gsub(/[.;,:'"]+$/, "")
+      link_to link, url
+    end
     text = text.gsub(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
     text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
     text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
@@ -71,25 +76,25 @@ module ApplicationHelper
       "#{distance_in_minutes} minutes"
 
     when 45..89
-      '1 hour'
+      'an hour'
 
     when 90..1439
       "#{(distance_in_minutes.to_f / 60.0).round} hours"
 
     when 1440..2879
-      '1 day'
+      'a day'
 
     when 2880..43199
       "#{(distance_in_minutes / 1440).round} days"
 
     when 43200..86399
-      '1 month'
+      'a month'
 
     when 86400..525959
       "#{(distance_in_minutes / 43200).round} months"
 
     when 525960..1051919
-      '1 year'
+      'a year'
 
     else
       "over #{(distance_in_minutes / 525960).round} years"
