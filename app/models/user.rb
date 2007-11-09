@@ -18,6 +18,8 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
   before_save :encrypt_password
   before_create :set_role
+  after_create :increment_count
+  after_destroy :decrement_count
   
   # Users are in one of seven possible roles:
   LEVEL_UNACTIVATED = -1
@@ -257,8 +259,8 @@ class User < ActiveRecord::Base
   def uploaded_posts(offset, limit, options = {})
     extra_sql = ""
     
-    if options[:hide_unsafe_posts]
-      extra_sql = "AND p.status = 'active' AND p.rating = 's'"
+    if options[:hide_explicit]
+      extra_sql = "AND p.status = 'active' AND p.rating <> 'e'"
     end
     
     Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} #{extra_sql} ORDER BY p.id DESC OFFSET #{offset} LIMIT #{limit}")
@@ -267,8 +269,8 @@ class User < ActiveRecord::Base
   def favorite_posts(offset, limit, options = {})
     extra_sql = ""
     
-    if options[:hide_unsafe_posts]
-      extra_sql = "AND p.status = 'active' AND p.rating = 's'"
+    if options[:hide_explicit]
+      extra_sql = "AND p.status = 'active' AND p.rating <> 'e'"
     end
     
     Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql} ORDER BY f.id DESC OFFSET #{offset} LIMIT #{limit}")
@@ -277,8 +279,8 @@ class User < ActiveRecord::Base
   def favorite_post_count(options = {})
     extra_sql = ""
     
-    if options[:hide_unsafe_posts]
-      extra_sql = "AND p.status = 'active' AND p.rating = 's'"
+    if options[:hide_explicit]
+      extra_sql = "AND p.status = 'active' AND p.rating <> 'e'"
     end
     
     Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql}")
@@ -345,6 +347,14 @@ class User < ActiveRecord::Base
 
     connection.execute(User.sanitize_sql(["UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), self.id]))
     return pass
+  end
+  
+  def increment_count
+    connection.execute("update table_data set row_count = row_count + 1 where name = 'users'")
+  end
+  
+  def decrement_count
+    connection.execute("update table_data set row_count = row_count - 1 where name = 'users'")
   end
 
   def to_xml(options = {})

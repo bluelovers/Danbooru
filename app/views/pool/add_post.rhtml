@@ -1,6 +1,6 @@
 <h3>Add to Pool</h3>
 
-<% unless hide_unsafe_posts? && (@post.is_pending? || @post.rating != 's') %>
+<% unless hide_explicit? && @post.rating == 'e' %>
   <%= link_to(image_tag(@post.preview_url), :controller => "post", :action => "show", :id => @post.id) %>
 <% end %>
 

@@ -9,7 +9,7 @@
   <% end %>
 
   function loadPost() {
-    if (<%= hide_unsafe_posts? %> && posts[i][2] != 's') {
+    if (<%= hide_explicit? %> && posts[i][2] == 'e') {
       notice("You cannot view this post")
     } else {
       $("img").src = posts[i][1]

@@ -1,6 +1,6 @@
 <h4>Delete Post</h4>
 
-<% unless hide_unsafe_posts? && (@post.rating != 's' || @post.is_pending?) %>
+<% unless hide_explicit? && @post.rating == 'e' %>
   <%= image_tag @post.preview_url %>
 <% end %>
 

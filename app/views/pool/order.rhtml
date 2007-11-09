@@ -42,7 +42,7 @@ function orderReverse() {
       <% @pool_posts.each do |pp| %>
         <tr>
           <td>
-            <% if hide_unsafe_posts? && (pp.post.is_pending? || pp.post.rating != 's') %>
+            <% if hide_explicit? && pp.post.rating == 'e' %>
               <%= link_to("Blocked", :controller => "post", :action => "show", :id => pp.post_id) %>
             <% else %>
               <%= link_to(image_tag(pp.post.preview_url), {:controller => "post", :action => "show", :id => pp.post_id}, :title => pp.post.cached_tags)%>

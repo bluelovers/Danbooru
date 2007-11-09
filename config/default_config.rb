@@ -20,9 +20,9 @@ CONFIG["enable_turbo_mode"] = false
 # Set to true to allow new account signups.
 CONFIG["enable_signups"] = true
 
-# Enable this if you want unsafe posts to be hidden from unprivileged members
+# Enable this if you want explicit posts to be hidden from unprivileged members
 # and anonymous visitors.
-CONFIG["hide_unsafe_posts"] = false
+CONFIG["hide_explicit_posts"] = false
 
 # Newly created users start at this level. Set this to 3 if you want everyone
 # to start out as a privileged member.

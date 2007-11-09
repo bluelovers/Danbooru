@@ -11,7 +11,7 @@
     <% @users.each do |user| %>
       <tr>
         <td><%= link_to h(user.pretty_name), :controller => "favorite", :action => "show", :id => user.id %></td>
-        <td><%= user.favorite_post_count(:hide_unsafe_posts => hide_unsafe_posts?) %></td>
+        <td><%= user.favorite_post_count(:hide_explicit => hide_explicit?) %></td>
       </tr>
     <% end %>
   </tbody>

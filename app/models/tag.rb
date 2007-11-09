@@ -31,8 +31,8 @@ class Tag < ActiveRecord::Base
 
       cond = ["p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id"]
 
-      if options[:hide_unsafe_posts]
-        cond << "p.rating = 's'"
+      if options[:hide_explicit]
+        cond << "p.rating <> 'e'"
       end
 
       counts = connection.select_all(sanitize_sql(["SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE " + cond.join(" and ") + " GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT #{options[:limit]}", start, stop]))

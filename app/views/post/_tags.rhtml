@@ -2,9 +2,9 @@
   <h5>Tags</h5>
   <ul>
     <!-- google_ad_section_start -->
-    <%= tag_links(@tags[:exclude], :prefix => "-", :hide_unsafe_posts => hide_unsafe_posts?) %>
-    <%= tag_links(@tags[:include], :hide_unsafe_posts => hide_unsafe_posts?) %>
-    <%= tag_links(Tag.find_related(@tags[:related].to_a), :hide_unsafe_posts => hide_unsafe_posts?) %>
+    <%= tag_links(@tags[:exclude], :prefix => "-", :hide_explicit => hide_explicit?) %>
+    <%= tag_links(@tags[:include], :hide_explicit => hide_explicit?) %>
+    <%= tag_links(Tag.find_related(@tags[:related].to_a), :hide_explicit => hide_explicit?) %>
     <!-- google_ad_section_end -->
   </ul>
 </div>

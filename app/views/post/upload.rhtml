@@ -82,6 +82,6 @@
       <%= javascript_tag "RelatedTags.init('#{escape_javascript(@current_user.my_tags.to_s)}', $F('post_source'))" %>
     </div>
 
-    <%= submit_tag "Upload", :tabindex => 8 %>
+    <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
   <% end %>
 </div>

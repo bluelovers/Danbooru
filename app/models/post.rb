@@ -26,6 +26,9 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_user_id
   after_save :commit_tags
   after_save :blank_image_board_sources
+  after_create :increment_count
+  after_destroy :decrement_count
+  after_save :update_count
   attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status, :deletion_reason
 
   has_and_belongs_to_many :tags, :order => "name"
@@ -34,9 +37,9 @@ class Post < ActiveRecord::Base
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   belongs_to :user
 
-  def self.fast_count(tags = nil, hide_unsafe_posts = false)
-    if hide_unsafe_posts
-      prefix = "safe_"
+  def self.fast_count(tags = nil, hide_explicit = false)
+    if hide_explicit
+      prefix = "non-explicit_"
     else
       prefix = ""
     end
@@ -46,7 +49,7 @@ class Post < ActiveRecord::Base
     else
       c = connection.select_value(sanitize_sql(["SELECT #{prefix}post_count FROM tags WHERE name = ?", tags])).to_i
       if c == 0
-        return Post.count_by_sql(Post.generate_sql(tags, :count => true, :safe_mode => hide_unsafe_posts))
+        return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
       else
         return c
       end
@@ -135,6 +138,8 @@ class Post < ActiveRecord::Base
     end
 
     r = r.to_s.downcase[0, 1]
+
+    @old_rating = self.rating
 
     if %w(q e s).include?(r)
       write_attribute(:rating, r)
@@ -456,8 +461,8 @@ class Post < ActiveRecord::Base
       params << q[:exclude]
     end
 
-    if options[:hide_unsafe_posts]
-      conditions << "p.rating = 's'"
+    if options[:hide_explicit]
+      conditions << "p.rating <> 'e'"
       conditions << "p.status = 'active'"
     end
 
@@ -599,5 +604,31 @@ class Post < ActiveRecord::Base
   
   def is_active?
     self.status == "active"
+  end
+  
+  def update_count
+    if @old_rating
+      if @old_rating != "e" && self.rating == "e"
+        connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")      
+      elsif @old_rating == "e" && self.rating != "e"
+        connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")      
+      end
+    end
+  end
+  
+  def increment_count
+    connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
+    
+    if self.rating <> "e"
+      connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")
+    end
+  end
+  
+  def decrement_count
+    connection.execute("update table_data set row_count = row_count - 1 where name = 'posts'")
+    
+    if self.rating <> "e"
+      connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")
+    end
   end
 end

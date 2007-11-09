@@ -5,13 +5,13 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   local_addresses.clear
   
-  helper_method :hide_unsafe_posts?
+  helper_method :hide_explicit?
   before_filter :set_title
   before_filter :set_current_user
 
   protected
-  def hide_unsafe_posts?
-    CONFIG["hide_unsafe_posts"] && (@current_user == nil || !@current_user.privileged?)
+  def hide_explicit?
+    CONFIG["hide_explicit_posts"] && (@current_user == nil || !@current_user.privileged?)
   end
 
   def render_error(record)

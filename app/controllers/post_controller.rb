@@ -194,8 +194,8 @@ class PostController < ApplicationController
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
-    @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_unsafe_posts?), limit, params[:page])
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_unsafe_posts => hide_unsafe_posts?))
+    @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_explicit?), limit, params[:page])
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_explicit => hide_explicit?))
 
     if @posts.empty? && !params[:tags].blank?
       @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name", :limit => 10).map {|x| x.name}
@@ -209,11 +209,11 @@ class PostController < ApplicationController
           @tags = Tag.parse_query(params[:tags])
         else
           if CONFIG["enable_caching"]
-            @tags = Cache.get("poptags:#{hide_unsafe_posts?}", 60) do
-              {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_unsafe_posts => hide_unsafe_posts?)}
+            @tags = Cache.get("poptags:#{hide_explicit?}", 60) do
+              {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_explicit => hide_explicit?)}
             end
           else
-            @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_unsafe_posts => hide_unsafe_posts?)}
+            @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_explicit => hide_explicit?)}
           end
         end
       end
@@ -223,7 +223,7 @@ class PostController < ApplicationController
   end
 
   def atom
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :hide_unsafe_posts => hide_unsafe_posts?))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :hide_explicit => hide_explicit?))
     render :layout => false
   end
 
