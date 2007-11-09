@@ -2,8 +2,6 @@ module TagHelper
   def tag_links(tags, options = {})
     return "" if tags.blank?
     prefix = options[:prefix] || ""
-    hide_unsafe_posts = options[:hide_unsafe_posts]
-    count_field = hide_unsafe_posts ? "safe_post_count" : "post_count"        
     
     html = ""
     tags = tags.map do |t|
@@ -12,7 +10,7 @@ module TagHelper
         tag = Tag.find(:first, :conditions => ["name = ?", t], :select => "name, #{count_field}")
         
         if tag
-          [tag.name, tag.__send__(count_field)]
+          [tag.name, tag.post_count]
         else
           [t, 0]
         end
@@ -21,7 +19,7 @@ module TagHelper
         [t["name"], t["post_count"]]
 
       when Tag
-        [t.name, t.__send__(count_field)]
+        [t.name, t.post_count]
         
       when Array
         t

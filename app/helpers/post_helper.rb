@@ -4,7 +4,7 @@ module PostHelper
       return ""
     end
 
-    if hide_unsafe_posts? && post.rating != "s"
+    if hide_explicit? && post.rating == "e"
       return ""
     end
     
