@@ -123,11 +123,7 @@ tr.padded th {
 }
 
 tr.even {
-  background: rgb(245, 245, 245);
-}
-
-tr.odd {
-  background: rgb(250, 250, 250);
+  background: rgb(247, 247, 247);
 }
 
 tr.pending-tag {
