@@ -210,7 +210,7 @@ div#footer {
 }
 
 div.sidebar {
-  width: 20em;
+  width: 15em;
   margin-right: 1em;
   float: left;
   overflow: hidden;
@@ -223,7 +223,7 @@ div.sidebar li {
 
 div.content {
   float: left;
-  width: 55em;
+  width: 60em;
 }
 
 span.informational {
