@@ -10,27 +10,6 @@ class WikiPage < ActiveRecord::Base
   TAG_INS_CLOSE = '</ins>'
   TAG_NEWLINE = "<img src=\"/images/nl.png\" alt=\"newline\"/>\n"
   TAG_BREAK = "<br/>\n"
-
-  if Object.const_defined?(:Ferret)
-    after_save :update_index
-    before_destroy :delete_index
-    
-    def self.index_pages
-      find(:all).each do |page|
-        page.update_index()
-      end
-    end
-
-    def update_index
-      WIKI_INDEX << {:id => self.id, :title => self.title, :body => self.body}
-    end
-  
-    def delete_index
-      WIKI_INDEX.search_each("id:#{self.id}") do |id, score|
-        WIKI_INDEX.delete(id)
-      end
-    end
-  end
   
   def make_title_canonical
     self.title = title.tr(" ", "_").downcase

@@ -6,27 +6,6 @@ class Note < ActiveRecord::Base
   acts_as_versioned :table_name => "note_versions", :order => "updated_at DESC"
   after_save :update_post
 
-  if Object.const_defined?(:Ferret)
-    after_save :update_index
-    before_destroy :delete_index
-    
-    def self.index_notes
-      find(:all).each do |note|
-        note.update_index()
-      end
-    end
-
-    def update_index
-      NOTE_INDEX << {:id => self.id, :body => self.body}
-    end
-  
-    def delete_index
-      NOTE_INDEX.search_each("id:#{self.id}") do |id, score|
-        NOTE_INDEX.delete(id)
-      end
-    end
-  end
-
   def self.active
     find(:all, :conditions => "is_active = TRUE")
   end
