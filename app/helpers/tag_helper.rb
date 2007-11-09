@@ -55,7 +55,13 @@ module TagHelper
 
     tags.each do |name, count|
       name = name || "UNKNOWN"
-      html << '<li>'
+      
+      if type_map[name]
+        html << '<li class="tag-type-' + type_map[name] + '">'
+      else
+        html << '<li>'
+      end
+      
       html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
       
       if @current_user
@@ -65,9 +71,6 @@ module TagHelper
 
       html << link_to(h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name) << " "
       html << content_tag("span", count.to_i, :class => "post-count") << " "
-      if type_map[name]
-        html << content_tag("span", "(" + type_map[name] + ")", :class => type_map[name] + "-tag")
-      end
       html << '</li>'
     end
 

@@ -201,7 +201,7 @@
             </tr>
             <tr>
               <th><label class="block" for="post_tags">Tags</label></th>
-              <td><%= text_field "post", "tags", :size => 40, :value => @post.cached_tags %> <%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)</td>
+              <td><%= text_area "post", "tags", :size => "50x5", :value => @post.cached_tags %> <%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)</td>
             </tr>
           </table>
           <div>
