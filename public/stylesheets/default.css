@@ -12,7 +12,6 @@ body {
   font-size: 0.8em;
   background: white;
   padding: 1em 3em;
-  width: 80em;
 }
 
 h1 {
@@ -114,6 +113,7 @@ span.author {
 th {
   font-weight: bold;
   text-align: left;
+  vertical-align: top;
   padding: 0.2em 0.5em;
   white-space: nowrap;
 }
@@ -156,9 +156,9 @@ table {
 }
 
 textarea {
+  width: 100%;
   font-family: monospace;
   font-size: 1.2em;
-  width: 100%;
 }
 
 ol {
@@ -206,7 +206,7 @@ div#footer {
 }
 
 div.sidebar {
-  width: 15em;
+  width: 20%;
   margin-right: 1em;
   float: left;
   overflow: hidden;
@@ -219,7 +219,7 @@ div.sidebar li {
 
 div.content {
   float: left;
-  width: 60em;
+  width: 77%;
 }
 
 span.informational {

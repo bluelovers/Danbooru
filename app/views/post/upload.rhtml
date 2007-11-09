@@ -39,41 +39,49 @@
         </tr>
         <tr>
           <th><%= content_tag "label", "Download From", :for => "post_source" %></th>
-          <td><%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 1 %> <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %></td>
+          <td><%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %></td>
         </tr>
         <tr>
           <th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
           <td>
-            <%= text_area "post", "tags", :size => "50x2", :tabindex => 1 %> 
-            <%= link_to_function "Find related", "RelatedTags.find('post_tags')" %> (<%= link_to_function "artists", "RelatedTags.find('post_tags', 'artist')" %>/<%= link_to_function "characters", "RelatedTags.find('post_tags', 'char')" %>/<%= link_to_function "copyrights", "RelatedTags.find('post_tags', 'copyright')" %>)
+            <%= text_area "post", "tags", :size => "50x2", :tabindex => 3 %><br/>
+            <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
+            <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
+            <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
+            <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> |
+            <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+
           </td>
         </tr>
         <% if CONFIG["enable_parent_posts"] %>
           <tr>
             <th><label for="post_parent_id">Parent</label></th>
-            <td><%= text_field "post", "parent_id", :size => 5 %></td>
+            <td><%= text_field "post", "parent_id", :size => 5, :tabindex => 4 %></td>
           </tr>
         <% end %>
         <tr>
           <th><%= content_tag "label", "Rating", :for => "post_rating_questionable" %></th>
           <td>
-            <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" tabindex="1"/>
+            <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" tabindex="5"/>
             <label for="post_rating_explicit">Explicit</label>
 
-            <input id="post_rating_questionable" name="post[rating]" type="radio" value="Questionable" checked="checked" tabindex="1"/>
+            <input id="post_rating_questionable" name="post[rating]" type="radio" value="Questionable" checked="checked" tabindex="6"/>
             <label for="post_rating_questionable">Questionable</label>
 
-            <input id="post_rating_safe" name="post[rating]" type="radio" value="Safe" tabindex="1"/>
+            <input id="post_rating_safe" name="post[rating]" type="radio" value="Safe" tabindex="7"/>
             <label for="post_rating_safe">Safe</label>
           </td>
         </tr>
       </table>
+
+      <div style="margin-bottom: 1em;">
+      </div>
 
       <div id="related"><em>None</em></div>
 
       <%= javascript_tag "RelatedTags.init('#{escape_javascript(@current_user.my_tags.to_s)}', $F('post_source'))" %>
     </div>
 
-    <%= submit_tag "Upload", :tabindex => 1 %>
+    <%= submit_tag "Upload", :tabindex => 8 %>
   <% end %>
 </div>
