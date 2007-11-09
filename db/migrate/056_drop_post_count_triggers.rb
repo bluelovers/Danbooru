@@ -7,7 +7,7 @@ class DropPostCountTriggers < ActiveRecord::Migration
     execute "drop trigger trg_users_delete on users"
     execute "drop trigger trg_users_insert on users"
     execute "drop function trg_users__delete()"
-    execute "drop function ttrg_users__insert()"
+    execute "drop function trg_users__insert()"
     execute "insert into table_data (name, row_count) values ('non-explicit_posts', (select count(*) from posts where rating <> 'e'))"
     execute "delete from table_data where name = 'safe_posts'"
   end

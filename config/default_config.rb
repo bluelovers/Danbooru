@@ -59,9 +59,9 @@ CONFIG["enable_caching"] = false
 # relevant if you enable caching.
 CONFIG["memcache_servers"] = ["localhost:4000"]
 
-# Any post rated safe that has one of the following tags will
-# automatically be rated questionable.
-CONFIG["questionable_tags"] = %w(no_panties nude pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob cameltoe blowjob cunnilingus anal_sex topless)
+# Any post rated safe or questionable that has one of the following 
+# tags will automatically be rated explicit.
+CONFIG["explicit_tags"] = %w(pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape yaoi asshole footjob handjob blowjob cunnilingus anal_sex)
 
 # After a post receives this many posts, new comments will no longer
 # bump the post in comment/index.

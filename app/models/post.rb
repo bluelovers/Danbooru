@@ -164,8 +164,8 @@ class Post < ActiveRecord::Base
     @tag_cache = TagImplication.with_implied(@tag_cache).uniq
 
     transaction do
-      if (@tag_cache & CONFIG["questionable_tags"]).any? && self.rating == 's'
-        connection.execute("UPDATE posts SET rating = 'q' WHERE id = #{self.id}")
+      if (@tag_cache & CONFIG["explicit_tags"]).any? && self.rating != 'e'
+        connection.execute("UPDATE posts SET rating = 'e' WHERE id = #{self.id}")
         Cache.expire(:update_post => self.id, :tags => @tag_cache.join(" "), :rating => "q") if CONFIG["enable_caching"]
       end
 
