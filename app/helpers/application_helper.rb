@@ -7,7 +7,7 @@ module ApplicationHelper
       text = simple_format(text)
     end
     
-    text = text.gsub(/(http:\S+)/) do
+    text = text.gsub(/(http:\/\/[a-zA-Z0-9_.\/~%-]+)/) do
       link = $1
       url = link.gsub(/[.;,:'"]+$/, "")
       link_to link, url

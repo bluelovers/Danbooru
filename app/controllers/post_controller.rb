@@ -13,9 +13,10 @@ class PostController < ApplicationController
   helper :wiki, :tag, :comment, :pool, :favorite
   
   @@recent_searches = []
+  @@popular_searches = Hash.new(0)
 
   def create
-    if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
+    if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to do |fmt|
         fmt.html {flash[:notice] = "You cannot upload more than #{CONFIG['member_post_limit']} posts in a day"; redirect_to(:action => "upload")}
         fmt.xml {render :xml => {:success => false, :reason => "daily limit exceeded"}.to_xml(:root => "response"), :status => 500}
@@ -160,12 +161,13 @@ class PostController < ApplicationController
   end
   
   def recent_searches
+    @popular_searches = @@popular_searches.reject {|k ,v| k == :count}
     @recent_searches = @@recent_searches
   end
   
   def deleted_index
     if params[:user_id]
-      @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted' and user_id = ?", params[:user_id]]
+      @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted' and user_id = ? ", params[:user_id]]
     else
       @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted'"]
     end
@@ -191,6 +193,14 @@ class PostController < ApplicationController
       if @@recent_searches.size > 50
         @@recent_searches.pop
       end
+
+      if @@popular_searches[:count] > 1000
+        @@popular_searches[:count] = 0
+        @@popular_searches.delete_if {|k, v| v < 10}
+      end
+
+      @@popular_searches[params[:tags]] += 1
+      @@popular_searches[:count] += 1
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
@@ -248,9 +258,9 @@ class PostController < ApplicationController
     set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
     if @current_user && @current_user.privileged?
-      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ?", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
+      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
     else
-      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at <= ?", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
+      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
     end
     respond_to do |fmt|
       fmt.html
@@ -271,9 +281,9 @@ class PostController < ApplicationController
     set_title "Exploring #{@start.year}/#{@start.month}/#{@start.day} - #{@end.year}/#{@end.month}/#{@end.day}"
 
     if @current_user && @current_user.privileged?
-      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ?", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
+      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
     else
-      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ?", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
+      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
     end
 
     respond_to do |fmt|
@@ -295,9 +305,9 @@ class PostController < ApplicationController
     set_title "Exploring #{@start.year}/#{@start.month}"
 
     if @current_user && @current_user.privileged?
-      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ?", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
+      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
     else
-      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ?", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
+      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
     end
 
     respond_to do |fmt|
@@ -326,7 +336,7 @@ class PostController < ApplicationController
     params[:limit] = params[:limit].to_i
 
     if params[:post_id]
-      conditions = ["post_id = ?", params[:post_id]]
+      conditions = ["post_id = ? ", params[:post_id]]
     else
       conditions = nil
     end
