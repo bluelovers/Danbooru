@@ -47,7 +47,7 @@ class Post < ActiveRecord::Base
     if tags.blank?
       return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
     else
-      c = connection.select_value(sanitize_sql(["SELECT #{prefix}post_count FROM tags WHERE name = ?", tags])).to_i
+      c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
       if c == 0
         return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
       else
@@ -85,15 +85,21 @@ class Post < ActiveRecord::Base
   end
   
   def expire_cache_on_create
-    Cache.expire(:create_post => self.id, :tags => self.cached_tags, :rating => self.rating)
+    unless self.is_pending?
+      Cache.expire(:tags => self.cached_tags)
+    end
   end
 
   def expire_cache_on_update
-    Cache.expire(:update_post => self.id, :tags => self.cached_tags, :rating => self.rating)
+    unless self.is_pending?
+      Cache.expire(:tags => self.cached_tags)
+    end
   end
 
   def expire_cache_on_destroy
-    Cache.expire(:destroy_post => self.id, :tags => self.cached_tags, :rating => self.rating)
+    unless self.is_pending?
+      Cache.expire(:tags => self.cached_tags)
+    end
   end
 
   def favorited_by
@@ -619,7 +625,7 @@ class Post < ActiveRecord::Base
   def increment_count
     connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
     
-    if self.rating <> "e"
+    if self.rating != "e"
       connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")
     end
   end
@@ -627,7 +633,7 @@ class Post < ActiveRecord::Base
   def decrement_count
     connection.execute("update table_data set row_count = row_count - 1 where name = 'posts'")
     
-    if self.rating <> "e"
+    if self.rating != "e"
       connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")
     end
   end

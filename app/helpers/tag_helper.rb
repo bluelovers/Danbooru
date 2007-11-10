@@ -7,7 +7,7 @@ module TagHelper
     tags = tags.map do |t|
       case t
       when String
-        tag = Tag.find(:first, :conditions => ["name = ?", t], :select => "name, #{count_field}")
+        tag = Tag.find(:first, :conditions => ["name = ?", t], :select => "name, post_count")
         
         if tag
           [tag.name, tag.post_count]
