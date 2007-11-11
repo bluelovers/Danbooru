@@ -10,7 +10,7 @@
       <h6 class="response-title"><%= h post.title %></h6>
     <% end %>
     <div class="body">
-      <%= format_text(h(post.body)) %>
+      <%= format_text(post.body) %>
     </div>
     <div class="footer">
       <%= link_to "Edit", :action => "edit", :id => post.id %>

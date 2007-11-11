@@ -5,7 +5,7 @@
   </div>
   <div class="content">
     <div class="body">
-      <%= format_text(h(comment.body), :mode => :comment) %>
+      <%= format_text(comment.body, :mode => :comment) %>
     </div>
     <div class="footer">
       <%= link_to_function "Respond", "Comment.quote(#{comment.id})" %>

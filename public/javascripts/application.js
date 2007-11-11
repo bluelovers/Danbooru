@@ -4516,7 +4516,7 @@ Comment.quote = function(id) {
     onSuccess: function(req) {
       var resp = eval("(" + req.responseText + ")")
       $('reply-' + resp.post_id).show()
-      $('reply-text-' + resp.post_id).value += '<quote>' + resp.creator + ' said:\n' + resp.body.replace(/<quote>(?:.|\n)+?<\/quote>\n*/gm, "") + '\n</quote>\n\n'
+      $('reply-text-' + resp.post_id).value += '[quote]' + resp.creator + ' said:\n' + resp.body.replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, "") + '\n[/quote]\n\n'
     },
     onFailure: function(req) {
       notice("Error quoting comment")
@@ -4563,7 +4563,7 @@ Forum.quote = function(id) {
       var resp = eval("(" + req.responseText + ")")
       $('reply').show()
       $('reply').scrollTo()
-      $('forum_post_body').value += '<quote>' + resp.creator + ' said:\n' + resp.body.replace(/<quote>(?:.|\n)+?<\/quote>\n*/gm, "") + '\n</quote>\n\n'
+      $('forum_post_body').value += '[quote]' + resp.creator + ' said:\n' + resp.body.replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, "") + '\n[/quote]\n\n'
     },
     onFailure: function(req) {
       notice("Error quoting forum post")

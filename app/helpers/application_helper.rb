@@ -1,13 +1,12 @@
-# The methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   def format_text(text, options = {})
-    if options[:skip_simple_format]
-      text = CGI.escapeHTML(text)
-    else
+    text = CGI.escapeHTML(text)
+
+    unless options[:skip_simple_format]
       text = simple_format(text)
     end
-    
-    text = text.gsub(/(http:\/\/[a-zA-Z0-9_.\/~%-]+)/) do
+
+    text = text.gsub(/(http:\/\/[a-zA-Z0-9_.\/~%?&=;,-]+)/) do
       link = $1
       url = link.gsub(/[.;,:'"]+$/, "")
       link_to link, url
@@ -15,10 +14,10 @@ module ApplicationHelper
     text = text.gsub(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
     text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
     text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
-    text = text.gsub(/&lt;quote&gt;(.+?)&lt;\/quote&gt;/m, '<div class="quote">\1</div>')
+    text = text.gsub(/\[quote\](.+?)\[\/quote\]/m, '<div class="quote">\1</div>')
     text = text.gsub(/<p><div>/, "<div>")
     text = text.gsub(/<\/div><\/p>/, "</div>")
-    text = text.gsub(/&lt;s&gt;(.+?)&lt;\/s&gt;/m, '<a href="#" class="spoiler">\1</a>')
+    text = text.gsub(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
     text = text.gsub(/(\w+ said:)/, '<em>\1</em>')
     text = text.gsub(/\[\[(.+?)\]\]/) do
       match = $1
