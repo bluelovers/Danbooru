@@ -1,7 +1,7 @@
 class Tag < ActiveRecord::Base
   serialize :cached_related
 
-  @@tag_types = {
+  @tag_types = {
     :general    => 0,
     "general"   => 0,
     "gen"       => 0,
@@ -23,7 +23,7 @@ class Tag < ActiveRecord::Base
 
   class << self
     def types
-      @@tag_types
+      @tag_types
     end
 
     def count_by_period(start, stop, options = {})
@@ -46,16 +46,16 @@ class Tag < ActiveRecord::Base
         is_amb = false
       end
 
-      tag_type = @@tag_types[name[/^(.+?):/, 1]]
+      tag_type = types[name[/^(.+?):/, 1]]
       if tag_type == nil
-        tag_type = @@tag_types[:general]
+        tag_type = types[:general]
       else
         name.gsub!(/^.+?:/, "")
       end
 
       t = find_by_name(name)
       if t != nil
-        if t.tag_type == @@tag_types[:general] && t.tag_type != tag_type
+        if t.tag_type == types[:general] && t.tag_type != tag_type
           t.update_attributes(:tag_type => tag_type, :is_ambiguous => is_amb)
         end
         return t

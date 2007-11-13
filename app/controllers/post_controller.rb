@@ -1,6 +1,30 @@
 class PostController < ApplicationController
   layout 'default'
 
+  @recent_searches = []
+  @popular_searches = Hash.new(0)
+
+  class << self
+    def add_search(tags)
+      @recent_searches.unshift(tags)
+      
+      if @recent_searches.size > 50
+        @recent_searches.pop
+      end
+
+      if @popular_searches[:count] > 200
+        @popular_searches[:count] = 0
+        @popular_searches.delete_if {|k, v| v < 10}
+      end
+
+      @popular_searches[tags] += 1
+      @popular_searches[:count] += 1
+    end
+
+    attr_accessor :recent_searches
+    attr_accessor :popular_searches
+  end
+
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag]
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
   before_filter :mod_only, :only => [:moderate]
@@ -12,9 +36,6 @@ class PostController < ApplicationController
 
   helper :wiki, :tag, :comment, :pool, :favorite
   
-  @@recent_searches = []
-  @@popular_searches = Hash.new(0)
-
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to do |fmt|
@@ -161,8 +182,8 @@ class PostController < ApplicationController
   end
   
   def recent_searches
-    @popular_searches = @@popular_searches.reject {|k ,v| k == :count}
-    @recent_searches = @@recent_searches
+    @popular_searches = self.class.popular_searches.reject {|k ,v| k == :count}
+    @recent_searches = self.class.recent_searches
   end
   
   def deleted_index
@@ -188,19 +209,7 @@ class PostController < ApplicationController
     end
     
     if params[:tags]
-      @@recent_searches.unshift(params[:tags])
-      
-      if @@recent_searches.size > 50
-        @@recent_searches.pop
-      end
-
-      if @@popular_searches[:count] > 1000
-        @@popular_searches[:count] = 0
-        @@popular_searches.delete_if {|k, v| v < 10}
-      end
-
-      @@popular_searches[params[:tags]] += 1
-      @@popular_searches[:count] += 1
+      self.class.add_search(params[:tags])
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])

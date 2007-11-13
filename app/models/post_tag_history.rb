@@ -1,6 +1,9 @@
 class PostTagHistory < ActiveRecord::Base
-  @@disable_versioning = false
-  cattr_accessor :disable_versioning
+  @disable_versioning = false
+
+  class << self
+    attr_accessor :disable_versioning
+  end
 
   def author
     if user_id
