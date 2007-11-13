@@ -78,6 +78,7 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
 	height = height * scale;
 
 	gdImagePtr preview = gdImageCreateTrueColor(width, height);
+  gdImageFill(preview, 0, 0, gdImageTrueColor(255, 255, 255));
 	gdImageCopyResampled(preview, img, 0, 0, 0, 0, width, height, img->sx, img->sy);
 	gdImageJpeg(preview, write_file, 95);
 	gdImageDestroy(img);

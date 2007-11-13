@@ -1,14 +1,403 @@
 class Post < ActiveRecord::Base
+  module ParentMethods
+    def parent_id=(pid)
+      @old_parent_id = self.parent_id
+      write_attribute(:parent_id, pid)
+    end
+
+    def update_parent_on_create
+      if self.parent_id
+        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+      end
+    end
+  
+    def update_parent_on_update
+      if @old_parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
+        connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+      end
+    
+      if self.parent_id
+        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+      end
+    end
+  end
+  
+  module CacheMethods
+    def expire_cache_on_create
+      unless self.is_pending?
+        Cache.expire(:tags => self.cached_tags)
+      end
+    end
+
+    def expire_cache_on_update
+      unless self.is_pending?
+        Cache.expire(:tags => self.cached_tags)
+      end
+    end
+
+    def expire_cache_on_destroy
+      unless self.is_pending?
+        Cache.expire(:tags => self.cached_tags)
+      end
+    end
+  end
+  
+  module NeighborMethods
+    def update_neighbor_links_on_create
+      prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC", :select => "id")
+
+      if prev_post != nil
+        # should only be nil for very first post created
+        connection.execute("UPDATE posts SET prev_post_id = #{prev_post.id} WHERE id = #{self.id}")
+        connection.execute("UPDATE posts SET next_post_id = #{self.id} WHERE id = #{prev_post.id}")
+      end
+    end
+
+    def update_neighbor_links_on_update
+      if next_post_id
+        connection.execute("UPDATE posts SET prev_post_id = #{id} WHERE id = #{next_post_id}")
+      end
+
+      if prev_post_id
+        connection.execute("UPDATE posts SET next_post_id = #{id} WHERE id = #{prev_post_id}")
+      end
+    end
+  end
+  
+  module TagMethods
+    # Returns the tags in a URL suitable string
+    def tag_title
+      return cached_tags.gsub(/[^a-z0-9]+/, "-")[0, 50]
+    end
+
+    def append_tags(t)
+      @tag_cache = self.cached_tags + " " + t
+    end
+
+    def tags=(t)
+      @tag_cache = t || ""
+    end
+    
+    # commits the tag changes to the database
+    def commit_tags
+      if @tag_cache == nil
+        if self.new_record?
+          @tag_cache = "tagme"
+        else
+          return
+        end
+      end
+
+      @tag_cache = Tag.scan_tags(@tag_cache)
+      @tag_cache = ["tagme"] if @tag_cache.empty?
+      @tag_cache = TagAlias.to_aliased(@tag_cache).uniq
+      @tag_cache = TagImplication.with_implied(@tag_cache).uniq
+
+      transaction do
+        if (@tag_cache & CONFIG["explicit_tags"]).any? && self.rating != 'e'
+          connection.execute("UPDATE posts SET rating = 'e' WHERE id = #{self.id}")
+          Cache.expire(:update_post => self.id, :tags => @tag_cache.join(" "), :rating => "q") if CONFIG["enable_caching"]
+        end
+
+        connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
+        tag_list = []
+
+        @tag_cache.each do |t|
+          if t =~ /^rating:([qse])/
+            connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
+          elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
+            connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
+          elsif t =~ /^pool:(\S+)/
+            begin
+              pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
+              pool.add_post(self.id) if pool
+            rescue Pool::PostAlreadyExistsError
+            end
+          else
+            record = Tag.find_or_create_by_name(t)
+            unless tag_list.include?(record.name)
+              tag_list << record.name
+              connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{record.id})")
+            end
+          end
+        end
+
+        tag_string = tag_list.sort.uniq.join(" ")
+
+        unless PostTagHistory.disable_versioning || connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == tag_string
+          PostTagHistory.create(:post_id => self.id, :tags => tag_string, :user_id => self.updater_user_id, :ip_addr => self.updater_ip_addr)
+        end
+        connection.execute(Post.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = #{id}", tag_string]))
+      end
+    end
+  end
+
+  module SqlMethods
+    def generate_sql__range_helper(arr, field, c, p)
+      case arr[0]
+      when :eq
+        c << "#{field} = ?"
+        p << arr[1]
+
+      when :gt
+        c << "#{field} >= ?"
+        p << arr[1]
+
+      when :lt
+        c << "#{field} <= ?"
+        p << arr[1]
+
+      when :between
+        c << "#{field} BETWEEN ? AND ?"
+        p << arr[1]
+        p << arr[2]
+
+      else
+        # do nothing
+      end
+    end
+
+    def generate_sql(q, options = {})
+      original_query = q
+
+      unless q.is_a?(Hash)
+        q = Tag.parse_query(q)
+      end
+
+      conditions = ["status > 'deleted'"]
+      from = ["posts p"]
+      params = []
+
+      generate_sql__range_helper(q[:post_id], "p.id", conditions, params)
+      generate_sql__range_helper(q[:width], "p.width", conditions, params)
+      generate_sql__range_helper(q[:height], "p.height", conditions, params)
+      generate_sql__range_helper(q[:score], "p.score", conditions, params)
+      generate_sql__range_helper(q[:date], "p.created_at::date", conditions, params)
+
+      if q[:md5].is_a?(String)
+        conditions << "p.md5 = ?"
+        params << q[:md5]
+      end
+
+      if q[:parent_id].is_a?(Integer)
+        conditions << "(p.parent_id = ? or p.id = ?)"
+        params << q[:parent_id]
+        params << q[:parent_id]
+      elsif q[:parent_id] == false
+        conditions << "p.parent_id is null"
+      end
+
+      if q[:source].is_a?(String)
+        conditions << "p.source ILIKE ? ESCAPE '\\\\'"
+        params << q[:source]
+      end
+
+      if q[:fav].is_a?(String)
+        from << "favorites f"
+        from << "users u1"
+        conditions << "p.id = f.post_id AND f.user_id = u1.id AND lower(u1.name) = lower(?)"
+        params << q[:fav]
+      end
+
+      if q[:user].is_a?(String)
+        from << "users u2"
+        conditions << "p.user_id = u2.id AND lower(u2.name) = lower(?)"
+        params << q[:user]
+      end
+
+      if q[:pool].is_a?(String)
+        from << "pools"
+        from << "pools_posts"
+        conditions << "pools.id = pools_posts.pool_id AND pools_posts.post_id = p.id AND pools.name ILIKE ? ESCAPE '\\\\'"
+        params << "%" + q[:pool].to_escaped_for_sql_like + "%"
+      end
+
+      if q[:related].any? || q[:include].any?
+        conditions2 = []
+
+        if q[:include].any?
+          from << "posts_tags pt0"
+          from << "tags t0"
+          conditions2 << "(p.id = pt0.post_id AND t0.id = pt0.tag_id AND t0.name IN (?))"
+          params << (q[:include] + q[:related])
+        else
+          conditions3 = []
+
+          if q[:related].size == 1
+            count = connection.select_value(Post.sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", q[:related][0]])).to_i
+            if count < 100
+              # 96% of the tags have a post count below 100. it makes sense to optimize for this common case, then.
+              # for tags with low post counts, using "p.id in (...)" is much faster than relying on a join.
+              conditions3 << "p.id IN (SELECT pt1.post_id FROM posts_tags pt1 WHERE pt1.tag_id = (SELECT id FROM tags WHERE name = ?))"
+            else
+              # On the other hand, for extremely populated tags (the top 5%) this method is much faster.
+              from << "posts_tags pt1"
+              conditions3 << "p.id = pt1.post_id AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)"
+            end
+          else
+            (1..q[:related].size).each {|i| from << "posts_tags pt#{i}"}
+            conditions3 << "p.id = pt1.post_id"
+            (2..q[:related].size).each {|i| conditions3 << "pt1.post_id = pt#{i}.post_id"}
+            (1..q[:related].size).each {|i| conditions3 << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
+          end
+
+          params += q[:related]
+          conditions2 << "(" + conditions3.join(" AND ") + ")"
+        end
+
+        conditions << "(" + conditions2.join(" OR ") + ")"
+      end
+
+      if q[:exclude].any?
+        conditions << "p.id NOT IN (SELECT pt_.post_id FROM posts_tags pt_, tags t_ WHERE pt_.tag_id = t_.id AND t_.name IN (?))"
+        params << q[:exclude]
+      end
+
+      if options[:hide_explicit]
+        conditions << "p.rating <> 'e'"
+        conditions << "p.status = 'active'"
+      end
+
+      if q[:rating].is_a?(String)
+        case q[:rating][0, 1].downcase
+        when "s"
+          conditions << "p.rating = 's'"
+
+        when "q"
+          conditions << "p.rating = 'q'"
+
+        when "e"
+          conditions << "p.rating = 'e'"
+        end
+      end
+
+      if q[:rating_negated].is_a?(String)
+        case q[:rating_negated][0, 1].downcase
+        when "s"
+          conditions << "p.rating <> 's'"
+
+        when "q"
+          conditions << "p.rating <> 'q'"
+
+        when "e"
+          conditions << "p.rating <> 'e'"
+        end
+      end
+
+      if q[:unlocked_rating] == true
+        conditions << "p.is_rating_locked = FALSE"
+      end
+
+      if options[:pending]
+        conditions << "p.status < 'active'"
+      end
+
+      if original_query.blank?
+        conditions << "p.parent_id is null"
+      end
+
+      sql = "SELECT "
+
+      if options[:count]
+        sql << "COUNT(p)"
+      else
+        sql << "p.*"
+      end
+
+      sql << " FROM " + from.join(", ") + " WHERE " + conditions.join(" AND ")
+
+      if options[:order]
+        sql << " ORDER BY " + options[:order]
+      end
+
+      if options[:limit]
+        sql << " LIMIT " + options[:limit].to_s
+      end
+
+      if options[:offset]
+        sql << " OFFSET " + options[:offset].to_s
+      end
+
+      return Post.sanitize_sql([sql, *params])
+    end
+  end
+  
+  module CountMethods
+    def self.fast_count(tags = nil, hide_explicit = false)
+      if hide_explicit
+        prefix = "non-explicit_"
+      else
+        prefix = ""
+      end
+
+      if tags.blank?
+        return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
+      else
+        c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
+        if c == 0
+          return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
+        else
+          return c
+        end
+      end
+    end
+    
+    def update_count
+      if @old_rating
+        if @old_rating != "e" && self.rating == "e"
+          connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")      
+        elsif @old_rating == "e" && self.rating != "e"
+          connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")      
+        end
+      end
+    end
+
+    def increment_count
+      connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
+
+      if self.rating != "e"
+        connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")
+      end
+    end
+
+    def decrement_count
+      connection.execute("update table_data set row_count = row_count - 1 where name = 'posts'")
+
+      if self.rating != "e"
+        connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")
+      end
+    end
+  end
+  
+  module CommentMethods
+    def recent_comments
+      Comment.find(:all, :conditions => "post_id = #{self.id}", :order => "id desc", :limit => 6).reverse
+    end
+
+    def comment_count
+      @comment_count ||= Comment.count_by_sql("SELECT COUNT(*) FROM comments WHERE post_id = #{self.id}")
+      return @comment_count
+    end
+  end
+  
+  include NeighborMethods
+  include TagMethods
+  extend SqlMethods
+  include CountMethods
+  include CommentMethods
+  
   votable
   image_store
   
   if CONFIG["enable_caching"]
+    include CacheMethods
     after_create :expire_cache_on_create
     after_update :expire_cache_on_update
     before_destroy :expire_cache_on_destroy
   end
 
   if CONFIG["enable_parent_posts"]
+    include ParentMethods
     after_create :update_parent_on_create
     after_update :update_parent_on_update
   end
@@ -36,70 +425,10 @@ class Post < ActiveRecord::Base
   has_many :notes, :order => "id desc"
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   belongs_to :user
-
-  def self.fast_count(tags = nil, hide_explicit = false)
-    if hide_explicit
-      prefix = "non-explicit_"
-    else
-      prefix = ""
-    end
-    
-    if tags.blank?
-      return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
-    else
-      c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-      if c == 0
-        return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
-      else
-        return c
-      end
-    end
-  end
-  
-  if CONFIG["enable_parent_posts"]
-    def parent_id=(pid)
-      @old_parent_id = self.parent_id
-      write_attribute(:parent_id, pid)
-    end
-
-    def update_parent_on_create
-      if self.parent_id
-        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
-      end
-    end
-  
-    def update_parent_on_update
-      if @old_parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
-        connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
-      end
-    
-      if self.parent_id
-        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
-      end
-    end
-  end
   
   def update_status_on_destroy
     self.update_attribute(:status, "deleted")
     return false
-  end
-  
-  def expire_cache_on_create
-    unless self.is_pending?
-      Cache.expire(:tags => self.cached_tags)
-    end
-  end
-
-  def expire_cache_on_update
-    unless self.is_pending?
-      Cache.expire(:tags => self.cached_tags)
-    end
-  end
-
-  def expire_cache_on_destroy
-    unless self.is_pending?
-      Cache.expire(:tags => self.cached_tags)
-    end
   end
 
   def favorited_by
@@ -110,28 +439,6 @@ class Post < ActiveRecord::Base
     if self.source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
       connection.execute("UPDATE posts SET source = '' WHERE id = #{self.id}")
     end
-  end
-
-  def recent_comments
-    Comment.find(:all, :conditions => "post_id = #{self.id}", :order => "id desc", :limit => 6).reverse
-  end
-
-  def comment_count
-    @comment_count ||= Comment.count_by_sql("SELECT COUNT(*) FROM comments WHERE post_id = #{self.id}")
-    return @comment_count
-  end
-  
-  # Returns the tags in a URL suitable string
-  def tag_title
-    return cached_tags.gsub(/[^a-z0-9]+/, "-")[0, 50]
-  end
-
-  def append_tags(t)
-    @tag_cache = self.cached_tags + " " + t
-  end
-
-  def tags=(t)
-    @tag_cache = t || ""
   end
 
   def rating=(r)
@@ -151,59 +458,6 @@ class Post < ActiveRecord::Base
       write_attribute(:rating, r)
     else
       write_attribute(:rating, 'q')
-    end
-  end
-
-  # commits the tag changes to the database
-  def commit_tags
-    if @tag_cache == nil
-      if self.new_record?
-        @tag_cache = "tagme"
-      else
-        return
-      end
-    end
-
-    @tag_cache = Tag.scan_tags(@tag_cache)
-    @tag_cache = ["tagme"] if @tag_cache.empty?
-    @tag_cache = TagAlias.to_aliased(@tag_cache).uniq
-    @tag_cache = TagImplication.with_implied(@tag_cache).uniq
-
-    transaction do
-      if (@tag_cache & CONFIG["explicit_tags"]).any? && self.rating != 'e'
-        connection.execute("UPDATE posts SET rating = 'e' WHERE id = #{self.id}")
-        Cache.expire(:update_post => self.id, :tags => @tag_cache.join(" "), :rating => "q") if CONFIG["enable_caching"]
-      end
-
-      connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
-      tag_list = []
-
-      @tag_cache.each do |t|
-        if t =~ /^rating:([qse])/
-          connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
-        elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
-          connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
-        elsif t =~ /^pool:(\S+)/
-          begin
-            pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
-            pool.add_post(self.id) if pool
-          rescue Pool::PostAlreadyExistsError
-          end
-        else
-          record = Tag.find_or_create_by_name(t)
-          unless tag_list.include?(record.name)
-            tag_list << record.name
-            connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{record.id})")
-          end
-        end
-      end
-
-      tag_string = tag_list.sort.uniq.join(" ")
-
-      unless PostTagHistory.disable_versioning || connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == tag_string
-        PostTagHistory.create(:post_id => self.id, :tags => tag_string, :user_id => self.updater_user_id, :ip_addr => self.updater_ip_addr)
-      end
-      connection.execute(Post.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = #{id}", tag_string]))
     end
   end
 
@@ -327,214 +581,6 @@ class Post < ActiveRecord::Base
     end
   end
 
-  def update_neighbor_links_on_create
-    prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC", :select => "id")
-
-    if prev_post != nil
-      # should only be nil for very first post created
-      connection.execute("UPDATE posts SET prev_post_id = #{prev_post.id} WHERE id = #{self.id}")
-      connection.execute("UPDATE posts SET next_post_id = #{self.id} WHERE id = #{prev_post.id}")
-    end
-  end
-
-  def update_neighbor_links_on_update
-    if next_post_id
-      connection.execute("UPDATE posts SET prev_post_id = #{id} WHERE id = #{next_post_id}")
-    end
-
-    if prev_post_id
-      connection.execute("UPDATE posts SET next_post_id = #{id} WHERE id = #{prev_post_id}")
-    end
-  end
-
-  def self.generate_sql__range_helper(arr, field, c, p)
-    case arr[0]
-    when :eq
-      c << "#{field} = ?"
-      p << arr[1]
-
-    when :gt
-      c << "#{field} >= ?"
-      p << arr[1]
-
-    when :lt
-      c << "#{field} <= ?"
-      p << arr[1]
-
-    when :between
-      c << "#{field} BETWEEN ? AND ?"
-      p << arr[1]
-      p << arr[2]
-
-    else
-      # do nothing
-    end
-  end
-
-  def self.generate_sql(q, options = {})
-    original_query = q
-    
-    unless q.is_a?(Hash)
-      q = Tag.parse_query(q)
-    end
-
-    conditions = ["status > 'deleted'"]
-    from = ["posts p"]
-    params = []
-
-    generate_sql__range_helper(q[:post_id], "p.id", conditions, params)
-    generate_sql__range_helper(q[:width], "p.width", conditions, params)
-    generate_sql__range_helper(q[:height], "p.height", conditions, params)
-    generate_sql__range_helper(q[:score], "p.score", conditions, params)
-    generate_sql__range_helper(q[:date], "p.created_at::date", conditions, params)
-
-    if q[:md5].is_a?(String)
-      conditions << "p.md5 = ?"
-      params << q[:md5]
-    end
-    
-    if q[:parent_id].is_a?(Integer)
-      conditions << "(p.parent_id = ? or p.id = ?)"
-      params << q[:parent_id]
-      params << q[:parent_id]
-    elsif q[:parent_id] == false
-      conditions << "p.parent_id is null"
-    end
-    
-    if q[:source].is_a?(String)
-      conditions << "p.source ILIKE ? ESCAPE '\\\\'"
-      params << q[:source]
-    end
-
-    if q[:fav].is_a?(String)
-      from << "favorites f"
-      from << "users u1"
-      conditions << "p.id = f.post_id AND f.user_id = u1.id AND lower(u1.name) = lower(?)"
-      params << q[:fav]
-    end
-
-    if q[:user].is_a?(String)
-      from << "users u2"
-      conditions << "p.user_id = u2.id AND lower(u2.name) = lower(?)"
-      params << q[:user]
-    end
-
-    if q[:pool].is_a?(String)
-      from << "pools"
-      from << "pools_posts"
-      conditions << "pools.id = pools_posts.pool_id AND pools_posts.post_id = p.id AND pools.name ILIKE ? ESCAPE '\\\\'"
-      params << "%" + q[:pool].to_escaped_for_sql_like + "%"
-    end
-
-    if q[:related].any? || q[:include].any?
-      conditions2 = []
-      
-      if q[:include].any?
-        from << "posts_tags pt0"
-        from << "tags t0"
-        conditions2 << "(p.id = pt0.post_id AND t0.id = pt0.tag_id AND t0.name IN (?))"
-        params << (q[:include] + q[:related])
-      else
-        conditions3 = []
-
-        if q[:related].size == 1
-          count = connection.select_value(Post.sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", q[:related][0]])).to_i
-          if count < 100
-            # 96% of the tags have a post count below 100. it makes sense to optimize for this common case, then.
-            # for tags with low post counts, using "p.id in (...)" is much faster than relying on a join.
-            conditions3 << "p.id IN (SELECT pt1.post_id FROM posts_tags pt1 WHERE pt1.tag_id = (SELECT id FROM tags WHERE name = ?))"
-          else
-            # On the other hand, for extremely populated tags (the top 5%) this method is much faster.
-            from << "posts_tags pt1"
-            conditions3 << "p.id = pt1.post_id AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)"
-          end
-        else
-          (1..q[:related].size).each {|i| from << "posts_tags pt#{i}"}
-          conditions3 << "p.id = pt1.post_id"
-          (2..q[:related].size).each {|i| conditions3 << "pt1.post_id = pt#{i}.post_id"}
-          (1..q[:related].size).each {|i| conditions3 << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
-        end
-
-        params += q[:related]
-        conditions2 << "(" + conditions3.join(" AND ") + ")"
-      end
-
-      conditions << "(" + conditions2.join(" OR ") + ")"
-    end
-
-    if q[:exclude].any?
-      conditions << "p.id NOT IN (SELECT pt_.post_id FROM posts_tags pt_, tags t_ WHERE pt_.tag_id = t_.id AND t_.name IN (?))"
-      params << q[:exclude]
-    end
-
-    if options[:hide_explicit]
-      conditions << "p.rating <> 'e'"
-      conditions << "p.status = 'active'"
-    end
-
-    if q[:rating].is_a?(String)
-      case q[:rating][0, 1].downcase
-      when "s"
-        conditions << "p.rating = 's'"
-
-      when "q"
-        conditions << "p.rating = 'q'"
-
-      when "e"
-        conditions << "p.rating = 'e'"
-      end
-    end
-
-    if q[:rating_negated].is_a?(String)
-      case q[:rating_negated][0, 1].downcase
-      when "s"
-        conditions << "p.rating <> 's'"
-
-      when "q"
-        conditions << "p.rating <> 'q'"
-
-      when "e"
-        conditions << "p.rating <> 'e'"
-      end
-    end
-
-    if q[:unlocked_rating] == true
-      conditions << "p.is_rating_locked = FALSE"
-    end
-
-    if options[:pending]
-      conditions << "p.status < 'active'"
-    end
-
-    if original_query.blank?
-      conditions << "p.parent_id is null"
-    end
-    
-    sql = "SELECT "
-    
-    if options[:count]
-      sql << "COUNT(p)"
-    else
-      sql << "p.*"
-    end
-
-    sql << " FROM " + from.join(", ") + " WHERE " + conditions.join(" AND ")
-
-    if options[:order]
-      sql << " ORDER BY " + options[:order]
-    end
-
-    if options[:limit]
-      sql << " LIMIT " + options[:limit].to_s
-    end
-
-    if options[:offset]
-      sql << " OFFSET " + options[:offset].to_s
-    end
-
-    return Post.sanitize_sql([sql, *params])
-  end
-
   def self.find_by_tags(tags, options = {})
     return find_by_sql(Post.generate_sql(tags, options))
   end
@@ -610,31 +656,5 @@ class Post < ActiveRecord::Base
   
   def is_active?
     self.status == "active"
-  end
-  
-  def update_count
-    if @old_rating
-      if @old_rating != "e" && self.rating == "e"
-        connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")      
-      elsif @old_rating == "e" && self.rating != "e"
-        connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")      
-      end
-    end
-  end
-  
-  def increment_count
-    connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
-    
-    if self.rating != "e"
-      connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")
-    end
-  end
-  
-  def decrement_count
-    connection.execute("update table_data set row_count = row_count - 1 where name = 'posts'")
-    
-    if self.rating != "e"
-      connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")
-    end
   end
 end
