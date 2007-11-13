@@ -804,3 +804,11 @@ li.tag-type-copyright a:hover {
 li.tag-type-artist a:hover {
   color: #33CFFF;
 }
+
+tr.positive-record {
+  background: #EFE;
+}
+
+tr.negative-record {
+  background: #FEE;
+}

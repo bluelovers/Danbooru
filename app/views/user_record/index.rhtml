@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     <% @user_records.each do |rec| %>
-      <tr style="background: <%= rec.is_positive? ? '#EFE' : '#FEE' %>">
+      <tr class="<%= rec.is_positive? ? 'positive-record' : 'negative-record' %>">
         <td>
           <% if @user %>
             <%= link_to h(rec.user.pretty_name), :controller => "user", :action => "show", :id => rec.user_id %>
