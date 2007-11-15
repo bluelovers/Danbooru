@@ -16,8 +16,12 @@ class UserRecordController < ApplicationController
     @user = User.find(params[:user_id])
 
     if request.post?
-      @user_record = UserRecord.create(params[:user_record].merge(:user_id => params[:user_id], :reported_by => @current_user.id))
-      flash[:notice] = "Record updated"
+      if @user.id == @current_user.id
+        flash[:notice] = "You cannot create a record for yourself"
+      else
+        @user_record = UserRecord.create(params[:user_record].merge(:user_id => params[:user_id], :reported_by => @current_user.id))
+        flash[:notice] = "Record updated"
+      end
       redirect_to :action => "index", :user_id => @user.id
     end
   end
