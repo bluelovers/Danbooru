@@ -53,3 +53,17 @@ Post.flag = function(id) {
     }
   })
 }
+
+Post.submit_tags = function(form, e) {
+  if (!e) {
+    e = window.event
+  }
+  
+  var form = $(form)
+  
+	if (e.keyCode == 13) {
+		if (!form.onsubmit || form.onsubmit()) {
+			form.submit()
+		}
+	}
+}

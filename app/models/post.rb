@@ -1,4 +1,4 @@
-class Post < ActiveRecord::Base
+class Post < ActiveRecord::Base  
   module ParentMethods
     def parent_id=(pid)
       @old_parent_id = self.parent_id
@@ -72,6 +72,14 @@ class Post < ActiveRecord::Base
 
     def append_tags(t)
       @tag_cache = self.cached_tags + " " + t
+    end
+    
+    def tags
+      if self.new_record?
+        []
+      else
+        Tag.find(:all, :joins => "join posts_tags on tags.id = posts_tags.tag_id", :select => "tags.*", :conditions => "posts_tags.post_id = #{self.id}")
+      end
     end
 
     def tags=(t)
@@ -614,6 +622,11 @@ class Post < ActiveRecord::Base
     end
   end
   
+  has_many :comments, :order => "id"
+  has_many :notes, :order => "id desc"
+  has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
+  belongs_to :user
+  
   include NeighborMethods
   include TagMethods
   extend SqlMethods
@@ -654,12 +667,6 @@ class Post < ActiveRecord::Base
   after_destroy :decrement_count
   after_save :update_count
   attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status, :deletion_reason
-
-  has_and_belongs_to_many :tags, :order => "name"
-  has_many :comments, :order => "id"
-  has_many :notes, :order => "id desc"
-  has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
-  belongs_to :user
   
   def update_status_on_destroy
     self.update_attribute(:status, "deleted")

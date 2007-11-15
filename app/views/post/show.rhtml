@@ -159,7 +159,7 @@
       </h4>
       
       <div id="edit" style="display: none;">
-        <% form_tag(:controller => "post", :action => "update", :id => @post.id) do %>
+        <% form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form") do %>
           <table class="form">
             <tr>
               <th><label class="block" for="post_rating_questionable">Rating</label></th>
@@ -207,7 +207,7 @@
             <tr>
               <th><label class="block" for="post_tags">Tags</label></th>
               <td>
-                <%= text_area "post", "tags", :size => "50x2", :value => @post.cached_tags, :tabindex => 10 %><br/>
+                <%= text_area "post", "tags", :size => "50x2", :value => @post.cached_tags, :tabindex => 10, :onkeypress => "Post.submit_tags('edit-form', event)" %><br/>
                 <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
                 <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
                 <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
