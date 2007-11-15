@@ -6,6 +6,6 @@ Post.find(:all, :conditions => ["(status = 'pending' or status = 'flagged') and 
   unless post.deletion_reason.blank?
     post.update_attribute(:deletion_reason, "Unapproved in seven days")
   end
-  
+
   post.destroy
 end
