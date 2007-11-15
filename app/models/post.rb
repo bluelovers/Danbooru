@@ -323,23 +323,29 @@ class Post < ActiveRecord::Base
   end
   
   module CountMethods
-    def self.fast_count(tags = nil, hide_explicit = false)
-      if hide_explicit
-        prefix = "non-explicit_"
-      else
-        prefix = ""
-      end
-
-      if tags.blank?
-        return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
-      else
-        c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-        if c == 0
-          return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
+    module ClassMethods
+      def fast_count(tags = nil, hide_explicit = false)
+        if hide_explicit
+          prefix = "non-explicit_"
         else
-          return c
+          prefix = ""
+        end
+
+        if tags.blank?
+          return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
+        else
+          c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
+          if c == 0
+            return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
+          else
+            return c
+          end
         end
       end
+    end
+    
+    def self.included(m)
+      m.extend(ClassMethods)
     end
     
     def update_count
@@ -869,6 +875,10 @@ class Post < ActiveRecord::Base
     else
       nil
     end
+  end
+  
+  def really_destroy
+    connection.execute("delete from posts where id = #{self.id}")
   end
   
   def is_flagged?

@@ -60,33 +60,34 @@
           <%= CONFIG["ad_code_show_side"] %>
         <% end %>
       </div>
-      <% unless @post.is_deleted? %>
-        <div>
-          <h5>Options</h5>
-          <ul>
-            <li><%= link_to_function "Edit", "$('edit').show().scrollTo(); Form.Element.focus('post_tags')" %></li>
-            <% if @post.image? && @post.width && @post.width > 700 %>
-              <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
-            <% end %>
-            <li>
-              <% if @current_user && @current_user.has_permission?(@post) %>
-                <%= link_to "Delete", :action => "delete", :id => @post.id %>
-              <% end %>
-            </li>
+      <div>
+        <h5>Options</h5>
+        <ul>
+          <li><%= link_to_function "Edit", "$('edit').show().scrollTo(); Form.Element.focus('post_tags')" %></li>
+          <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
+            <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
+          <% end %>
+          <% if !@post.is_deleted? && @current_user && @current_user.has_permission?(@post) %>
+            <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
+          <% end %>
+          <% if @post.is_deleted? && @current_user && @current_user.has_permission?(@post) %>
+            <li><%= link_to "Really Delete", :action => "delete", :id => @post.id, :really => 1 %></li>
+          <% end %>
+          <% unless @post.is_flagged? || @post.is_deleted? %>
             <li><%= link_to_function "Flag for deletion", "Post.flag(#{@post.id})" %></li>
-            <% if @post.image? && !@post.is_note_locked? %>
-              <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
-            <% end %>
-            <% if @current_user %>
-              <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
-              <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
-            <% end %>
-            <% if @post.is_pending? && @current_user && @current_user.mod? %>
-              <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[status]=active')}" %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
+          <% end %>
+          <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
+            <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
+          <% end %>
+          <% if !@post.is_deleted? && @current_user %>
+            <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
+            <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
+          <% end %>
+          <% if @post.is_pending? && @current_user && @current_user.mod? %>
+            <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[status]=active')}" %></li>
+          <% end %>
+        </ul>
+      </div>
       <div>
         <h5>History</h5>
         <ul>

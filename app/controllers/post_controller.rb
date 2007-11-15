@@ -166,6 +166,8 @@ class PostController < ApplicationController
       end
 
       @post.destroy
+      
+      @post.really_destroy if params[:really] == "1"
 
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "show", :id => @post.id)}
