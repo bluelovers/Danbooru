@@ -33,6 +33,10 @@ Now it's time to configure your copy. Change into the config directory and edit 
 
 You should manually build the resizer extension. This obviously requires gcc and the make tools. The resizer depends on the GD library. The source code is located in lib/danbooru_image_resizer. Run "ruby extconf.rb" then run "make". You should NOT have to install the resulting extension.
 
+There is a known issue when building GD on OS X; sometimes the library files will be incorrectly named. Running the following script command should fix the issue:
+
+>> for I in libgd libgd.2 libgd.2.0.0; do sudo mv /usr/local/lib/$I /usr/local/lib/$I.dylib; done
+
 Create the database. A schema file is provided at db/postgres.sql. You should also run the migration scripts by entering "rake db:migrate". This requires the resizer extension to have been built, so be sure you have completed that step.
 
 Caching is only necessary if you expect to get more than 200,000 visitors a month. You will find the necesssary settings in the default_config.rb file that you can copy over into your local_config.rb. Make sure the memcached daemon is running before you start up Danbooru.
