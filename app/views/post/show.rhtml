@@ -79,6 +79,9 @@
           <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
             <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
           <% end %>
+          <% if @current_user && Favorite.exists?("user_id = #{@current_user.id} and post_id = #{@post.id}") %>
+            <li><%= link_to_function "Remove from favorites", "Favorite.destroy(#{@post.id})", :title => "Remove from favorites" %></li>
+          <% end %>
           <% if !@post.is_deleted? && @current_user %>
             <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
             <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>

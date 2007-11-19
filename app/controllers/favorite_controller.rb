@@ -28,22 +28,22 @@ class FavoriteController < ApplicationController
   
   def create
     begin
-      @current_user.add_favorite(params[:id])
-      p = Post.find(:first, :conditions => ["id = ?", params[:id]], :select => "posts.score, posts.id")
+      @post = Post.find(:first, :conditions => ["id = ?", params[:id]], :select => "posts.score, posts.id")
+      @current_user.add_favorite(@post.id)
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:id])}
+        fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
         fmt.js do
-          favorited_users = p.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, ERB::Util.h(x.name)]}
+          favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
           if favorited_users.empty?
             favorited_users = "Favorited by: no one"
           else
             favorited_users = "Favorited by: #{favorited_users.join(', ')}"
           end
 
-          render :json => {:success => true, :score => p.score, :post_id => params[:id], :favorited => favorited_users}.to_json
+          render :json => {:success => true, :score => @post.score, :post_id => @post.id, :favorited => favorited_users}.to_json
         end
-        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => params[:id]}.to_xml(:root => "response")}
+        fmt.xml {render :xml => {:success => true, :score => @post.score, :post_id => @post.id}.to_xml(:root => "response")}
       end
     rescue User::AlreadyFavoritedError
       respond_to do |fmt|
@@ -55,11 +55,21 @@ class FavoriteController < ApplicationController
   end
   
   def destroy
-    @current_user.delete_favorite(params[:id])
+    @post = Post.find(params[:id])
+    @current_user.delete_favorite(@post.id)
 
     respond_to do |fmt|
-      fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => params[:id])}
-      fmt.js {render :json => {:success => true, :post_id => params[:id].to_i}.to_json}
+      fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
+      fmt.js do 
+        favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
+        if favorited_users.empty?
+          favorited_users = "Favorited by: no one"
+        else
+          favorited_users = "Favorited by: #{favorited_users.join(', ')}"
+        end
+        
+        render :json => {:success => true, :post_id => @post.id, :favorited => favorited_users, :score => @post.score}.to_json
+      end
       fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
     end
   end
