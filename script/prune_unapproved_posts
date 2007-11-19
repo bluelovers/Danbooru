@@ -2,9 +2,9 @@
 
 require File.dirname(__FILE__) + '/../config/environment'
 
-Post.find(:all, :conditions => ["(status = 'pending' or status = 'flagged') and created_at < ?", 7.days.ago]).each do |post|
+Post.find(:all, :conditions => ["status = 'pending' and created_at < ?", 3.days.ago]).each do |post|
   unless post.deletion_reason.blank?
-    post.update_attribute(:deletion_reason, "Unapproved in seven days")
+    post.update_attribute(:deletion_reason, "Unapproved in three days")
   end
 
   post.destroy

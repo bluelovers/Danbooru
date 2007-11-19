@@ -5,6 +5,7 @@ require "postgres"
 require "sqlite3"
 require "yaml"
 
+`rm -f /home/albert/miezaru/public/sqlite.db.gz`
 `rm -f /home/albert/miezaru/public/sqlite.db`
 
 pg = PGconn.new("127.0.0.1", nil, nil, nil, "danbooru")
