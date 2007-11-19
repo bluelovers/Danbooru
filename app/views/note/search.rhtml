@@ -19,7 +19,7 @@
   </div>
   
   <div id="paginator">
-    <%= custom_pagination_links(@pages) %>
+    <%= custom_pagination_links(@pages, :params => {:controller => "note", :action => "search", :query => params[:query]}) %>
   </div>
 <% end %>
 
