@@ -6,8 +6,6 @@ dir_config("gd")
 
 have_header("gd.h")
 
-have_library("jpeg")
-have_library("png")
 have_library("gd")
 
 have_func("gdImageCreateFromJpeg", "gd.h")
