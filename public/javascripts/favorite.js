@@ -36,8 +36,8 @@ Favorite.destroy = function(post_id) {
     asynchronous: true,
     method: 'post',
 		postBody: 'id='+post_id,
-    onComplete: function(req) {
-      var resp = eval("(" + req.responseText + ")")
+    onComplete: function(res) {
+      var resp = eval("(" + res.responseText + ")")
 
       notice("Post #" + post_id + " removed from your favorites")
         

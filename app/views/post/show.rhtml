@@ -77,13 +77,14 @@
             <li><%= link_to_function "Flag for deletion", "Post.flag(#{@post.id})" %></li>
           <% end %>
           <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
-            <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :title => "Add a translation note" %></li>
+            <li><%= link_to_function "Add translation", "Note.create(#{@post.id})" %></li>
           <% end %>
-          <% if @current_user && Favorite.exists?("user_id = #{@current_user.id} and post_id = #{@post.id}") %>
-            <li><%= link_to_function "Remove from favorites", "Favorite.destroy(#{@post.id})", :title => "Remove from favorites" %></li>
+          <% if @current_user && Favorite.exists?(["user_id = ? and post_id = ?", @current_user.id, @post.id]) %>
+            <li><%= link_to_function "Remove from favorites", "Favorite.destroy(#{@post.id})" %></li>
+          <% elsif !@post.is_deleted? && @current_user %>
+            <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})" %></li>
           <% end %>
-          <% if !@post.is_deleted? && @current_user %>
-            <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})", :title => "Add to favorites" %></li>
+          <% if @current_user && !@post.is_deleted? %>
             <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
           <% end %>
           <% if @post.is_pending? && @current_user && @current_user.mod? %>

@@ -25,7 +25,7 @@ class Tag < ActiveRecord::Base
     def types
       @tag_types
     end
-
+    
     def count_by_period(start, stop, options = {})
       options[:limit] ||= 50
 

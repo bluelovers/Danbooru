@@ -34,6 +34,7 @@ class FavoriteController < ApplicationController
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
         fmt.js do
+          @post.reload
           favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
           if favorited_users.empty?
             favorited_users = "Favorited by: no one"
@@ -61,6 +62,7 @@ class FavoriteController < ApplicationController
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
       fmt.js do 
+        @post.reload
         favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
         if favorited_users.empty?
           favorited_users = "Favorited by: no one"
