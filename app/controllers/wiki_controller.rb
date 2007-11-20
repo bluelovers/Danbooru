@@ -193,7 +193,7 @@ class WikiController < ApplicationController
   def recent_changes
     set_title "Recent Changes"
 
-    @pages, @wiki_pages = paginate :wiki_page_versions, :order => "updated_at DESC", :per_page => (params[:per_page] || 25)
+    @pages, @wiki_pages = paginate :wiki_pages, :order => "updated_at DESC", :per_page => (params[:per_page] || 25)
     
     respond_to do |fmt|
       fmt.html
