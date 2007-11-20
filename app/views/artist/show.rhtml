@@ -64,7 +64,6 @@
     <%= link_to "Edit", :action => "edit", :id => @artist.id %> |
     <% unless @artist.alias_id %>
       <%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %> |
-      <%= link_to "Wiki", :controller => "wiki", :action => "show", :title => @artist.name %> |
       <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
     <% end %>
     <% if !@artist.url_b.blank? %>

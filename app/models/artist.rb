@@ -44,9 +44,11 @@ class Artist < ActiveRecord::Base
   
   def commit_notes
     if @notes
-      wp = WikiPage.find_or_create_by_title(self.name)
+      wp = WikiPage.find_by_title(self.name)
       
-      if wp.is_locked?
+      if wp == nil
+        wp = WikiPage.create(:title => self.name, :body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
+      elsif wp.is_locked?
         self.errors.add(:notes, "wiki page is locked")
       else
         wp.update_attributes(:body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
