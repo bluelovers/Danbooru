@@ -2,7 +2,9 @@ class Artist < ActiveRecord::Base
   before_validation :normalize
   validates_uniqueness_of :name
   after_save :commit_relations
+  after_save :commit_notes
   belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
+  attr_accessor :updater_ip_addr
 
   def self.normalize_url(url)
     if url
@@ -36,6 +38,18 @@ class Artist < ActiveRecord::Base
           a = Artist.find_or_create_by_name(name)
           a.update_attributes(:group_id => self.id, :updater_id => self.updater_id)
         end
+      end
+    end
+  end
+  
+  def commit_notes
+    if @notes
+      wp = WikiPage.find_or_create_by_title(self.name)
+      
+      if wp.is_locked?
+        self.errors.add(:notes, "wiki page is locked")
+      else
+        wp.update_attributes(:body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
       end
     end
   end
@@ -108,6 +122,20 @@ class Artist < ActiveRecord::Base
 
   def to_s
     return self.name
+  end
+  
+  def notes
+    wp = WikiPage.find_page(self.name)
+    
+    if wp
+      return wp.body
+    else
+      return ""
+    end
+  end
+  
+  def notes=(val)
+    @notes = val
   end
 
   def self.find_all_by_md5(md5)

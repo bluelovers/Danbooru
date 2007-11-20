@@ -30,7 +30,7 @@ class WikiPage < ActiveRecord::Base
   def pretty_title
     self.title.tr("_", " ")
   end
-
+  
 # Produce a formatted page that shows the difference between two versions of a page.
   def diff(version)
     otherpage = WikiPage.find_page(title, version)
@@ -88,12 +88,16 @@ class WikiPage < ActiveRecord::Base
   def self.find_page(title, version = nil)
     return nil if title.blank?
 
-    page = WikiPage.find_first(["lower(title) = lower(?)", title.tr(" ", "_")])
+    page = find_by_title(title)
     page.revert_to(version) if version && page
 
     return page
   end
-
+  
+  def self.find_by_title(title)
+    return find(:first, :conditions => ["lower(title) = lower(?)", title.tr(" ", "_")])
+  end
+  
   def lock!
     connection.execute("UPDATE wiki_pages SET is_locked = TRUE WHERE id = #{id}")
     connection.execute("UPDATE wiki_page_versions SET is_locked = TRUE WHERE wiki_page_id = #{id}")

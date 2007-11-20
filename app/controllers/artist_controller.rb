@@ -4,7 +4,7 @@ class ArtistController < ApplicationController
   before_filter :privileged_only, :only => [:destroy]
   before_filter :member_only, :only => [:update, :create]
   verify :method => :post, :only => [:destroy, :update, :create]
-  helper :post
+  helper :post, :wiki
 
   def destroy
     @artist = Artist.find(params[:id])
@@ -23,7 +23,7 @@ class ArtistController < ApplicationController
     end
 
     artist = Artist.find(params[:id])
-    artist.update_attributes(params[:artist].merge(:updater_id => (@current_user ? @current_user.id : nil)))
+    artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
 
     if artist.errors.empty?
       respond_to do |fmt|
@@ -42,7 +42,7 @@ class ArtistController < ApplicationController
   end
 
   def create
-    artist = Artist.create(params[:artist].merge(:updater_id => (@current_user ? @current_user.id : nil)))
+    artist = Artist.create(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
 
     if artist.errors.empty?
       respond_to do |fmt|
