@@ -65,7 +65,7 @@
         <ul>
           <li><%= link_to_function "Edit", "$('edit').show().scrollTo(); Form.Element.focus('post_tags')" %></li>
           <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
-            <li><%= link_to_function "Resize image", "toggleImageResize()" %></li>
+            <li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
           <% end %>
           <% if !@post.is_deleted? && @current_user && @current_user.has_permission?(@post) %>
             <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
@@ -74,18 +74,18 @@
             <li><%= link_to "Really Delete", :action => "delete", :id => @post.id, :really => 1 %></li>
           <% end %>
           <% unless @post.is_flagged? || @post.is_deleted? %>
-            <li><%= link_to_function "Flag for deletion", "Post.flag(#{@post.id})" %></li>
+            <li><%= link_to_function "Flag for Deletion", "Post.flag(#{@post.id})" %></li>
           <% end %>
           <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
-            <li><%= link_to_function "Add translation", "Note.create(#{@post.id})" %></li>
+            <li><%= link_to_function "Add Translation", "Note.create(#{@post.id})" %></li>
           <% end %>
           <% if @current_user && Favorite.exists?(["user_id = ? and post_id = ?", @current_user.id, @post.id]) %>
-            <li><%= link_to_function "Remove from favorites", "Favorite.destroy(#{@post.id})" %></li>
+            <li><%= link_to_function "Remove from Favorites", "Favorite.destroy(#{@post.id})" %></li>
           <% elsif !@post.is_deleted? && @current_user %>
-            <li><%= link_to_function "Add to favorites", "Favorite.create(#{@post.id})" %></li>
+            <li><%= link_to_function "Add to Favorites", "Favorite.create(#{@post.id})" %></li>
           <% end %>
           <% if @current_user && !@post.is_deleted? %>
-            <li><%= link_to "Add to pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
+            <li><%= link_to "Add to Pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
           <% end %>
           <% if @post.is_pending? && @current_user && @current_user.mod? %>
             <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[status]=active')}" %></li>
