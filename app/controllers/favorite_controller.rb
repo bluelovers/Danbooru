@@ -5,7 +5,16 @@ class FavoriteController < ApplicationController
   helper :post
   
   def show
-    @user = User.find(params[:id])
+    if params[:id]
+      @user = User.find(params[:id])
+    elsif @current_user
+      @user = @current_user
+    else
+      flash[:notice] = "No user specified"
+      redirect_to :back
+      return
+    end
+    
     set_title "#{@user.pretty_name}'s Favorites"
     
     if hide_explicit?

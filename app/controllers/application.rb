@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    if @current_user == nil && request.method == :get && !%w(xml js).include?(params[:format])
+    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
       key = cache_key()
       cached = Cache.get(key)
       unless cached.blank?
