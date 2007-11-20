@@ -21,7 +21,7 @@
 </table>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages) %>
+  <%= custom_pagination_links(@pages, :params => {:controller => "wiki", :action => "index", :query => params[:query]}) %>
 </div>
 
 <%= render :partial => "footer" %>
