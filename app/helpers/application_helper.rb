@@ -60,7 +60,17 @@ module ApplicationHelper
       '/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
     end
   end
-
+  
+  def compact_time(time)
+    if time > Time.now.beginning_of_day
+      time.strftime("%H:%M")
+    elsif time > Time.now.beginning_of_year
+      time.strftime("%b %e")
+    else
+      time.strftime("%Y-%m-%d")
+    end
+  end
+  
   def time_ago_in_words(time)
     from_time = time
     to_time = Time.now

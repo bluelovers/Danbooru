@@ -9,9 +9,9 @@
   <table class="listing">
     <thead>
       <tr>
-        <th width="65%">Title</th>
-        <th width="10%">Author</th>
-        <th width="20%">Last Updated</th>
+        <th width="70%">Title</th>
+        <th width="15%">Updated by</th>
+        <th width="10%">Updated at</th>
         <th width="5%">Responses</th>
       </tr>
     </thead>
@@ -33,8 +33,8 @@
               <span class="locked-topic">(locked)</span>
             <% end %>
           </td>
-          <td><%= h fp.author %></td>
-          <td><%= time_ago_in_words(fp.updated_at) %> ago by <%= fp.last_updater %></td>
+          <td><%= h fp.last_updater %></td>
+          <td><%= compact_time(fp.updated_at) %></td>
           <td><%= fp.response_count %></td>
         <% end %>
       <% end %>

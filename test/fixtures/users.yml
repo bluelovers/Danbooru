@@ -1,0 +1,19 @@
+admin:
+  id: 1
+  name: admin
+  password_hash: b3c976b76ba4505518baa3dd35fd5d335069963c
+  level: 20
+  login_count: 0
+  email: admin@danbooru.com
+  invite_count: 100
+  always_resize_images: false
+  created_at: 2007-01-01
+mod:
+  id: 2
+  name: mod
+  password_hash: b3c976b76ba4505518baa3dd35fd5d335069963c
+  level: 10
+  login_count: 0
+  email: mod@danbooru.com
+  tag_blacklist: loli toddlercon
+  

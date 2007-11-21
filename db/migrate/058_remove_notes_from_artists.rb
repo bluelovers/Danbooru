@@ -18,6 +18,6 @@ class RemoveNotesFromArtists < ActiveRecord::Migration
   end
 
   def self.down
-    raise "Not implemented"
+    add_column :artists, :notes, :text, :default => "", :null => false
   end
 end

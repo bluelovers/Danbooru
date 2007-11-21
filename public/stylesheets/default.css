@@ -156,7 +156,6 @@ table {
 }
 
 textarea {
-  width: 100%;
   font-family: monospace;
   font-size: 1.2em;
 }
@@ -773,12 +772,21 @@ div.status-notice {
   background: #EEE;
 }
 
+div.has-mail {
+  border: 2px solid #AFA;
+  padding: 1em;
+  margin: 1em;
+  background: #EFE;
+  font-size: 1.5em;
+  text-align: center;
+}
+
 div.status-notice p {
   margin: 0;
 }
 
 tr.highlight {
-  background: #EEE;
+  background: #FFD;
 }
 
 li.tag-type-character a {

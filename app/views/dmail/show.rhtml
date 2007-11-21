@@ -1,0 +1,19 @@
+<h4><%= h(@dmail.title) %></h4>
+
+<div style="margin-bottom: 1em;">
+  <em>Sent by <%= @dmail.from.name %> on <%= compact_time(@dmail.created_at) %></em>
+</div>
+
+<div style="width: 50em;">
+  <%= format_text(@dmail.body) %>
+</div>
+
+<div style="width: 50em; display: none;" id="response">
+  <%= render :partial => "compose" %>
+</div>
+
+<% content_for(:footer) do %>
+  <%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.to.name)}')" %> |
+<% end %>
+
+<%= render :partial => "footer" %>

@@ -34,5 +34,6 @@ class DropPostCountTriggers < ActiveRecord::Migration
   end
 
   def self.down
+    raise IrreversibleMigration
   end
 end

@@ -19,7 +19,6 @@ class AddFullTextSearch < ActiveRecord::Migration
   end
 
   def self.down
-    # I'm lazy
     raise IrreversibleMigration
   end
 end
