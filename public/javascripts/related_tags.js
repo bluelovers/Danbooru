@@ -55,7 +55,7 @@ RelatedTags.build_html = function(key, tags) {
       html += ' style="background: rgb(0, 111, 250); color: white;"'
     }
     
-    html += '>' + tag + '</a> '
+    html += '>' + tag.replace(/>/g, "&gt;").replace(/</g, "&lt;") + '</a> '
   }
   html += '</p>'
 

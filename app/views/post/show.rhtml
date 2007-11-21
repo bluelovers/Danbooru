@@ -240,7 +240,7 @@
         <%= javascript_tag "RelatedTags.init('', '')" %>
       <% end %>
       
-      <% if @current_user && @current_user.always_resize_images? && !@post.is_deleted? && @post.notes.empty? %>
+      <% if @current_user && @current_user.always_resize_images? && !@post.is_deleted? %>
         <%= javascript_tag "toggleImageResize()" %>
       <% end %>
 

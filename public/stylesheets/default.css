@@ -418,6 +418,12 @@ div#post-view div.note-box {
   opacity: 0.5;
 }
 
+div#post-view div.unsaved {
+  background: #FFF;
+  opacity: 0.33;
+  border: 1px solid red;
+}
+
 div#post-view div.note-corner {
   background: black;
   width: 7px;
@@ -426,6 +432,10 @@ div#post-view div.note-corner {
   bottom: 0;
   right: 0;
   cursor: se-resize;
+}
+
+div#post-view div.unsaved div.note-corner {
+  background: red;
 }
 
 div#post-view div.note-body {

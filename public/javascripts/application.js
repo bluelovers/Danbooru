@@ -4455,6 +4455,20 @@ function notice(msg) {
   $('notice').show()
   $('notice').innerHTML = msg
 }
+
+var ClipRange = Class.create()
+ClipRange.prototype = {
+  initialize: function(min, max) {
+    if (min > max) throw "paramError"
+      this.min = min
+      this.max = max
+    },
+    clip: function(x) {
+      if (x < this.min) return this.min
+      if (x > this.max) return this.max
+      return x
+  }
+}
 Cookie = {}
 
 Cookie.put = function(name, value, days) {
@@ -4596,22 +4610,26 @@ Forum.quote = function(id) {
 function toggleImageResize() {
   var img = $("image");
 
-  if ((img.full_size == 1) || (img.full_size == null)) {
-    img.full_size = 0;
+  if ((img.scale_factor == 1) || (img.scale_factor == null)) {
     img.original_width = img.width;
     img.original_height = img.height;
     var client_width = $("right-col").clientWidth - 15;
     var client_height = $("right-col").clientHeight;
 
     if (img.width > client_width) {
-      var ratio = client_width / img.width;
+      var ratio = img.scale_factor = client_width / img.width;
       img.width = img.width * ratio;
       img.height = img.height * ratio;
     }
   } else {
-    img.full_size = 1;
+    img.scale_factor = 1;
     img.width = img.original_width;
     img.height = img.original_height;
+  }
+  if (window.Note) {
+    for (var i=0; i<window.Note.all.length; ++i) {
+      window.Note.all[i].adjustScale()
+    }
   }
 }
 
@@ -4622,17 +4640,19 @@ Note.all = []
 Note.display = true
 
 Note.show = function() {
-	for (var i=0; i<Note.all.length; ++i) {
-		Note.all[i].bodyHide()
-		Note.all[i].elements.box.style.display = "block"
-	}
+/* 	for (var i=0; i<Note.all.length; ++i) { */
+/* 		Note.all[i].bodyHide() */
+/* 		Note.all[i].elements.box.style.display = "block" */
+/* 	} */
+	$('note-container').style.visibility = "visible"
 }
 
 Note.hide = function() {
-	for (var i=0; i<Note.all.length; ++i) {
-		Note.all[i].bodyHide()
-		Note.all[i].elements.box.style.display = "none"
-	}
+/* 	for (var i=0; i<Note.all.length; ++i) { */
+/* 		Note.all[i].bodyHide() */
+/* 		Note.all[i].elements.box.style.display = "none" */
+/* 	} */
+	$('note-container').style.visibility = "hidden"
 }
 
 Note.find = function(id) {
@@ -4672,7 +4692,7 @@ Note.updateNoteCount = function() {
 
 Note.create = function() {
 	var note = ''
-	note += '<div class="note-box" style="width: 150px; height: 150px; '
+	note += '<div class="note-box unsaved" style="width: 150px; height: 150px; '
 	note += 'top: ' + ($('image').clientHeight / 2 - 75) + 'px; '
 	note += 'left: ' + ($('image').clientWidth / 2 - 75) + 'px;" '
 	note += 'id="note-box-' + Note.counter + '">'
@@ -4711,22 +4731,30 @@ Note.prototype = {
 			image:		$('image')
 		}
 
-		// store the data
-		this.old = {
+		// for scaling
+		this.fullsize = {
 			left:           this.elements.box.offsetLeft,
 			top:            this.elements.box.offsetTop,
 			width:          this.elements.box.clientWidth,
-			height:         this.elements.box.clientHeight,
+			height:         this.elements.box.clientHeight
+		}
+		if (this.elements.image.scale_factor == null)
+			this.elements.image.scale_factor = 1
+
+		// store the data
+		this.old = {
 			raw_body:       raw_body,
 			formatted_body: this.elements.body.innerHTML
 		}
+		for (p in this.fullsize)
+			this.old[p] = this.fullsize[p]
 
 		// IE opacity
 		if(/MSIE/.test(navigator.userAgent) && !window.opera)
 			Element.setStyle(this.elements.box, {opacity: 0.5})
 
 		// reposition the box to be relative to the image
-
+		// is this needed? in what browsers?
 		this.elements.box.style.top = this.elements.box.offsetTop + "px"
 		this.elements.box.style.left = this.elements.box.offsetLeft + "px"
 
@@ -4771,9 +4799,9 @@ Note.prototype = {
 		var top = Position.deltaY
 		var left = Position.deltaX + 25
 
-		inject += '<div id="edit-box" style="width: 375px; height: 150px; top: '+top+'px; left: '+left+'px; position: absolute; z-index: 100; background: white; border: 1px solid black; padding: 1em;">'
-		inject += '<form onsubmit="return false;">'
-		inject += '<textarea rows="6" id="edit-box-text" style="width: 95%; margin-bottom: 1em;">' + this.textValue() + '</textarea>'
+		inject += '<div id="edit-box" style="top: '+top+'px; left: '+left+'px; position: absolute; visibility: visible; z-index: 100; background: white; border: 1px solid black; padding: 12px;">'
+		inject += '<form onsubmit="return false;" style="padding: 0; margin: 0;">'
+		inject += '<textarea rows="7" id="edit-box-text" style="width: 350px; margin: 2px 2px 12px 2px;">' + this.textValue() + '</textarea>'
 		inject += '<input type="submit" value="Save" name="save" id="note-save-' + this.id + '" />'
 		inject += '<input type="submit" value="Cancel" name="cancel" id="note-cancel-' + this.id + '" />'
 		inject += '<input type="submit" value="Remove" name="remove" id="note-remove-' + this.id + '" />'
@@ -4803,17 +4831,19 @@ Note.prototype = {
 			this.hideTimer = null
 		}
 
-		// hide the other notes
-		if (Note.all) {
-			for (var i=0; i<Note.all.length; ++i) {
-				if (Note.all[i].id != this.id) {
-					Note.all[i].bodyHide()
-				}
+		if (Note.noteShowingBody == this) return
+		if (Note.noteShowingBody) Note.noteShowingBody.bodyHide()
+		Note.noteShowingBody = this
+		
+		if (Note.zindex >= 9) {		/* don't use more than 10 layers (+1 for the body, which will always be above all notes) */
+			Note.zindex = 0
+			for (var i=0; i< Note.all.length; ++i) {
+				Note.all[i].elements.box.style.zIndex = 0
 			}
 		}
 
 		this.elements.box.style.zIndex = ++Note.zindex
-		this.elements.body.style.zIndex = Note.zindex
+		this.elements.body.style.zIndex = 10
 		this.elements.body.style.top = (this.elements.box.offsetTop + this.elements.box.clientHeight + 5) + "px"
 		this.elements.body.style.left = this.elements.box.offsetLeft + "px"
 		this.elements.body.style.display = "block"
@@ -4825,6 +4855,7 @@ Note.prototype = {
 
 	bodyHide: function(e) {
 		this.elements.body.style.display = "none"
+		if (Note.noteShowingBody == this) Note.noteShowingBody = null
 	},
 
 	dragStart: function(e) {
@@ -4836,6 +4867,12 @@ Note.prototype = {
 		this.cursorStartY = Event.pointerY(e)
 		this.boxStartX = this.elements.box.offsetLeft
 		this.boxStartY = this.elements.box.offsetTop
+		this.boundsX = new ClipRange(5,
+			this.elements.image.clientWidth
+			- this.elements.box.clientWidth - 5)
+		this.boundsY = new ClipRange(5,
+			this.elements.image.clientHeight
+			- this.elements.box.clientHeight - 5)
 		this.dragging = true
 
 		this.bodyHide()
@@ -4850,34 +4887,30 @@ Note.prototype = {
 		this.cursorStartY = null
 		this.boxStartX = null
 		this.boxStartY = null
+		this.boundsX = null
+		this.boundsY = null
 		this.dragging = false
 
 		this.bodyShow()
 	},
 
+	adjustScale: function() {
+		var ratio = this.elements.image.scale_factor
+		for (p in this.fullsize)
+			this.elements.box.style[p] = this.fullsize[p] * ratio + 'px'
+	},
+
 	drag: function(e) {
 		var left = this.boxStartX + Event.pointerX(e) - this.cursorStartX
 		var top = this.boxStartY + Event.pointerY(e) - this.cursorStartY
-		var bound
-
-		bound = 5
-		if (left < bound)
-			left = bound
-
-		bound = this.elements.image.clientWidth - this.elements.box.clientWidth - 5
-		if (left > bound)
-			left = bound
-
-		bound = 5
-		if (top < bound)
-			top = bound
-
-		bound = this.elements.image.clientHeight - this.elements.box.clientHeight - 5
-		if (top > bound)
-			top = bound
-
+		left = this.boundsX.clip(left)
+		top = this.boundsY.clip(top)
+		
 		this.elements.box.style.left = left + 'px'
 		this.elements.box.style.top = top + 'px'
+		var ratio = this.elements.image.scale_factor
+		this.fullsize.left = left / ratio
+		this.fullsize.top = top / ratio
 
 		Event.stop(e)
 	},
@@ -4889,6 +4922,10 @@ Note.prototype = {
 		this.boxStartHeight = this.elements.box.clientHeight
 		this.boxStartX = this.elements.box.offsetLeft
 		this.boxStartY = this.elements.box.offsetTop
+		this.boundsX = new ClipRange(10,
+			this.elements.image.clientWidth - this.boxStartX - 5)
+		this.boundsY = new ClipRange(10,
+			this.elements.image.clientHeight - this.boxStartY - 5)
 		this.dragging = true
 
 		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), false)
@@ -4911,34 +4948,24 @@ Note.prototype = {
 		this.boxStartHeight = null
 		this.boxStartX = null
 		this.boxStartY = null
+		this.boundsX = null
+		this.boundsY = null
 		this.dragging = false
 
 		Event.stop(e)
 	},
 
 	resize: function(e) {
-		var w = this.boxStartWidth + Event.pointerX(e) - this.cursorStartX
-		var h = this.boxStartHeight + Event.pointerY(e) - this.cursorStartY
-		var bound
+		var width = this.boxStartWidth + Event.pointerX(e) - this.cursorStartX
+		var height = this.boxStartHeight + Event.pointerY(e) - this.cursorStartY
+		width = this.boundsX.clip(width)
+		height = this.boundsY.clip(height)
 
-		if (w < 10)
-			w = 10
-
-		bound = this.elements.image.clientWidth - this.boxStartX - 5
-		if (w > bound)
-			w = bound
-
-		if (h < 10)
-			h = 10
-
-		bound = this.elements.image.clientHeight - this.boxStartY - 5
-		if (h > bound)
-			h = bound
-
-		this.elements.box.style.width = w + "px"
-		this.elements.box.style.height = h + "px"
-		this.elements.box.style.left = this.boxStartX + "px"
-		this.elements.box.style.top = this.boxStartY + "px"
+		this.elements.box.style.width = width + "px"
+		this.elements.box.style.height = height + "px"
+		var ratio = this.elements.image.scale_factor
+		this.fullsize.width = width / ratio
+		this.fullsize.height = height / ratio
 
 		Event.stop(e)
 	},
@@ -4983,10 +5010,9 @@ Note.prototype = {
 	},
 
 	save: function(e) {
-		this.old.left = this.elements.box.offsetLeft
-		this.old.top = this.elements.box.offsetTop
-		this.old.width = this.elements.box.clientWidth
-		this.old.height = this.elements.box.clientHeight
+		var note = this
+		for (p in this.fullsize)
+			this.old[p] = this.fullsize[p]
 		this.old.raw_body = $('edit-box-text').value
 		this.old.formatted_body = this.textValue()
 		this.elements.body.innerHTML = this.textValue()
@@ -5019,6 +5045,7 @@ Note.prototype = {
 				} else {
 					notice("Error: unknown")
 				}
+				note.elements.box.addClassName('unsaved')
 			},
 			onException: function(req,exc) {
 				notice("Exception: <pre>"+exc+"</pre>")
@@ -5027,14 +5054,14 @@ Note.prototype = {
 				notice("Note saved")
 				var response = eval("(" + req.responseText + ")")
 				if (response.old_id < 0) {
-					var n = Note.find(response.old_id)
-					n.is_new = false
-					n.id = response.new_id
-					n.elements.box.id = 'note-box-' + n.id
-					n.elements.body.id = 'note-body-' + n.id
-					n.elements.corner.id = 'note-corner-' + n.id
+					note.is_new = false
+					note.id = response.new_id
+					note.elements.box.id = 'note-box-' + note.id
+					note.elements.body.id = 'note-body-' + note.id
+					note.elements.corner.id = 'note-corner-' + note.id
 				}
-				$("note-body-" + response.new_id).innerHTML = response.formatted_body
+				note.elements.body.innerHTML = response.formatted_body
+				note.elements.box.removeClassName('unsaved')
 			}
 		})
 
@@ -5045,10 +5072,11 @@ Note.prototype = {
 		this.hideEditBox(e)
 		this.bodyHide()
 
-		this.elements.box.style.top = this.old.top + "px"
-		this.elements.box.style.left = this.old.left + "px"
-		this.elements.box.style.width = this.old.width + "px"
-		this.elements.box.style.height = this.old.height + "px"
+		var ratio = this.elements.image.scale_factor
+		for (p in this.fullsize) {
+			this.fullsize[p] = this.old[p]
+			this.elements.box.style[p] = this.fullsize[p] * ratio + 'px'
+		}
 		this.elements.body.innerHTML = this.old.formatted_body
 
 		Event.stop(e)
@@ -5423,7 +5451,7 @@ RelatedTags.build_html = function(key, tags) {
       html += ' style="background: rgb(0, 111, 250); color: white;"'
     }
     
-    html += '>' + tag + '</a> '
+    html += '>' + tag.replace(/>/g, "&gt;").replace(/</g, "&lt;") + '</a> '
   }
   html += '</p>'
 
