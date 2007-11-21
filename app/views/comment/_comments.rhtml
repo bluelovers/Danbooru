@@ -12,7 +12,7 @@
   <% content_tag("div", :id => "reply-#{post_id}", :style => (hide ? "display: none;" : nil)) do %>
     <% form_tag(:controller => "comment", :action => "create") do %>
       <%= hidden_field_tag "comment[post_id]", post_id %>
-      <%= text_area "comment", "body", :rows => 6, :cols => 40, :id => "reply-text-#{post_id}"%>
+      <%= text_area "comment", "body", :size => "60x7", :id => "reply-text-#{post_id}"%>
       <%= submit_tag "Post" %>
       <%= submit_tag "Post as Anonymous" %>
       <%= check_box_tag "comment[do_not_bump_post]", "1", false, :id => "nobump-#{post_id}" %>

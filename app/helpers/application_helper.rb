@@ -15,7 +15,7 @@ module ApplicationHelper
     text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
     text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
     text = text.gsub(/\[quote\](.+?)\[\/quote\]/m, '<div class="quote">\1</div>')
-    text = text.gsub(/<p><div>/, "<div>")
+    text = text.gsub(/<p><div/, "<div")
     text = text.gsub(/<\/div><\/p>/, "</div>")
     text = text.gsub(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
     text = text.gsub(/(\w+ said:)/, '<em>\1</em>')
@@ -67,7 +67,7 @@ module ApplicationHelper
     elsif time > Time.now.beginning_of_year
       time.strftime("%b %e")
     else
-      time.strftime("%Y-%m-%d")
+      time.strftime("%b %e, %Y")
     end
   end
   

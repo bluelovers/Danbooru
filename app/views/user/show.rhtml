@@ -1,247 +1,106 @@
 <h2><%= h(@user.pretty_name) %></h2>
 
-<table width="100%">
-  <tr>
-    <th width="10%">Joined</th>
-    <td width="90%"><%= @user.created_at.strftime("%c") %></td>
-  </tr>
-  <tr>
-    <th>Level</th>
-    <td><%= @user.pretty_level %></td>
-  </tr>
-  <tr>
-    <th>Posts</th>
-    <td><%= Post.count("user_id = #{@user.id}") %></td>
-  </tr>
-  <tr>
-    <th>Deleted Posts</th>
-    <td><%= link_to Post.count("status = 'deleted' and user_id = #{@user.id}"), :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
-  </tr>
-  <tr>
-    <th>Favorites</th>
-    <td><%= Favorite.count("user_id = #{@user.id}") %></td>
-  </tr>
-  <tr>
-    <th>Comments</th>
-    <td><%= Comment.count("user_id = #{@user.id}") %></td>
-  </tr>
-  <tr>
-    <th>Note Edits</th>
-    <td><%= link_to NoteVersion.count("user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
-  </tr>
-  <tr>
-    <th>Wiki Edits</th>
-    <td><%= WikiPageVersion.count("user_id = #{@user.id}") %></td>
-  </tr>
-  <tr>
-    <th>Forum Posts</th>
-    <td><%= ForumPost.count("creator_id = #{@user.id}") %></td>
-  </tr>
-  <tr>
-    <th>Invites</th>
-    <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "lower(name)", :select => "name, id").map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
-  </tr>
-  <tr>
-    <th>Record</th>
-    <td>
-      <span style="color: green;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = true", @user.id]) %></span>
-      /
-      <span style="color: red;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", @user.id]) %></span>
-      (<%= link_to "see all", :controller => "user_record", :action => "index", :user_id => @user.id %>)
-    </td>
-  </tr>
-</table>
-
-<div style="clear: both; margin-bottom: 2em;">
-  <h3><%= link_to "Recent Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h3>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5, :hide_explicit => hide_explicit?)} %>
-</div>
-
-<div style="clear: both; margin-bottom: 2em;">
-  <h3><%= link_to "Recent Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h3>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5, :hide_explicit => hide_explicit?)} %>
-</div>
-
-<div style="clear: both; margin-bottom: 2em;">
-  <h3>Similar Users</h3>
-  <table style="width: 30em;">
-    <thead>
-      <tr>
-        <th width="90%">User</th>
-        <th width="10%">Similarity</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @user.similar_users.each do |u| %>
-        <tr class="<%= cycle 'even', 'odd' %>">
-          <td><%= link_to h(User.find(u["user_id"]).pretty_name), :action => "show", :id => u["user_id"] %></td>
-          <td><%= number_to_percentage(100 * u["similarity"], :precision => 1) %></td>
-        </tr>
-      <% end %>
-    </tbody>
+<div style="float: left; width: 25em;">
+  <table width="100%">
+    <tr>
+      <th width="40%">Joined</th>
+      <td width="60%"><%= @user.created_at.strftime("%Y-%m-%d") %></td>
+    </tr>
+    <tr>
+      <th>Level</th>
+      <td><%= @user.pretty_level %></td>
+    </tr>
+    <tr>
+      <th>Posts</th>
+      <td><%= link_to Post.count("user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></td>
+    </tr>
+    <tr>
+      <th>Deleted Posts</th>
+      <td><%= link_to Post.count("status = 'deleted' and user_id = #{@user.id}"), :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
+    </tr>
+    <tr>
+      <th>Favorites</th>
+      <td><%= link_to Favorite.count("user_id = #{@user.id}"), :controller => "favorite", :action => "show", :id => @user.id %></td>
+    </tr>
+    <tr>
+      <th>Comments</th>
+      <td><%= Comment.count("user_id = #{@user.id}") %></td>
+    </tr>
+    <tr>
+      <th>Note Edits</th>
+      <td><%= link_to NoteVersion.count("user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
+    </tr>
+    <tr>
+      <th>Wiki Edits</th>
+      <td><%= WikiPageVersion.count("user_id = #{@user.id}") %></td>
+    </tr>
+    <tr>
+      <th>Forum Posts</th>
+      <td><%= ForumPost.count("creator_id = #{@user.id}") %></td>
+    </tr>
+    <tr>
+      <th>Invites</th>
+      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "lower(name)", :select => "name, id").map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
+    </tr>
+    <tr>
+      <th>Record</th>
+      <td>
+        <span style="color: green;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = true", @user.id]) %></span>
+        /
+        <span style="color: red;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", @user.id]) %></span>
+        (<%= link_to "see all", :controller => "user_record", :action => "index", :user_id => @user.id %>)
+      </td>
+    </tr>
   </table>
 </div>
 
-<div style="clear: both; margin-bottom: 2em;">
-  <h3>Recent Favorite <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('fav-' + x)}); Element.show('fav-copys')" %></h3>
-
-  <div id="fav-tags">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <div id="fav-artists" style="display: none;">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:artist]).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <div id="fav-chars" style="display: none;">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:character]).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <div id="fav-copys" style="display: none;">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.favorite_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:copyright]).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+<div style="float: left; width: 60em;">
+  <table width="100%">
+    <tr>
+      <th>Similar Users</th>
+      <td><%= @user.similar_users.map {|x| link_to(h(User.find(x["user_id"]).pretty_name), :action => "show", :id => x["user_id"])}.join(", ") %></td>
+    </tr>
+    <tr>
+      <th>Favorite Tags</th>
+      <td><%= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Favorite Artists</th>
+      <td><%= @user.favorite_tags(:type => Tag.types[:artist]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Favorite Characters</th>
+      <td><%= @user.favorite_tags(:type => Tag.types[:character]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Favorite Copyrights</th>
+      <td><%= @user.favorite_tags(:type => Tag.types[:copyright]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Uploaded Tags</th>
+      <td><%= @user.uploaded_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Uploaded Artists</th>
+      <td><%= @user.uploaded_tags(:type => Tag.types[:artist]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Uploaded Characters</th>
+      <td><%= @user.uploaded_tags(:type => Tag.types[:character]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+    <tr>
+      <th>Uploaded Copyrights</th>
+      <td><%= @user.uploaded_tags(:type => Tag.types[:copyright]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+    </tr>
+  </table>
 </div>
 
-<div style="clear: both; margin-bottom: 2em;">
-  <h3>Recent Uploaded <%= link_to_function "Tags", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-tags')" %>/<%= link_to_function "Artists", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-artists')" %>/<%= link_to_function "Characters", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-chars')" %>/<%= link_to_function "Copyrights", "['tags', 'artists', 'chars', 'copys'].each(function(x) {Element.hide('upload-' + x)}); Element.show('upload-copys')" %></h3>
-
-  <div id="upload-tags">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <div id="upload-artists" style="display: none;">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:artist]).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <div id="upload-chars" style="display: none;">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:character]).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <div id="upload-copys" style="display: none;">
-    <table style="width: 30em;">
-      <thead>
-        <tr>
-          <th width="80%">Name</th>
-          <th width="20%">Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.uploaded_tags(:start_date => 3.months.ago, :end_date => Time.now, :type => Tag.types[:copyright]).each do |tag| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to h(tag["tag"]), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}" %></td>
-            <td><%= tag["count"] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+<div style="float: left; clear: both; margin-bottom: 2em;">
+  <h4>Favorites</h4>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5, :hide_explicit => hide_explicit?)} %>
 </div>
 
-<div style="clear: both;" id="footer">
-  <%= link_to "All Users", :action => "index" %>
+<div style="float: left; clear: both; margin-bottom: 2em;">
+  <h4>Uploads</h4>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5, :hide_explicit => hide_explicit?)} %>
 </div>

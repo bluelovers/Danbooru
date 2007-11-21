@@ -246,6 +246,10 @@ span.date {
   color: #AAA;
 }
 
+ul.bare-list li {
+  list-style-type: none;
+}
+
 ul.flat-list {
   display: inline;
 }
@@ -363,33 +367,69 @@ div#user-stats ul {
   margin-top: 2em;
 }
 
+div#comment-list > div.post {
+  float: left;
+  margin-bottom: 50px;
+}
+
+div.response-list > div.post {
+  float: left;
+  clear: left;
+  margin-bottom: 35px;
+}
+
+div.response-list > div.post > div.author {
+  float: left;
+  width: 150px;
+  padding-right: 10px;
+}
+
+div.response-list > div.post > div.author > h6 {
+  font-size: 1.3em;
+  color: #000;
+}
+
+div.response-list > div.post > div.author > h6 > a{
+  color: #000;
+}
+
+div.response-list > div.post > div.content {
+  float: left;
+  width: 375px;
+  padding: 0 0 0 10px;
+  margin: 0;
+}
+
+div.response-list > div.post > div.content > div.footer {
+  margin-top: 1em;
+  color: #CCC;
+}
+
+div.response-list > div.post > div.content > div.footer a {
+  color: #666;
+}
+
+div.response-list > div.post > div.content > div.body {
+}
+
 div#comment-list div.col1 {
   width: 200px;
   float: left;
   clear: left;
-  margin-bottom: 5em;
 }
 
 div#comment-list div.col2 {
   width: 600px;
   float: left;
-  margin-bottom: 5em;
 }
 
-div#comment-list h6.comment-header a:hover {
-  color: #333;
-} 
-
-div#comment-list div.post-info {
-  margin-bottom: 1em;
+div#comment-list div.col3 {
+  width: 200px;
+  float: left;
 }
 
-div#comment-list div.post-info span.info {
-	margin-right: 1em;
-}
-
-div#comment-list div.comment {
-  margin-bottom: 1em;
+div#comment-list div.col3 strong {
+  color: #222;
 }
 
 div#post-list div.upload input {
@@ -605,42 +645,6 @@ div#forum > table th:first-child {
   text-align: left;
 }
 
-div.response-list > div.post {
-  margin-bottom: 2em;
-  float: left;
-  clear: both;
-}
-
-div.response-list > div.post > div.author {
-  float: left;
-  width: 10em;
-  padding-right: 2em;
-}
-
-div.response-list > div.post > div.author > h6.author {
-  font-size: 1.3em;
-}
-
-div.response-list > div.post > div.content {
-  float: left;
-  width: 30em;
-  padding-left: 2em;
-  min-height: 4em;
-}
-
-div.response-list > div.post > div.content > div.footer {
-  margin-top: 1em;
-  color: #CCC;
-}
-
-div.response-list > div.post > div.content > div.footer a {
-  color: #666;
-}
-
-div.response-list > div.post > div.content > div.body {
-  width: 40em;
-}
-
 p.tn {
   font-size: 0.8em;
   color: gray;
@@ -752,16 +756,12 @@ table.listing tbody tr:hover {
   background: #FFD;
 }
 
-span.tag-list a {
-  margin-right: 1em;
-}
-
 span.post-count {
   color: #AAA;
 }
 
 div.quote {
-  margin: 1em 0;
+  margin: 0 0 1em 0;
   padding: 1em;
   border: 1px solid #666;
   background: #EEE;

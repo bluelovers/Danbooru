@@ -5,28 +5,37 @@
 
   <% @posts.each do |post| %>
     <% unless post.blacklisted?(@current_user) %>
-      <% content_tag(:div, :class => "post", :id => "p#{post.id}") do %>
+      <div class="post" id="p<%= post.id %>">
         <div class="col1">
           <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
         </div>
-        <% content_tag(:div, :class => "col2", :id => "comments-for-p#{post.id}") do %>
-          <div class="post-info">
-            <div>
-              <span class="info"><strong>Date</strong> <%= post.created_at.strftime("%D %I:%M") %></span>
-              <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
-              <span class="info"><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
-              <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
-            </div>
-            <div>
-              <strong>Tags</strong> <span class="tag-list"><%= post.cached_tags.split(/ /).map {|x| link_to(h(x), :controller => "post", :action => "index", :tags => x)}.join(" ") %></span>
-            </div>
-            <% if post.comment_count > 6 %>
-              <p><%= link_to "#{post.comment_count - 6} comments hidden", :controller => "post", :action => "show", :id => post.id %></p>
-            <% end %>
-          </div>
-          <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>
-        <% end %>
-      <% end %>
+        <div class="col2" id="comments-for-p<%= post.id %>">
+          <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>          
+        </div>
+        <div class="col3">
+          <ul class="bare-list">
+            <li><strong>Uploaded by</strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></li>
+            <li><strong>Uploaded on</strong> <%= compact_time(post.created_at) %></li>
+            <li><strong>Score</strong> <%= content_tag :span, post.score, :id => "post-score-#{post.id}" %> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</li>
+            <li><strong>Rating</strong> <%= post.pretty_rating %></li>
+            <li>
+              <strong>Comments</strong>
+              <%= link_to post.comment_count, :controller => "post", :action => "show", :id => post.id %>
+              <% if post.comment_count > 6 %>
+                (<%= post.comment_count - 6 %> hidden)
+              <% end %>
+            </li>
+            <li>
+              <strong>Tags</strong>
+              <ul>
+                <% post.cached_tags.split(/ /).each do |tag| %>
+                  <li><%= link_to(h(tag), :controller => "post", :action => "index", :tags => tag) %></li>
+                <% end %>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
     <% end %>
   <% end %>
 

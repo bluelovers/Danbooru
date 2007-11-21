@@ -106,18 +106,14 @@ class User < ActiveRecord::Base
   
   def uploaded_tags(options = {})
     type = options[:type]
-    start_date = options[:start_date]
-    end_date = options[:end_date]
+    
+    if CONFIG["enable_caching"]
+      uploaded_tags = Cache.get("uploaded_tags/#{self.id}/#{type}")
+      return uploaded_tags unless uploaded_tags == nil
+    end
+    
     popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
     popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
-    
-    if start_date && end_date
-      date_sql = "p.created_at BETWEEN ? AND ?"
-      params = [start_date, end_date]
-    else
-      date_sql = "true"
-      params = []
-    end
 
     if type
       sql = <<-EOS
@@ -125,13 +121,12 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, tags t, posts p
         WHERE p.user_id = #{self.id}
         AND p.id = pt.post_id
-        AND #{date_sql}
         AND pt.tag_id = t.id
         #{popular_tags}
         AND t.tag_type = #{type.to_i}
         GROUP BY pt.tag_id
         ORDER BY count DESC
-        LIMIT 10
+        LIMIT 6
       EOS
     else
       sql = <<-EOS
@@ -139,31 +134,32 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, posts p
         WHERE p.user_id = #{self.id}
         AND p.id = pt.post_id
-        AND #{date_sql}
         #{popular_tags}
         GROUP BY pt.tag_id
         ORDER BY count DESC
-        LIMIT 10
+        LIMIT 6
       EOS
     end
     
-    return connection.select_all(User.sanitize_sql([sql, *params]))
+    uploaded_tags = connection.select_all(sql)
+    
+    if CONFIG["enable_caching"]
+      Cache.put("uploaded_tags/#{self.id}/#{type}", uploaded_tags, 1.day)
+    end
+    
+    return uploaded_tags
   end
 
   def favorite_tags(options = {})
     type = options[:type]
-    start_date = options[:start_date]
-    end_date = options[:end_date]
+    
+    if CONFIG["enable_caching"]
+      favorite_tags = Cache.get("favorite_tags/#{self.id}/#{type}")
+      return favorite_tags unless favorite_tags == nil
+    end
+    
     popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
     popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
-    
-    if start_date && end_date
-      date_sql = "f.created_at BETWEEN ? AND ?"
-      params = [start_date, end_date]
-    else
-      date_sql = "true"
-      params = []
-    end
 
     if type
       sql = <<-EOS
@@ -171,13 +167,12 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, tags t, favorites f
         WHERE f.user_id = #{self.id}
         AND f.post_id = pt.post_id
-        AND #{date_sql}
         AND pt.tag_id = t.id
         #{popular_tags}
         AND t.tag_type = #{type.to_i}
         GROUP BY pt.tag_id
         ORDER BY count DESC
-        LIMIT 10
+        LIMIT 6
       EOS
     else
       sql = <<-EOS
@@ -185,41 +180,42 @@ class User < ActiveRecord::Base
         FROM posts_tags pt, favorites f
         WHERE f.user_id = #{self.id}
         AND f.post_id = pt.post_id
-        AND #{date_sql}
         #{popular_tags}
         GROUP BY pt.tag_id
         ORDER BY count DESC
-        LIMIT 10
+        LIMIT 6
       EOS
     end
     
-    return connection.select_all(User.sanitize_sql([sql, *params]))
+    favorite_tags = connection.select_all(sql)
+    
+    if CONFIG["enable_caching"]
+      Cache.put("favorite_tags/#{self.id}/#{type}", favorite_tags, 1.day)
+    end
+    
+    return favorite_tags
   end
   
   def similar_users
     sql = <<-EOS
       SELECT 
-        f0.user_id,
+        f0.user_id as user_id,
         COUNT(*) / (SELECT sqrt((SELECT COUNT(*) FROM favorites WHERE user_id = f0.user_id) * (SELECT COUNT(*) FROM favorites WHERE user_id = #{id}))) AS similarity
       FROM
         favorites f0,
-        favorites f1
+        favorites f1,
+        users u
       WHERE
         f0.post_id = f1.post_id
         AND f1.user_id = #{id}
         AND f0.user_id <> #{id}
+        AND u.id = f0.user_id
       GROUP BY f0.user_id
       ORDER BY similarity DESC
-      LIMIT 50
+      LIMIT 6
     EOS
     
-    users = connection.select_all(sql)
-    sum = users.inject(0) {|sum, x| sum + x["similarity"].to_f}
-    users.each do |x|
-      x["similarity"] = x["similarity"].to_f / sum
-    end
-
-    return users[0, 10]
+    return connection.select_all(sql)
   end
   
   def set_role
