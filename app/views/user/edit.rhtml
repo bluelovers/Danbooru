@@ -1,18 +1,18 @@
 <div id="user-edit">
   <% form_tag(:controller => "user", :action => "update") do %>
-    <p><em>Separate individual tags and users with spaces.</em></p>
-
     <table class="form">
       <tbody>
-        <tr>
-          <th>
-            <label class="block" for="user_tag_blacklist">Tag Blacklist</label>
-            <p>Any post containing a blacklisted tag will be hidden.</p>
-          </th>
-          <td>
-            <%= text_field "user", "tag_blacklist", :size => 40 %>
-          </td>
-        </tr>
+        <% if @current_user.privileged? %>
+          <tr>
+            <th>
+              <label class="block" for="user_tag_blacklist">Tag Blacklist</label>
+              <p>Any post containing a blacklisted tag will be hidden. Separate tags with spaces.</p>
+            </th>
+            <td>
+              <%= text_field "user", "tag_blacklist", :size => 40 %>
+            </td>
+          </tr>
+        <% end %>
         <tr>
           <th>
             <label class="block" for="user_email">Email</label>

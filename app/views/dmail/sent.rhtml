@@ -15,11 +15,7 @@
       <% @dmails.each do |dmail| %>
         <tr class="<%= cycle 'even', 'odd' %>" id="row-<%= dmail.id %>">
           <td><%= h dmail.to.name %></td>
-          <% if dmail.has_seen %>
-            <td><%= link_to(h(dmail.title), :action => "show", :id => dmail.id) %></td>
-          <% else %>
-            <td><strong><%= link_to(h(dmail.title), :action => "show", :id => dmail.id) %></strong></td>
-          <% end %>
+          <td><%= link_to(h(dmail.title), :action => "show", :id => dmail.id) %></td>
           <td><%= compact_time(dmail.created_at) %></td>
         </tr>
       <% end %>

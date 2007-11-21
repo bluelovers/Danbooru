@@ -28,7 +28,7 @@ class DmailController < ApplicationController
       redirect_to :action => "inbox"
     else
       flash[:notice] = "Error: " + CGI.escapeHTML(@dmail.errors.full_messages.join(", "))
-      redirect_to :action => "inbox"
+      render :action => "compose"
     end
   end
   
@@ -43,17 +43,18 @@ class DmailController < ApplicationController
   def show
     @dmail = Dmail.find(params[:id])
 
-    # TODO: Add refined access checking
     if @dmail.to_id != @current_user.id && @dmail.from_id != @current_user.id
       flash[:notice] = "Access denied"
       redirect_to :action => "inbox"
       return
     end
 
-    @dmail.update_attribute(:has_seen, true)
+    if @dmail.to_id == @current_user.id
+      @dmail.update_attribute(:has_seen, true)
     
-    unless Dmail.exists?(["has_seen = false and to_id = ?", @current_user.id])
-      @current_user.update_attribute(:has_mail, false)
+      unless Dmail.exists?(["has_seen = false and to_id = ?", @current_user.id])
+        @current_user.update_attribute(:has_mail, false)
+      end
     end
   end
   

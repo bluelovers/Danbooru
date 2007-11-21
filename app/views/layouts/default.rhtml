@@ -24,7 +24,7 @@
       <li><%= link_to "Artists", :controller => "artist", :action => "index", :order => "date" %></li>
       <li><%= link_to "Tags", :controller => "tag", :action => "cloud" %></li>
       <li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
-      <% if @current_user && ForumPost.updated?(@current_user) %>
+      <% if @current_user && @current_user.privileged? && ForumPost.updated?(@current_user) %>
         <li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :class => "forum-update" %></li>
       <% else %>
         <li><%= link_to "Forum", :controller => "forum", :action => "index" %></li>

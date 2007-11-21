@@ -38,6 +38,10 @@ h6 {
   font-size: 1em;
 }
 
+textarea {
+  display: block;
+}
+
 img {
   border: none;
   vertical-align: middle;
