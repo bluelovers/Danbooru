@@ -408,13 +408,13 @@ div.response-list > div.post > div.content > div.body {
 }
 
 div#comment-list div.col1 {
-  width: 200px;
+  width: 180px;
   float: left;
   clear: left;
 }
 
 div#comment-list div.col2 {
-  width: 600px;
+  width: 580px;
   float: left;
 }
 
