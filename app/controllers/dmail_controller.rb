@@ -15,7 +15,15 @@ class DmailController < ApplicationController
     @dmail = Dmail.create(params[:dmail])
     
     if @dmail.errors.empty?
+      @recipient = @dmail.to
+      @recipient.update_attribute(:has_mail, true)
+      
+      if @recipient.receive_dmails? && @recipient.email.include?("@")
+        UserMailer.deliver_dmail(@recipient, @current_user, @dmail.title, @dmail.body)
+      end
+      
       User.update(@dmail.to_id, :has_mail => true)
+      
       flash[:notice] = "Message sent to #{params[:dmail][:to]}"
       redirect_to :action => "inbox"
     else
