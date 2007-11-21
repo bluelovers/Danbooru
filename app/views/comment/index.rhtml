@@ -29,7 +29,7 @@
               <strong>Tags</strong>
               <ul>
                 <% post.cached_tags.split(/ /).each do |tag| %>
-                  <li><%= link_to(h(tag), :controller => "post", :action => "index", :tags => tag) %></li>
+                  <li><%= link_to(h(tag.tr("_", " ")), :controller => "post", :action => "index", :tags => tag) %></li>
                 <% end %>
               </ul>
             </li>
