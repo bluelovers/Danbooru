@@ -15,6 +15,13 @@
     <% elsif @post.is_pending? %>
       <div class="status-notice">
         This post is pending moderator approval.
+        
+        <% if @current_user && !@current_user.privileged? && @current_user.id == @post.user_id %>
+          <div style="margin-top: 1em;">
+            <h6>When will my post get approved?</h6>
+            <p>All pending posts are placed in a moderation queue. Moderators then select good posts from the queue and approve them. In general they will not delete posts. If a post is not approved in three days, it will be automatically deleted.</p>
+          </div>
+        <% end %>
       </div>
     <% elsif @post.is_deleted? %>
       <div class="status-notice">
