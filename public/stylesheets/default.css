@@ -386,11 +386,6 @@ div.response-list > div.post > div.author {
 
 div.response-list > div.post > div.author > h6 {
   font-size: 1.3em;
-  color: #000;
-}
-
-div.response-list > div.post > div.author > h6 > a{
-  color: #000;
 }
 
 div.response-list > div.post > div.content {
