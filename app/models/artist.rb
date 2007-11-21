@@ -43,7 +43,7 @@ class Artist < ActiveRecord::Base
   end
   
   def commit_notes
-    if @notes
+    unless @notes.blank?
       wp = WikiPage.find_by_title(self.name)
       
       if wp == nil
