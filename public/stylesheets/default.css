@@ -367,25 +367,16 @@ div#user-stats ul {
   margin-top: 2em;
 }
 
-div#comment-list {
-  width: 980px;
-}
-
-div#comment-list > div.post {
-  float: left;
-  margin-bottom: 50px;
-}
-
 div.response-list > div.post {
   float: left;
   clear: left;
-  margin-bottom: 35px;
+  margin-bottom: 2em;
 }
 
 div.response-list > div.post > div.author {
   float: left;
-  width: 150px;
-  padding-right: 10px;
+  width: 15em;
+  padding-right: 1em;
 }
 
 div.response-list > div.post > div.author > h6 {
@@ -394,7 +385,7 @@ div.response-list > div.post > div.author > h6 {
 
 div.response-list > div.post > div.content {
   float: left;
-  width: 375px;
+  width: 30em;
   padding: 0 0 0 10px;
   margin: 0;
 }
@@ -412,23 +403,31 @@ div.response-list > div.post > div.content > div.body {
 }
 
 div#comment-list div.col1 {
-  width: 180px;
+  width: 200px;
   float: left;
   clear: left;
 }
 
 div#comment-list div.col2 {
-  width: 580px;
   float: left;
+  width: 50em;
 }
 
-div#comment-list div.col3 {
-  width: 200px;
+div#comment-list > div.post {
   float: left;
+  margin-bottom: 3em;;
 }
 
-div#comment-list div.col3 strong {
-  color: #222;
+div#comment-list > div.post > div.col2 > div.header {
+  margin-bottom: 1em;
+}
+
+div#comment-list > div.post > div.col2 > div.header > div > span.info {
+  margin-right: 1em;
+}
+
+div#comment-list > div.post > div.col2 > div.header > div.tags > a {
+  margin-right: 0.8em;
 }
 
 div#post-list div.upload input {
