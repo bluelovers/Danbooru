@@ -1,4 +1,4 @@
-<div class="space">
+<div style="margin-bottom: 1em;">
   <h6>Recent Changes (<%= link_to "all", :action => "recent_changes" %>)</h6>
   <ul>
     <%- WikiPage.find(:all, :limit => 25, :order => "updated_at desc").each do |page| -%>

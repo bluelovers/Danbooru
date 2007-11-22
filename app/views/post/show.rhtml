@@ -140,7 +140,7 @@
                  <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= note.formatted_body %></div>
               <% end %>
             </div>
-            <%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height, :class => "data") %>
+            <%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height) %>
           <% elsif @post.flash? %>
             <object width="<%= @post.width %>" height="<%= @post.height %>">
               <param name="movie" value="<%= @post.file_url %>"/>
@@ -153,7 +153,7 @@
             <p>You must download this file manually.</p>
           <% end %>
         </div>
-        <div class="space">
+        <div style="margin-bottom: 1em;">
           <p id="note-count"></p>
           <script type="text/javascript">
           //<![CDATA[
@@ -235,7 +235,7 @@
           </table>
           <div>
             <h5>Related Tags</h5>
-            <div class="space" id="related"><em>None</em></div>
+            <div style="margin-bottom: 1em;" id="related"><em>None</em></div>
           </div>
           <%= submit_tag "Save changes", :tabindex => 11, :accesskey => "s" %>
         <% end %>

@@ -1,4 +1,4 @@
-<div class="space">
+<div style="margin-bottom: 1em;">
   <h5>Search</h5>
   <% form_tag({:controller => "post", :action => "index"}, :method => "get") do %>
     <%= text_field_tag("tags", params[:tags], :size => 20) %>

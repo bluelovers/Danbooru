@@ -9,46 +9,9 @@ h1, h2, h3, h4 {
 }
 
 body {
-  font-size: 0.8em;
+  font-size: 80%;
   background: white;
   padding: 1em 3em;
-}
-
-h1 {
-  font-size: 2em;
-}
-
-h2 {
-  font-size: 1.8em;
-}
-
-h3 {
-  font-size: 1.6em;
-}
-
-h4 {
-  font-size: 1.4em;
-}
-
-h5 {
-  font-size: 1.2em;
-}
-
-h6 {
-  font-size: 1em;
-}
-
-textarea {
-  display: block;
-}
-
-img {
-  border: none;
-  vertical-align: middle;
-}
-
-input, textarea {
-  padding: 0 0.3em;
 }
 
 a:link {
@@ -75,10 +38,6 @@ a.last-page {
   color: #666;
 }
 
-span.locked-topic {
-  color: #666;
-}
-
 a.spoiler {
   color: black;
   background: black;
@@ -89,20 +48,88 @@ a.spoiler:hover {
   color: white;
 }
 
-a.help {
-  background: #E6E6E6;
+code {
+  font-family: monospace;
+  font-size: 1.2em;
 }
 
-.link {
-  color: #006FFA;
-  background: none;
-  border: none;
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.8em;
+}
+
+h2.wiki-title {
+  color: #003DD8;
+  margin-bottom: 0.25em;
+}
+
+h3 {
+  font-size: 1.6em;
+}
+
+h4 {
+  font-size: 1.4em;
+}
+
+h5 {
+  font-size: 1.2em;
+}
+
+h6 {
   font-size: 1em;
-  cursor: pointer;
 }
 
-.link:hover {
-  color: #33CFFF;
+img {
+  border: none;
+  vertical-align: middle;
+}
+
+img.preview {
+  margin: auto;
+}
+
+input {
+  padding: 0 0.3em;
+}
+
+li {
+  margin-left: 1em;
+}
+
+ol {
+  margin-left: 1em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+span.author {
+  color: #AAA;
+}
+
+span.date {
+  color: #AAA;
+}
+
+span.locked-topic {
+  color: #666;
+}
+
+span.informational {
+  cursor: help;
+}
+
+span.thumb {
+  height: 180px;
+  width: 180px;
+  display: inline-block;
+  float: left;
+  text-align: center;
+  vertical-align: middle;
 }
 
 strong.divider {
@@ -110,8 +137,14 @@ strong.divider {
   color: gray;
 }
 
-span.author {
-  color: gray;
+td {
+  padding: 1px 4px; 
+  vertical-align: top;
+}
+
+textarea {
+  display: block;
+  padding: 0 0.3em;
 }
 
 th {
@@ -122,37 +155,12 @@ th {
   white-space: nowrap;
 }
 
-tr.padded th {
-  padding: 0 1em;
-}
-
 tr.even {
   background: rgb(247, 247, 247);
 }
 
 tr.pending-tag {
   background: rgb(240, 255, 240);
-}
-
-td {
-  padding: 1px 4px; 
-  vertical-align: top;
-}
-
-fieldset {
-  border: 1px dashed gray;
-  margin-bottom: 1em;
-  padding: 0.5em 1em;
-  width: 50%;
-}
-
-legend {
-  letter-spacing: 0.5em;
-}
-
-code {
-  font-family: monospace;
-  font-size: 1.2em;
 }
 
 table {
@@ -164,36 +172,66 @@ textarea {
   font-size: 1.2em;
 }
 
-ol {
-  margin-left: 1em;
-}
-
 ul {
   margin-bottom: 1em;
 }
 
-li {
-  margin-left: 1em;
+ul.bare-list li {
+  list-style-type: none;
 }
 
-p {
+ul.flat-list {
+  display: inline;
+}
+
+ul.flat-list li {
+  display: inline;
+  list-style-type: none;
+  font-weight: bold;
+  margin: 0 1em 0 0;
+}
+
+ul.flat-list li a {
+  font-weight: normal;
+}
+
+ul.flat-list li a.forum-update {
+  font-weight: bold;
+}
+
+
+
+div#comment-list > div.post {
+  float: left;
+  margin-bottom: 3em;;
+}
+
+div#comment-list > div.post > div.col1 {
+  width: 200px;
+  float: left;
+  clear: left;
+}
+
+div#comment-list > div.post > div.col2 {
+  float: left;
+  width: 50em;
+}
+
+div#comment-list > div.post > div.col2 > div.header {
   margin-bottom: 1em;
 }
 
-h5 a:link {
-  color: black;
+div#comment-list > div.post > div.col2 > div.header > div > span.info {
+  margin-right: 1em;
 }
 
-h5 a:visited {
-  color: black;
+div#comment-list > div.post > div.col2 > div.header > div.tags > a {
+  margin: 0 0.5em 0 0;
 }
 
-h5 a:hover {
-  color: #33CFFF;
-}
-
-.space {
-  margin-bottom: 1em;
+div.content {
+  float: left;
+  width: 77%;
 }
 
 div#header {
@@ -208,88 +246,11 @@ div#footer {
   clear: both;
 }
 
-div.sidebar {
-  width: 20%;
-  margin-right: 1em;
-  float: left;
-  overflow: hidden;
-}
-
-div.sidebar li {
-  list-style-type: none;
-  margin: 0;
-}
-
-div.content {
-  float: left;
-  width: 77%;
-}
-
-span.informational {
-  cursor: help;
-}
-
-img.preview {
-  margin: auto;
-}
-
-span.thumb {
-  height: 180px;
-  width: 180px;
-  display: inline-block;
-  float: left;
-  text-align: center;
-  vertical-align: middle;
-}
-
-span.date {
-  color: #AAA;
-}
-
-ul.bare-list li {
-  list-style-type: none;
-}
-
-ul.flat-list {
-  display: inline;
-}
-
-ul.flat-list * {
-  display: inline;
-}
-
-ul.flat-list li {
-  list-style-type: none;
-  font-weight: bold;
-  margin: 0 1em 0 0;
-}
-
-ul.flat-list li a {
-  font-weight: normal;
-}
-
-ul.flat-list li a.forum-update {
-  font-weight: bold;
-}
-
 div#notice {
   font-size: 1.2em;
   color: red;
   font-weight: bold;
   margin-bottom: 1em;
-}
-
-form.button-to input {
-  border: none;
-  color: #006FFA;
-  background: none;
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: normal;
-}
-
-form.button-to input:hover {
-  color: #33CFFF;
 }
 
 div#paginator {
@@ -301,25 +262,11 @@ div#paginator {
   clear: both;
 }
 
-div#paginator span {
-  margin: 0 3px;
-  padding: 2px 6px;
-}
-
 div#paginator a {
   margin: 0 3px;
   padding: 2px 6px;
   font-weight: normal;
   border: 1px solid #EAEAEA;
-}
-
-div#paginator a.current {
-  border: 1px solid #AAA;
-}
-
-div#paginator a:hover {
-  background: rgb(60, 60, 220);
-  color: white;
 }
 
 div#paginator a.arrow {
@@ -331,40 +278,73 @@ div#paginator a.arrow:hover {
   color: #33CFFF;
 }
 
-div#static-index {
-  text-align: center;
+div#paginator a.current {
+  border: 1px solid #AAA;
 }
 
-div#static-index div#links a {
-  margin: 0 0.5em;
+div#paginator a:hover {
+  background: rgb(60, 60, 220);
+  color: white;
 }
 
-div#static-more li {
-  list-style-type: none;
-  margin: 0;
+div#paginator span {
+  margin: 0 3px;
+  padding: 2px 6px;
 }
 
-div#static-more div {
-  float: left;
-  width: 25%;
+div#post-view > div#right-col > div > div#note-container {
+  position: absolute;
 }
 
-div#static-more ul {
-  margin-top: 2em;
+div#post-view > div#right-col > div > div#note-container > div.note-body {
+  background: #FFE;
+  border: 1px solid black;
+  display: none;
+  width: 140px;
+  height: 100px;
+  position: absolute;
+  padding: 5px;
+  cursor: pointer;
+  overflow: auto;
 }
 
-div#user-stats li {
-  list-style-type: none;
-  margin: 0;
+div#post-view > div#right-col > div > div#note-container > div.note-box {
+  position: absolute;
+  border: 1px solid black;
+  width: 150px;
+  height: 150px;
+  cursor: move;
+  background: #FFE;
+  opacity: 0.5;
 }
 
-div#user-stats div {
-  float: left;
-  width: 30%;
+div#post-view > div#right-col > div > div#note-container > div.note-box > div.note-corner {
+  background: black;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
 }
 
-div#user-stats ul {
-  margin-top: 2em;
+div#post-view > div#right-col > div > div#note-container > div.unsaved {
+  background: #FFF;
+  opacity: 0.33;
+  border: 1px solid red;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.unsaved > div.note-corner {
+  background: red;
+}
+
+div#post-view > div#right-col > div > img {
+  margin-right: 5em;
+}
+
+div#post-view > div#right-col > div#edit {
+  margin-bottom: 2em;
+  padding: 1em;
 }
 
 div.response-list > div.post {
@@ -399,102 +379,38 @@ div.response-list > div.post > div.content > div.footer a {
   color: #666;
 }
 
-div.response-list > div.post > div.content > div.body {
-}
-
-div#comment-list div.col1 {
-  width: 200px;
-  float: left;
-  clear: left;
-}
-
-div#comment-list div.col2 {
-  float: left;
-  width: 50em;
-}
-
-div#comment-list > div.post {
-  float: left;
-  margin-bottom: 3em;;
-}
-
-div#comment-list > div.post > div.col2 > div.header {
-  margin-bottom: 1em;
-}
-
-div#comment-list > div.post > div.col2 > div.header > div > span.info {
+div.sidebar {
+  width: 20%;
   margin-right: 1em;
+  float: left;
+  overflow: hidden;
 }
 
-div#comment-list > div.post > div.col2 > div.header > div.tags > a {
-  margin-right: 0.8em;
+div.sidebar li {
+  list-style-type: none;
+  margin: 0;
 }
 
-div#post-list div.upload input {
-  margin-right: 1em;
+div#static-index {
+  text-align: center;
 }
 
-div#post-view img.data {
-  margin-right: 5em;
+div#static-index > div#links > a {
+  margin: 0 0.5em;
 }
 
-div#post-view div#related0 img {
-  padding: 0;
+div#static-more > div {
+  float: left;
+  width: 25%;
 }
 
-div#post-view div#note-container {
-  position: absolute;
+div#static-more > div > ul {
+  margin-top: 2em;
 }
 
-div#post-view div.note-box {
-  position: absolute;
-  border: 1px solid black;
-  width: 150px;
-  height: 150px;
-  cursor: move;
-  background: #FFE;
-  opacity: 0.5;
-}
-
-div#post-view div.unsaved {
-  background: #FFF;
-  opacity: 0.33;
-  border: 1px solid red;
-}
-
-div#post-view div.note-corner {
-  background: black;
-  width: 7px;
-  height: 7px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  cursor: se-resize;
-}
-
-div#post-view div.unsaved div.note-corner {
-  background: red;
-}
-
-div#post-view div.note-body {
-  background: #FFE;
-  border: 1px solid black;
-  display: none;
-  width: 140px;
-  height: 100px;
-  position: absolute;
-  padding: 5px;
-  cursor: pointer;
-  overflow: auto;
-}
-
-div#post-view div#edit {
-  margin-bottom: 2em;
-  padding: 1em;
-}
-
-div#post-view span.radio {
-  margin-right: 1em;
+div#static-more > div > ul > li {
+  list-style-type: none;
+  margin: 0;
 }
 
 div#tag-list {
@@ -502,54 +418,49 @@ div#tag-list {
   margin-bottom: 2em;
 }
 
-div#tag-list a {
+div#tag-list > a {
   padding-right: 5px;
 }
 
-div#alpha-paginator {
-  text-align: center;
+div.wiki > h2.title {
+  color: #009;
 }
 
-div#alpha-paginator a {
-  margin: 0.2em;
-}
-
-div#wiki-view {
+div#wiki-show > div#body {
   line-height: 2em;
   width: 50em;
   text-align: left;
 }
 
-h2.wiki-title {
-  color: #003DD8;
-  margin-bottom: 0.25em;
+div#wiki-show > div#body > ul {
+  line-height: 1.2em;
 }
 
-span.old-version {
-  color: gray;
+div#wiki-show > div#body > ul ul {
+  margin: 0 0 0 1.5em;
 }
 
-p.linked-from {
-  color: gray;
-  font-style: italic;
-}
-
-div.diff {
+div#wiki-diff > div#body {
   font-family: monospace;
   font-size: 1.2em;
-  margin-top: 1em;
+  margin-top: 1em;  
 }
 
-del {
-  font-family: monospace;
+div#wiki-diff del {
   background-color: #f88;
   text-decoration: line-through;
 }
 
-ins {
-  font-family: monospace;
+div#wiki-diff ins {
   background-color: #8f8;
 }
+
+
+
+
+
+
+
 
 div#admin-edit-user option {
   width: 15em;
