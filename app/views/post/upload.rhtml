@@ -44,7 +44,7 @@
         <tr>
           <th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
           <td>
-            <%= text_area "post", "tags", :size => "50x2", :tabindex => 3, :onkeypress => "Post.submit_tags('edit-form', event)" %><br/>
+            <%= text_area "post", "tags", :size => "50x2", :tabindex => 3, :onkeypress => "Post.submit_tags('edit-form', event)" %>
             <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
             <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
             <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
