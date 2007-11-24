@@ -26,7 +26,12 @@ class Tag < ActiveRecord::Base
       @tag_types
     end
     
-    def type_name(tag_type, general_string=true)
+    def find_type(name)
+      tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
+      return type_name(tag.tag_type)
+    end
+    
+    def type_name(tag_type, general_string = true)
       case tag_type
         when Tag.types[:artist]
           "artist"

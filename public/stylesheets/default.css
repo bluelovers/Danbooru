@@ -283,7 +283,8 @@ ul.link-page > li {
 	list-style-type: none;
 }
 
-.tag-type-artist > a {
+.tag-type-artist > a,
+a.tag-type-artist {
   color: #A00;
 }
 
@@ -337,7 +338,7 @@ div#comment-list > div.post > div.col2 > div.header > div > span.info {
   margin-right: 1em;
 }
 
-div#comment-list > div.post > div.col2 > div.header > div.tags > a {
+div#comment-list > div.post > div.col2 > div.header > div.tags > span {
   margin: 0 0.5em 0 0;
 }
 

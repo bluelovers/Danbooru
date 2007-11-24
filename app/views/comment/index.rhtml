@@ -21,7 +21,12 @@
               <% end %>
             </div>
             <div class="tags">
-              <strong>Tags</strong> <%= post.cached_tags.split(/ /).map {|x| link_to(h(x.tr("_", " ")), :controller => "post", :action => "index", :tags => x)}.join(" ") %>
+              <strong>Tags</strong> 
+              <% post.cached_tags.split(/ /).each do |name| %>
+                <span class="tag-type-<%= Tag.find_type(name) %>">
+                  <%= link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
+                </span>
+              <% end %>
             </div>
           </div>
           <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>          
