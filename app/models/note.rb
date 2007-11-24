@@ -3,7 +3,7 @@ class Note < ActiveRecord::Base
 
   belongs_to :post
   before_save :blank_body
-  acts_as_versioned :table_name => "note_versions", :order => "updated_at DESC"
+  acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
 
   def self.active
@@ -15,7 +15,8 @@ class Note < ActiveRecord::Base
   end
 
   def formatted_body
-    self.body.gsub(/<tn>(.+?)<\/tn>/, '<br/><p class="tn">\1</p>').gsub(/\n/, '<br/>')
+    # TODO: need to sanitize body
+    self.body.gsub(/\[tn\](.+?)\[\/tn\]/m, '<br/><p class="tn">\1</p>').gsub(/\n/, '<br/>')
   end
 
   def update_post

@@ -53,6 +53,18 @@ code {
   font-size: 1.2em;
 }
 
+dd {
+  margin-bottom: 1em;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dt.bad {
+  color: red;
+}
+
 h1 {
   font-size: 2em;
 }
@@ -87,12 +99,37 @@ img {
   vertical-align: middle;
 }
 
+img.flagged {
+  border: 3px solid #A00;
+}
+
+img.has-children {
+  border: 3px solid #0A0;
+}
+
+img.pending {
+  border: 3px solid #00A;
+}
+
 img.preview {
   margin: auto;
 }
 
 input {
   padding: 0 0.3em;
+}
+
+input[type=password]:focus {
+	background: #FFC;
+}
+
+input[type=text]:focus {
+	background: #FFC;
+}
+
+label {
+	font-weight: bold;
+  white-space: nowrap;
 }
 
 li {
@@ -123,6 +160,10 @@ span.informational {
   cursor: help;
 }
 
+span.post-count {
+  color: #AAA;
+}
+
 span.thumb {
   height: 180px;
   width: 180px;
@@ -137,17 +178,20 @@ strong.divider {
   color: gray;
 }
 
-td {
+table {
+  margin-bottom: 2em;
+}
+
+table.form {
+  width: 70em;
+}
+
+table td {
   padding: 1px 4px; 
   vertical-align: top;
 }
 
-textarea {
-  display: block;
-  padding: 0 0.3em;
-}
-
-th {
+table th {
   font-weight: bold;
   text-align: left;
   vertical-align: top;
@@ -155,21 +199,50 @@ th {
   white-space: nowrap;
 }
 
-tr.even {
+table tr.even {
   background: rgb(247, 247, 247);
 }
 
-tr.pending-tag {
+table tr.highlight {
+  background: #FFD;
+}
+
+table tr.pending-tag {
   background: rgb(240, 255, 240);
 }
 
-table {
-  margin-bottom: 2em;
+table.form p {
+	font-size: 0.8em;
+  font-weight: normal;
+	width: 15em;
+	margin: 0;
+	padding: 0 1em 0 0;
+}
+
+table.form th {
+	background: white;
+	color: black;
+	white-space: normal;
+  padding-right: 2em;
+}
+
+table.form > tfoot input {
+	margin-top: 1em;
+}
+
+table.highlightable > tbody > tr:hover {
+  background: #FFD;
 }
 
 textarea {
+  display: block;
+  padding: 0 0.3em;
   font-family: monospace;
   font-size: 1.2em;
+}
+
+textarea:focus {
+	background: #FFC;
 }
 
 ul {
@@ -199,7 +272,46 @@ ul.flat-list li a.forum-update {
   font-weight: bold;
 }
 
+ul.link-page {
+	font-size: 1.2em;
+	font-weight: bold;
+}
 
+ul.link-page > li {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+ul.tag-sidebar > li.tag-type-artist > a {
+  color: #A00;
+}
+
+ul.tag-sidebar > li.tag-type-artist > a:hover {
+  color: #33CFFF;
+}
+
+ul.tag-sidebar > li.tag-type-character > a {
+  color: #0A0;
+}
+
+ul.tag-sidebar > li.tag-type-character > a:hover {
+  color: #33CFFF;
+}
+
+ul.tag-sidebar > li.tag-type-copyright > a {
+  color: #A0A;
+}
+
+ul.tag-sidebar > li.tag-type-copyright > a:hover {
+  color: #33CFFF;
+}
+
+
+
+div#artist-index > table td {
+  white-space: nowrap;
+}
 
 div#comment-list > div.post {
   float: left;
@@ -234,6 +346,15 @@ div.content {
   width: 77%;
 }
 
+div.has-mail {
+  border: 2px solid #AFA;
+  padding: 1em;
+  margin: 1em;
+  background: #EFE;
+  font-size: 1.5em;
+  text-align: center;
+}
+
 div#header {
   margin-bottom: 1em;
 }
@@ -246,11 +367,64 @@ div#footer {
   clear: both;
 }
 
+div#forum > table th:first-child {
+  text-align: left;
+}
+
+div#forum > table td:first-child {
+  text-align: left;
+}
+
+div.help {
+  width: 40em;
+  margin-top: 2em;
+}
+
+div.help a.code {
+  font-family: monospace;
+}
+
+div.help div.code {
+  border: 1px dashed green;
+  margin: 1em 0;
+  padding: 1em 2em;
+  background: #EEE;
+  overflow: hidden;
+  font-family: monospace;
+}
+
+div.help > div.section {
+  margin-bottom: 4em;
+}
+
+div.help > div.section > div.section {
+  margin-bottom: 2em;
+}
+
+div.help h1,
+div.help h2,
+div.help h3,
+div.help h4 {
+  margin: 0 0 0.5em 0;  
+}
+
+div.help h4 {
+  color: #060;
+}
+
+div#info {
+	font-style: italic;
+}
+
 div#notice {
   font-size: 1.2em;
   color: red;
   font-weight: bold;
   margin-bottom: 1em;
+}
+
+div.page {
+	width: 40em;
 }
 
 div#paginator {
@@ -292,6 +466,11 @@ div#paginator span {
   padding: 2px 6px;
 }
 
+div#post-popular > h3 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
 div#post-view > div#right-col > div > div#note-container {
   position: absolute;
 }
@@ -306,6 +485,11 @@ div#post-view > div#right-col > div > div#note-container > div.note-body {
   padding: 5px;
   cursor: pointer;
   overflow: auto;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.note-body > p.tn {
+  font-size: 0.8em;
+  color: gray;
 }
 
 div#post-view > div#right-col > div > div#note-container > div.note-box {
@@ -345,6 +529,21 @@ div#post-view > div#right-col > div > img {
 div#post-view > div#right-col > div#edit {
   margin-bottom: 2em;
   padding: 1em;
+}
+
+div.quote {
+  margin: 0 0 1em 0;
+  padding: 1em;
+  border: 1px solid #666;
+  background: #EEE;
+}
+
+div#related {
+  margin: 0 3em 1em 0;
+}
+
+div#related > p > a {
+  margin-right: 1em;
 }
 
 div.response-list > div.post {
@@ -413,6 +612,17 @@ div#static-more > div > ul > li {
   margin: 0;
 }
 
+div.status-notice {
+  border: 2px solid #666;
+  padding: 1em;
+  margin: 1em;
+  background: #EEE;
+}
+
+div.status-notice p {
+  margin: 0;
+}
+
 div#tag-list {
   text-align: center;
   margin-bottom: 2em;
@@ -420,6 +630,14 @@ div#tag-list {
 
 div#tag-list > a {
   padding-right: 5px;
+}
+
+div#user-record > table > tbody > tr.positive-record {
+  background: #EFE;
+}
+
+div#user-record > table > tbody > tr.negative-record {
+  background: #FEE;
 }
 
 div.wiki > h2.title {
@@ -453,293 +671,4 @@ div#wiki-diff del {
 
 div#wiki-diff ins {
   background-color: #8f8;
-}
-
-
-
-
-
-
-
-
-div#admin-edit-user option {
-  width: 15em;
-}
-
-div#upload-list td {
-  padding: 0 1em;
-}
-
-div#user-index {
-  width: 40em;
-}
-
-div#user-list {
-  width: 40em;
-}
-
-div#user-list table {
-  width: 100%;
-}
-
-div#post-add table div {
-  width: 36em;
-}
-
-div#related {
-  margin: 0 3em 1em 0;
-}
-
-div#related a {
-  margin-right: 1em;
-}
-
-div#related p {
-  margin-bottom: 1em;
-}
-
-div#post-popular {
-  text-align: center;
-}
-
-div#post-popular * {
-  margin: auto;
-}
-
-div#post-popular h1 {
-  margin-bottom: 1em;
-}
-
-div#post-tag-history tbody tr:hover {
-  background: #FFD;
-}
-
-div#post-tag-history li {
-  list-style-type: none;
-  margin: 0;
-}
-
-div#amb-content {
-  font-size: 1.2em;
-  font-style: italic;
-}
-
-ul.tag-explore {
-  margin: 0;
-}
-
-ul.tag-explore li {
-  list-style-type: none;
-  margin: 0 0 0 1em;
-}
-
-div#tag-explore img {
-  margin: 1em;
-}
-
-tr.footer > td {
-  padding-top: 1em;
-}
-
-div#artist td {
-  white-space: nowrap;
-}
-
-div#forum > table {
-  width: 100%;
-}
-
-div#forum > table td:first-child,
-div#forum > table th:first-child {
-  text-align: left;
-}
-
-p.tn {
-  font-size: 0.8em;
-  color: gray;
-}
-
-ul.news li {
-  margin-bottom: 0.5em;
-}
-
-div.help {
-  width: 40em;
-  margin-top: 2em;
-}
-
-div.help div.section {
-  margin-bottom: 4em;
-}
-
-div.help div.section div.section {
-  margin-bottom: 2em;
-}
-
-div.help h4 {
-  margin-bottom: 0.5em;
-  color: #060;
-}
-
-div.help h1, div.help h2, div.help h3, div.help h4 {
-  margin: 0 0 0.5em 0;
-}
-
-dt {
-  font-weight: bold;
-}
-
-dt.bad {
-  color: red;
-}
-
-dd {
-  margin-bottom: 1em;
-}
-
-div.help div.code {
-  border: 1px dashed green;
-  margin: 1em 0;
-  padding: 1em 2em;
-  background: #EEE;
-  overflow: hidden;
-  font-family: monospace;
-}
-
-a.code {
-  font-family: monospace;
-}
-
-table.form {
-  width: 70em;
-}
-
-table.form th {
-	background: white;
-	color: black;
-	white-space: normal;
-  padding-right: 2em;
-}
-
-label {
-	font-weight: bold;
-  white-space: nowrap;
-}
-
-table.form p {
-	font-size: 0.8em;
-  font-weight: normal;
-	width: 15em;
-	margin: 0;
-	padding: 0 1em 0 0;
-}
-
-table.form tfoot input {
-	margin-top: 1em;
-}
-
-ul.link-page {
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
-ul.link-page li {
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-}
-
-div.page {
-	width: 40em;
-}
-
-textarea:focus, input[type=text]:focus, input[type=password]:focus {
-	background: #FFC;
-}
-
-div#info {
-	font-style: italic;
-}
-
-table.listing tbody tr:hover {
-  background: #FFD;
-}
-
-span.post-count {
-  color: #AAA;
-}
-
-div.quote {
-  margin: 0 0 1em 0;
-  padding: 1em;
-  border: 1px solid #666;
-  background: #EEE;
-}
-
-img.has-children {
-  border: 3px solid #0F0;
-}
-
-img.pending {
-  border: 3px solid blue;
-}
-
-img.flagged {
-  border: 3px solid red;
-}
-
-div.status-notice {
-  border: 2px solid #666;
-  padding: 1em;
-  margin: 1em;
-  background: #EEE;
-}
-
-div.has-mail {
-  border: 2px solid #AFA;
-  padding: 1em;
-  margin: 1em;
-  background: #EFE;
-  font-size: 1.5em;
-  text-align: center;
-}
-
-div.status-notice p {
-  margin: 0;
-}
-
-tr.highlight {
-  background: #FFD;
-}
-
-li.tag-type-character a {
-  color: #0a0;
-}
-
-li.tag-type-copyright a {
-  color: #a0a;
-}
-
-li.tag-type-artist a {
-  color: #a00;
-}
-
-li.tag-type-character a:hover {
-  color: #33CFFF;
-}
-
-li.tag-type-copyright a:hover {
-  color: #33CFFF;
-}
-
-li.tag-type-artist a:hover {
-  color: #33CFFF;
-}
-
-tr.positive-record {
-  background: #EFE;
-}
-
-tr.negative-record {
-  background: #FEE;
 }

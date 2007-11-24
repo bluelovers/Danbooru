@@ -1,36 +1,38 @@
-<h4>Record</h4>
+<div id="user-record">
+  <h4>Record</h4>
 
-<table width="100%">
-  <thead>
-    <tr>
-      <th width="15%">User</th>
-      <th width="15%">Reporter</th>
-      <th width="20%">When</th>
-      <th width="50%">Body</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @user_records.each do |rec| %>
-      <tr class="<%= rec.is_positive? ? 'positive-record' : 'negative-record' %>">
-        <td>
-          <% if @user %>
-            <%= link_to h(rec.user.pretty_name), :controller => "user", :action => "show", :id => rec.user_id %>
-          <% else %>
-            <%= link_to h(rec.user.pretty_name), :action => "index", :user_id => rec.user_id %>
-          <% end %>
-        </td>
-        <td><%= h(rec.reporter.pretty_name) %></td>
-        <td><%= time_ago_in_words(rec.created_at) %> ago</td>
-        <td><%= format_text(rec.body, :skip_simple_format => true) %></td>
+  <table width="100%">
+    <thead>
+      <tr>
+        <th width="15%">User</th>
+        <th width="15%">Reporter</th>
+        <th width="20%">When</th>
+        <th width="50%">Body</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @user_records.each do |rec| %>
+        <tr class="<%= rec.is_positive? ? 'positive-record' : 'negative-record' %>">
+          <td>
+            <% if @user %>
+              <%= link_to h(rec.user.pretty_name), :controller => "user", :action => "show", :id => rec.user_id %>
+            <% else %>
+              <%= link_to h(rec.user.pretty_name), :action => "index", :user_id => rec.user_id %>
+            <% end %>
+          </td>
+          <td><%= h(rec.reporter.pretty_name) %></td>
+          <td><%= time_ago_in_words(rec.created_at) %> ago</td>
+          <td><%= format_text(rec.body, :skip_simple_format => true) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<% if @pages %>
-  <div id="paginator">
-    <%= custom_pagination_links(@pages, :params => {:controller => "user_record", :action => "index"}) %>
-  </div>
-<% end %>
+  <% if @pages %>
+    <div id="paginator">
+      <%= custom_pagination_links(@pages, :params => {:controller => "user_record", :action => "index"}) %>
+    </div>
+  <% end %>
 
-<%= render :partial => "footer" %>
+  <%= render :partial => "footer" %>  
+</div>

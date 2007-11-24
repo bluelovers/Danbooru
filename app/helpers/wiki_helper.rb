@@ -1,14 +1,14 @@
 module WikiHelper
   def wikilize(text)
-    fmt = sanitize(text)
+    fmt = CGI.escapeHTML(text)
 
-    fmt.gsub!(/\[\[(.+?)\]\]/) do
+    fmt = fmt.gsub(/\[\[(.+?)\]\]/) do
       match = $1
 
       if match =~ /(.+?)\|(.+)/
-        link_to h($2), :controller => "wiki", :action => "show", :title => $1.gsub(/\s/, '_').downcase
+        link_to $2, :controller => "wiki", :action => "show", :title => $1.gsub(/\s/, '_').downcase
       else
-        link_to h(match), :controller => "wiki", :action => "show", :title => match.gsub(/\s/, '_').downcase
+        link_to match, :controller => "wiki", :action => "show", :title => match.gsub(/\s/, '_').downcase
       end
     end
 
