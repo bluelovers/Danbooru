@@ -100,15 +100,15 @@ img {
 }
 
 img.flagged {
-  border: 3px solid #A00;
+  border: 3px solid #F00;
 }
 
 img.has-children {
-  border: 3px solid #0A0;
+  border: 3px solid #0F0;
 }
 
 img.pending {
-  border: 3px solid #00A;
+  border: 3px solid #00F;
 }
 
 img.preview {
