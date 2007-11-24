@@ -6,7 +6,7 @@ module PoolHelper
     if pools.empty?
       html << "none"
     else
-      html << pools.map {|p| link_to(CGI.escapeHTML(p.pretty_name), :controller => "pool", :action => "show", :id => p.id)}.join(", ")
+      html << pools.map {|p| link_to(h(p.pretty_name), :controller => "pool", :action => "show", :id => p.id)}.join(", ")
     end
     
     return html

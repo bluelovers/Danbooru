@@ -1,6 +1,6 @@
 module ApplicationHelper
   def format_text(text, options = {})
-    text = CGI.escapeHTML(text)
+    text = h(text)
 
     unless options[:skip_simple_format]
       text = simple_format(text)

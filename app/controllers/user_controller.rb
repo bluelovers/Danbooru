@@ -52,7 +52,7 @@ class UserController < ApplicationController
             user.save!
             @current_user.decrement! :invite_count
           end
-          flash[:notice] = "You have invited #{user.pretty_name}"
+          flash[:notice] = "You have invited #{CGI.escapeHTML(user.pretty_name)}"
         end
       end
       

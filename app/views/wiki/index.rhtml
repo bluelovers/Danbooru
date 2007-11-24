@@ -14,7 +14,7 @@
   </tr>
   <%- @wiki_pages.each do |wiki_page| -%>
     <tr class="<%= cycle 'even', 'odd' %>">
-      <td><%= link_to wiki_page.pretty_title, :controller => "wiki", :action => "show", :title => wiki_page.title, :nordirect => 1 %></td>
+      <td><%= link_to h(wiki_page.pretty_title), :controller => "wiki", :action => "show", :title => wiki_page.title, :nordirect => 1 %></td>
       <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= h wiki_page.author %></td>
     </tr>
   <%- end -%>

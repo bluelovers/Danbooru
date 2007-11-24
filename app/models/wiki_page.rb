@@ -3,6 +3,7 @@ class WikiPage < ActiveRecord::Base
   before_save :make_title_canonical
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false
+  validates_presence_of :body
   
   TAG_DEL = '<del>'
   TAG_INS = '<ins>'

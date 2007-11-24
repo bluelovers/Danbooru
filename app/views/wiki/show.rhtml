@@ -10,7 +10,7 @@
       <li><%= link_to "View Posts", :controller => "post", :action => "index", :tags => params[:title] %></li>
     </ul>
   <% else %>
-    <h2 class="title"><%= @page.pretty_title %> <%- unless @page.last_version? -%><span class="old-version">(Version <%= @page.version %>)</span><%- end -%></h2>
+    <h2 class="title"><%= h @page.pretty_title %> <%- unless @page.last_version? -%><span class="old-version">(Version <%= @page.version %>)</span><%- end -%></h2>
     <div id="body">
       <%= wikilize(@page.body) %>
     </div>
