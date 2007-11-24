@@ -297,7 +297,11 @@ class Post < ActiveRecord::Base
       end
 
       if options[:pending]
-        conditions << "p.status < 'active'"
+        conditions << "p.status = 'pending'"
+      end
+      
+      if options[:flagged]
+        conditions << "p.status = 'flagged'"
       end
 
       if original_query.blank?

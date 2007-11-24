@@ -20,57 +20,99 @@
 // ]]>
 </script>
 
-<form method="post" action="/post/moderate">
-  <%= hidden_field_tag "reason", "" %>
-  
-  <div style="margin: 1em 0;">
-    <h4>Deletion Guidelines</h4>
-    <p>As a general rule, you should not delete posts. Only approve of posts that you personally like. Posts that are not approved in three days will be automatically deleted.</p>
-  </div>
-  
-  <table width="100%">
-    <thead>
-      <tr>
-        <th width="1%"></th>
-        <th width="10%"></th>
-        <th width="10%">Author</th>
-        <th width="10%">Rating</th>
-        <th width="10%">Status</th>
-        <th width="59%">Tags</th>
-      </tr>      
-    </thead>
-    <tbody>
-      <% @posts.each do |p| %>
-        <tr class="<%= cycle 'even', 'odd' %>">
-          <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
-          <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-          <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
-          <td><%= p.pretty_rating %></td>
-          <td>
-            <% if p.is_flagged? %>
-              Flagged: <%= format_text(p.deletion_reason, :skip_simple_format => true) %>
-            <% elsif p.is_pending? %>
-              Pending
-            <% end %>
-          </td>
-          <td>
-            <% if p.parent_id %>
-              parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
-            <% end %>
-            <%= h p.cached_tags %>
+<div style="margin-bottom: 2em;">
+  <h2>Pending</h2>
+  <form method="post" action="/post/moderate">
+    <%= hidden_field_tag "reason", "" %>
+
+    <div style="margin: 1em 0;">
+      <h4>Deletion Guidelines</h4>
+      <p>As a general rule, you should not delete posts. Only approve of posts that you personally like. Posts that are not approved in three days will be automatically deleted.</p>
+    </div>
+
+    <table width="100%">
+      <thead>
+        <tr>
+          <th width="1%"></th>
+          <th width="10%"></th>
+          <th width="10%">Author</th>
+          <th width="10%">Rating</th>
+          <th width="69%">Tags</th>
+        </tr>      
+      </thead>
+      <tbody>
+        <% @pending_posts.each do |p| %>
+          <tr class="<%= cycle 'even', 'odd' %>">
+            <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
+            <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
+            <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
+            <td><%= p.pretty_rating %></td>
+            <td>
+              <% if p.parent_id %>
+                parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
+              <% end %>
+              <%= h p.cached_tags %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7">
+            <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
           </td>
         </tr>
-      <% end %>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="7">
-          <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
-          <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
-          <%= submit_tag "Approve" %> 
-          <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
-        </td>
-      </tr>
-    </tfoot>
-  </table>
-</form>
+      </tfoot>
+    </table>
+  </form>
+</div>
+
+<div>
+  <h2>Flagged</h2>
+  <form method="post" action="/post/moderate">
+    <%= hidden_field_tag "reason", "" %>
+
+    <table width="100%">
+      <thead>
+        <tr>
+          <th width="1%"></th>
+          <th width="10%"></th>
+          <th width="10%">Author</th>
+          <th width="10%">Rating</th>
+          <th width="10%">Reason</th>
+          <th width="59%">Tags</th>
+        </tr>      
+      </thead>
+      <tbody>
+        <% @flagged_posts.each do |p| %>
+          <tr class="<%= cycle 'even', 'odd' %>">
+            <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
+            <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
+            <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
+            <td><%= p.pretty_rating %></td>
+            <td><%= format_text(p.deletion_reason, :skip_simple_format => true) %></td>
+            <td>
+              <% if p.parent_id %>
+                parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
+              <% end %>
+              <%= h p.cached_tags %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7">
+            <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </form>
+</div>

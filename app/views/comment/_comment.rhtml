@@ -1,6 +1,6 @@
 <div class="post">
   <div class="author">
-    <h6><%= link_to_unless comment.user_id.nil?, h(comment.author), :controller => "user", :action => "show", :id => comment.user_id %></h6>
+    <h6><%= link_to_unless comment.user_id.nil?, h(comment.pretty_author), :controller => "user", :action => "show", :id => comment.user_id %></h6>
     <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>">Posted <%= time_ago_in_words(comment.created_at) %> ago</span>
   </div>
   <div class="content">
