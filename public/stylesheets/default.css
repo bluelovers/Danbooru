@@ -283,27 +283,27 @@ ul.link-page > li {
 	list-style-type: none;
 }
 
-ul.tag-sidebar > li.tag-type-artist > a {
+.tag-type-artist > a {
   color: #A00;
 }
 
-ul.tag-sidebar > li.tag-type-artist > a:hover {
+.tag-type-artist > a:hover {
   color: #33CFFF;
 }
 
-ul.tag-sidebar > li.tag-type-character > a {
+.tag-type-character > a {
   color: #0A0;
 }
 
-ul.tag-sidebar > li.tag-type-character > a:hover {
+.tag-type-character > a:hover {
   color: #33CFFF;
 }
 
-ul.tag-sidebar > li.tag-type-copyright > a {
+.tag-type-copyright > a {
   color: #A0A;
 }
 
-ul.tag-sidebar > li.tag-type-copyright > a:hover {
+.tag-type-copyright > a:hover {
   color: #33CFFF;
 }
 
@@ -479,8 +479,9 @@ div#post-view > div#right-col > div > div#note-container > div.note-body {
   background: #FFE;
   border: 1px solid black;
   display: none;
-  width: 140px;
-  height: 100px;
+  max-width: 300px;
+  min-width: 140px;
+  min-height: 10px;
   position: absolute;
   padding: 5px;
   cursor: pointer;

@@ -67,6 +67,8 @@ class UserController < ApplicationController
   end
 
   def index
+    set_title "Users"
+    
     conds = []
     cond_params = []
     

@@ -21,11 +21,12 @@ class String
   end
 
   def to_escaped_for_sql_like
-    return self.gsub(/\\/, '\\\\').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
+  # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
+    return self.gsub(/\\/, '\0\0').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
   end
 
   def to_escaped_js
-    return self.gsub(/\\/, '\\\\').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\n\r|\r|\n/, '\\\\n')
+    return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\r|\n/, '\\n')
   end
 end
 

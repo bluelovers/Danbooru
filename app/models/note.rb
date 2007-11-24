@@ -15,8 +15,7 @@ class Note < ActiveRecord::Base
   end
 
   def formatted_body
-    # TODO: need to sanitize body
-    self.body.gsub(/\[tn\](.+?)\[\/tn\]/m, '<br/><p class="tn">\1</p>').gsub(/\n/, '<br/>')
+    self.body.gsub(/<tn>(.+?)<\/tn>/m, '<br/><p class="tn">\1</p>').gsub(/\n/, '<br/>')
   end
 
   def update_post

@@ -74,7 +74,7 @@ class TagController < ApplicationController
       sql_params << ("%" + params[:name_pattern].to_escaped_for_sql_like + "%")
     end
 
-    sql_conds << "TRUE" # for the empty case
+    sql_conds << "TRUE" if sql_conds.empty?
 
     respond_to do |fmt|
       fmt.html do
@@ -136,7 +136,7 @@ class TagController < ApplicationController
   end
 
   def edit
-    @tag = Tag.new
+    @tag = Tag.find_by_name(params[:name]) or Tag.new
   end
 
   def related

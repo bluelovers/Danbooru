@@ -137,7 +137,7 @@
                 <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
                   <div class="note-corner" id="note-corner-<%= note.id %>"></div>
                 </div>
-                 <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= note.formatted_body %></div>
+                 <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= hs note.formatted_body %></div>
               <% end %>
             </div>
             <%= image_tag(@post.file_url, :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.width, :height => @post.height) %>
@@ -156,11 +156,11 @@
         <div style="margin-bottom: 1em;">
           <p id="note-count"></p>
           <script type="text/javascript">
-          //<![CDATA[
+          //<![CDATA[	NOTE: there is no CDATA in HTML. As long as this page is served as text/html, this does nothing.
             Note.post_id = <%= @post.id %>
 
             <% @post.notes.active.each do |note| %>
-              Note.all.push(new Note(<%= note.id %>, false, '<%= note.body.to_escaped_js.gsub(/\r\n|\r|\n/, '\\n') %>'))
+              Note.all.push(new Note(<%= note.id %>, false, '<%= h note.body.to_escaped_js %>'))
             <% end %>
 
             Note.updateNoteCount()

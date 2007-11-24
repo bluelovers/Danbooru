@@ -1,8 +1,32 @@
-<ul>
-  <% @tags.each do |tag| %>
-    <li><%= link_to h(tag['name']), :controller => "post", :action => "index", :tags => tag['name'] %> (<%= tag['post_count'] %>)</li>
-  <% end %>
-</ul>
+<% form_tag({:action => "index"}, :method => :get) do %>
+  <%= content_tag('label', "Containing:", { 'for' => "name_pattern" }) %>
+  <%= text_field_tag "name_pattern", params[:name_pattern] %>
+  <%= content_tag('label', "Type:", { 'for' => "type" }) %>
+  <%= select_tag "type", options_for_select(["any", "general", "artist", "copyright", "character"], params[:type]) %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<table> 
+  <thead>
+    <tr>
+      <th>Posts</th>
+      <th>Name</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tags.each do |tag| %>
+      <tr class="<%= cycle 'even', 'odd' %>">
+        <td align="right"><%= tag['post_count'] %></td>
+        <td class="tag-type-<%= tag.type_name %>"><%= link_to h(tag['name']), :controller => "post", :action => "index", :tags => tag['name'] %></td>
+        <td>
+        <%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %>
+        (<%= link_to "edit", :action => "edit", :name => tag['name'] %>)
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <div id="paginator">
   <%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type]}) %>

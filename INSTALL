@@ -14,6 +14,7 @@ Danbooru also has the following Ruby dependencies:
 - diff-lcs (gem install diff-lcs)
 - redcloth (gem install redcloth)
 - acts_as_versioned (gem install acts_as_versioned)
+- html5 (gem install html5)
 
 The following dependencies are optional:
 - mongrel (web server, http://mongrel.rubyforge.org)

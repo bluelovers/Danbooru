@@ -122,6 +122,11 @@ Note.prototype = {
 		// is this needed? in what browsers?
 		this.elements.box.style.top = this.elements.box.offsetTop + "px"
 		this.elements.box.style.left = this.elements.box.offsetLeft + "px"
+		
+		if (is_new && raw_body == '') {
+			this.bodyfit = true
+			this.elements.body.style.height = "100px"
+		}
 
 		// attach the event listeners
 		Event.observe(this.elements.box, "mousedown", this.bind("dragStart"), false)
@@ -209,9 +214,55 @@ Note.prototype = {
 
 		this.elements.box.style.zIndex = ++Note.zindex
 		this.elements.body.style.zIndex = 10
-		this.elements.body.style.top = (this.elements.box.offsetTop + this.elements.box.clientHeight + 5) + "px"
-		this.elements.body.style.left = this.elements.box.offsetLeft + "px"
+		this.elements.body.style.top = 0 + "px"
+		this.elements.body.style.left = 0 + "px"
+
+		var dw = document.documentElement.scrollWidth
+//		alert([document.body.scrollWidth, document.body.offsetWidth, document.body.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth, document.documentElement.clientWidth])
+		this.elements.body.style.visibility = "hidden"
 		this.elements.body.style.display = "block"
+		if (!this.bodyfit) {
+			this.elements.body.style.height = "auto"
+			this.elements.body.style.minWidth = "140px"
+			var w, h, lo, hi, x, last
+			w = this.elements.body.offsetWidth
+			h = this.elements.body.offsetHeight
+			if (w/h < 1.6180339887) {
+				/* for tall notes (lots of text), find more pleasant proportions */
+				lo = 140, hi = 400
+				do {
+					last = w
+					x = (lo+hi)/2
+					this.elements.body.style.minWidth = x + "px"
+					w = this.elements.body.offsetWidth
+					h = this.elements.body.offsetHeight
+					if (w/h < 1.6180339887) lo = x
+					else hi = x
+				} while ((lo < hi) && (w > last))
+			} else if (this.elements.body.scrollWidth <= this.elements.body.clientWidth) {	/* scroll test required by Firefox */
+				/* for short notes (often a single line), make the box no wider than necessary */
+				lo = 20, hi = w
+				do {
+					x = (lo+hi)/2
+					this.elements.body.style.minWidth = x + "px"
+					if (this.elements.body.offsetHeight > h) lo = x
+					else hi = x
+				} while ((hi - lo) > 4)
+				if (this.elements.body.offsetHeight > h)
+					this.elements.body.style.minWidth = hi + "px"
+			}
+			this.bodyfit = true
+		}
+		this.elements.body.style.top = (this.elements.box.offsetTop + this.elements.box.clientHeight + 5) + "px"
+		/* keep the box within the document's width */
+		var l = 0, e = this.elements.box
+		do { l += e.offsetLeft } while (e = e.offsetParent)
+		l += this.elements.body.offsetWidth + 10 - dw
+		if (l > 0)
+			this.elements.body.style.left = this.elements.box.offsetLeft - l + "px"
+		else
+			this.elements.body.style.left = this.elements.box.offsetLeft + "px"
+		this.elements.body.style.visibility = "visible"
 	},
 
 	bodyHideTimer: function(e) {
@@ -380,10 +431,11 @@ Note.prototype = {
 			this.old[p] = this.fullsize[p]
 		this.old.raw_body = $('edit-box-text').value
 		this.old.formatted_body = this.textValue()
-		this.elements.body.innerHTML = this.textValue()
+		this.elements.body.innerHTML = this.textValue()	// FIXME? this is not quite how the note will look (filtered elems, <tn>...). the user won't input a <script> that only damages him, but it might be nice to "preview" the <tn> here
 
 		this.hideEditBox(e)
 		this.bodyHide()
+		this.bodyfit = false
 
 		var params = []
 		params.push("note%5Bx%5D=" + this.old.left)
@@ -414,6 +466,7 @@ Note.prototype = {
 			},
 			onException: function(req,exc) {
 				notice("Exception: <pre>"+exc+"</pre>")
+				note.elements.box.addClassName('unsaved')
 			},
 			onSuccess: function(req) {
 				notice("Note saved")

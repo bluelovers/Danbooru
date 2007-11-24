@@ -26,6 +26,23 @@ class Tag < ActiveRecord::Base
       @tag_types
     end
     
+    def type_name(tag_type, general_string=true)
+      case tag_type
+        when Tag.types[:artist]
+          "artist"
+        when Tag.types[:character]
+          "character"
+        when Tag.types[:copyright]
+          "copyright"
+        else
+          if general_string
+            "general"
+          else
+            nil
+          end
+      end
+    end
+    
     def count_by_period(start, stop, options = {})
       options[:limit] ||= 50
 
@@ -265,6 +282,10 @@ class Tag < ActiveRecord::Base
 
   def to_s
     name
+  end
+
+  def type_name(general_string=true)
+    Tag.type_name(tag_type, general_string)
   end
 
   def <=>(rhs)
