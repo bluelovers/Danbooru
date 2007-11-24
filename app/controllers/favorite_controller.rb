@@ -11,7 +11,7 @@ class FavoriteController < ApplicationController
       @user = @current_user
     else
       flash[:notice] = "No user specified"
-      redirect_to :back
+      redirect_to :controller => "post", :action => "index"
       return
     end
     
