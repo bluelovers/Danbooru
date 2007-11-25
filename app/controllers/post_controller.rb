@@ -106,12 +106,14 @@ class PostController < ApplicationController
   def moderate
     if request.post?
       Post.transaction do
-        params[:ids].keys.each do |post_id|
-          if params[:commit] == "Approve"
-            Post.update(post_id, :status => "active")
-          elsif params[:commit] == "Delete"
-            Post.update(post_id, :deletion_reason => params[:reason]) unless params[:reason].blank?
-            Post.destroy(post_id)
+        if params[:ids]
+          params[:ids].keys.each do |post_id|
+            if params[:commit] == "Approve"
+              Post.update(post_id, :status => "active")
+            elsif params[:commit] == "Delete"
+              Post.update(post_id, :deletion_reason => params[:reason]) unless params[:reason].blank?
+              Post.destroy(post_id)
+            end
           end
         end
       end
@@ -120,7 +122,7 @@ class PostController < ApplicationController
     else
       if params[:query]
         @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
-        @flagged_posts = Post.find_by_sql(post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
+        @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
       else
         @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id desc")
         @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id desc")

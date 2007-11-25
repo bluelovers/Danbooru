@@ -28,7 +28,11 @@ class Tag < ActiveRecord::Base
     
     def find_type(name)
       tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
-      return type_name(tag.tag_type)
+      if tag == nil
+        return "general"
+      else
+        return type_name(tag.tag_type)
+      end
     end
     
     def type_name(tag_type, general_string = true)
