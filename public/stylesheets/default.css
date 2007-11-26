@@ -417,6 +417,18 @@ div#info {
 	font-style: italic;
 }
 
+div.mail-list a.received {
+  color: #060;
+}
+
+div.mail-list a.sent {
+  color: #600;
+}
+
+div#mail-show div.message {
+  margin-bottom: 4em;
+}
+
 div#notice {
   font-size: 1.2em;
   color: red;

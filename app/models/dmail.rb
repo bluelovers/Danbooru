@@ -7,14 +7,45 @@ class Dmail < ActiveRecord::Base
   belongs_to :to, :class_name => "User", :foreign_key => "to_id"
   belongs_to :from, :class_name => "User", :foreign_key => "from_id"
   
-  alias_method :original_to=, :to=
-  
-  def to=(name)
-    if name.is_a?(String)
-      user = User.find_by_name(name)
-      self.original_to = user if user
+  def to_name
+    if self.to_id
+      self.to.name
     else
-      self.original_to = name
+      ""
+    end
+  end
+  
+  def from_name
+    if self.from_id
+      self.from.name
+    else
+      ""
+    end
+  end
+  
+  def to_name=(name)
+    user = User.find_by_name(name)
+    self.to_id = user.id
+  end
+  
+  def from_name=(name)
+    user = User.find_by_name(name)
+    self.from_id = user.id
+  end
+  
+  def title
+    if self.parent_id
+      return "Re: " + self[:title]
+    else
+      return self[:title]
+    end
+  end
+  
+  def message_count
+    if self.parent_id
+      Dmail.count(["parent_id = ?", self.parent_id]).to_i
+    else
+      0
     end
   end
 end

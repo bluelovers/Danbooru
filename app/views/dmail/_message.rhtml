@@ -1,0 +1,11 @@
+<div class="message">
+  <h5><%= h(message.title) %></h5>
+
+  <div style="margin-bottom: 1em;">
+    <em>Sent by <%= h message.from.name %> <%= time_ago_in_words(message.created_at) %> ago</em>
+  </div>
+
+  <div style="width: 50em;">
+    <%= format_text(message.body) %>
+  </div>    
+</div>

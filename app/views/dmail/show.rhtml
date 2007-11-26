@@ -1,19 +1,20 @@
-<h4><%= h(@dmail.title) %></h4>
+<div id="mail-show">
+  <div id="previous-messages" style="display: none;">
+  </div>
+  
+  <%= render :partial => "message", :locals => {:message => @dmail} %>
 
-<div style="margin-bottom: 1em;">
-  <em>Sent by <%= @dmail.from.name %> on <%= compact_time(@dmail.created_at) %></em>
+  <div style="width: 50em; display: none;" id="response">
+    <%= render :partial => "compose", :locals => {:from_id => @current_user.id} %>
+  </div>
+
+  <% content_for(:footer) do %>
+    <%= link_to_function "Show Conversation", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})", :title => "#{pluralize(@dmail.message_count, 'message')} hidden" %> |
+    <% if @dmail.to_id == @current_user.id %>
+      <%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %> |
+    <% end %>
+  <% end %>
+
+  <%= render :partial => "footer" %>
 </div>
 
-<div style="width: 50em;">
-  <%= format_text(@dmail.body) %>
-</div>
-
-<div style="width: 50em; display: none;" id="response">
-  <%= render :partial => "compose" %>
-</div>
-
-<% content_for(:footer) do %>
-  <%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.to.name)}')" %> |
-<% end %>
-
-<%= render :partial => "footer" %>

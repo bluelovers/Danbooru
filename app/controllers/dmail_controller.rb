@@ -2,13 +2,13 @@ class DmailController < ApplicationController
   before_filter :member_only
   layout "default"
   
-  def auto_complete_for_dmail_to
-    @users = User.find(:all, :order => "lower(name)", :conditions => ["name ilike ? escape '\\\\'", params[:dmail][:to] + "%"])
+  def auto_complete_for_dmail_to_name
+    @users = User.find(:all, :order => "lower(name)", :conditions => ["name ilike ? escape '\\\\'", params[:dmail][:to_name] + "%"])
     render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
   end
   
   def compose
-    @dmail = Dmail.new(:from_id => @current_user.id)
+    @dmail = Dmail.new
   end
   
   def create
@@ -24,7 +24,7 @@ class DmailController < ApplicationController
       
       User.update(@dmail.to_id, :has_mail => true)
       
-      flash[:notice] = "Message sent to #{params[:dmail][:to]}"
+      flash[:notice] = "Message sent to #{params[:dmail][:to_name]}"
       redirect_to :action => "inbox"
     else
       flash[:notice] = "Error: " + CGI.escapeHTML(@dmail.errors.full_messages.join(", "))
@@ -33,11 +33,7 @@ class DmailController < ApplicationController
   end
   
   def inbox
-    @pages, @dmails = paginate :dmails, :conditions => ["to_id = ?", @current_user.id], :order => "created_at desc", :per_page => 25
-  end
-  
-  def sent
-    @pages, @dmails = paginate :dmails, :conditions => ["from_id = ?", @current_user.id], :order => "created_at desc", :per_page => 25
+    @pages, @dmails = paginate :dmails, :conditions => ["to_id = ? or from_id = ?", @current_user.id, @current_user.id], :order => "created_at desc", :per_page => 25
   end
   
   def show
@@ -58,15 +54,8 @@ class DmailController < ApplicationController
     end
   end
   
-  def destroy
-    Dmail.find(params[:dmail].keys).each do |dmail|
-      # TODO: Add refined access checking
-      if dmail.to_id == @current_user.id
-        dmail.destroy
-      end
-    end
-    
-    flash[:notice] = "Messages deleted"
-    redirect_to :action => "inbox"
+  def show_previous_messages
+    @dmails = Dmail.find(:all, :conditions => ["parent_id = ? and id < ?", params[:parent_id], params[:id]], :order => "id asc")
+    render :layout => false
   end
 end
