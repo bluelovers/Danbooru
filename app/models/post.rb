@@ -421,7 +421,7 @@ class Post < ActiveRecord::Base
       end
 
       def file_url
-        "http://" + CONFIG["server_host"] + "/data/#{file_name}"
+        CONFIG["url_base"] + "/data/#{file_name}"
       end
 
       def preview_path
@@ -434,9 +434,9 @@ class Post < ActiveRecord::Base
 
       def preview_url
         if image?
-          "http://" + CONFIG["server_host"] + "/data/preview/#{md5}.jpg"
+          CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
         else
-          "http://" + CONFIG["server_host"] + "/data/preview/default.png"
+          CONFIG["url_base"] + "/data/preview/default.png"
         end
       end
 
@@ -470,7 +470,7 @@ class Post < ActiveRecord::Base
       end
 
       def file_url
-        "http://" + CONFIG["server_host"] + "/data/#{file_hierarchy}/#{file_name}"
+        CONFIG["url_base"] + "/data/#{file_hierarchy}/#{file_name}"
       end
 
       def preview_path
@@ -483,9 +483,9 @@ class Post < ActiveRecord::Base
 
       def preview_url
         if image?
-          "http://" + CONFIG["server_host"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
+          CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
-          "http://" + CONFIG["server_host"] + "/data/preview/default.png"
+          CONFIG["url_base"] + "/data/preview/default.png"
         end
       end
 
@@ -526,7 +526,7 @@ class Post < ActiveRecord::Base
         if self.is_warehoused?
           select_random_image_server() + "/data/#{file_hierarchy}/#{file_name}"
         else
-          "http://" + CONFIG["server_host"] + "/data/#{file_hierarchy}/#{file_name}"
+          CONFIG["url_base"] + "/data/#{file_hierarchy}/#{file_name}"
         end
       end
 
@@ -547,9 +547,9 @@ class Post < ActiveRecord::Base
           end
         else
           if image?
-            "http://" + CONFIG["server_host"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
+            CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
           else
-            "http://" + CONFIG["server_host"] + "/data/preview/default.png"
+            CONFIG["url_base"] + "/data/preview/default.png"
           end
         end
       end

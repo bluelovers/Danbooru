@@ -9,6 +9,8 @@ require File.join(File.dirname(__FILE__), 'boot')
 require 'default_config'
 require 'local_config'
 
+CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
+
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
