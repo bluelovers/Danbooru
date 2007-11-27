@@ -673,6 +673,10 @@ div#wiki-show > div#body > ul {
   margin-bottom: 1em;
 }
 
+div#wiki-show > div#byline {
+  color: #666;
+}
+
 div#wiki-diff > div#body {
   font-family: monospace;
   font-size: 1.2em;

@@ -30,7 +30,7 @@
       <% end %>
       <li><%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1, :noredirect => 1 %></li>
     </ul>
-    <p class="linked-from"><strong>Edited by: </strong><%= h @page.author %></p>
+    <div id="byline">Updated by <%= link_to h(@page.author), :controller => "user", :action => "show", :id => @page.user_id %> <%= time_ago_in_words(@page.updated_at) %> ago</div>
   <% end %>
 </div>
 
