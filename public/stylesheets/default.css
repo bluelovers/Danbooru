@@ -664,12 +664,13 @@ div#wiki-show > div#body {
   text-align: left;
 }
 
-div#wiki-show > div#body > ul {
+div#wiki-show > div#body ul {
   line-height: 1.2em;
+  margin: 0 0 0 1em;
 }
 
-div#wiki-show > div#body > ul ul {
-  margin: 0 0 0 1.5em;
+div#wiki-show > div#body > ul {
+  margin-bottom: 1em;
 }
 
 div#wiki-diff > div#body {
