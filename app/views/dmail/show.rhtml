@@ -1,4 +1,4 @@
-<div id="mail-show">
+<div id="mail-show" class="mail">
   <div id="previous-messages" style="display: none;">
   </div>
   
@@ -9,7 +9,7 @@
   </div>
 
   <% content_for(:footer) do %>
-    <%= link_to_function "Show Conversation", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})", :title => "#{pluralize(@dmail.message_count, 'message')} hidden" %> |
+    <%= link_to_function "Show Previous", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})", :title => "#{pluralize(@dmail.message_count, 'message')} hidden" %> |
     <% if @dmail.to_id == @current_user.id %>
       <%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %> |
     <% end %>

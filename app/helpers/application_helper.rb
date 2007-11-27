@@ -79,31 +79,31 @@ module ApplicationHelper
 
     case distance_in_minutes
     when 0..1
-      'a minute'
+      '1 minute'
 
     when 2..44
       "#{distance_in_minutes} minutes"
 
     when 45..89
-      'an hour'
+      '1 hour'
 
     when 90..1439
       "#{(distance_in_minutes.to_f / 60.0).round} hours"
 
     when 1440..2879
-      'a day'
+      '1 day'
 
     when 2880..43199
       "#{(distance_in_minutes / 1440).round} days"
 
     when 43200..86399
-      'a month'
+      '1 month'
 
     when 86400..525959
       "#{(distance_in_minutes / 43200).round} months"
 
     when 525960..1051919
-      'a year'
+      '1 year'
 
     else
       "over #{(distance_in_minutes / 525960).round} years"

@@ -43,7 +43,7 @@ class Dmail < ActiveRecord::Base
   
   def message_count
     if self.parent_id
-      Dmail.count(["parent_id = ?", self.parent_id]).to_i
+      Dmail.count(["parent_id = ? and id < ?", self.parent_id, self.id]).to_i
     else
       0
     end

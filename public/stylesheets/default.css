@@ -417,11 +417,11 @@ div#info {
 	font-style: italic;
 }
 
-div.mail-list a.received {
+div.mail .received {
   color: #060;
 }
 
-div.mail-list a.sent {
+div.mail .sent {
   color: #600;
 }
 
