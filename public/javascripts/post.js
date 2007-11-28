@@ -61,7 +61,7 @@ Post.submit_tags = function(form, e) {
   
   var form = $(form)
   
-	if (e.keyCode == 13) {
+	if (e.keyCode == 13 || e.keyCode == 3) {
 		if (!form.onsubmit || form.onsubmit()) {
 			form.submit()
       Event.stop(e)
