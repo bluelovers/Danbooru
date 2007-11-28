@@ -25,7 +25,7 @@ class PostController < ApplicationController
     attr_accessor :popular_searches
   end
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag]
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => { :action => :show, :id => lambda { |c| c.params[:id] } }
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
   before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
@@ -35,6 +35,17 @@ class PostController < ApplicationController
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
+  
+  def verify_action(options)
+    if options[:redirect_to]
+  	  options[:redirect_to].each do |k,v|
+  	  	if v.is_a?(Proc)
+  	  	  options[:redirect_to][k] = v.call(self)
+  	  	end
+  	  end
+    end
+  	super(options)
+  end
   
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
