@@ -15,7 +15,11 @@
         <tr class="<%= cycle 'even', 'odd' %>">
           <td style="background: <%= id_to_color(change.post_id) %>;"></td>
           <% if params[:post_id] %>
-            <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
+            <% if @current_user && @current_user.privileged? %>
+              <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
+            <% else %>
+              <td><%= change.post_id %></td>
+            <% end %>
           <% else %>
             <td><%= link_to change.post_id, :controller => "post", :action => "tag_history", :post_id => change.post_id %></td>
           <% end %>
