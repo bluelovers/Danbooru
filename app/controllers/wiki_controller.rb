@@ -68,7 +68,7 @@ class WikiController < ApplicationController
 
   def add
     @wiki_page = WikiPage.new
-    @wiki_page.title = params[:title]
+    @wiki_page.title = params[:title] || "Title"
   end
 
   def create
