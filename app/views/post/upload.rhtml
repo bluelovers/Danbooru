@@ -34,17 +34,27 @@
 
       <table class="form">
         <tr>
-          <th><%= content_tag "label", "File", :for => "post_file" %></th>
-          <td><%= file_field "post", "file", :size => 50, :tabindex => 1 %></td>
+          <th width="20%"><label for="post_file">File</label></th>
+          <td width="80%"><%= file_field "post", "file", :size => 50, :tabindex => 1 %></td>
         </tr>
         <tr>
-          <th><%= content_tag "label", "Download From", :for => "post_source" %></th>
+          <th>
+            <label for="post_source">Source</label>
+            <% unless @current_user.privileged? %>
+              <p>You can enter a URL here to download from a website</p>
+            <% end %>
+          </th>
           <td><%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %> <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %></td>
         </tr>
         <tr>
-          <th><%= content_tag "label", "Tags", :for => "post_tags" %></th>
+          <th>
+            <label for="post_tags">Tags</label>
+            <% unless @current_user.privileged? %>
+              <p>Separate tags with spaces (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+            <% end %>
+          </th>
           <td>
-            <%= text_area "post", "tags", :size => "50x2", :tabindex => 3, :onkeypress => "Post.submit_tags('edit-form', event)" %>
+            <%= text_area "post", "tags", :size => "60x2", :tabindex => 3, :onkeypress => "Post.submit_tags('edit-form', event)" %>
             <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
             <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
             <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
@@ -58,7 +68,12 @@
           </tr>
         <% end %>
         <tr>
-          <th><%= content_tag "label", "Rating", :for => "post_rating_questionable" %></th>
+          <th>
+            <label for="post_rating_questionable">Rating</label>
+            <% unless @current_user.privileged? %>
+              <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
+            <% end %>
+          </th>
           <td>
             <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" tabindex="5"/>
             <label for="post_rating_explicit">Explicit</label>
