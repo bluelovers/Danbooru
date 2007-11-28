@@ -762,22 +762,23 @@ class Post < ActiveRecord::Base
 
 # automatically downloads from the source url if it's a URL
   def auto_download
-    return if !(source =~ /^http/ && file_ext.blank?)
-
-    begin
-      url = URI.parse(source)
-      res = Net::HTTP.start(url.host, url.port) do |http|
-        http.get(url.request_uri)
+    if source =~ /^http:\/\// && file_ext.blank?
+      begin
+        url = URI.parse(source)
+        res = Net::HTTP.start(url.host, url.port) do |http|
+          http.read_timeout = 10
+          http.get(url.request_uri)
+        end
+        self.file_ext = content_type_to_file_ext(res.content_type) || find_ext(source)
+        File.open(tempfile_path, 'wb') do |out|
+          out.write(res.body)
+        end
+        return true
+      rescue Exception => x
+        delete_tempfile
+        errors.add "source", "couldn't be opened: #{x}"
+        return false
       end
-      self.file_ext = content_type_to_file_ext(res.content_type) || find_ext(source)
-      File.open(tempfile_path, 'wb') do |out|
-        out.write(res.body)
-      end
-      return true
-    rescue Exception => x
-      delete_tempfile
-      errors.add "source", "couldn't be opened: #{x}"
-      return false
     end
   end
 
