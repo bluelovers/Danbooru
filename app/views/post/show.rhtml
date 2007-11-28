@@ -179,7 +179,12 @@
         <% form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form") do %>
           <table class="form">
             <tr>
-              <th><label class="block" for="post_rating_questionable">Rating</label></th>
+              <th>
+                <label class="block" for="post_rating_questionable">Rating</label>
+                <% unless @current_user && @current_user.privileged? %>
+                  <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
+                <% end %>
+              </th>
               <td>
                 <% if @post.is_rating_locked? %>
                   This post is rating locked.
@@ -222,7 +227,12 @@
               <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
             </tr>
             <tr>
-              <th><label class="block" for="post_tags">Tags</label></th>
+              <th>
+                <label class="block" for="post_tags">Tags</label>
+                <% unless @current_user && @current_user.privileged? %>
+                  <p>Separate tags with spaces (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+                <% end %>
+              </th>
               <td>
                 <%= text_area "post", "tags", :size => "50x2", :value => @post.cached_tags, :tabindex => 10, :onkeypress => "Post.submit_tags('edit-form', event)" %><br/>
                 <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
