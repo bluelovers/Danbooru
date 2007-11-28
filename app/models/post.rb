@@ -750,12 +750,19 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
+    begin
+      Timeout.timeout(5) do
+        retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
     
-    if retcode == 0
-      return true
-    else
-      errors.add "preview", "couldn't be generated (error code #{retcode})"
+        if retcode == 0
+          return true
+        else
+          errors.add "preview", "couldn't be generated (error code #{retcode})"
+          return false
+        end
+      end
+    rescue Timeout::Error
+      errors.add "preview", "timed out"
       return false
     end
   end
