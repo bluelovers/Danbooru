@@ -25,7 +25,7 @@ class PostController < ApplicationController
     attr_accessor :popular_searches
   end
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => { :action => :show, :id => lambda { |c| c.params[:id] } }
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
   before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
@@ -38,13 +38,19 @@ class PostController < ApplicationController
   
   def verify_action(options)
     if options[:redirect_to]
-  	  options[:redirect_to].each do |k,v|
+      # Make a copy so we don't modify the original
+      options_redirect_to = options[:redirect_to].clone
+      
+  	  options_redirect_to.each do |k,v|
   	  	if v.is_a?(Proc)
-  	  	  options[:redirect_to][k] = v.call(self)
+  	  	  options_redirect_to[k] = v.call(self)
   	  	end
   	  end
+  	  
+    	super(options.merge(:redirect_to => options_redirect_to))
+  	else
+  	  super(options)
     end
-  	super(options)
   end
   
   def create
