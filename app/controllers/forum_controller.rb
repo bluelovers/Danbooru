@@ -98,6 +98,8 @@ class ForumController < ApplicationController
   end
 
   def index
+    set_title CONFIG["app_name"] + " Forum"
+  
     if params[:parent_id]
       @pages, @forum_posts = paginate :forum_posts, :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]]
     else
