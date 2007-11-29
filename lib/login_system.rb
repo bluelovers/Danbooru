@@ -27,10 +27,6 @@ module LoginSystem
       @current_user = User.authenticate(params[:user][:name], params[:user][:password])
     end
     
-    if @current_user && @current_user.blocked?
-      @current_user = nil
-    end
-    
     if @current_user
       if @current_user.ip_addr != request.remote_ip
         @current_user.update_attribute(:ip_addr, request.remote_ip)
@@ -40,16 +36,12 @@ module LoginSystem
         @current_user.update_attribute(:last_logged_in_at, Time.now)
       end
       
+      if @current_user.blocked? && @current_user.ban.expires_at < Time.now
+        @current_user.update_attribute(:level, User::LEVEL_MEMBER)
+        Ban.destroy_all("user_id = #{@current_user.id}")
+      end
+      
       session[:user_id] = @current_user.id
-    end
-  end
-
-  def jailed_only
-    if @current_user && @current_user.level >= User::LEVEL_JAILED
-      return true
-    else
-      access_denied()
-      return false
     end
   end
 

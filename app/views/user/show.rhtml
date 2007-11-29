@@ -8,46 +8,51 @@
     </tr>
     <tr>
       <th>Level</th>
-      <td><%= @user.pretty_level %></td>
+      <td>
+        <%= @user.pretty_level %>
+        <% if @user.blocked? %>
+          (reason: <%= h @user.ban.reason %>; expires: <%= @user.ban.expires_at.strftime("%Y-%m-%d") %>)
+        <% end %>
+      </td>
     </tr>
     <tr>
       <th>Posts</th>
-      <td><%= link_to Post.count("user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></td>
+      <td><%= link_to Post.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <th>Deleted Posts</th>
-      <td><%= link_to Post.count("status = 'deleted' and user_id = #{@user.id}"), :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
+      <td><%= link_to Post.count(:all, :conditions => "status = 'deleted' and user_id = #{@user.id}"), :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
     </tr>
     <tr>
       <th>Favorites</th>
-      <td><%= link_to Favorite.count("user_id = #{@user.id}"), :controller => "favorite", :action => "show", :id => @user.id %></td>
+      <td><%= link_to Favorite.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "favorite", :action => "show", :id => @user.id %></td>
     </tr>
     <tr>
       <th>Comments</th>
-      <td><%= Comment.count("user_id = #{@user.id}") %></td>
+      <td><%= Comment.count(:all, :conditions => "user_id = #{@user.id}") %></td>
     </tr>
     <tr>
       <th>Note Edits</th>
-      <td><%= link_to NoteVersion.count("user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
+      <td><%= link_to NoteVersion.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
     </tr>
     <tr>
       <th>Wiki Edits</th>
-      <td><%= WikiPageVersion.count("user_id = #{@user.id}") %></td>
+      <td><%= WikiPageVersion.count(:all, :conditions => "user_id = #{@user.id}") %></td>
     </tr>
     <tr>
       <th>Forum Posts</th>
-      <td><%= ForumPost.count("creator_id = #{@user.id}") %></td>
+      <td><%= ForumPost.count(:all, :conditions => "creator_id = #{@user.id}") %></td>
     </tr>
     <tr>
       <th>Invites</th>
-      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "lower(name)", :select => "name, id").map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
+      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "lower(name)", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
     </tr>
     <tr>
       <th>Record</th>
       <td>
-        <span style="color: green;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = true", @user.id]) %></span>
+        <span style="color: green;"><%= UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = true", @user.id]) %></span>
         /
-        <span style="color: red;"><%= UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", @user.id]) %></span>
+        <span style="color: red;"><%= UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = false", @user.id]) %></span>
         (<%= link_to "see all", :controller => "user_record", :action => "index", :user_id => @user.id %>)
       </td>
     </tr>
@@ -106,6 +111,9 @@
 </div>
 
 <div id="footer">
+  <% if @current_user && @current_user.mod? %>
+    <%= link_to "Block Account", :controller => "user", :action => "block_account", :id => @user.id %> |
+  <% end %>
   <%= link_to "Send Mail", :controller => "dmail", :action => "compose", :to => @user.name %> |
   <%= link_to "All Users", :controller => "user", :action => "index" %>
 </div>

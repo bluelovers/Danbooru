@@ -5,6 +5,7 @@ class UserController < ApplicationController
   verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
   before_filter :member_only, :only => [:authenticate, :update, :edit]
   before_filter :privileged_only, :only => [:invites]
+  before_filter :mod_only, :only => [:block_account]
   helper :post
   filter_parameter_logging :password
   auto_complete_for :user, :name
@@ -118,7 +119,7 @@ class UserController < ApplicationController
   def authenticate
     save_cookies(@current_user)
     @current_user.increment! :login_count
-
+    
     respond_to do |fmt|
       fmt.html {flash[:notice] = "You are now logged in"; redirect_to(:action => "home")}
       fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
@@ -219,7 +220,25 @@ class UserController < ApplicationController
       @user = User.new
     end
   end
-
+  
+  def block_account
+    @user = User.find(params[:id])
+    
+    if request.post?
+      if @user.mod?
+        flash[:notice] = "You can not ban other moderators or administrators"
+        redirect_to :action => "block_account"
+        return
+      end
+      
+      @user.update_attribute(:level, User::LEVEL_BLOCKED)
+      Ban.create(params[:ban].merge(:banned_by => @current_user.id))
+      redirect_to :action => "show", :id => @user.id
+    else
+      @ban = Ban.new(:user_id => @user.id)
+    end
+  end
+  
   if CONFIG["enable_account_email_activation"]
     def resend_confirmation
       user = @current_user
