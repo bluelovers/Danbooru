@@ -479,6 +479,11 @@ div#paginator span {
   padding: 2px 6px;
 }
 
+div#post-add p#scale {
+  color: #999;
+  font-style: italic;
+}
+
 div#post-popular > h3 {
   text-align: center;
   margin-bottom: 1em;

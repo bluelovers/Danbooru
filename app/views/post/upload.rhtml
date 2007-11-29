@@ -19,6 +19,7 @@
     <div id="posts">
       <% if params[:url] %>
         <%= image_tag(params["url"], :title => "Preview", :id => "image") %>
+        <p id="scale"></p>
         <script type="text/javascript">
           // <![CDATA[
           if ($("image").height > 400) {
@@ -27,6 +28,7 @@
             var ratio = 400.0 / height
             $("image").width = width * ratio
             $("image").height = height * ratio
+            $("scale").innerHTML = "Scaled " + (100 * ratio.toFixed(2)) + "%"
           }
           // ]]>
         </script>
