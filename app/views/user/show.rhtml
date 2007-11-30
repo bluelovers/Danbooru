@@ -10,7 +10,7 @@
       <th>Level</th>
       <td>
         <%= @user.pretty_level %>
-        <% if @user.blocked? %>
+        <% if @user.level == User::LEVEL_BLOCKED %>
           (reason: <%= h @user.ban.reason %>; expires: <%= @user.ban.expires_at.strftime("%Y-%m-%d") %>)
         <% end %>
       </td>
@@ -45,7 +45,7 @@
     </tr>
     <tr>
       <th>Invites</th>
-      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "lower(name)", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
+      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
     </tr>
     <tr>
       <th>Record</th>
