@@ -1,0 +1,21 @@
+<% form_tag(:action => "block_account") do %>
+  <%= hidden_field "ban", "user_id" %>
+  <table class="form">
+    <tbody>
+      <tr>
+        <th><label for="ban_reason">Reason</label></th>
+        <td><%= text_area "ban", "reason", :size => "40x5" %></td>
+      </tr>
+      <tr>
+        <th><label for="ban_duration">Duration</label></th>
+        <td><%= ban_duration_select "ban", "duration" %></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td></td>
+        <td><%= submit_tag "Submit" %></td>
+      </tr>
+    </tfoot>
+  </table>
+<% end %>

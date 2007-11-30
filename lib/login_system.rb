@@ -72,6 +72,15 @@ module LoginSystem
     end
   end
 
+  def blocked_only
+    if @current_user && @current_user.level <= User::LEVEL_BLOCKED
+      access_denied()
+      return false
+    else
+      return true
+    end
+  end 
+
   def admin_only
     if @current_user && @current_user.admin?
       return true
