@@ -751,7 +751,7 @@ class Post < ActiveRecord::Base
     end
 
     begin
-      Timeout.timeout(5) do
+      Timeout.timeout(30) do
         retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
     
         if retcode == 0
