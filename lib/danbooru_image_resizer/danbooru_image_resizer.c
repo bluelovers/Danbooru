@@ -32,7 +32,7 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
   VALUE file_ext_string = StringValue(file_ext);
   VALUE read_path_string = StringValue(read_path);
   VALUE write_path_string = StringValue(write_path);
-  
+
   const char * file_ext_cstr = RSTRING(file_ext_string)->ptr;
   const char * read_path_cstr = RSTRING(read_path_string)->ptr;
   const char * write_path_cstr = RSTRING(write_path_string)->ptr;
@@ -78,6 +78,14 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
 	height = height * scale;
 
 	gdImagePtr preview = gdImageCreateTrueColor(width, height);
+
+  if (preview == NULL) {
+    gdImageDestroy(img);
+    fclose(read_file);
+    fclose(write_file);
+    return INT2FIX(5);
+  }
+
 	gdImageFill(preview, 0, 0, gdTrueColor(255, 255, 255));
 	gdImageCopyResampled(preview, img, 0, 0, 0, 0, width, height, img->sx, img->sy);
 	gdImageJpeg(preview, write_file, 95);
