@@ -4,11 +4,11 @@
       <tbody>
         <% if @current_user.privileged? %>
           <tr>
-            <th>
+            <th width="15%">
               <label class="block" for="user_tag_blacklist">Tag Blacklist</label>
               <p>Any post containing a blacklisted tag will be hidden. Separate tags with spaces.</p>
             </th>
-            <td>
+            <td width="85%">
               <%= text_field "user", "tag_blacklist", :size => 40 %>
             </td>
           </tr>

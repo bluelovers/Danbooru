@@ -1,17 +1,39 @@
-<% form_tag({:action => "index"}, :method => :get) do %>
-  <%= content_tag('label', "Containing:", { 'for' => "name_pattern" }) %>
-  <%= text_field_tag "name_pattern", params[:name_pattern] %>
-  <%= content_tag('label', "Type:", { 'for' => "type" }) %>
-  <%= select_tag "type", options_for_select(["any", "general", "artist", "copyright", "character"], params[:type]) %>
-  <%= submit_tag "Search" %>
-<% end %>
+<div>
+  <% form_tag({:action => "index"}, :method => :get) do %>
+    <table class="form">
+      <tbody>
+        <tr>
+          <th width="15%">
+            <label for="name">Name</label>
+            <p>Use * as a wildcard.</p>
+          </th>
+          <td width="85%"><%= text_field_tag "name", params[:name], :size => 40 %></td>
+        </tr>
+        <tr>
+          <th><label for="type">Type</label></th>
+          <td><%= select_tag "type", options_for_select([["Any", ""], ["Artist", Tag.types[:artist]], ["Character", Tag.types[:character]], ["Copyright", Tag.types[:copyright]], ["General", Tag.types[:general]]]) %></td>
+        </tr>
+        <tr>
+          <th><label for="order">Order</label></th>
+          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]]) %></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><%= submit_tag "Search" %></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  <% end %>
+</div>
 
-<table> 
+<table width="100%" class="highlightable"> 
   <thead>
     <tr>
-      <th>Posts</th>
-      <th>Name</th>
-      <th>Type</th>
+      <th width="5%">Posts</th>
+      <th width="20%">Name</th>
+      <th width="75%">Type</th>
     </tr>
   </thead>
   <tbody>
@@ -29,16 +51,7 @@
 </table>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type]}) %>
+  <%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type], :name => params[:name]}) %>
 </div>
-
-<% content_for("footer") do %>
-  <p><%= render :partial => "alpha_paginator" %></p>
-  <p>
-    <%= link_to "Order by Name", :order => "name" %> |
-    <%= link_to "Order by Count", :order => "count" %> |
-    <%= link_to "Order by Date", :order => "date" %>
-  </p>
-<% end %>
 
 <%= render :partial => "footer" %>

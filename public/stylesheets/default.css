@@ -186,6 +186,24 @@ table.form {
   width: 70em;
 }
 
+table.form p {
+	font-size: 0.8em;
+  font-weight: normal;
+	margin: 0;
+	padding: 0;
+}
+
+table.form th {
+	background: white;
+	color: black;
+	white-space: normal;
+  padding-right: 2em;
+}
+
+table.highlightable > tbody > tr:hover {
+  background: #FFD;
+}
+
 table td {
   padding: 1px 4px; 
   vertical-align: top;
@@ -209,29 +227,6 @@ table tr.highlight {
 
 table tr.pending-tag {
   background: rgb(240, 255, 240);
-}
-
-table.form p {
-	font-size: 0.8em;
-  font-weight: normal;
-	width: 15em;
-	margin: 0;
-	padding: 0 1em 0 0;
-}
-
-table.form th {
-	background: white;
-	color: black;
-	white-space: normal;
-  padding-right: 2em;
-}
-
-table.form > tfoot input {
-	margin-top: 1em;
-}
-
-table.highlightable > tbody > tr:hover {
-  background: #FFD;
 }
 
 textarea {

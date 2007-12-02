@@ -21,71 +21,53 @@ class TagController < ApplicationController
       limit = params[:limit].to_i
     end
 
-    if params[:letter]
-      sql = "SELECT count(*) FROM tags WHERE substring(name FROM 1 FOR 1) < ?"
-      cond_params = [params[:letter]]
-
-      if params[:type]
-        sql << " AND tag_type = ?"
-        cond_params << Tag.types[params[:type]]
-      end
-
-      page = (Tag.count_by_sql([sql, *cond_params]) / 50) + 1
-      redirect_to :action => "index", :order => params[:order], :type => params[:type], :page => page, :letter => nil
-      return
-    end
-
     case params[:order]
-    when "date"
-      order = "id DESC"
-
+    when "name"
+      order = "name"
+      
     when "count"
-      order = "post_count DESC"
+      order = "post_count desc"
+      
+    when "date"
+      order = "id desc"
 
     else
       order = "name"
     end
 
-    sql_conds = []
-    sql_params = []
+    conds = ["true"]
+    cond_params = []
 
-    if Tag.types[params[:type]]
-      sql_conds << "tag_type = ?"
-      sql_params << Tag.types[params[:type]]
+    unless params[:name].blank?
+      conds << "name like ? escape '\\\\'"
+      cond_params << params[:name].to_escaped_for_sql_like
+    end
+
+    unless params[:type].blank?
+      conds << "tag_type = ?"
+      cond_params << params[:type].to_i
     end
 
     if params[:after_id]
-      sql_conds << "id >= ?"
-      sql_params << params[:after_id]
+      conds << "id >= ?"
+      cond_params << params[:after_id]
     end
 
     if params[:id]
-      sql_conds << "id = ?"
-      sql_params << params[:id]
+      conds << "id = ?"
+      cond_params << params[:id]
     end
-
-    if params[:name]
-      sql_conds << "name = ?"
-      sql_params << params[:name]
-    end
-
-    if params[:name_pattern]
-      sql_conds << "name ILIKE ? ESCAPE '\\\\'"
-      sql_params << ("%" + params[:name_pattern].to_escaped_for_sql_like + "%")
-    end
-
-    sql_conds << "TRUE" if sql_conds.empty?
 
     respond_to do |fmt|
       fmt.html do
-        @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => [sql_conds.join(" AND "), *sql_params]
+        @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params]
       end
       fmt.xml do
-        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])
+        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
         render :xml => @tags.to_xml(:root => "tags")
       end
       fmt.js do
-        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [sql_conds.join(" AND "), *sql_params])
+        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
         render :json => @tags.to_json
       end
     end

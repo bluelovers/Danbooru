@@ -1,8 +1,8 @@
 <% form_tag(:action => "update") do %>
-  <table>
+  <table class="form">
     <tr>
-      <th><label for="tag_name">Name</label></th>
-      <td><%= text_field_with_auto_complete "tag", "name", {}, :min_chars => 3, :url => {:controller => "tag", :action => "auto_complete_for_tag_name"} %></td>
+      <th width="15%"><label for="tag_name">Name</label></th>
+      <td width="85%"><%= text_field_with_auto_complete "tag", "name", {}, :min_chars => 3, :url => {:controller => "tag", :action => "auto_complete_for_tag_name"} %></td>
     </tr>
     <tr>
       <th><label for="tag_type">Type</label></th>
