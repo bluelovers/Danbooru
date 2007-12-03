@@ -6,13 +6,14 @@
       <tr>
         <th width="15%">User</th>
         <th width="15%">Reporter</th>
-        <th width="20%">When</th>
+        <th width="15%">When</th>
         <th width="50%">Body</th>
+        <th width="5%"></th>
       </tr>
     </thead>
     <tbody>
       <% @user_records.each do |rec| %>
-        <tr class="<%= rec.is_positive? ? 'positive-record' : 'negative-record' %>">
+        <tr class="<%= rec.is_positive? ? 'positive-record' : 'negative-record' %>" id="record-<%= rec.id %>">
           <td>
             <% if @user %>
               <%= link_to h(rec.user.pretty_name), :controller => "user", :action => "show", :id => rec.user_id %>
@@ -23,6 +24,11 @@
           <td><%= h(rec.reporter.pretty_name) %></td>
           <td><%= time_ago_in_words(rec.created_at) %> ago</td>
           <td><%= format_text(rec.body, :skip_simple_format => true) %></td>
+          <td>
+            <% if @current_user && (@current_user.mod? ||@current_user.id == rec.reported_by) %>
+              <%= link_to_function "Delete", "UserRecord.destroy(#{rec.id})" %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

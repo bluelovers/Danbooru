@@ -1,7 +1,6 @@
 class UserRecordController < ApplicationController
   layout "default"
-  before_filter :privileged_only, :only => [:create]
-  before_filter :admin_only, :only => [:destroy]
+  before_filter :privileged_only, :only => [:create, :destroy]
   
   def index
     if params[:user_id]
@@ -28,9 +27,17 @@ class UserRecordController < ApplicationController
   
   def destroy
     if request.post?
-      UserRecord.destroy(params[:id])
-      flash[:notice] = "Record updated"
-      redirect_to :action => "index", :user_id => params[:user_id]
+      @user_record = UserRecord.find(params[:id])
+      if @current_user.mod? || @current_user.id == @user_record.created_by
+        UserRecord.destroy(params[:id])
+      
+        respond_to do |fmt|
+          fmt.html {flash[:notice] = "Record updated"; redirect_to(:action => "index", :user_id => params[:user_id])}
+          fmt.js {render :js => {:success => true}.to_json}
+        end
+      else
+        access_denied()
+      end
     end
   end
 end
