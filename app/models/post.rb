@@ -326,7 +326,24 @@ class Post < ActiveRecord::Base
 
       sql << " FROM " + from.join(", ") + " WHERE " + conditions.join(" AND ")
 
-      if options[:order]
+      if q[:order] && !options[:count]
+        case q[:order]
+        when "id"
+          sql << " ORDER BY p.id"
+          
+        when "id_desc"
+          sql << " ORDER BY p.id DESC"
+          
+        when "score"
+          sql << " ORDER BY p.score"
+          
+        when "score_desc"
+          sql << " ORDER BY p.score DESC"
+          
+        else
+          sql << " ORDER BY p.id"
+        end
+      elsif options[:order]
         sql << " ORDER BY " + options[:order]
       end
 

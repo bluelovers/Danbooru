@@ -222,7 +222,7 @@ class Tag < ActiveRecord::Base
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(user|fav|md5|-rating|rating|width|height|score|source|id|date|pool|parent):(.+)$/
+        if token =~ /^(user|fav|md5|-rating|rating|width|height|score|source|id|date|pool|parent|order):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "fav"
@@ -253,6 +253,8 @@ class Tag < ActiveRecord::Base
             else
               q[:parent_id] = $2.to_i
             end
+          elsif $1 == "order"
+            q[:order] = $2
           end
         elsif token[0] == ?-
           q[:exclude] << token[1..-1]
