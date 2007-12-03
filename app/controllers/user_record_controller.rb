@@ -33,7 +33,7 @@ class UserRecordController < ApplicationController
       
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Record updated"; redirect_to(:action => "index", :user_id => params[:user_id])}
-          fmt.js {render :js => {:success => true}.to_json}
+          fmt.js {render :js => {:success => true}.to_json}* 
         end
       else
         access_denied()
