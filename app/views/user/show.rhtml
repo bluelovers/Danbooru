@@ -43,8 +43,14 @@
       <th>Forum Posts</th>
       <td><%= ForumPost.count(:all, :conditions => "creator_id = #{@user.id}") %></td>
     </tr>
+    <% if @user.invited_by %>
+      <tr>
+        <th>Invited By</th>
+        <td><%= link_to h(User.find(@user.invited_by).name), :action => "show", :id => @user.invited_by %></td>
+      </tr>
+    <% end %>
     <tr>
-      <th>Invites</th>
+      <th>Recent Invites</th>
       <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
     </tr>
     <tr>
@@ -101,12 +107,12 @@
 </div>
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
-  <h4>Favorites</h4>
+  <h4><%= link_to "Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5, :hide_explicit => hide_explicit?)} %>
 </div>
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
-  <h4>Uploads</h4>
+  <h4><%= link_to "Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5, :hide_explicit => hide_explicit?)} %>
 </div>
 
