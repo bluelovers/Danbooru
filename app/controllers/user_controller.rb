@@ -41,8 +41,8 @@ class UserController < ApplicationController
             return
           end
           
-          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false", user.id]) > 0 && !@current_user.admin?
-            flash[:notice] = "This user has negative feedback on his record and can only be invited by an administrator"
+          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", user.id, User::LEVEL_MOD]) > 0 && !@current_user.mod?
+            flash[:notice] = "This user has negative feedback on his record and can only be invited by a moderator"
             redirect_to :action => "invites"
             return
           end
