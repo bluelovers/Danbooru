@@ -148,10 +148,18 @@ class Post < ActiveRecord::Base
         p << arr[1]
 
       when :gt
+        c << "#{field} > ?"
+        p << arr[1]
+      
+      when :gte
         c << "#{field} >= ?"
         p << arr[1]
 
       when :lt
+        c << "#{field} < ?"
+        p << arr[1]
+
+      when :lte
         c << "#{field} <= ?"
         p << arr[1]
 

@@ -192,11 +192,17 @@ class Tag < ActiveRecord::Base
       when /^([-\d]+)\.\.([-\d]+)$/
         return [:between, cast[$1], cast[$2]]
 
-      when /^\.\.([-\d]+)$/, /^<=?([-\d]+)$/
+      when /^\.\.([-\d]+)$/, /^<([-\d]+)$/
         return [:lt, cast[$1]]
-
-      when /^([-\d]+)\.\.$/, /^>=?([-\d]+)$/
+        
+      when /^<=([-\d]+)$/
+        return [:lte, cast[$1]]
+      
+      when /^([-\d]+)\.\.$/, /^>([-\d]+)$/
         return [:gt, cast[$1]]
+        
+      when /^>=([-\d]+)$/
+        return [:gte, cast[$1]]
 
       when /^([-\d]+)$/
         return [:eq, cast[$1]]
