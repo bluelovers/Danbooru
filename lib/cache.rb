@@ -9,7 +9,7 @@ module Cache
         CACHE.incr(key)
       end
   
-      $cache_version = CACHE.incr("$cache_version")
+      CACHE.incr("$cache_version")
     end
     
     if options[:post_id]
