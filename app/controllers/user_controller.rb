@@ -235,7 +235,7 @@ class UserController < ApplicationController
       Ban.create(params[:ban].merge(:banned_by => @current_user.id))
       redirect_to :action => "show", :id => @user.id
     else
-      @ban = Ban.new(:user_id => @user.id)
+      @ban = Ban.new(:user_id => @user.id, :duration => "1")
     end
   end
   

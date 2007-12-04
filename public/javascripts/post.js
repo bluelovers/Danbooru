@@ -82,9 +82,16 @@ Post.init_from_cookies = function() {
     toggleImageResize()
   }
   
-  if (Cookie.get("my_tags") != "") {
-    RelatedTags.init(Cookie.unescape(Cookie.get("my_tags")), "")
-  } else {
-    RelatedTags.init('', '')
+  if ($("post_tags")) {
+    if (Cookie.get("my_tags") != "") {
+      RelatedTags.init(Cookie.unescape(Cookie.get("my_tags")), "")
+    } else {
+      RelatedTags.init('', '')
+    }
+  }
+  
+  if (Cookie.get("block_reason") != "") {
+    $("block-reason").innerHTML = Cookie.unescape(Cookie.get("block_reason"))
+    $("block-reason").show()
   }
 }

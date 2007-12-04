@@ -98,6 +98,12 @@ class ApplicationController < ActionController::Base
       else
         cookies["resize_image"] = "0"
       end
+      
+      if @current_user.level == User::LEVEL_BLOCKED
+        cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime('%Y-%m-%d')}"
+      else
+        cookies["block_reason"] = ""
+      end
     end
     
     if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])

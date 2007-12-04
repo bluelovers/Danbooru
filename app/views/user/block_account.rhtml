@@ -7,8 +7,10 @@
         <td><%= text_area "ban", "reason", :size => "40x5" %></td>
       </tr>
       <tr>
-        <th><label for="ban_duration">Duration</label></th>
-        <td><%= ban_duration_select "ban", "duration" %></td>
+        <th>
+          <label for="ban_duration">Duration (days)</label>
+        </th>
+        <td><%= text_field "ban", "duration", :size => 10 %></td>
       </tr>
     </tbody>
     <tfoot>

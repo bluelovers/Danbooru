@@ -6,6 +6,8 @@
       <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
     </div>
     
+    <div class="blocked" id="block-reason" style="display: none;"></div>
+    
     <% if @post.is_flagged? %>
       <div class="status-notice">
         This post was flagged for deletion. Reason: <%= format_text(@post.deletion_reason, :skip_simple_format => true) %>

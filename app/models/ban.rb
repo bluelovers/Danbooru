@@ -6,24 +6,11 @@ class Ban < ActiveRecord::Base
   end
   
   def duration=(dur)
-    case dur
-    when "one_day"
-      self.expires_at = 1.day.from_now
-      
-    when "one_week"
-      self.expires_at = 1.week.from_now
-      
-    when "one_month"
-      self.expires_at = 1.month.from_now
-      
-    when "one_year"
-      self.expires_at = 1.year.from_now
-      
-    else
-      raise "Unknown duration"
-    end
+    self.expires_at = dur.to_i.days.from_now
+    @duration = dur
   end
   
   def duration
+    @duration
   end
 end

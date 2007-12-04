@@ -309,6 +309,16 @@ div#artist-index > table td {
   white-space: nowrap;
 }
 
+div.blocked {
+  border: 2px solid #F00;
+  background: #FCC;
+  color: #F00;
+  font-size: 1.2em;
+  padding: 1em;
+  margin: 1em;
+  text-align: center;
+}
+
 div#comment-list > div.post {
   float: left;
   margin-bottom: 3em;;
@@ -342,19 +352,6 @@ div.content {
   width: 77%;
 }
 
-div.has-mail {
-  border: 2px solid #AFA;
-  padding: 1em;
-  margin: 1em;
-  background: #EFE;
-  font-size: 1.5em;
-  text-align: center;
-}
-
-div#header {
-  margin-bottom: 1em;
-}
-
 div#footer {
   margin-top: 1em;
   text-align: center;
@@ -369,6 +366,20 @@ div#forum > table th:first-child {
 
 div#forum > table td:first-child {
   text-align: left;
+}
+
+
+div.has-mail {
+  border: 2px solid #AFA;
+  padding: 1em;
+  margin: 1em;
+  background: #EFE;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+div#header {
+  margin-bottom: 1em;
 }
 
 div.help {
