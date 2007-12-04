@@ -6,6 +6,7 @@
 #define DANBOORU_PREVIEW_SIZE 150
 
 static VALUE danbooru_module;
+static FILE * log = NULL;
 
 /* PRE-CONDITIONS:
  * 1) file_ext is one of four possible case-sensitive strings: jpg, jpeg, 
@@ -29,23 +30,26 @@ static VALUE danbooru_module;
  */
 
 static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path, VALUE write_path) {
-  VALUE file_ext_string = StringValue(file_ext);
-  VALUE read_path_string = StringValue(read_path);
-  VALUE write_path_string = StringValue(write_path);
+  fprintf(log, "----\n"); fflush(log);
+  fprintf(log, "Entering resizer\n"); fflush(log);
 
-  const char * file_ext_cstr = RSTRING(file_ext_string)->ptr;
-  const char * read_path_cstr = RSTRING(read_path_string)->ptr;
-  const char * write_path_cstr = RSTRING(write_path_string)->ptr;
+  const char * file_ext_cstr = StringValueCStr(file_ext);
+  const char * read_path_cstr = StringValueCStr(read_path);
+  const char * write_path_cstr = StringValueCStr(write_path);
+  fprintf(log, "Casted VALUEs to cstrings\n"); fflush(log);
 
   if (file_ext_cstr == NULL || read_path_cstr == NULL || write_path_cstr == NULL) {
     return INT2FIX(1);
   }
+  fprintf(log, "Checked to see if cstrings were null\n"); fflush(log);
+  fprintf(log, "file_ext=%s read_path=%s write_path=%s\n", file_ext_cstr, read_path_cstr, write_path_cstr); fflush(log);
   
   FILE * read_file = fopen(read_path_cstr, "rb");
   
   if (read_file == NULL) {
     return INT2FIX(2);
   }
+  fprintf(log, "Opened read file\n"); fflush(log);
   
   FILE * write_file = fopen(write_path_cstr, "wb");
   
@@ -53,6 +57,7 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
     fclose(read_file);
     return INT2FIX(3);
   }
+  fprintf(log, "Opened write file\n"); fflush(log);
   
   gdImagePtr img = NULL;
   
@@ -69,6 +74,7 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
     fclose(write_file);
     return INT2FIX(4);
   }
+  fprintf(log, "Loaded read file\n"); fflush(log);
 
   size_t width = img->sx;
 	size_t height = img->sy;
@@ -78,6 +84,7 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
 	height = height * scale;
 
 	gdImagePtr preview = gdImageCreateTrueColor(width, height);
+  fprintf(log, "Generated preview\n"); fflush(log);
 
   if (preview == NULL) {
     gdImageDestroy(img);
@@ -87,16 +94,25 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
   }
 
 	gdImageFill(preview, 0, 0, gdTrueColor(255, 255, 255));
+  fprintf(log, "Filled preview\n"); fflush(log);
+
 	gdImageCopyResampled(preview, img, 0, 0, 0, 0, width, height, img->sx, img->sy);
+  fprintf(log, "Resized preview\n"); fflush(log);
+
 	gdImageJpeg(preview, write_file, 95);
+  fprintf(log, "Wrote preview to file\n"); fflush(log);
+
 	gdImageDestroy(img);
 	gdImageDestroy(preview);
 	fclose(read_file);
 	fclose(write_file);
+  fprintf(log, "Cleaned up\n"); fflush(log);
+ 
   return INT2FIX(0);
 }
 
 void Init_danbooru_image_resizer() {
+  log = fopen("/var/www/sites/miezaru/log/resizer.log", "a");
   danbooru_module = rb_define_module("Danbooru");
   rb_define_module_function(danbooru_module, "resize_image", danbooru_resize_image, 3);
 }
