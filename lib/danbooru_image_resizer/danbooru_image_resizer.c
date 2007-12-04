@@ -27,37 +27,50 @@ static FILE * log = NULL;
  * 4) If the preview file could not be opened, a value of 3 will be
  *    returned.
  * 5) If GD could not open the image file, a value of 4 will be returned.
+ * 6) If the preview image could not be created, a value of 5 will be 
+ *    returned.
  */
 
 static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path, VALUE write_path) {
-  fprintf(log, "----\n"); fflush(log);
-  fprintf(log, "Entering resizer\n"); fflush(log);
+  fprintf(log, "----\n"); 
 
   const char * file_ext_cstr = StringValueCStr(file_ext);
   const char * read_path_cstr = StringValueCStr(read_path);
   const char * write_path_cstr = StringValueCStr(write_path);
-  fprintf(log, "Casted VALUEs to cstrings\n"); fflush(log);
 
-  if (file_ext_cstr == NULL || read_path_cstr == NULL || write_path_cstr == NULL) {
+  if (file_ext_cstr == NULL) {
+    fprintf(log, "ERROR: file_ext_cstr was null\n"); 
     return INT2FIX(1);
   }
-  fprintf(log, "Checked to see if cstrings were null\n"); fflush(log);
-  fprintf(log, "file_ext=%s read_path=%s write_path=%s\n", file_ext_cstr, read_path_cstr, write_path_cstr); fflush(log);
+
+  if (read_path_cstr == NULL) {
+    fprintf(log, "ERROR: read_path_cstr was null\n"); 
+    return INT2FIX(1);
+  }
   
+  if (write_path_cstr == NULL) {
+    fprintf(log, "ERROR: write_path_cstr was null\n"); 
+    return INT2FIX(1);
+  }
+
+  fprintf(log, "file_ext_cstr=%s\n", file_ext_cstr); 
+  fprintf(log, "read_path_cstr=%s\n", read_path_cstr); 
+  fprintf(log, "write_path_cstr=%s\n", write_path_cstr); 
+
   FILE * read_file = fopen(read_path_cstr, "rb");
   
   if (read_file == NULL) {
+    fprintf(log, "ERROR: read_file was null\n"); 
     return INT2FIX(2);
   }
-  fprintf(log, "Opened read file\n"); fflush(log);
   
   FILE * write_file = fopen(write_path_cstr, "wb");
   
   if (write_file == NULL) {
+    fprintf(log, "ERROR: write_file was null\n"); 
     fclose(read_file);
     return INT2FIX(3);
   }
-  fprintf(log, "Opened write file\n"); fflush(log);
   
   gdImagePtr img = NULL;
   
@@ -70,11 +83,11 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
   }
 
   if (img == NULL) {
+    fprintf(log, "ERROR: could not create image\n"); 
     fclose(read_file);
     fclose(write_file);
     return INT2FIX(4);
   }
-  fprintf(log, "Loaded read file\n"); fflush(log);
 
   size_t width = img->sx;
 	size_t height = img->sy;
@@ -84,35 +97,38 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext, VALUE read_path
 	height = height * scale;
 
 	gdImagePtr preview = gdImageCreateTrueColor(width, height);
-  fprintf(log, "Generated preview\n"); fflush(log);
 
   if (preview == NULL) {
+    fprintf(log, "ERROR: could not generate preview\n"); 
     gdImageDestroy(img);
     fclose(read_file);
     fclose(write_file);
     return INT2FIX(5);
+  } else {
+    fprintf(log, "Generated preview\n"); 
   }
 
 	gdImageFill(preview, 0, 0, gdTrueColor(255, 255, 255));
-  fprintf(log, "Filled preview\n"); fflush(log);
+  fprintf(log, "Filled preview\n"); 
 
 	gdImageCopyResampled(preview, img, 0, 0, 0, 0, width, height, img->sx, img->sy);
-  fprintf(log, "Resized preview\n"); fflush(log);
+  fprintf(log, "Resized preview\n"); 
 
 	gdImageJpeg(preview, write_file, 95);
-  fprintf(log, "Wrote preview to file\n"); fflush(log);
+  fprintf(log, "Wrote preview to file\n"); 
 
 	gdImageDestroy(img);
 	gdImageDestroy(preview);
 	fclose(read_file);
 	fclose(write_file);
-  fprintf(log, "Cleaned up\n"); fflush(log);
+  fprintf(log, "Done\n"); 
  
   return INT2FIX(0);
 }
 
 void Init_danbooru_image_resizer() {
-  log = fopen("/var/www/sites/miezaru/log/resizer.log", "a");
+  log = fopen("/tmp/resizer.log", "a");
+  setvbuf(log, NULL, _IOLBF, 256);
   danbooru_module = rb_define_module("Danbooru");
   rb_define_module_function(danbooru_module, "resize_image", danbooru_resize_image, 3);
 }

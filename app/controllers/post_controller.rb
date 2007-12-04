@@ -1,30 +1,6 @@
 class PostController < ApplicationController
   layout 'default'
 
-  @recent_searches = []
-  @popular_searches = Hash.new(0)
-
-  class << self
-    def add_search(tags)
-      @recent_searches.unshift(tags)
-      
-      if @recent_searches.size > 50
-        @recent_searches.pop
-      end
-
-      if @popular_searches[:count] > 200
-        @popular_searches[:count] = 0
-        @popular_searches.delete_if {|k, v| v < 10}
-      end
-
-      @popular_searches[tags] += 1
-      @popular_searches[:count] += 1
-    end
-
-    attr_accessor :recent_searches
-    attr_accessor :popular_searches
-  end
-
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
   before_filter :mod_only, :only => [:moderate]
@@ -41,15 +17,15 @@ class PostController < ApplicationController
       # Make a copy so we don't modify the original
       options_redirect_to = options[:redirect_to].clone
       
-  	  options_redirect_to.each do |k,v|
-  	  	if v.is_a?(Proc)
-  	  	  options_redirect_to[k] = v.call(self)
-  	  	end
-  	  end
-  	  
-    	super(options.merge(:redirect_to => options_redirect_to))
-  	else
-  	  super(options)
+      options_redirect_to.each do |k,v|
+        if v.is_a?(Proc)
+          options_redirect_to[k] = v.call(self)
+        end
+      end
+      
+      super(options.merge(:redirect_to => options_redirect_to))
+    else
+      super(options)
     end
   end
   
@@ -204,11 +180,6 @@ class PostController < ApplicationController
     end
   end
   
-  def recent_searches
-    @popular_searches = self.class.popular_searches.reject {|k ,v| k == :count}
-    @recent_searches = self.class.recent_searches
-  end
-  
   def deleted_index
     if params[:user_id]
       @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted' and user_id = ? ", params[:user_id]]
@@ -229,10 +200,6 @@ class PostController < ApplicationController
     limit = params[:limit].to_i
     if limit == 0 || limit > 100
       limit = 16
-    end
-    
-    if params[:tags]
-      self.class.add_search(params[:tags])
     end
 
     @ambiguous = Tag.select_ambiguous(params[:tags])
