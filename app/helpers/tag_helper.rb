@@ -28,23 +28,27 @@ module TagHelper
         raise
       end
     end
-
-    type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec| 
-      h[rec.name] = case rec.tag_type
-      when Tag.types[:artist]
-        "artist"
+    
+    if @current_user && @current_user.privileged?
+      type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec| 
+        h[rec.name] = case rec.tag_type
+        when Tag.types[:artist]
+          "artist"
         
-      when Tag.types[:character]
-        "character"
+        when Tag.types[:character]
+          "character"
         
-      when Tag.types[:copyright]
-        "copyright"
+        when Tag.types[:copyright]
+          "copyright"
         
-      else
-        nil
-      end
+        else
+          nil
+        end
       
-      h
+        h
+      end
+    else
+      type_map = {}
     end
 
     tags.each do |name, count|

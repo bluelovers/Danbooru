@@ -23,7 +23,7 @@
             <div class="tags">
               <strong>Tags</strong> 
               <% post.cached_tags.split(/ /).each do |name| %>
-                <span class="tag-type-<%= Tag.find_type(name) %>">
+                <span class="tag-type-<%= @current_user && @current_user.privileged? ? Tag.find_type(name) : '' %>">
                   <%= link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
                 </span>
               <% end %>
