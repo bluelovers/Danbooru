@@ -13,7 +13,7 @@ module Cache
     end
     
     if options[:post_id]
-      CACHE.set("p/s/#{options[:post_id]}", nil)
+      # CACHE.set("p/s/#{options[:post_id]}", nil)
     end
   end
   
