@@ -4,6 +4,8 @@ class Comment < ActiveRecord::Base
   belongs_to :user
   after_save :update_last_commented_at
   after_destroy :update_last_commented_at
+  after_save :expire_cache
+  after_destroy :expire_cache
   attr_accessor :do_not_bump_post
 
   def update_last_commented_at
@@ -26,6 +28,10 @@ class Comment < ActiveRecord::Base
   
   def pretty_author
     author.tr("_", " ")
+  end
+  
+  def expire_cache
+    Cache.expire(:post_id => self.post_id)
   end
 
   def to_xml(options = {})
