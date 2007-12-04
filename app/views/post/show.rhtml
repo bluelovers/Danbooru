@@ -51,6 +51,11 @@
 
     <div class="sidebar">
       <%= render :partial => 'search' %>
+
+      <% unless @current_user && @current_user.privileged? %>
+        <%= CONFIG["ad_code_show_side"] %>
+      <% end %>
+
       <%= render :partial => 'tags' %>
 
       <div id="stats">
@@ -68,10 +73,6 @@
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post) %></li>
         </ul>
-        
-        <% unless @current_user && @current_user.privileged? %>
-          <%= CONFIG["ad_code_show_side"] %>
-        <% end %>
       </div>
       <div>
         <h5>Options</h5>
@@ -179,13 +180,13 @@
         <% form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form") do %>
           <table class="form">
             <tr>
-              <th>
+              <th width="15%">
                 <label class="block" for="post_rating_questionable">Rating</label>
                 <% unless @current_user && @current_user.privileged? %>
                   <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
                 <% end %>
               </th>
-              <td>
+              <td width="85%">
                 <% if @post.is_rating_locked? %>
                   This post is rating locked.
                 <% else %>

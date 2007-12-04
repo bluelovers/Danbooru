@@ -341,7 +341,7 @@ class Post < ActiveRecord::Base
           sql << " ORDER BY p.score DESC"
           
         else
-          sql << " ORDER BY p.id"
+          sql << " ORDER BY p.id DESC"
         end
       elsif options[:order]
         sql << " ORDER BY " + options[:order]

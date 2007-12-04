@@ -13,6 +13,9 @@
   
   <div class="sidebar">
     <%= render :partial => "search" %>
+    <% unless @current_user && @current_user.privileged? %>
+      <%= CONFIG["ad_code_index_side"] %>
+    <% end %>
     <div style="margin-bottom: 1em;">
       <h5>Mode</h5>
       <form onsubmit="return false;" action="">
@@ -39,10 +42,6 @@
     </div>
 
     <%= render :partial => 'tags' %>
-    
-    <% unless @current_user && @current_user.privileged? %>
-      <%= CONFIG["ad_code_index_side"] %>
-    <% end %>
   </div>
   <div class="content">
     <% unless @current_user && @current_user.privileged? %>
