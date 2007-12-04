@@ -32,12 +32,14 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_key
+    $cache_version = CACHE.get("$cache_version")
+    
     a = "#{params[:controller]}/#{params[:action]}"
     tags = params[:tags].to_s.downcase.scan(/\S+/).sort.map do |x|
       version = CACHE.get("tag:" + x, true).to_i
       "#{x}:#{version}"
     end.join(",")
-
+    
     case a
     when "post/index"
       page = params[:page].to_i
@@ -52,6 +54,9 @@ class ApplicationController < ActionController::Base
       else
         key = "p/i/t=#{tags}&p=#{page}"
       end
+      
+    when "post/show"
+      key = "p/s/#{params[:id]}"
       
     when "post/atom"
       if tags.empty?
@@ -69,6 +74,32 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
+    if @current_user
+      if @current_user.has_mail?
+        cookies["has_mail"] = "1"
+      else
+        cookies["has_mail"] = "0"
+      end
+
+      if ForumPost.updated?(@current_user)
+        cookies["forum_updated"] = "1"
+      else
+        cookies["forum_updated"] = "0"
+      end
+      
+      if params[:controller] == "post" && params[:action] == "show"
+        cookies["my_tags"] = @current_user.my_tags
+      else
+        cookies["my_tags"] = ""
+      end
+
+      if params[:controller] == "post" && params[:action] == "show" && @current_user.always_resize_images?
+        cookies["resize_image"] = "1"
+      else
+        cookies["resize_image"] = "0"
+      end
+    end
+    
     if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
       key = cache_key()
       cached = Cache.get(key)

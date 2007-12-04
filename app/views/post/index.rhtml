@@ -48,6 +48,10 @@
       <%= CONFIG["ad_code_index_top"] %>
     <% end %>
     
+    <div class="has-mail" id="has-mail-notice" style="display: none;">
+      <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
+    </div>
+    
     <div id="edit-panel" style="display: none; margin-bottom: 1em;">
       <h4>Edit Tags</h4>
       <%= hidden_field_tag "edit_post_id", "" %>
@@ -71,6 +75,8 @@
       <%= link_to "Moderate", :controller => "post", :action => "moderate" %> |
       <%= link_to "Help", :controller => "help", :action => "posts" %>
     </div>
+    
+    <% javascript_tag "Post.init_from_cookies()" %>
   </div>
 </div>
 

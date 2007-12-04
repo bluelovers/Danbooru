@@ -68,3 +68,23 @@ Post.submit_tags = function(form, e) {
 		}
 	}
 }
+
+Post.init_from_cookies = function() {
+  if (Cookie.get("has_mail") == "1") {
+    $("has-mail-notice").show()
+  }
+  
+  if (Cookie.get("forum_updated") == "1") {
+    $("forum-link").className = "forum-update"
+  }
+  
+  if (Cookie.get("resize_image") == "1") {
+    toggleImageResize()
+  }
+  
+  if (Cookie.get("my_tags") != "") {
+    RelatedTags.init(Cookie.unescape(Cookie.get("my_tags")), "")
+  } else {
+    RelatedTags.init('', '')
+  }
+}

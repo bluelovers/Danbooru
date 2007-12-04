@@ -4504,6 +4504,10 @@ Cookie.get = function(name) {
 Cookie.remove = function(name) {
   Cookie.put(name, "", -1)
 }
+
+Cookie.unescape = function(val) {
+  return unescape(val.replace(/\+/g, " "))
+}
 Comment = {}
 
 Comment.flag = function(id) {
@@ -5299,6 +5303,26 @@ Post.submit_tags = function(form, e) {
       Event.stop(e)
 		}
 	}
+}
+
+Post.init_from_cookies = function() {
+  if (Cookie.get("has_mail") == "1") {
+    $("has-mail-notice").show()
+  }
+  
+  if (Cookie.get("forum_updated") == "1") {
+    $("forum-link").className = "forum-update"
+  }
+  
+  if (Cookie.get("resize_image") == "1") {
+    toggleImageResize()
+  }
+  
+  if (Cookie.get("my_tags") != "") {
+    RelatedTags.init(Cookie.unescape(Cookie.get("my_tags")), "")
+  } else {
+    RelatedTags.init('', '')
+  }
 }
 PostModeMenu = {}
 

@@ -31,13 +31,13 @@ class Post < ActiveRecord::Base
 
     def expire_cache_on_update
       unless self.is_pending?
-        Cache.expire(:tags => self.cached_tags)
+        Cache.expire(:tags => self.cached_tags, :post_id => self.id)
       end
     end
 
     def expire_cache_on_destroy
       unless self.is_pending?
-        Cache.expire(:tags => self.cached_tags)
+        Cache.expire(:tags => self.cached_tags, :post_id => self.id)
       end
     end
   end
@@ -104,7 +104,7 @@ class Post < ActiveRecord::Base
       transaction do
         if (@tag_cache & CONFIG["explicit_tags"]).any? && self.rating != 'e'
           connection.execute("UPDATE posts SET rating = 'e' WHERE id = #{self.id}")
-          Cache.expire(:update_post => self.id, :tags => @tag_cache.join(" "), :rating => "q") if CONFIG["enable_caching"]
+          Cache.expire(:tags => @tag_cache.join(" "), :post_id => self.id) if CONFIG["enable_caching"]
         end
 
         connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")

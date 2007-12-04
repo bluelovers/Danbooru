@@ -33,3 +33,7 @@ Cookie.get = function(name) {
 Cookie.remove = function(name) {
   Cookie.put(name, "", -1)
 }
+
+Cookie.unescape = function(val) {
+  return unescape(val.replace(/\+/g, " "))
+}

@@ -2,11 +2,9 @@
   <% if @post.nil? %>
     <h2>Nobody here but us chickens!</h2>
   <% else %>
-    <% if @current_user && @current_user.has_mail? %>
-      <div class="has-mail">
-        <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
-      </div>
-    <% end %>
+    <div class="has-mail" id="has-mail-notice" style="display: none;">
+      <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
+    </div>
     
     <% if @post.is_flagged? %>
       <div class="status-notice">
@@ -15,13 +13,6 @@
     <% elsif @post.is_pending? %>
       <div class="status-notice">
         This post is pending moderator approval.
-        
-        <% if @current_user && !@current_user.privileged? && @current_user.id == @post.user_id %>
-          <div style="margin-top: 1em;">
-            <h6>When will my post get approved?</h6>
-            <p>All pending posts are placed in a moderation queue. Moderators then select good posts from the queue and approve them. In general they will not delete posts. If a post is not approved in three days, it will be automatically deleted.</p>
-          </div>
-        <% end %>
       </div>
     <% elsif @post.is_deleted? %>
       <div class="status-notice">
@@ -81,11 +72,8 @@
           <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
             <li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
           <% end %>
-          <% if !@post.is_deleted? && @current_user && @current_user.has_permission?(@post) %>
+          <% if !@post.is_deleted? %>
             <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
-          <% end %>
-          <% if @post.is_deleted? && @current_user && @current_user.has_permission?(@post) %>
-            <li><%= link_to "Really Delete", :action => "delete", :id => @post.id, :really => 1 %></li>
           <% end %>
           <% unless @post.is_flagged? || @post.is_deleted? %>
             <li><%= link_to_function "Flag for Deletion", "Post.flag(#{@post.id})" %></li>
@@ -93,12 +81,9 @@
           <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
             <li><%= link_to_function "Add Translation", "Note.create(#{@post.id})" %></li>
           <% end %>
-          <% if @current_user && Favorite.exists?(["user_id = ? and post_id = ?", @current_user.id, @post.id]) %>
-            <li><%= link_to_function "Remove from Favorites", "Favorite.destroy(#{@post.id})" %></li>
-          <% elsif !@post.is_deleted? && @current_user %>
-            <li><%= link_to_function "Add to Favorites", "Favorite.create(#{@post.id})" %></li>
-          <% end %>
-          <% if @current_user && !@post.is_deleted? %>
+          <li><%= link_to_function "Remove from Favorites", "Favorite.destroy(#{@post.id})" %></li>
+          <li><%= link_to_function "Add to Favorites", "Favorite.create(#{@post.id})" %></li>
+          <% unless @post.is_deleted? %>
             <li><%= link_to "Add to Pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
           <% end %>
           <% if @post.is_pending? && @current_user && @current_user.mod? %>
@@ -252,15 +237,7 @@
         <% end %>
       </div>
       
-      <% if @current_user %>
-        <%= javascript_tag "RelatedTags.init('#{escape_javascript(@current_user.my_tags.to_s)}', '')" %>
-      <% else %>
-        <%= javascript_tag "RelatedTags.init('', '')" %>
-      <% end %>
-      
-      <% if @current_user && @current_user.always_resize_images? && !@post.is_deleted? %>
-        <%= javascript_tag "toggleImageResize()" %>
-      <% end %>
+      <%= javascript_tag "Post.init_from_cookies()" %>
 
       <div id="comments" style="margin-top: 1em;">
         <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
