@@ -6,10 +6,6 @@ class Note < ActiveRecord::Base
   acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
 
-  def self.active
-    find(:all, :conditions => "is_active = TRUE")
-  end
-
   def blank_body
     self.body = "(empty)" if self.body.blank?
   end

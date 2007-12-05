@@ -919,6 +919,10 @@ class Post < ActiveRecord::Base
     connection.execute("delete from posts where id = #{self.id}")
   end
   
+  def active_notes
+    self.notes.select {|x| x.is_active?}
+  end
+  
   def is_flagged?
     self.status == "flagged"
   end

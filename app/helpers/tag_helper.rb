@@ -4,29 +4,16 @@ module TagHelper
     prefix = options[:prefix] || ""
     
     html = ""
-    tags = tags.map do |t|
-      case t
-      when String
-        tag = Tag.find(:first, :conditions => ["name = ?", t], :select => "name, post_count")
-        
-        if tag
-          [tag.name, tag.post_count]
-        else
-          [t, 0]
-        end
+    
+    case tags[0]
+    when String
+      tags = Tag.find(:all, :conditions => ["name in (?)", tags], :select => "name, post_count").inject({}) {|all, x| all[x.name] = x.post_count; all}.to_a.sort {|a, b| a[0] <=> b[0]}
 
-      when Hash
-        [t["name"], t["post_count"]]
-
-      when Tag
-        [t.name, t.post_count]
-        
-      when Array
-        t
-
-      else
-        raise
-      end
+    when Hash
+      tags = tags.map {|x| [x["name"], x["post_count"]]}
+      
+    when Tag
+      tags = tags.map {|x| [x.name, x.post_count]}
     end
     
     if @current_user && @current_user.privileged?

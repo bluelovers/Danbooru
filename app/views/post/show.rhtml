@@ -115,7 +115,7 @@
         <div>
           <% if @post.image? %>
             <div id="note-container">
-              <% @post.notes.active.each do |note| %>
+              <% @post.active_notes.each do |note| %>
                 <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
                   <div class="note-corner" id="note-corner-<%= note.id %>"></div>
                 </div>
@@ -141,7 +141,7 @@
           //<![CDATA[	NOTE: there is no CDATA in HTML. As long as this page is served as text/html, this does nothing.
             Note.post_id = <%= @post.id %>
 
-            <% @post.notes.active.each do |note| %>
+            <% @post.active_notes.each do |note| %>
               Note.all.push(new Note(<%= note.id %>, false, '<%= h note.body.to_escaped_js %>'))
             <% end %>
 
