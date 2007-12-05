@@ -1,9 +1,5 @@
 module PostHelper
   def print_preview(post, options = {})
-    if post.blacklisted?(options[:user])
-      return ""
-    end
-
     if hide_explicit? && post.rating == "e"
       return ""
     end

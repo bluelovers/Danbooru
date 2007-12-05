@@ -4,16 +4,17 @@
   <% else %>
     <% posts.each do |post| %>
       <% unless hide_explicit? && post.rating == 'e' %>
-        <%= print_preview(post, :onclick => "return typeof(PostModeMenu) == 'undefined' || PostModeMenu.click(#{post.id})", :user => @current_user) %>
+        <%= print_preview(post, :onclick => "return PostModeMenu.click(#{post.id})") %>
       <% end %>
     <% end %>
     <script type="text/javascript">
     // <![CDATA[
-      var posts = {}
       <% posts.each do |post| %>
-        posts[<%= post.id %>] = {tags: [<%= post.cached_tags.split(/ /).map {|x| "'" + escape_javascript(x) + "'"}.join(", ") %>]}
+        Post.register(<%= post.id %>, '<%= escape_javascript(post.cached_tags) %>', '<%= post.rating %>')
       <% end %>
     // ]]>
     </script>
   <% end %>
+  
+  <%= javascript_tag "Post.hide_blacklisted()" %>
 </div>

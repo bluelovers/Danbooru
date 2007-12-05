@@ -34,8 +34,18 @@
   <% else %>
     <div id="notice" style="display: none;"></div>
   <% end %>
+  
+  <div class="has-mail" id="has-mail-notice" style="display: none;">
+    <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
+  </div>
+  
+  <div class="blocked" id="block-reason" style="display: none;">
+  </div>
+  
   <div id="content">
     <%= @content_for_layout %>
   </div>
+  
+  <%= javascript_tag "Cookie.setup('#{controller.controller_name}', '#{controller.action_name}')" %>
 </body>
 </html>

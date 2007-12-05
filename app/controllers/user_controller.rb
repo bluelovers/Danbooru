@@ -3,7 +3,7 @@ require 'digest/sha2'
 class UserController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
-  before_filter :member_only, :only => [:authenticate, :update, :edit]
+  before_filter :blocked_only, :only => [:authenticate, :update, :edit]
   before_filter :privileged_only, :only => [:invites]
   before_filter :mod_only, :only => [:block_account]
   helper :post

@@ -35,5 +35,32 @@ Cookie.remove = function(name) {
 }
 
 Cookie.unescape = function(val) {
-  return unescape(val.replace(/\+/g, " "))
+  return window.unescape(val.replace(/\+/g, " "))
+}
+
+Cookie.setup = function(controller, action) {
+  if (this.get("has_mail") == "1") {
+    $("has-mail-notice").show()
+  }
+  
+  if (this.get("forum_updated") == "1") {
+    $("forum-link").className = "forum-update"
+  }
+  
+  if (controller == "post" && action == "show" && this.get("resize_image") == "1") {
+    Post.resize_image()
+  }
+  
+  if (controller == "post" && (action == "show" || action == "upload")) {
+    if (this.get("my_tags") != "") {
+      RelatedTags.init(this.unescape(this.get("my_tags")), "")
+    } else {
+      RelatedTags.init('', '')
+    }
+  }
+  
+  if (this.get("block_reason") != "") {
+    $("block-reason").innerHTML = this.unescape(this.get("block_reason"))
+    $("block-reason").show()
+  }
 }

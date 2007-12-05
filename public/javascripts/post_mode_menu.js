@@ -63,11 +63,11 @@ PostModeMenu.click = function(post_id) {
   } else if (s.value == "fav") {
     Favorite.create(post_id)
   } else if (s.value == "edit") {
-    var post = posts[post_id]
+    var post = Post.posts[post_id]
     $("edit_post_id").value = post_id
     $("edit_tags").value = post.tags.join(" ")
     $("edit-panel").show()
-    $("edit_tags").focus()
+    return false
   } else if (s.value == 'vote-down') {
     Post.vote(-1, post_id)
   } else if (s.value == 'vote-up') {
@@ -91,10 +91,10 @@ PostModeMenu.click = function(post_id) {
     var commands = TagScript.parse(tag_script)
 
     commands.each(function(x) {
-      posts[post_id].tags = TagScript.process(posts[post_id].tags, x)
+      Post.posts[post_id].tags = TagScript.process(Post.posts[post_id].tags, x)
     })
 
-    var newTags = posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
+    var newTags = Post.posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
     Post.update(post_id, 'post[tags]=' + newTags.join(' '))
   }
 

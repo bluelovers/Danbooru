@@ -75,12 +75,7 @@ require 'net/http'
 require 'core_extensions'
 require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
 require 'danbooru_image_resizer/danbooru_image_resizer'
-
-begin
-  require 'superredcloth'
-rescue LoadError
-  require 'redcloth'
-end
+require 'redcloth'
 
 if CONFIG["enable_caching"]
   require 'memcache_util'

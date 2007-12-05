@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   helper_method :hide_explicit?
   before_filter :set_title
   before_filter :set_current_user
+  before_filter :init_cookies
 
   protected
   def hide_explicit?
@@ -73,7 +74,7 @@ class ApplicationController < ActionController::Base
     return key
   end
   
-  def cache_action
+  def init_cookies
     if @current_user
       if @current_user.has_mail?
         cookies["has_mail"] = "1"
@@ -87,13 +88,13 @@ class ApplicationController < ActionController::Base
         cookies["forum_updated"] = "0"
       end
       
-      if params[:controller] == "post" && params[:action] == "show"
+      if controller_name == "post" && action_name == "show"
         cookies["my_tags"] = @current_user.my_tags
       else
         cookies["my_tags"] = ""
       end
 
-      if params[:controller] == "post" && params[:action] == "show" && @current_user.always_resize_images?
+      if controller_name == "post" && action_name == "show" && @current_user.always_resize_images?
         cookies["resize_image"] = "1"
       else
         cookies["resize_image"] = "0"
@@ -104,8 +105,13 @@ class ApplicationController < ActionController::Base
       else
         cookies["block_reason"] = ""
       end
+      
+      cookies["blacklisted_tags"] = @current_user.blacklisted_tags
+      puts @current_user.blacklisted_tags
     end
-    
+  end
+  
+  def cache_action
     if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
       key = cache_key()
       cached = Cache.get(key)

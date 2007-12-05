@@ -20,9 +20,37 @@ The following dependencies are optional:
 - mongrel (web server, http://mongrel.rubyforge.org)
 - aws/s3 (required for Amazon S3 support, http://amazon.rubyforge.org)
 - ragel (required for superredcloth, http://www.cs.queensu.ca/~thurston/ragel)
-- superredcloth (more updated version of redcloth, http://redhanded.hobix.com/inspect/superredclothAsAChild.html)
 - memcached (required for caching, http://www.danga.com/memcached)
 - memcache-client (required for caching, http://dev.robotcoop.com/Libraries)
+
+If you are installing from a stock Debian system, the following commands should work:
+
+>> apt-get install libreadline5-dev
+>> apt-get install gcc
+>> apt-get install zlib1g-dev
+>> apt-get install flex
+>> apt-get install bison
+>> apt-get install make
+>> (manually install PostgreSQL 8.3)
+>> apt-get install libgd2-noxpm
+>> apt-get install ruby
+>> apt-get install ruby-dev
+>> apt-get install rubygems
+>> apt-get install ragel
+>> apt-get install memcached
+>> apt-get install memcache-dev
+>> apt-get install git-core
+>> apt-get install subversion
+>> apt-get install apache2
+>> gem install postgres -- --with-pgsql-dir=/usr/local/pgsql
+>> gem install rails -y
+>> gem install diff-lcs -y
+>> gem install redcloth -y
+>> gem install acts_as_versioned -y
+>> gem install html5 -y
+>> gem install mongrel -y
+>> gem install memcache-client -y
+>> gem install aws-s3 -y
 
 Installing the postgres gem might be tricky because the gem looks for PostgreSQL development files in the wrong location. If the gem install fails, try running "gem install postgres -- --with-pgsql-lib-dir=/usr/local/pgsql/lib --with-pgsql-include-dir=/usr/local/pgsql/include". Substitute "/usr/local/pgsql" with wherever your PostgreSQL files are.
 

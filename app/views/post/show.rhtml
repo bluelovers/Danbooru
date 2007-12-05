@@ -1,13 +1,7 @@
 <div id="post-view">
   <% if @post.nil? %>
     <h2>Nobody here but us chickens!</h2>
-  <% else %>
-    <div class="has-mail" id="has-mail-notice" style="display: none;">
-      <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
-    </div>
-    
-    <div class="blocked" id="block-reason" style="display: none;"></div>
-    
+  <% else %>    
     <% if @post.is_flagged? %>
       <div class="status-notice">
         This post was flagged for deletion. Reason: <%= format_text(@post.deletion_reason, :skip_simple_format => true) %>
@@ -72,7 +66,7 @@
         <ul>
           <li><%= link_to_function "Edit", "$('edit').show().scrollTo(); Form.Element.focus('post_tags')" %></li>
           <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
-            <li><%= link_to_function "Resize Image", "toggleImageResize()" %></li>
+            <li><%= link_to_function "Resize Image", "Post.resize_image()" %></li>
           <% end %>
           <% if !@post.is_deleted? %>
             <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
@@ -239,8 +233,6 @@
         <% end %>
       </div>
       
-      <%= javascript_tag "Post.init_from_cookies()" %>
-
       <div id="comments" style="margin-top: 1em;">
         <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
       </div>

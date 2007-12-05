@@ -1,10 +1,4 @@
-<div id="post-list">
-  <div class="has-mail" id="has-mail-notice" style="display: none;">
-    <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
-  </div>
-  
-  <div class="blocked" id="block-reason" style="display: none;"></div>
-  
+<div id="post-list">  
   <% if @ambiguous.any? %>
     <div class="status-notice">
       <%= link_to_amb_tags(@ambiguous) %>
@@ -57,7 +51,7 @@
     <div id="edit-panel" style="display: none; margin-bottom: 1em;">
       <h4>Edit Tags</h4>
       <%= hidden_field_tag "edit_post_id", "" %>
-      <%= text_area_tag "edit_tags", "", :size => "40x2" %> 
+      <%= text_area_tag "edit_tags", "", :size => "60x2" %> 
       <%= button_to_function "Update", "$('edit-panel').hide(); Post.update($F('edit_post_id'), 'post[tags]=' + $F('edit_tags'))" %>
       <%= button_to_function "Cancel", "$('edit-panel').hide()" %>
     </div>
@@ -78,7 +72,5 @@
       <%= link_to "Help", :controller => "help", :action => "posts" %>
     </div>
   </div>
-  
-  <%= javascript_tag "Post.init_from_cookies()" %>
 </div>
 

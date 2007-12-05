@@ -4433,24 +4433,6 @@ Form.Element.DelayedObserver.prototype = {
     this.callback(this.element, $F(this.element));
   }
 };
-Object.extend(Array.prototype, {
-  uniq: (function() {
-    var temp = []
-    for (i=0; i<this.length; ++i) {
-      if (!temp.include(this[i])) {
-        temp.push(this[i])
-      }
-    }
-    return temp
-  })
-})
-
-Object.extend(String.prototype, {
-  cgiUnescape: function() {
-    return decodeURIComponent(this.replace(/\+/g, " "))
-  }
-})
-
 function notice(msg) {
   $('notice').show()
   $('notice').innerHTML = msg
@@ -4469,6 +4451,7 @@ ClipRange.prototype = {
       return x
   }
 }
+
 Cookie = {}
 
 Cookie.put = function(name, value, days) {
@@ -4506,7 +4489,34 @@ Cookie.remove = function(name) {
 }
 
 Cookie.unescape = function(val) {
-  return unescape(val.replace(/\+/g, " "))
+  return window.unescape(val.replace(/\+/g, " "))
+}
+
+Cookie.setup = function(controller, action) {
+  if (this.get("has_mail") == "1") {
+    $("has-mail-notice").show()
+  }
+  
+  if (this.get("forum_updated") == "1") {
+    $("forum-link").className = "forum-update"
+  }
+  
+  if (controller == "post" && action == "show" && this.get("resize_image") == "1") {
+    Post.resize_image()
+  }
+  
+  if (controller == "post" && (action == "show" || action == "upload")) {
+    if (this.get("my_tags") != "") {
+      RelatedTags.init(this.unescape(this.get("my_tags")), "")
+    } else {
+      RelatedTags.init('', '')
+    }
+  }
+  
+  if (this.get("block_reason") != "") {
+    $("block-reason").innerHTML = this.unescape(this.get("block_reason"))
+    $("block-reason").show()
+  }
 }
 Comment = {}
 
@@ -4611,32 +4621,6 @@ Forum.quote = function(id) {
     }
   })
 }
-function toggleImageResize() {
-  var img = $("image");
-
-  if ((img.scale_factor == 1) || (img.scale_factor == null)) {
-    img.original_width = img.width;
-    img.original_height = img.height;
-    var client_width = $("right-col").clientWidth - 15;
-    var client_height = $("right-col").clientHeight;
-
-    if (img.width > client_width) {
-      var ratio = img.scale_factor = client_width / img.width;
-      img.width = img.width * ratio;
-      img.height = img.height * ratio;
-    }
-  } else {
-    img.scale_factor = 1;
-    img.width = img.original_width;
-    img.height = img.original_height;
-  }
-  if (window.Note) {
-    for (var i=0; i<window.Note.all.length; ++i) {
-      window.Note.all[i].adjustScale()
-    }
-  }
-}
-
 var Note = Class.create()
 Note.zindex = 0
 Note.counter = -1
@@ -5236,6 +5220,8 @@ Pool.remove_post = function(post_id, pool_id) {
 }
 Post = {}
 
+Post.posts = {}
+
 Post.update = function(post_id, params) {
   notice('Updating post #' + post_id)
 
@@ -5305,30 +5291,53 @@ Post.submit_tags = function(form, e) {
 	}
 }
 
-Post.init_from_cookies = function() {
-  if (Cookie.get("has_mail") == "1") {
-    $("has-mail-notice").show()
+Post.register = function(post_id, tags, rating) {
+  tags = tags + " rating:" + rating[0]
+  this.posts[post_id] = {"tags": tags.match(/\S+/g)}
+}
+
+Post.hide_blacklisted = function() {
+  var blacklist = Cookie.get("blacklisted_tags").match(/\S+/g)
+  
+  if (blacklist == null) {
+    return
   }
   
-  if (Cookie.get("forum_updated") == "1") {
-    $("forum-link").className = "forum-update"
-  }
-  
-  if (Cookie.get("resize_image") == "1") {
-    toggleImageResize()
-  }
-  
-  if ($("post_tags")) {
-    if (Cookie.get("my_tags") != "") {
-      RelatedTags.init(Cookie.unescape(Cookie.get("my_tags")), "")
-    } else {
-      RelatedTags.init('', '')
+  for (var id in this.posts) {
+    for (var i=0; i< this.posts[id].tags.length; ++i) {
+      if (blacklist.include(this.posts[id].tags[i])) {
+        console.log("hiding %d", id)
+        $("p" + id).hide()
+        break
+      }
     }
   }
+}
+
+Post.resize_image = function() {
+  var img = $("image");
+
+  if ((img.scale_factor == 1) || (img.scale_factor == null)) {
+    img.original_width = img.width;
+    img.original_height = img.height;
+    var client_width = $("right-col").clientWidth - 15;
+    var client_height = $("right-col").clientHeight;
+
+    if (img.width > client_width) {
+      var ratio = img.scale_factor = client_width / img.width;
+      img.width = img.width * ratio;
+      img.height = img.height * ratio;
+    }
+  } else {
+    img.scale_factor = 1;
+    img.width = img.original_width;
+    img.height = img.original_height;
+  }
   
-  if (Cookie.get("block_reason") != "") {
-    $("block-reason").innerHTML = Cookie.unescape(Cookie.get("block_reason"))
-    $("block-reason").show()
+  if (window.Note) {
+    for (var i=0; i<window.Note.all.length; ++i) {
+      window.Note.all[i].adjustScale()
+    }
   }
 }
 PostModeMenu = {}
@@ -5396,11 +5405,11 @@ PostModeMenu.click = function(post_id) {
   } else if (s.value == "fav") {
     Favorite.create(post_id)
   } else if (s.value == "edit") {
-    var post = posts[post_id]
+    var post = Post.posts[post_id]
     $("edit_post_id").value = post_id
     $("edit_tags").value = post.tags.join(" ")
     $("edit-panel").show()
-    $("edit_tags").focus()
+    return false
   } else if (s.value == 'vote-down') {
     Post.vote(-1, post_id)
   } else if (s.value == 'vote-up') {
@@ -5424,10 +5433,10 @@ PostModeMenu.click = function(post_id) {
     var commands = TagScript.parse(tag_script)
 
     commands.each(function(x) {
-      posts[post_id].tags = TagScript.process(posts[post_id].tags, x)
+      Post.posts[post_id].tags = TagScript.process(Post.posts[post_id].tags, x)
     })
 
-    var newTags = posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
+    var newTags = Post.posts[post_id].tags.map(function(i) {return encodeURIComponent(i)}).sort()
     Post.update(post_id, 'post[tags]=' + newTags.join(' '))
   }
 
@@ -5490,7 +5499,7 @@ RelatedTags.init = function(user_tags, artist_url) {
   RelatedTags.user_tags = user_tags.match(/\S+/g)
 
   if (Cookie.get("recent_tags").length > 0) {
-    RelatedTags.recent_tags = Cookie.get("recent_tags").cgiUnescape().match(/\S+/g).uniq().sort()
+    RelatedTags.recent_tags = Cookie.unescape(Cookie.get("recent_tags")).match(/\S+/g).uniq().sort()
   }
 
   if ((artist_url != null) && (artist_url.match(/^http/))) {
