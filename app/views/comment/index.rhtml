@@ -4,40 +4,47 @@
   <% end %>
 
   <% @posts.each do |post| %>
-    <% unless post.blacklisted?(@current_user) %>
-      <div class="post" id="p<%= post.id %>">
-        <div class="col1">
-          <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
-        </div>
-        <div class="col2" id="comments-for-p<%= post.id %>">
-          <div class="header">
-            <div>
-              <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
-              <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
-              <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
-              <span class="info"><strong>Score</strong> <span id="post-score-<%= post.id %>"><%= post.score %></span> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
-              <% if post.comment_count > 6 %>
-                <span class="info"><strong>Hidden</strong> <%= link_to post.comment_count - 6, :controller => "post", :action => "show", :id => post.id %></span>
-              <% end %>
-            </div>
-            <div class="tags">
-              <strong>Tags</strong>
-              <% post.cached_tags.split(/ /).each do |name| %>
-                <span class="tag-type-<%= @current_user && @current_user.privileged? ? Tag.find_type(name) : '' %>">
-                  <%= link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
-                </span>
-              <% end %>
-            </div>
-          </div>
-          <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>          
-        </div>
+    <div class="post" id="p<%= post.id %>">
+      <div class="col1">
+        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
       </div>
-    <% end %>
+      <div class="col2" id="comments-for-p<%= post.id %>">
+        <div class="header">
+          <div>
+            <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
+            <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
+            <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
+            <span class="info"><strong>Score</strong> <span id="post-score-<%= post.id %>"><%= post.score %></span> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
+            <% if post.comment_count > 6 %>
+              <span class="info"><strong>Hidden</strong> <%= link_to post.comment_count - 6, :controller => "post", :action => "show", :id => post.id %></span>
+            <% end %>
+          </div>
+          <div class="tags">
+            <strong>Tags</strong>
+            <% post.cached_tags.split(/ /).each do |name| %>
+              <span class="tag-type-<%= @current_user && @current_user.privileged? ? Tag.find_type(name) : '' %>">
+                <%= link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+        <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>          
+      </div>
+    </div>
   <% end %>
 
   <div id="paginator">
     <%= custom_pagination_links(@pages)  %>
   </div>
+  
+  <script type="text/javascript">
+    // <![CDATA[
+    <% @posts.each do |post| %>
+      Post.register(<%= post.id %>, '<%= escape_javascript(post.cached_tags) %>', '<%= post.rating %>')
+    <% end %>
+    // ]]>
+    Post.hide_blacklisted()
+  </script>
 
   <%= render :partial => "footer" %>
 </div>
