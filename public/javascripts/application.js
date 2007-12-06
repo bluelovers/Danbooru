@@ -5306,7 +5306,6 @@ Post.hide_blacklisted = function() {
   for (var id in this.posts) {
     for (var i=0; i< this.posts[id].tags.length; ++i) {
       if (blacklist.include(this.posts[id].tags[i])) {
-        console.log("hiding %d", id)
         $("p" + id).hide()
         break
       }
