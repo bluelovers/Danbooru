@@ -31,13 +31,13 @@ class Post < ActiveRecord::Base
 
     def expire_cache_on_update
       unless self.is_pending?
-        Cache.expire(:tags => self.cached_tags, :post_id => self.id)
+        Cache.expire(:tags => self.cached_tags)
       end
     end
 
     def expire_cache_on_destroy
       unless self.is_pending?
-        Cache.expire(:tags => self.cached_tags, :post_id => self.id)
+        Cache.expire(:tags => self.cached_tags)
       end
     end
   end
