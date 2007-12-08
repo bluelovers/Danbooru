@@ -5297,7 +5297,7 @@ Post.register = function(post_id, tags, rating) {
 }
 
 Post.hide_blacklisted = function() {
-  var blacklist = Cookie.get("blacklisted_tags").match(/\S+/g)
+  var blacklist = Cookie.unescape(Cookie.get("blacklisted_tags")).match(/\S+/g)
   
   if (blacklist == null) {
     return

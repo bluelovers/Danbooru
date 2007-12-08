@@ -107,7 +107,6 @@ class ApplicationController < ActionController::Base
       end
       
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags
-      puts @current_user.blacklisted_tags
     end
   end
   
