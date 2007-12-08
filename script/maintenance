@@ -8,7 +8,10 @@ psql danbooru -c "update table_data set row_count = (select count(*) from posts 
 psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null and status <> 'deleted' and rating <> 'e') where name = 'non-explicit_posts'"
 psql danbooru -c "analyze"
 sudo script/process_logs
-pg_dump -Fc -f db/db.dump danbooru
+script/backup_db
+script/backup_db_to_s3
+script/backup_svn_to_s3
 sudo script/rotate_logs
 script/prune_unapproved_posts
+script/prune_backup_dbs
 mv public/maintenance.html public/maintenance2.html

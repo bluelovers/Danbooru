@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pg_dump -Fc -f db/db.snapshot.`date +"%Y-%m-%d.%H:%m"`.dump danbooru
+pg_dump -Fc -f db/db-`date +"%Y-%m-%d-%H-%m"`.dump danbooru
