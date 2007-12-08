@@ -1,0 +1,9 @@
+#!/bin/sh
+
+mv public/maintenance2.html public/maintenance.html
+mongrel_rails cluster::stop
+svn update
+sleep 5
+mongrel_rails cluster::start
+sleep 5
+mv public/maintenance.html public/maintenance2.html
