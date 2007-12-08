@@ -9,7 +9,7 @@ Danbooru has the following general dependencies:
 
 If you are installing on a Debian system, the following command should work:
 
->> apt-get install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev ruby ruby1.8-dev rubygems ragel memcached libmemcache-dev git-core apache2 devscripts
+>> apt-get install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev ruby ruby1.8-dev rubygems ragel memcached libmemcache-dev subversion apache2 devscripts
 
 As of this writing, PostgreSQL is still in experimental so you will have to install it manually. Download the following files from http://packages.debian.org/experimental/postgresql-8.3
 
@@ -29,9 +29,9 @@ You will need to install several dependencies. You can just plug these into apt-
 >> gem install postgres -- --with-pgsql-lib-dir=/usr/lib --with-pgsql-include-dir=/usr/include/postgresql
 >> for i in rails diff-lcs redcloth acts_as_versioned html5 mongrel memcache-client aws-s3 ; do gem install $i -y ; done
 
-Once you've downloaded and installed everything, get the latest copy of Danbooru using git:
+Once you've downloaded and installed everything, get the latest copy of Danbooru using Subversion:
 
->> git clone git://donmai.us/danbooru
+>> svn co svn://danbooru.donmai.us/danbooru/trunk
 
 Now it's time to configure your copy. Change into the config directory and edit the following files: database.yml, local_config.rb. Example files are provided.
 

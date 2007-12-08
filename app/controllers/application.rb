@@ -82,11 +82,11 @@ class ApplicationController < ActionController::Base
         cookies["has_mail"] = "0"
       end
 
-      if ForumPost.updated?(@current_user)
-        cookies["forum_updated"] = "1"
-      else
-        cookies["forum_updated"] = "0"
-      end
+      # if ForumPost.updated?(@current_user)
+      #   cookies["forum_updated"] = "1"
+      # else
+      #   cookies["forum_updated"] = "0"
+      # end
       
       if controller_name == "post" && action_name == "show"
         cookies["my_tags"] = @current_user.my_tags
