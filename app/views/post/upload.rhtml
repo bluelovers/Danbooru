@@ -7,8 +7,7 @@
         <li>Do not upload <%= link_to "furry", :controller => "wiki", :action => "show", :title => "furry" %>, <%= link_to "yaoi", :controller => "wiki", :action => "show", :title => "yaoi" %>, <%= link_to "guro", :controller => "wiki", :action => "show", :title => "guro" %>, <%= link_to "toon", :controller => "wiki", :action => "show", :title => "toon" %>, or <%= link_to "poorly drawn", :controller => "wiki", :action => "show", :title => "poorly_drawn" %> art</li>
         <li>Do not upload things with <%= link_to "compression artifacts", :controller => "wiki", :action => "show", :title => "compression_artifacts" %></li>
         <li>Do not upload things with <%= link_to "obnoxious watermarks", :controller => "wiki", :action => "show", :title => "watermark" %></li>
-        <li>Do not upload <%= link_to "game CGs", :controller => "wiki", :action => "show", :title => "game_cg" %></li>
-        <li><%= link_to "Group doujinshi and manga pages together", :controller => "help", :action => "post_relationships" %></li>
+        <li><%= link_to "Group doujinshi, manga pages, and similar game CGs together", :controller => "help", :action => "post_relationships" %></li>
         <li>Read the <%= link_to "tagging guidelines", :controller => "help", :action => "tags" %></li>
       </ul>
       <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
