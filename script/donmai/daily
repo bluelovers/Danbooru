@@ -2,16 +2,16 @@
 
 export RAILS_ENV=production
 cd /var/www/sites/danbooru
-mv public/maintenance2.html public/maintenance.html
+script/donmai/downbooru
 psql danbooru -c "delete from tags where post_count = 0 and id not in (select alias_id from tag_aliases union select predicate_id from tag_implications union select consequent_id from tag_implications)"
 psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null and status <> 'deleted') where name = 'posts'"
 psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null and status <> 'deleted' and rating <> 'e') where name = 'non-explicit_posts'"
 psql danbooru -c "analyze"
-sudo script/process_logs
-script/backup_db
-script/backup_db_to_s3
-script/backup_svn_to_s3
-sudo script/rotate_logs
-script/prune_unapproved_posts
-script/prune_backup_dbs
-mv public/maintenance.html public/maintenance2.html
+sudo script/donmai/process_logs
+script/donmai/backup_db
+script/donmai/backup_db_to_s3
+script/donmai/backup_svn_to_s3
+sudo script/donmai/rotate_logs
+script/donmai/prune_unapproved_posts
+script/donmai/prune_backup_dbs
+script/donmai/upbooru
