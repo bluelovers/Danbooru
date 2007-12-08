@@ -1,0 +1,14 @@
+#!/bin/bash
+
+export RAILS_ENV=production
+cd /var/www/sites/danbooru
+mv public/maintenance2.html public/maintenance.html
+psql danbooru -c "delete from tags where post_count = 0 and id not in (select alias_id from tag_aliases union select predicate_id from tag_implications union select consequent_id from tag_implications)"
+psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null and status <> 'deleted') where name = 'posts'"
+psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null and status <> 'deleted' and rating <> 'e') where name = 'non-explicit_posts'"
+psql danbooru -c "analyze"
+sudo script/process_logs
+pg_dump -Fc -f db/db.dump danbooru
+sudo script/rotate_logs
+script/prune_unapproved_posts
+mv public/maintenance.html public/maintenance2.html
