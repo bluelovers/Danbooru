@@ -111,26 +111,24 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    result = RubyProf.profile do
-      if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
-        key = cache_key()
-        cached = Cache.get(key)
-        unless cached.blank?
-          render :text => cached, :layout => false
-          return false
-        end
-
-        yield
-      
-  #      Cache.put(key, response.body)
-      else
-        yield
+    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
+      key = cache_key()
+      cached = Cache.get(key)
+      unless cached.blank?
+        render :text => cached, :layout => false
+        return false
       end
-    end
+
+      yield
     
-    File.open("#{RAILS_ROOT}/log/profile.txt", "w") do |f|
-      RubyProf::FlatPrinter.new(result).print(f, 0)
+      Cache.put(key, response.body)
+    else
+      yield
     end
+  end
+  
+  File.open("#{RAILS_ROOT}/log/profile.txt", "w") do |f|
+    RubyProf::FlatPrinter.new(result).print(f, 0)
   end
   
   public
