@@ -16,6 +16,7 @@ module TagHelper
       tags = tags.map {|x| [x.name, x.post_count]}
     end
     
+    type_map = {}
     type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec| 
       h[rec.name] = case rec.tag_type
       when Tag.types[:artist]
@@ -43,15 +44,15 @@ module TagHelper
         html << '<li>'
       end
       
-      html << link_to("?", :controller => "wiki", :action => "show", :title => name) << " "
+      html << %{<a href="/wiki/show?title=#{h(name)}">?</a> }
       
       if @current_user
-        html << link_to("+", :controller => "post", :action => "index", :tags => name + " " + params[:tags].to_s) << " "
-        html << link_to("&ndash;", :controller => "post", :action => "index", :tags => "-" + name + " " + params[:tags].to_s) << " "
+        html << %{<a href="/post/index?tags=#{h(name)}+#{h(params[:tags])}">+</a> }
+        html << %{<a href="/post/index?tags=-#{h(name)}+#{h(params[:tags])}">&ndash;</a> }
       end
 
-      html << link_to(h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name) << " "
-      html << content_tag("span", count.to_i, :class => "post-count") << " "
+      html << %{<a href="/post/index?tags=#{h(name)}">#{h(name)}</a> }
+      html << %{<span class="post-count">#{count}</span> }
       html << '</li>'
     end
 

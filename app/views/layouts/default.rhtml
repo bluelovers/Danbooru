@@ -16,16 +16,16 @@
   <div id="header">
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_header(h(params['tags'])) %></h2>
     <ul class="flat-list" id="navbar">
-      <li><%= link_to "My Account", :controller => "user", :action => "home" %></li>
-      <li><%= link_to "Posts", :controller => "post", :action => "index", :tags => nil %></li>
-      <li><%= link_to "Comments", :controller => "comment", :action => "index" %></li>
-      <li><%= link_to "Notes", :controller => "note", :action => "index" %></li>
-      <li><%= link_to "Pools", :controller => "pool", :action => "index" %></li>
-      <li><%= link_to "Artists", :controller => "artist", :action => "index", :order => "date" %></li>
-      <li><%= link_to "Tags", :controller => "tag", :action => "cloud" %></li>
-      <li><%= link_to "Wiki", :controller => "wiki", :action => "show", :title => "Help:Home" %></li>
-      <li><%= link_to "Forum", {:controller => "forum", :action => "index"}, :id => "forum-link" %></li>
-      <li><%= link_to "Help", :controller => "help", :action => "index" %></li>
+      <li><a href="/user/home">My Account</a></li>
+      <li><a href="/post/index">Posts</a></li>
+      <li><a href="/comment/index">Comments</a></li>
+      <li><a href="/note/index">Notes</a></li>
+      <li><a href="/pool/index">Pools</a></li>
+      <li><a href="/artist/index">Artists</a></li>
+      <li><a href="/tag/cloud">Tags</a></li>
+      <li><a href="/wiki/show?title=Help%3AHome">Wiki</a></li>
+      <li><a href="/forum/index">Forum</a></li>
+      <li><a href="/help/index">Help</a></li>
       <li><a href="/static/more">More &raquo;</a></li>
     </ul>
   </div>
