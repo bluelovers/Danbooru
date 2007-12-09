@@ -127,9 +127,9 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  File.open("#{RAILS_ROOT}/log/profile.txt", "w") do |f|
-    RubyProf::FlatPrinter.new(result).print(f, 0)
-  end
+  # File.open("#{RAILS_ROOT}/log/profile.txt", "w") do |f|
+  #   RubyProf::FlatPrinter.new(result).print(f, 0)
+  # end
   
   public
   def local_request?
