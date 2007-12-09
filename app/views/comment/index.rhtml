@@ -23,7 +23,7 @@
             <strong>Tags</strong>
             <% post.cached_tags.split(/ /).each do |name| %>
               <span class="tag-type-<%= Tag.find_type(name) %>">
-                <%= link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
+                <a href="/post/index?tags=<%= h name %>"><%= h name.tr("_", " ") %></a>
               </span>
             <% end %>
           </div>

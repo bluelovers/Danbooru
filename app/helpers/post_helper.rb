@@ -14,7 +14,7 @@ module PostHelper
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
 
     image = %{<img src="#{post.preview_url}" alt="#{h(post.cached_tags)}" class="#{image_class}" title="#{h(post.cached_tags)}" #{image_id}/>}
-    link = %{<a href="/post/show/#{post.id}/#{h(post.tag_title)}" #{link_onclick}>#{image}</a>}
+    link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>#{image}</a>}
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}
     return span
   end
@@ -22,7 +22,7 @@ module PostHelper
   def link_to_amb_tags(tags)
     html = "The following tags are potentially ambiguous: "
     tags = tags.map do |t|
-      %{<a href="/post/index?tags=%2A#{h(t)}%2A">#{h(t)}</a>}
+      %{<a href="/post/index?tags=%2A#{u(t)}%2A">#{h(t)}</a>}
     end
     html + tags.join(", ")
   end

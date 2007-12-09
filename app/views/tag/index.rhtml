@@ -32,15 +32,15 @@
   <thead>
     <tr>
       <th width="5%">Posts</th>
-      <th width="20%">Name</th>
-      <th width="75%">Type</th>
+      <th width="25%">Name</th>
+      <th width="70%">Type</th>
     </tr>
   </thead>
   <tbody>
     <% @tags.each do |tag| %>
       <tr class="<%= cycle 'even', 'odd' %>">
         <td align="right"><%= tag['post_count'] %></td>
-        <td class="tag-type-<%= tag.type_name %>"><%= link_to h(tag['name']), :controller => "post", :action => "index", :tags => tag['name'] %></td>
+        <td class="tag-type-<%= tag.type_name %>"><a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a></td>
         <td>
         <%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %>
         (<%= link_to "edit", :action => "edit", :name => tag['name'] %>)

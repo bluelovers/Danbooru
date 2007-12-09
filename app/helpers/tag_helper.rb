@@ -44,14 +44,14 @@ module TagHelper
         html << '<li>'
       end
       
-      html << %{<a href="/wiki/show?title=#{h(name)}">?</a> }
+      html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
       
       if @current_user
-        html << %{<a href="/post/index?tags=#{h(name)}+#{h(params[:tags])}">+</a> }
-        html << %{<a href="/post/index?tags=-#{h(name)}+#{h(params[:tags])}">&ndash;</a> }
+        html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}">+</a> }
+        html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}">&ndash;</a> }
       end
 
-      html << %{<a href="/post/index?tags=#{h(name)}">#{h(name)}</a> }
+      html << %{<a href="/post/index?tags=#{u(name)}">#{h(name)}</a> }
       html << %{<span class="post-count">#{count}</span> }
       html << '</li>'
     end
@@ -65,7 +65,7 @@ module TagHelper
     tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
       size = Math.log(tag["post_count"].to_i) / divisor
       size = 0.8 if size < 0.8
-      html << link_to(h(tag["name"].tr("_", " ")), {:controller => "post", :action => "index", :tags => tag["name"]}, :style => "font-size:#{size}em", :title => "#{tag['post_count']} posts") << " "
+      html << %{<a href="/post/index?tags=#{u(tag["name"])}" style="font-size: #{size}em;" title="#{tag["post_count"]} posts">#{h(tag["name"])}</a> }
     end
 
     return html
