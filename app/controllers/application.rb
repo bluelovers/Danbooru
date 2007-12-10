@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).scan(/\S+/))
       tags += cookies["recent_tags"].to_s.gsub(/(?:character|char|ch|copyright|copy|ambiguous|artist|parent|pool):/, "").scan(/\S+/)
-      cookies["recent_tags"] = tags.slice(0, 30).join(" ")
+      cookies["recent_tags"] = tags.slice(0, 20).join(" ")
     end
   end
   
@@ -111,6 +111,8 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
+    RubyProf.start if ENV["ENABLE_RUBY_PROFILING"]
+    
     if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
       key = cache_key()
       cached = Cache.get(key)
@@ -121,9 +123,14 @@ class ApplicationController < ActionController::Base
 
       yield
     
-      Cache.put(key, response.body)
+      Cache.put(key, response.body) unless ENV["ENABLE_RUBY_PROFILING"]
     else
       yield
+    end
+    
+    if ENV["ENABLE_RUBY_PROFILING"]
+      result = RubyProf.stop
+      RubyProf::FlatPrinter.new(result).print(File.open("log/profile.txt", "w"), 0)
     end
   end
   

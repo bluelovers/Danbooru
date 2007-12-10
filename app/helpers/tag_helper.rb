@@ -51,7 +51,7 @@ module TagHelper
         html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}">&ndash;</a> }
       end
 
-      html << %{<a href="/post/index?tags=#{u(name)}">#{h(name)}</a> }
+      html << %{<a href="/post/index?tags=#{u(name)}">#{h(name.tr("_", " "))}</a> }
       html << %{<span class="post-count">#{count}</span> }
       html << '</li>'
     end
