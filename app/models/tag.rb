@@ -285,10 +285,7 @@ class Tag < ActiveRecord::Base
   def related
     if Time.now > self.cached_related_expires_on
       length = (self.post_count / 10).to_i
-      
-      if CONFIG["enable_turbo_mode"]
-        length = 12 if length < 12
-      end
+      length = 8 if length < 8
 
       self.update_related_tags(length)
       self.reload
