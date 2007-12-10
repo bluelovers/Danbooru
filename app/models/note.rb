@@ -5,6 +5,15 @@ class Note < ActiveRecord::Base
   before_save :blank_body
   acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
+  
+  if CONFIG["enable_caching"]
+    after_save :expire_post_cache
+    after_destroy :expire_post_cache
+    
+    def expire_post_cache
+      Cache.expire(:post_id => self.post_id)
+    end
+  end
 
   def blank_body
     self.body = "(empty)" if self.body.blank?
