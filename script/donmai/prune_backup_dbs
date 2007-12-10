@@ -1,3 +1,0 @@
-#!/bin/bash
-
-find db -name '*.dump' -mtime +30 -exec /bin/rm -f {} \;
