@@ -24,19 +24,19 @@ class Post < ActiveRecord::Base
   
   module CacheMethods
     def expire_cache_on_create
-      unless self.is_pending?
+      unless self.is_pending? || self.rating == "e"
         Cache.expire(:tags => self.cached_tags, :post_id => self.id)
       end
     end
 
     def expire_cache_on_update
-      unless self.is_pending?
+      unless self.is_pending? || self.rating == "e"
         Cache.expire(:tags => self.cached_tags, :post_id => self.id)
       end
     end
 
     def expire_cache_on_destroy
-      unless self.is_pending?
+      unless self.is_pending? || self.rating == "e"
         Cache.expire(:tags => self.cached_tags, :post_id => self.id)
       end
     end
