@@ -191,7 +191,7 @@ class PostController < ApplicationController
   def index
     set_title "/#{params[:tags]}"
 
-    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 1
+    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 2
       flash[:notice] = "You need a privileged account to search for more than two tags at a time."
       redirect_to :controller => "user", :action => "login"
       return
