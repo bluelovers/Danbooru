@@ -38,17 +38,17 @@ class ApplicationController < ActionController::Base
       page = params[:page].to_i
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
       expiry = 0
-      cache_version = Cache.get("$cache_version") {0}
       
       if page > 10
-        expiry = (rand(7) + 1) * 1.day
+        expiry = (rand(4) + 3) * 1.day
       end
       
       if tags.empty?
         if page > 10
           key = "p/i/p=#{page}"
         else
-          key = "p/i/p=#{page}&cache_version=#{cache_version}"
+          cache_version = Cache.get("$cache_version") {0}
+          key = "p/i/p=#{page}&v=#{cache_version}"
         end
       else        
         if page > 10
