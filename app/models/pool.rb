@@ -19,12 +19,14 @@ class Pool < ActiveRecord::Base
     end
 
     transaction do
+      Cache.expire(:post_id => post_id)
       update_attributes(:updated_at => Time.now)
       PoolPost.create(:pool_id => self.id, :post_id => post_id)
     end
   end
   
   def remove_post(post_id)
+    Cache.expire(:post_id => post_id)
     PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
   end
 end

@@ -238,6 +238,7 @@ class User < ActiveRecord::Base
       transaction do
         connection.execute("INSERT INTO favorites (post_id, user_id) VALUES (#{post_id}, #{id})")
         connection.execute("UPDATE posts SET fav_count = fav_count + 1, score = score + 1 WHERE id = #{post_id}")
+        Cache.expire(:post_id => post_id)
       end
     end
   end
@@ -247,6 +248,7 @@ class User < ActiveRecord::Base
       transaction do
         connection.execute("DELETE FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
         connection.execute("UPDATE posts SET fav_count = fav_count - 1, score = score - 1 WHERE id = #{post_id}")
+        Cache.expire(:post_id => post_id)
       end
     end
   end

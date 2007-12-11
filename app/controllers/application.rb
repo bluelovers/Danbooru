@@ -33,45 +33,75 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_key
-    cache_version = Cache.get("$cache_version") {0}
-    
-    a = "#{params[:controller]}/#{params[:action]}"
-    tags = params[:tags].to_s.downcase.scan(/\S+/).sort.map do |x|
-      version = CACHE.get("tag:" + x, true).to_i
-      "#{x}:#{version}"
-    end.join(",")
-    
-    case a
+    case "#{controller_name}/#{action_name}"
     when "post/index"
       page = params[:page].to_i
-      page = 1 if page == 0
-
-      if tags.empty?
-        key = "p/i/p=#{page}&v=#{cache_version}"
-      elsif tags.include?(":")
-        # The presence of a colon implies a meta-tag, which won't be
-        # expired automatically.
-        key = "p/i/t=#{tags}&p=#{page}&v=#{cache_version}"
-      else
-        key = "p/i/t=#{tags}&p=#{page}"
+      tags = params[:tags].to_s.downcase.scan(/\S+/).sort
+      expiry = 0
+      cache_version = Cache.get("$cache_version") {0}
+      
+      if page > 10
+        expiry = (rand(7) + 1) * 1.day
       end
       
-    when "post/show"
-      key = "p/s/#{params[:id]}"
+      if tags.empty?
+        if page > 10
+          key = "p/i/p=#{page}"
+        else
+          key = "p/i/p=#{page}&cache_version=#{cache_version}"
+        end
+      else        
+        if page > 10
+          key = "p/i/p=#{page}&t=#{tags.join(',')}"
+        else
+          versioned_tags = tags.map do |x|
+            version = Cache.get("tag:#{x}").to_i
+            "#{x}:#{version}"
+          end
+
+          key = "p/i/p=#{page}&t=#{versioned_tags.join(',')}"
+        end
+      end
+      
+      return [key, expiry]
       
     when "post/atom"
+      tags = params[:tags].to_s.downcase.scan(/\S+/).sort
+      
       if tags.empty?
         key = "p/a/v=#{cache_version}"
-      elsif tags.include?(":")
-        # The presence of a colon implies a meta-tag, which won't be
-        # expired automatically.
-        key = "p/a/t=#{tags}&v=#{cache_version}"
       else
-        key = "p/a/t=#{tags}"
+        key = "p/a/t=#{tags.join(',')}"
       end
+      
+      return [key, 4.hours]
+      
+    when "post/show"
+      id = params[:id]
+      key = "p/s/#{id}"
+      return [key, 0]
+      
+    else
+      raise "Unknown action"
     end
+  end
+  
+  def cache_action
+    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
+      key, expiry = cache_key()
+      cached = Cache.get(key)
 
-    return key
+      unless cached.blank?
+        render :text => cached, :layout => false
+        return false
+      end
+
+      yield
+      
+      Cache.put(key, response.body, expiry)
+    else
+      yield
+    end
   end
   
   def init_cookies
@@ -109,34 +139,6 @@ class ApplicationController < ActionController::Base
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags
     end
   end
-  
-  def cache_action
-    RubyProf.start if ENV["ENABLE_RUBY_PROFILING"]
-    
-    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
-      key = cache_key()
-      cached = Cache.get(key)
-      unless cached.blank?
-        render :text => cached, :layout => false
-        return false
-      end
-
-      yield
-    
-      Cache.put(key, response.body) unless ENV["ENABLE_RUBY_PROFILING"]
-    else
-      yield
-    end
-    
-    if ENV["ENABLE_RUBY_PROFILING"]
-      result = RubyProf.stop
-      RubyProf::FlatPrinter.new(result).print(File.open("log/profile.txt", "w"), 0)
-    end
-  end
-  
-  # File.open("#{RAILS_ROOT}/log/profile.txt", "w") do |f|
-  #   RubyProf::FlatPrinter.new(result).print(f, 0)
-  # end
   
   public
   def local_request?

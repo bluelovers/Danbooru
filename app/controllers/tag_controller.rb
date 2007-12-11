@@ -63,8 +63,8 @@ class TagController < ApplicationController
         @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params]
       end
       fmt.xml do
-        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
-        render :xml => @tags.to_xml(:root => "tags")
+        order = nil if params[:order] == nil
+        render :xml => Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params]).to_xml(:root => "tags")
       end
       fmt.js do
         @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
