@@ -1,18 +1,21 @@
 module Cache
   def expire(options = {})
-    if options[:tags]
-      options[:tags].scan(/\S+/).each do |x|
+    tags = options[:tags]
+    post_id = options[:post_id]
+    cache_version = Cache.get("$cache_version").to_i
+
+    Cache.put("$cache_version", cache_version + 1)
+
+    if tags
+      tags.scan(/\S+/).each do |x|
         key = "tag:#{x}"
-        key_version = Cache.get(key) {0}
+        key_version = Cache.get(key).to_i
         Cache.put(key, key_version + 1)
       end
     end
 
-    if options[:post_id]
-      Cache.put("p/s/#{options[:post_id]}", nil)
-    else  
-      cache_version = Cache.get("$cache_version") {0}
-      Cache.put("$cache_version", cache_version + 1)
+    if post_id
+      Cache.delete("p/s/#{post_id}")
     end
   end
   

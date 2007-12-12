@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
         if page > 10
           key = "p/i/p=#{page}"
         else
-          cache_version = Cache.get("$cache_version") {0}
+          cache_version = Cache.get("$cache_version").to_i
           key = "p/i/p=#{page}&v=#{cache_version}"
         end
       else        
