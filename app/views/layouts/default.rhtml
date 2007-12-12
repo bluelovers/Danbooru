@@ -41,11 +41,12 @@
   
   <div class="blocked" id="block-reason" style="display: none;">
   </div>
-  
+
   <div id="content">
     <%= @content_for_layout %>
   </div>
-  
-  <%= javascript_tag "Cookie.setup('#{controller.controller_name}', '#{controller.action_name}')" %>
+
+  <%= javascript_tag "Cookie.setup()" %>
+  <%= @content_for_post_cookie_javascripts %>
 </body>
 </html>

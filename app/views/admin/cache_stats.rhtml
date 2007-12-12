@@ -1,17 +1,47 @@
-<h5>Memcache Servers</h5>
-<table>
-  <tr>
-    <th>Server</th>
-    <th>Size</th>
-    <th>Hits:Misses:Total</th>
-    <th>Hit Rate</th>
-  </tr>
-  <% CACHE.stats.each do |server, stats| %>
-    <tr>
-      <td><%= server %></td>
-      <td><%= stats["bytes"].to_i / 1024 %>/<%= stats["limit_maxbytes"].to_i / 1024 %></td>
-      <td><%= stats["get_hits"] %>:<%= stats["get_misses"] %>:<%= stats["cmd_get"] %></td>
-      <td><%= "%0.2f" % (100 * stats["get_hits"].to_f / stats["cmd_get"].to_f) %>%</td>
-    </tr>
+<div>
+  <% form_tag(:action => "cache_stats") do %>
+    <table width="100%" class="form">
+      <tbody>
+        <tr>
+          <th width="15%"><label for="key">Key</label></th>
+          <td width="85%"><%= text_field_tag "key", params[:key], :size => 40 %></td>
+        </tr>
+        <tr>
+          <th>
+            <label for="value">Value</label>
+            <p>Prefix with s: to save as string, otherwise value will be converted to integer.</p>
+          </th>
+          <td><%= text_field_tag "value", @value, :size => 40 %></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <%= submit_tag "Get" %>
+            <%= submit_tag "Update" %>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   <% end %>
-</table>
+</div>
+
+<div>
+  <h5>Memcache Servers</h5>
+  <table>
+    <tr>
+      <th>Server</th>
+      <th>Size</th>
+      <th>Hits:Misses:Total</th>
+      <th>Hit Rate</th>
+    </tr>
+    <% CACHE.stats.each do |server, stats| %>
+      <tr>
+        <td><%= server %></td>
+        <td><%= stats["bytes"].to_i / 1048576 %>/<%= stats["limit_maxbytes"].to_i / 1048576 %></td>
+        <td><%= stats["get_hits"] %>:<%= stats["get_misses"] %>:<%= stats["cmd_get"] %></td>
+        <td><%= "%0.2f" % (100 * stats["get_hits"].to_f / stats["cmd_get"].to_f) %>%</td>
+      </tr>
+    <% end %>
+  </table>  
+</div>

@@ -45,8 +45,19 @@ class AdminController < ApplicationController
     end
   end
 
-  def reset_cache
-    $cache_version += 1
-    redirect_to :action => "index"
+  def cache_stats
+    if params[:key]
+      if params[:commit] == "Update"
+        if params[:value] =~ /^s:/
+          Cache.put(params[:key], params[:value][2..-1])
+        else
+          Cache.put(params[:key], params[:value].to_i)
+        end
+        
+        flash[:notice] = "Cache updated"
+      end
+      
+      @value = Cache.get(params[:key])
+    end
   end
 end

@@ -39,12 +39,9 @@ class ApplicationController < ActionController::Base
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
       expiry = 0
       
-      if page > 10
-        expiry = (rand(4) + 3) * 1.day
-      end
-      
       if tags.empty?
         if page > 10
+          expiry = (rand(4) + 3) * 1.day
           key = "p/i/p=#{page}"
         else
           cache_version = Cache.get("$cache_version").to_i
@@ -52,6 +49,7 @@ class ApplicationController < ActionController::Base
         end
       else        
         if page > 10
+          expiry = (rand(4) + 3) * 1.day
           key = "p/i/p=#{page}&t=#{tags.join(',')}"
         else
           versioned_tags = tags.map do |x|
@@ -69,12 +67,18 @@ class ApplicationController < ActionController::Base
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
       
       if tags.empty?
+        cache_version = Cache.get("$cache_version").to_i
         key = "p/a/v=#{cache_version}"
       else
-        key = "p/a/t=#{tags.join(',')}"
+        versioned_tags = tags.map do |x|
+          version = Cache.get("tag:#{x}").to_i
+          "#{x}:#{version}"
+        end
+
+        key = "p/a/t=#{versioned_tags.join(',')}"
       end
       
-      return [key, 4.hours]
+      return [key, 0]
       
     when "post/show"
       id = params[:id]
@@ -87,7 +91,7 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
+    if (@current_user == nil || !@current_user.privileged?) && @nocache != true && request.method == :get && !%w(xml js).include?(params[:format])
       key, expiry = cache_key()
       cached = Cache.get(key)
 
@@ -117,25 +121,20 @@ class ApplicationController < ActionController::Base
       else
         cookies["forum_updated"] = "0"
       end
-      
-      if controller_name == "post" && action_name == "show"
-        cookies["my_tags"] = @current_user.my_tags
-      else
-        cookies["my_tags"] = ""
-      end
 
-      if controller_name == "post" && action_name == "show" && @current_user.always_resize_images?
-        cookies["resize_image"] = "1"
-      else
-        cookies["resize_image"] = "0"
-      end
-      
       if @current_user.level == User::LEVEL_BLOCKED
         cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime('%Y-%m-%d')}"
       else
         cookies["block_reason"] = ""
       end
       
+      if @current_user.always_resize_images?
+        cookies["resize_image"] = "1"
+      else
+        cookies["resize_image"] = "0"
+      end
+      
+      cookies["my_tags"] = @current_user.my_tags      
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags
     end
   end

@@ -92,10 +92,12 @@
       </div>
 
       <div id="related"><em>None</em></div>
-
-      <%= javascript_tag "RelatedTags.init('#{escape_javascript(@current_user.my_tags.to_s)}', $F('post_source'))" %>
     </div>
 
     <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
   <% end %>
 </div>
+
+<% content_for("post_cookie_javascripts") do %>
+  <%= javascript_tag "RelatedTags.init(Cookie.unescape(Cookie.get('my_tags')), '#{params[:url]}')" %>
+<% end %>

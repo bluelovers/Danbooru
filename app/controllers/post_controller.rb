@@ -232,6 +232,11 @@ class PostController < ApplicationController
   end
 
   def atom
+    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 2
+      render :nothing => true, :status => 500
+      return
+    end
+    
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :hide_explicit => hide_explicit?))
     render :layout => false
   end
@@ -243,6 +248,7 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags
     rescue ActiveRecord::RecordNotFound
+      @nocache = true
       flash.now[:notice] = "That post ID was not found"
     end
   end

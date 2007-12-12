@@ -277,15 +277,16 @@ class Tag < ActiveRecord::Base
     end
   end
 
-  def update_related_tags(length = 8)
+  def update_related_tags(length )
     sql = Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).to_yaml, length.hours.from_now])
     connection.execute(sql)
   end
 
   def related
     if Time.now > self.cached_related_expires_on
-      length = (self.post_count / 10).to_i
-      length = 8 if length < 8
+      length = (self.post_count / 3).to_i
+      length = 12 if length < 12
+      length = 8760 if length > 8760
 
       self.update_related_tags(length)
       self.reload
