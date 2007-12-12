@@ -95,7 +95,7 @@
         </ul>
       </div>
       <div>
-        <h5>Neighbors</h5>
+        <h5>Related Posts</h5>
         <ul>
           <% if @post.prev_post_id %>
             <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %></li>
@@ -103,6 +103,10 @@
           <% if @post.next_post_id %>
             <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %></li>
           <% end %>
+          <% if @post.parent_id %>
+            <li><%= link_to "Parent", :controller => "post", :action => "show", :id => @post.parent_id %></li>
+          <% end %>
+          <li><%= link_to "Random", :controller => "post", :action => "random" %></li>
         </ul>
       </div>
     </div>

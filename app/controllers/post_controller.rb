@@ -407,4 +407,24 @@ class PostController < ApplicationController
       fmt.js {render :json => {:success => true}.to_json}
     end
   end
+  
+  def random
+    max_id = Post.maximum(:id)
+    
+    25.times do
+      if @current_user && @current_user.privileged?
+        post = Post.find(:first, :conditions => ["id = ?", rand(max_id)], :select => "id")
+      else
+        post = Post.find(:first, :conditions => ["id = ? and rating <> 'e'", rand(max_id)], :select => "id")
+      end
+
+      if post != nil
+        redirect_to :action => "show", :id => post.id
+        return
+      end
+    end
+    
+    flash[:notice] = "Gave up"
+    redirect_to :action => "index"
+  end
 end
