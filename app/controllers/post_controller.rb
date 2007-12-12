@@ -411,7 +411,7 @@ class PostController < ApplicationController
   def random
     max_id = Post.maximum(:id)
     
-    25.times do
+    10.times do
       if @current_user && @current_user.privileged?
         post = Post.find(:first, :conditions => ["id = ?", rand(max_id)], :select => "id")
       else
@@ -424,7 +424,7 @@ class PostController < ApplicationController
       end
     end
     
-    flash[:notice] = "Gave up"
+    flash[:notice] = "Couldn't find a post in 10 tries. Try again."
     redirect_to :action => "index"
   end
 end
