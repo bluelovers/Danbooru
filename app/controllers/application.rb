@@ -91,11 +91,14 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
+    response.headers["Cache-Control"] = "max-age=3600, must-revalidate"
+    
     if (@current_user == nil || !@current_user.privileged?) && @nocache != true && request.method == :get && !%w(xml js).include?(params[:format])
       key, expiry = cache_key()
       cached = Cache.get(key)
 
       unless cached.blank?
+        response.headers["ETag"] = Digest::MD5.hexdigest(cached)
         render :text => cached, :layout => false
         return false
       end
@@ -106,6 +109,8 @@ class ApplicationController < ActionController::Base
     else
       yield
     end
+    
+    response.headers["ETag"] = Digest::MD5.hexdigest(response.body)
   end
   
   def init_cookies
