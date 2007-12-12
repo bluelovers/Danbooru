@@ -90,10 +90,10 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def cache_action
-    response.headers["Cache-Control"] = "max-age=3600, must-revalidate"
-    
+  def cache_action    
     if (@current_user == nil || !@current_user.privileged?) && @nocache != true && request.method == :get && !%w(xml js).include?(params[:format])
+      response.headers["Cache-Control"] = "max-age=3600, must-revalidate"
+      
       key, expiry = cache_key()
       cached = Cache.get(key)
 
@@ -106,11 +106,10 @@ class ApplicationController < ActionController::Base
       yield
       
       Cache.put(key, response.body, expiry)
+      response.headers["ETag"] = Digest::MD5.hexdigest(response.body)
     else
       yield
     end
-    
-    response.headers["ETag"] = Digest::MD5.hexdigest(response.body)
   end
   
   def init_cookies
