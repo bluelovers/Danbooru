@@ -157,7 +157,7 @@ class Tag < ActiveRecord::Base
     def select_ambiguous(tags)
       return [] if tags.blank?
 
-      tags = Tag.scan_tags(tags)
+      tags = Tag.scan_query(tags)
       return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags]))
     end
 

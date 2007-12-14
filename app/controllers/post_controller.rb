@@ -1,7 +1,7 @@
 class PostController < ApplicationController
   layout 'default'
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
+#  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
   before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
@@ -11,7 +11,8 @@ class PostController < ApplicationController
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
-  
+
+=begin  
   def verify_action(options)
     if options[:redirect_to]
       # Make a copy so we don't modify the original
@@ -28,6 +29,7 @@ class PostController < ApplicationController
       super(options)
     end
   end
+=end
   
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
@@ -191,10 +193,14 @@ class PostController < ApplicationController
   def index
     set_title "/#{params[:tags]}"
 
-    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 2
-      flash[:notice] = "You need a privileged account to search for more than two tags at a time."
-      redirect_to :controller => "user", :action => "login"
-      return
+    if (@current_user == nil || !@current_user.privileged?) && params[:tags]
+      tags = params[:tags].scan(/\S+/)
+
+      if tags.size > 2
+        flash[:notice] = "You need a privileged account to search for more than two tags at a time."
+        redirect_to :controller => "user", :action => "login"
+        return
+      end
     end
 
     limit = params[:limit].to_i
@@ -206,7 +212,7 @@ class PostController < ApplicationController
     @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_explicit?), limit, params[:page])
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_explicit => hide_explicit?))
 
-    if @posts.empty? && !params[:tags].blank?
+    if @posts.empty? && !params[:tags].blank? && params[:page].to_i < 2
       @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name", :limit => 10).map {|x| x.name}
     else
       @suggestions = []
@@ -218,7 +224,7 @@ class PostController < ApplicationController
           @tags = Tag.parse_query(params[:tags])
         else
           if CONFIG["enable_caching"]
-            @tags = Cache.get("poptags:#{hide_explicit?}", 60) do
+            @tags = Cache.get("poptags:#{hide_explicit?}", 1.day) do
               {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_explicit => hide_explicit?)}
             end
           else

@@ -46,7 +46,7 @@ module TagHelper
       
       html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
       
-      if @current_user
+      if @current_user && @current_user.privileged?
         html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}">+</a> }
         html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}">&ndash;</a> }
       end

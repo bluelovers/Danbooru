@@ -120,7 +120,7 @@ class ApplicationController < ActionController::Base
         cookies["has_mail"] = "0"
       end
 
-      if ForumPost.updated?(@current_user)
+      if @current_user.privileged? && ForumPost.updated?(@current_user)
         cookies["forum_updated"] = "1"
       else
         cookies["forum_updated"] = "0"
