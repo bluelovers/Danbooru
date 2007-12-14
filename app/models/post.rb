@@ -695,7 +695,7 @@ class Post < ActiveRecord::Base
   before_validation_on_create :generate_preview
   before_validation_on_create :get_image_dimensions
   before_validation_on_create :move_file
-  before_validation_on_create :validate_file_existence
+  # before_validation_on_create :validate_file_existence
   before_destroy :delete_file
   before_destroy :update_status_on_destroy
   after_create :update_neighbor_links_on_create
