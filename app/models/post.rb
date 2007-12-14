@@ -604,16 +604,27 @@ class Post < ActiveRecord::Base
         begin
           Timeout::timeout(5) do
             AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
-            AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000, must-revalidate")
-            if image?
-              AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000, must-revalidate")
+            unless AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000, must-revalidate")
+              self.delete_file()
+              self.delete_tempfile()
+              self.errors.add(:file, "could not be transferred")
+              return false
             end
-            delete_tempfile
+            
+            if image?
+              unless AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000, must-revalidate")
+                self.delete_file()
+                self.delete_tempfile()
+                self.errors.add(:preview, "could not be transferred")
+                return false
+              end
+            end
+            self.delete_tempfile()
           end
           return true
         rescue Exception => e
           self.errors.add('source', e.to_s)
-          delete_tempfile
+          self.delete_tempfile()
           return false
         end
       end
@@ -684,6 +695,7 @@ class Post < ActiveRecord::Base
   before_validation_on_create :generate_preview
   before_validation_on_create :get_image_dimensions
   before_validation_on_create :move_file
+  before_validation_on_create :validate_file_existence
   before_destroy :delete_file
   before_destroy :update_status_on_destroy
   after_create :update_neighbor_links_on_create
@@ -696,6 +708,29 @@ class Post < ActiveRecord::Base
   after_destroy :decrement_count
   after_save :update_count
   attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status, :deletion_reason
+  
+  
+  def validate_file_existence
+    uri = URI.parse(self.file_url)
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      resp = http.request_head(uri.path)
+      unless resp.is_a?(Net::HTTPSuccess)
+        self.errors.add(:file, "not found")
+        self.delete_file()
+        return false
+      end
+    end
+
+    uri = URI.parse(self.preview_url)
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      resp = http.request_head(uri.path)
+      unless resp.is_a?(Net::HTTPSuccess)
+        self.errors.add(:preview, "not found")
+        self.delete_file()
+        return false
+      end
+    end
+  end
   
   def update_status_on_destroy
     self.update_attribute(:status, "deleted")

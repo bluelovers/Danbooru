@@ -12,7 +12,7 @@ class PostController < ApplicationController
 
   helper :wiki, :tag, :comment, :pool, :favorite
 
-=begin  
+=begin
   def verify_action(options)
     if options[:redirect_to]
       # Make a copy so we don't modify the original
