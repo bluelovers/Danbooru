@@ -98,7 +98,7 @@ class ApplicationController < ActionController::Base
       cached = Cache.get(key)
 
       unless cached.blank?
-        response.headers["ETag"] = Digest::MD5.hexdigest(cached)
+        # response.headers["ETag"] = Digest::MD5.hexdigest(cached)
         render :text => cached, :layout => false
         return false
       end
@@ -106,7 +106,7 @@ class ApplicationController < ActionController::Base
       yield
       
       Cache.put(key, response.body, expiry)
-      response.headers["ETag"] = Digest::MD5.hexdigest(response.body)
+      # response.headers["ETag"] = Digest::MD5.hexdigest(response.body)
     else
       yield
     end
