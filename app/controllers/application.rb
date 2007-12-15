@@ -90,9 +90,12 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def set_cache_headers
+    response.headers["Cache-Control"] = "max-age=300"
+  end
+  
   def cache_action    
     if (@current_user == nil || !@current_user.privileged?) && @nocache != true && request.method == :get && !%w(xml js).include?(params[:format])
-      response.headers["Cache-Control"] = "max-age=3600, must-revalidate"
       
       key, expiry = cache_key()
       cached = Cache.get(key)

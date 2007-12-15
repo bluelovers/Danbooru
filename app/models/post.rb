@@ -602,9 +602,11 @@ class Post < ActiveRecord::Base
     module AmazonS3
       def move_file
         begin
+          base64_md5 = Base64.encode64(self.md5.unpack("a2") * (self.md5.size / 2).map {|x| x.hex.chr}.join)
+          
           Timeout::timeout(5) do
             AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
-            unless AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000, must-revalidate")
+            unless AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Content-MD5" => self.base64_md5, "Cache-Control" => "max-age=315360000")
               self.delete_file()
               self.delete_tempfile()
               self.errors.add(:file, "could not be transferred")
@@ -612,7 +614,7 @@ class Post < ActiveRecord::Base
             end
             
             if image?
-              unless AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000, must-revalidate")
+              unless AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
                 self.delete_file()
                 self.delete_tempfile()
                 self.errors.add(:preview, "could not be transferred")

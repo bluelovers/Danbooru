@@ -2,7 +2,7 @@ class PostController < ApplicationController
   layout 'default'
 
  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-  before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
+  before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update, :show, :index]
   before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
@@ -11,23 +11,6 @@ class PostController < ApplicationController
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
-
-  def verify_action(options)
-    if options[:redirect_to]
-      # Make a copy so we don't modify the original
-      options_redirect_to = options[:redirect_to].clone
-      
-      options_redirect_to.each do |k,v|
-        if v.is_a?(Proc)
-          options_redirect_to[k] = v.call(self)
-        end
-      end
-      
-      super(options.merge(:redirect_to => options_redirect_to))
-    else
-      super(options)
-    end
-  end
   
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
