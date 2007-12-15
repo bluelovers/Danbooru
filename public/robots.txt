@@ -5,12 +5,7 @@ Disallow: /comment/show
 Disallow: /comment/create
 Disallow: /pool/add_post
 Disallow: /pool/remove_post
-Disallow: /post/atom
-Disallow: /post/upload
-Disallow: /post/create
-Disallow: /post/destroy
-Disallow: /post/tag_history
-Disallow: /post/update
+Disallow: /post
 Disallow: /note/history
 Disallow: /tag/edit
 Disallow: /tag/update
@@ -20,6 +15,3 @@ Disallow: /wiki/update
 Disallow: /wiki/revert
 Disallow: /wiki/history
 Disallow: /wiki/rename
-
-User-agent: HTTrack
-Disallow: /post
