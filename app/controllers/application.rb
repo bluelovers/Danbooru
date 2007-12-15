@@ -1,5 +1,5 @@
 require 'login_system'
-require 'ruby-prof'
+# require 'ruby-prof'
 
 class ApplicationController < ActionController::Base
   include LoginSystem
