@@ -607,7 +607,6 @@ class Post < ActiveRecord::Base
           Timeout::timeout(5) do
             AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
             unless AWS::S3::S3Object.store(file_name, open(self.tempfile_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Content-MD5" => base64_md5, "Cache-Control" => "max-age=315360000")
-              self.delete_file()
               self.delete_tempfile()
               self.errors.add(:file, "could not be transferred")
               return false
@@ -615,7 +614,6 @@ class Post < ActiveRecord::Base
             
             if image?
               unless AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
-                self.delete_file()
                 self.delete_tempfile()
                 self.errors.add(:preview, "could not be transferred")
                 return false
