@@ -615,10 +615,8 @@ class Post < ActiveRecord::Base
           end
           return true
         rescue Exception => e
-          raise
-          self.errors.add('source', e.to_s)
           self.delete_tempfile()
-          return false
+          raise
         end
       end
 
