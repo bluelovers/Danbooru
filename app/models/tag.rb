@@ -1,6 +1,4 @@
 class Tag < ActiveRecord::Base
-  serialize :cached_related
-
   @tag_types = {
     :general    => 0,
     "general"   => 0,
@@ -110,35 +108,21 @@ class Tag < ActiveRecord::Base
       tags = [*tags]
       return [] if tags.empty?
 
-      if !CONFIG["enable_turbo_mode"]
-        from = ["posts_tags pt0"]
-        cond = ["pt0.post_id = pt1.post_id"]
-        sql = ""
+      from = ["posts_tags pt0"]
+      cond = ["pt0.post_id = pt1.post_id"]
+      sql = ""
 
-        (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
-        (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
-        (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
+      (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
+      (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
+      (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
 
-        sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
-        sql << " FROM " << from.join(", ")
-        sql << " WHERE " << cond.join(" AND ")
-        sql << " GROUP BY pt0.tag_id"
-        sql << " ORDER BY tag_count DESC LIMIT 25"
+      sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
+      sql << " FROM " << from.join(", ")
+      sql << " WHERE " << cond.join(" AND ")
+      sql << " GROUP BY pt0.tag_id"
+      sql << " ORDER BY tag_count DESC LIMIT 25"
 
-        return connection.select_all(sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
-      else
-        return tags.inject([]) do |all, x|
-          sql = ""
-          sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
-          sql << " FROM posts_tags pt0, posts_tags pt1"
-          sql << " WHERE pt1.post_id = pt0.post_id"
-          sql << " AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)"
-          sql << " GROUP by pt0.tag_id"
-          sql << " ORDER BY tag_count DESC"
-          sql << " LIMIT 25"
-          all += connection.select_all(sanitize_sql([sql, x]))
-        end
-      end
+      return connection.select_all(sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
     end
 
     def find_related(tags)
@@ -276,9 +260,9 @@ class Tag < ActiveRecord::Base
       return q
     end
   end
-
-  def update_related_tags(length )
-    sql = Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).to_yaml, length.hours.from_now])
+  
+  def update_related_tags(length)
+    sql = Tag.sanitize_sql(["UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = #{id}", Tag.calculate_related(self.name).flatten.join(","), length.hours.from_now])
     connection.execute(sql)
   end
 
@@ -292,7 +276,7 @@ class Tag < ActiveRecord::Base
       self.reload
     end
 
-    return self.cached_related
+    return self.cached_related.split(/,/).in_groups_of(2)
   end
 
   def to_s

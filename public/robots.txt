@@ -5,7 +5,9 @@ Disallow: /comment/show
 Disallow: /comment/create
 Disallow: /pool/add_post
 Disallow: /pool/remove_post
-Disallow: /post
+Disallow: /post/upload
+Disallow: /post/tag_history
+Disallow: /post/atom
 Disallow: /note/history
 Disallow: /tag/edit
 Disallow: /tag/update
