@@ -89,7 +89,7 @@
       <tbody>
         <% @flagged_posts.each do |p| %>
           <tr class="<%= cycle 'even', 'odd' %>">
-            <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
+            <td><input type="checkbox" class="f" name="ids[<%= p.id %>]" onclick="highlight_row(this)"/></td>
             <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
             <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
             <td><%= p.pretty_rating %></td>
@@ -106,8 +106,8 @@
       <tfoot>
         <tr>
           <td colspan="7">
-            <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
-            <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= button_to_function "Select all", "document.getElementsByClassName('f').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "document.getElementsByClassName('f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
             <%= submit_tag "Approve" %> 
             <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
           </td>

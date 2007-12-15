@@ -1,4 +1,5 @@
 require 'login_system'
+require 'ruby-prof'
 
 class ApplicationController < ActionController::Base
   include LoginSystem
@@ -94,14 +95,15 @@ class ApplicationController < ActionController::Base
     response.headers["Cache-Control"] = "max-age=300"
   end
   
-  def cache_action    
+  def cache_action
+    # RubyProf.start
+    
     if (@current_user == nil || !@current_user.privileged?) && @nocache != true && request.method == :get && !%w(xml js).include?(params[:format])
       
       key, expiry = cache_key()
       cached = Cache.get(key)
 
       unless cached.blank?
-        # response.headers["ETag"] = Digest::MD5.hexdigest(cached)
         render :text => cached, :layout => false
         return false
       end
@@ -109,10 +111,15 @@ class ApplicationController < ActionController::Base
       yield
       
       Cache.put(key, response.body, expiry)
-      # response.headers["ETag"] = Digest::MD5.hexdigest(response.body)
     else
       yield
     end
+    
+    # r = RubyProf.stop
+    # p = RubyProf::GraphHtmlPrinter.new(r)
+    # File.open("profile.html", "w") do |f|
+    #   p.print(f, 1)
+    # end
   end
   
   def init_cookies
