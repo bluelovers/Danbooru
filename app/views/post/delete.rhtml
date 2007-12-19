@@ -6,7 +6,6 @@
 
 <% form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
-  <%= hidden_field_tag "really", params[:really] %>
   <label>Reason</label> <%= text_field_tag "reason" %>
   <%= submit_tag "Delete" %> <%= submit_tag "Cancel" %>
 <% end %>

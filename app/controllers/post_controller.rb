@@ -145,9 +145,11 @@ class PostController < ApplicationController
         @post.update_attribute(:deletion_reason, params[:reason])
       end
 
-      @post.destroy
-      
-      @post.really_destroy if params[:really] == "1"
+      if @post.status == "deleted"
+        @post.delete_from_database
+      else
+        @post.destroy
+      end
 
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "show", :id => @post.id)}

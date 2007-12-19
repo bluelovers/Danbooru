@@ -941,7 +941,7 @@ class Post < ActiveRecord::Base
     end
   end
   
-  def really_destroy
+  def delete_from_database
     connection.execute("delete from posts where id = #{self.id}")
   end
   

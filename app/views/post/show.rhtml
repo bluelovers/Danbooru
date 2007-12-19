@@ -68,9 +68,7 @@
           <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
             <li><%= link_to_function "Resize Image", "Post.resize_image()" %></li>
           <% end %>
-          <% if !@post.is_deleted? %>
-            <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
-          <% end %>
+          <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
           <% unless @post.is_flagged? || @post.is_deleted? %>
             <li><%= link_to_function "Flag for Deletion", "Post.flag(#{@post.id})" %></li>
           <% end %>
