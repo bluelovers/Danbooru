@@ -35,18 +35,21 @@ class Tag < ActiveRecord::Base
     
     def type_name(tag_type, general_string = true)
       case tag_type
-        when Tag.types[:artist]
-          "artist"
-        when Tag.types[:character]
-          "character"
-        when Tag.types[:copyright]
-          "copyright"
+      when Tag.types[:artist]
+        "artist"
+
+      when Tag.types[:character]
+        "character"
+
+      when Tag.types[:copyright]
+        "copyright"
+
+      else
+        if general_string
+          "general"
         else
-          if general_string
-            "general"
-          else
-            nil
-          end
+          nil
+        end
       end
     end
     
@@ -253,9 +256,11 @@ class Tag < ActiveRecord::Base
         end
       end
 
-      q[:exclude] = TagAlias.to_aliased(q[:exclude])
-      q[:include] = TagAlias.to_aliased(q[:include])
-      q[:related] = TagAlias.to_aliased(q[:related])
+      unless options[:skip_aliasing]
+        q[:exclude] = TagAlias.to_aliased(q[:exclude])
+        q[:include] = TagAlias.to_aliased(q[:include])
+        q[:related] = TagAlias.to_aliased(q[:related])
+      end
 
       return q
     end

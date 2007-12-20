@@ -180,151 +180,129 @@ class Post < ActiveRecord::Base
         q = Tag.parse_query(q)
       end
 
-      conditions = ["status > 'deleted'"]
-      from = ["posts p"]
-      params = []
+      conds = ["p.status > 'deleted'"]
+      joins = ["posts p"]
+      join_params = []
+      cond_params = []
 
-      generate_sql__range_helper(q[:post_id], "p.id", conditions, params)
-      generate_sql__range_helper(q[:width], "p.width", conditions, params)
-      generate_sql__range_helper(q[:height], "p.height", conditions, params)
-      generate_sql__range_helper(q[:score], "p.score", conditions, params)
-      generate_sql__range_helper(q[:date], "p.created_at::date", conditions, params)
+      generate_sql__range_helper(q[:post_id], "p.id", conds, cond_params)
+      generate_sql__range_helper(q[:width], "p.width", conds, cond_params)
+      generate_sql__range_helper(q[:height], "p.height", conds, cond_params)
+      generate_sql__range_helper(q[:score], "p.score", conds, cond_params)
+      generate_sql__range_helper(q[:date], "p.created_at::date", conds, cond_params)
 
       if q[:md5].is_a?(String)
-        conditions << "p.md5 = ?"
-        params << q[:md5]
+        conds << "p.md5 = ?"
+        cond_params << q[:md5]
       end
 
       if q[:parent_id].is_a?(Integer)
-        conditions << "(p.parent_id = ? or p.id = ?)"
-        params << q[:parent_id]
-        params << q[:parent_id]
+        conds << "(p.parent_id = ? or p.id = ?)"
+        cond_params << q[:parent_id]
+        cond_params << q[:parent_id]
       elsif q[:parent_id] == false
-        conditions << "p.parent_id is null"
+        conds << "p.parent_id is null"
       end
 
       if q[:source].is_a?(String)
-        conditions << "p.source ILIKE ? ESCAPE '\\\\'"
-        params << q[:source]
+        conds << "p.source ILIKE ? ESCAPE '\\\\'"
+        cond_params << q[:source]
       end
 
       if q[:fav].is_a?(String)
-        from << "favorites f"
-        from << "users u1"
-        conditions << "p.id = f.post_id AND f.user_id = u1.id AND lower(u1.name) = lower(?)"
-        params << q[:fav]
+        joins << "JOIN favorites f ON f.post_id p.id JOIN users u1 ON f.user_id = u1.id"
+        conds << "lower(u1.name) = lower(?)"
+        cond_params << q[:fav]
       end
 
       if q[:user].is_a?(String)
-        from << "users u2"
-        conditions << "p.user_id = u2.id AND lower(u2.name) = lower(?)"
-        params << q[:user]
+        joins << "JOIN users u2 ON p.user_id = u2.id"
+        conds << "lower(u2.name) = lower(?)"
+        cond_params << q[:user]
       end
 
       if q[:pool].is_a?(String)
-        from << "pools"
-        from << "pools_posts"
-        conditions << "pools.id = pools_posts.pool_id AND pools_posts.post_id = p.id AND pools.name ILIKE ? ESCAPE '\\\\'"
-        params << "%" + q[:pool].to_escaped_for_sql_like + "%"
+        joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
+        conds << "pools.name ILIKE ? ESCAPE '\\\\'"
+        cond_params << "%" << q[:pool].to_escaped_for_sql_like << "%"
       end
 
-      if q[:related].any? || q[:include].any?
-        conditions2 = []
-
-        if q[:include].any?
-          from << "posts_tags pt0"
-          from << "tags t0"
-          conditions2 << "(p.id = pt0.post_id AND t0.id = pt0.tag_id AND t0.name IN (?))"
-          params << (q[:include] + q[:related])
-        else
-          conditions3 = []
-
-          if q[:related].size == 1
-            count = connection.select_value(Post.sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", q[:related][0]])).to_i
-            if count < 100
-              # 96% of the tags have a post count below 100. it makes sense to optimize for this common case, then.
-              # for tags with low post counts, using "p.id in (...)" is much faster than relying on a join.
-              conditions3 << "p.id IN (SELECT pt1.post_id FROM posts_tags pt1 WHERE pt1.tag_id = (SELECT id FROM tags WHERE name = ?))"
-            else
-              # On the other hand, for extremely populated tags (the top 5%) this method is much faster.
-              from << "posts_tags pt1"
-              conditions3 << "p.id = pt1.post_id AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)"
-            end
-          else
-            (1..q[:related].size).each {|i| from << "posts_tags pt#{i}"}
-            conditions3 << "p.id = pt1.post_id"
-            (2..q[:related].size).each {|i| conditions3 << "pt1.post_id = pt#{i}.post_id"}
-            (1..q[:related].size).each {|i| conditions3 << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
-          end
-
-          params += q[:related]
-          conditions2 << "(" + conditions3.join(" AND ") + ")"
+      if q[:include].any?
+        joins << "JOIN posts_tags ipt ON ipt.post_id = p.id"
+        conds << "ipt.tag_id IN (SELECT id FROM tags WHERE name IN (?))"
+        cond_params << (q[:include] + q[:related])
+      elsif q[:related].any?
+        q[:related].each_with_index do |rtag, i|
+          joins << "JOIN posts_tags rpt#{i} ON rpt#{i}.post_id = p.id AND rpt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
+          join_params << rtag
         end
-
-        conditions << "(" + conditions2.join(" OR ") + ")"
       end
 
       if q[:exclude].any?
-        conditions << "p.id NOT IN (SELECT pt_.post_id FROM posts_tags pt_, tags t_ WHERE pt_.tag_id = t_.id AND t_.name IN (?))"
-        params << q[:exclude]
+        q[:exclude].each_with_index do |etag, i|
+          joins << "LEFT JOIN posts_tags ept#{i} ON p.id = ept#{i}.post_id AND ept#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
+          conds << "ept#{i}.tag_id IS NULL"
+          join_params << etag
+        end
       end
 
       if options[:hide_explicit]
-        conditions << "p.rating <> 'e'"
-        conditions << "p.status = 'active'"
+        conds << "p.rating <> 'e'"
+        conds << "p.status = 'active'"
       end
 
       if q[:rating].is_a?(String)
         case q[:rating][0, 1].downcase
         when "s"
-          conditions << "p.rating = 's'"
+          conds << "p.rating = 's'"
 
         when "q"
-          conditions << "p.rating = 'q'"
+          conds << "p.rating = 'q'"
 
         when "e"
-          conditions << "p.rating = 'e'"
+          conds << "p.rating = 'e'"
         end
       end
 
       if q[:rating_negated].is_a?(String)
         case q[:rating_negated][0, 1].downcase
         when "s"
-          conditions << "p.rating <> 's'"
+          conds << "p.rating <> 's'"
 
         when "q"
-          conditions << "p.rating <> 'q'"
+          conds << "p.rating <> 'q'"
 
         when "e"
-          conditions << "p.rating <> 'e'"
+          conds << "p.rating <> 'e'"
         end
       end
 
       if q[:unlocked_rating] == true
-        conditions << "p.is_rating_locked = FALSE"
+        conds << "p.is_rating_locked = FALSE"
       end
 
       if options[:pending]
-        conditions << "p.status = 'pending'"
+        conds << "p.status = 'pending'"
       end
       
       if options[:flagged]
-        conditions << "p.status = 'flagged'"
+        conds << "p.status = 'flagged'"
       end
 
       if original_query.blank?
-        conditions << "p.parent_id is null"
+        conds << "p.parent_id is null"
       end
 
       sql = "SELECT "
 
       if options[:count]
-        sql << "COUNT(p)"
+        sql << "COUNT(*)"
       else
         sql << "p.*"
       end
 
-      sql << " FROM " + from.join(", ") + " WHERE " + conditions.join(" AND ")
+      sql << " FROM " + joins.join(" ")
+      sql << " WHERE " + conds.join(" AND ")
 
       if q[:order] && !options[:count]
         case q[:order]
@@ -355,6 +333,7 @@ class Post < ActiveRecord::Base
         sql << " OFFSET " + options[:offset].to_s
       end
 
+      params = join_params + cond_params
       return Post.sanitize_sql([sql, *params])
     end
   end
