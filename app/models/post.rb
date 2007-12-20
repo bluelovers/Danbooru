@@ -141,7 +141,7 @@ class Post < ActiveRecord::Base
   end
 
   module SqlMethods
-    def generate_sql__range_helper(arr, field, c, p)
+    def generate_sql_range_helper(arr, field, c, p)
       case arr[0]
       when :eq
         c << "#{field} = ?"
@@ -185,11 +185,11 @@ class Post < ActiveRecord::Base
       join_params = []
       cond_params = []
 
-      generate_sql__range_helper(q[:post_id], "p.id", conds, cond_params)
-      generate_sql__range_helper(q[:width], "p.width", conds, cond_params)
-      generate_sql__range_helper(q[:height], "p.height", conds, cond_params)
-      generate_sql__range_helper(q[:score], "p.score", conds, cond_params)
-      generate_sql__range_helper(q[:date], "p.created_at::date", conds, cond_params)
+      generate_sql_range_helper(q[:post_id], "p.id", conds, cond_params)
+      generate_sql_range_helper(q[:width], "p.width", conds, cond_params)
+      generate_sql_range_helper(q[:height], "p.height", conds, cond_params)
+      generate_sql_range_helper(q[:score], "p.score", conds, cond_params)
+      generate_sql_range_helper(q[:date], "p.created_at::date", conds, cond_params)
 
       if q[:md5].is_a?(String)
         conds << "p.md5 = ?"
@@ -210,14 +210,14 @@ class Post < ActiveRecord::Base
       end
 
       if q[:fav].is_a?(String)
-        joins << "JOIN favorites f ON f.post_id p.id JOIN users u1 ON f.user_id = u1.id"
-        conds << "lower(u1.name) = lower(?)"
+        joins << "JOIN favorites f ON f.post_id p.id JOIN users fu ON f.user_id = fu.id"
+        conds << "lower(fu.name) = lower(?)"
         cond_params << q[:fav]
       end
 
       if q[:user].is_a?(String)
-        joins << "JOIN users u2 ON p.user_id = u2.id"
-        conds << "lower(u2.name) = lower(?)"
+        joins << "JOIN users u ON p.user_id = u.id"
+        conds << "lower(u.name) = lower(?)"
         cond_params << q[:user]
       end
 
