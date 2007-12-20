@@ -235,7 +235,7 @@ class PostController < ApplicationController
       @post = Post.find(params[:id])
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
-      set_title @post.cached_tags
+      set_title @post.cached_tags.tr("_", " ")
     rescue ActiveRecord::RecordNotFound
       @nocache = true
       flash.now[:notice] = "That post ID was not found"
