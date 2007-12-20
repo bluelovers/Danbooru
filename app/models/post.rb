@@ -210,7 +210,7 @@ class Post < ActiveRecord::Base
       end
 
       if q[:fav].is_a?(String)
-        joins << "JOIN favorites f ON f.post_id p.id JOIN users fu ON f.user_id = fu.id"
+        joins << "JOIN favorites f ON f.post_id = p.id JOIN users fu ON f.user_id = fu.id"
         conds << "lower(fu.name) = lower(?)"
         cond_params << q[:fav]
       end
