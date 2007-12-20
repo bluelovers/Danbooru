@@ -6,5 +6,11 @@ module ActionView
         "<#{name}#{tag_options(options) if options}" + (open ? ">" : " />")
       end
     end
+    
+    class InstanceTag
+      def tag(name, options = nil, open = true)
+        "<#{name}#{tag_options(options) if options}" + (open ? ">" : " />")
+      end
+    end
   end
 end

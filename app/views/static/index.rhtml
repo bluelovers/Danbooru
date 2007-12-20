@@ -9,8 +9,10 @@
   </div>
   <div style="margin-bottom: 1em;">
     <% form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
-      <%= text_field_tag "tags", "", :size => 30 %><br>
-      <%= submit_tag "Search", :name => 'searchDefault' %>
+      <div>
+        <%= text_field_tag "tags", "", :size => 30 %><br>
+        <%= submit_tag "Search", :name => 'searchDefault' %>        
+      </div>
     <% end %>
   </div>
   <div style="font-size: 80%; margin-bottom: 2em;">
