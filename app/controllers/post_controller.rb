@@ -174,7 +174,7 @@ class PostController < ApplicationController
   end
 
   def index
-    set_title "/#{params[:tags]}"
+    set_title "/" + params[:tags].to_s.tr("_", " ")
 
     if (@current_user == nil || !@current_user.privileged?) && params[:tags]
       tags = params[:tags].scan(/\S+/)
