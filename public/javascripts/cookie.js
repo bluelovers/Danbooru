@@ -48,7 +48,7 @@ Cookie.setup = function() {
   }
   
   if (this.get("block_reason") != "") {
-    $("block-reason").innerHTML = this.unescape(this.get("block_reason"))
+    $("block-reason").innerHTML = this.decodeURIComponent(this.get("block_reason"))
     $("block-reason").show()
   }
 }
