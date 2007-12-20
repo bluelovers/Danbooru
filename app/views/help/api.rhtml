@@ -18,7 +18,7 @@
       <h4>Responses</h4>
       <p>All API calls that change state will return a single element response (for XML calls). They are formatted like this:</p>
       <div class="code">
-        &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br/>
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>
         &lt;response success="false" reason="duplicate"/&gt;
       </div>
       <p>For JSON responses, they'll look like this:</p>
@@ -31,7 +31,7 @@
       <h4>JSON Responses</h4>
       <p>While you will probably want to work with XML in the majority of cases, if you're writing something in JavaScript then the JSON responses may be preferable. They are much faster to parse and there's less code to write to get your data structure:</p>
       <div class="code">
-        var data = eval("(" + responseText + ")")<br/>
+        var data = eval("(" + responseText + ")")<br>
         alert(data.response)
       </div>
     </div>

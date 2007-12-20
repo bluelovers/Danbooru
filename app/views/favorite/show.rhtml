@@ -26,7 +26,7 @@
   <h3><%= h(@user.pretty_name) %>'s Favorites</h3>
   <p>Some of these posts were also favorited by: <%= print_also_favorited_by(@posts, @user) %>.</p>
   <% if @current_user && @current_user.id == @user.id %>
-    <input type="checkbox" id="del-mode" onclick="Element.toggle('info')"/>
+    <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
     <label for="del-mode">Delete Mode</label>
     <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from your favorites.</div>
   <% end %>

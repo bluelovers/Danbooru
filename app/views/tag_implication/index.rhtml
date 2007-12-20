@@ -11,7 +11,7 @@
     </tr>
     <% @implications.each do |i| %>
       <tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
-        <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>/></td>
+        <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>></td>
         <td><%= i.predicate.name %></td>
         <td><%= i.consequent.name %></td>
       </tr>

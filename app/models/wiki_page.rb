@@ -9,8 +9,8 @@ class WikiPage < ActiveRecord::Base
   TAG_INS = '<ins>'
   TAG_DEL_CLOSE = '</del>'
   TAG_INS_CLOSE = '</ins>'
-  TAG_NEWLINE = "<img src=\"/images/nl.png\" alt=\"newline\"/>\n"
-  TAG_BREAK = "<br/>\n"
+  TAG_NEWLINE = "<img src=\"/images/nl.png\" alt=\"newline\">\n"
+  TAG_BREAK = "<br>\n"
   
   def make_title_canonical
     self.title = title.tr(" ", "_").downcase

@@ -77,6 +77,7 @@ require 'aws/s3' if CONFIG["image_store"] == :amazon_s3
 require 'danbooru_image_resizer/danbooru_image_resizer'
 require 'redcloth'
 require 'ruby-prof' if ENV["ENABLE_RUBY_PROFILING"]
+require 'html_4_tags'
 
 if CONFIG["enable_caching"]
   require 'memcache_util'

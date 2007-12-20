@@ -27,7 +27,7 @@
     <tbody>
       <% @comments.each do |c| %>
         <tr>
-          <td><input type="checkbox" class="c" name="c[<%= c.id %>]" onclick="highlight_row(this)"/></td>
+          <td><input type="checkbox" class="c" name="c[<%= c.id %>]" onclick="highlight_row(this)"></td>
           <td><%= link_to h(c.author), :controller => "post", :action => "show", :id => c.post_id %></td>
           <td><%= h(c.body) %></td>
         </tr>

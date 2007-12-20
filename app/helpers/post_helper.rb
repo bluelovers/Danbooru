@@ -13,7 +13,7 @@ module PostHelper
     link_onclick = options[:onclick]
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
 
-    image = %{<img src="#{post.preview_url}" alt="#{h(post.cached_tags)}" class="#{image_class}" title="#{h(post.cached_tags)}" #{image_id}/>}
+    image = %{<img src="#{post.preview_url}" alt="#{h(post.cached_tags)}" class="#{image_class}" title="#{h(post.cached_tags)}" #{image_id}>}
     link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>#{image}</a>}
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}
     return span
