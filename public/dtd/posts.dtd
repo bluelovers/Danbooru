@@ -1,8 +1,0 @@
-<!ELEMENT posts		(post*)>
-<!ELEMENT post		EMPTY>
-<!ATTLIST post id	CDATA #REQUIRED>
-<!ATTLIST post title	CDATA #IMPLIED>
-<!ATTLIST post tags	CDATA #REQUIRED>
-<!ATTLIST post filename	CDATA #REQUIRED>
-<!ATTLIST post md5	CDATA #REQUIRED>
-<!ATTLIST post host	CDATA #REQUIRED>

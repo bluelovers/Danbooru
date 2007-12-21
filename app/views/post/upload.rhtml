@@ -97,5 +97,7 @@
 </div>
 
 <% content_for("post_cookie_javascripts") do %>
-  <%= javascript_tag "RelatedTags.init(Cookie.unescape(Cookie.get('my_tags')), '#{params[:url]}')" %>
+  <script type="text/javascript">
+    RelatedTags.init(Cookie.unescape(Cookie.get('my_tags')), '<%= params[:url] %>')
+  </script>
 <% end %>

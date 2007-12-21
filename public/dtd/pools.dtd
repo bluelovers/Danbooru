@@ -1,5 +1,0 @@
-<!ELEMENT pools			(pool*)>
-<!ELEMENT pool			(#PCDATA)>
-<!ATTLIST pool title		CDATA #REQUIRED>
-<!ATTLIST pool creator		CDATA #REQUIRED>
-<!ATTLIST pool postCount	CDATA #REQUIRED>

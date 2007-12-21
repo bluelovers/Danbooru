@@ -1,9 +1,0 @@
-<!ELEMENT tags		(tag*)>
-<!ELEMENT tag		(related*)>
-<!ELEMENT related	EMPTY>
-<!ATTLIST tag id	CDATA #REQUIRED>
-<!ATTLIST tag count	CDATA #REQUIRED>
-<!ATTLIST tag name	CDATA #REQUIRED>
-<!ATTLIST related id	CDATA #REQUIRED>
-<!ATTLIST related count	CDATA #REQUIRED>
-<!ATTLIST related name	CDATA #REQUIRED>
