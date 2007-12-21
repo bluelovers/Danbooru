@@ -10,20 +10,20 @@ module ApplicationHelper
       text = simple_format(text)
     end
 
-    text = text.gsub(/(http:\/\/[a-zA-Z0-9_.\/~%?&=;,-]+)/) do
+    text.gsub!(/(http:\/\/[a-zA-Z0-9_.\/~%?&=;,-]+)/) do
       link = $1
       url = link.gsub(/[.;,:'"]+$/, "")
       link_to link, url
     end
-    text = text.gsub(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
-    text = text.gsub(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
-    text = text.gsub(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
-    text = text.gsub(/\[quote\](.+?)\[\/quote\]/m, '<div class="quote">\1</div>')
-    text = text.gsub(/<p><div/, "<div")
-    text = text.gsub(/<\/div><\/p>/, "</div>")
-    text = text.gsub(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
-    text = text.gsub(/(\w+ said:)/, '<em>\1</em>')
-    text = text.gsub(/\[\[(.+?)\]\]/) do
+    text.gsub!(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
+    text.gsub!(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
+    text.gsub!(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
+    text.gsub!(/\[quote\](.+?)\[\/quote\]/m, '<div class="quote">\1</div>')
+    text.gsub!(/<p><div/, "<div")
+    text.gsub!(/<\/div><\/p>/, "</div>")
+    text.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
+    text.gsub!(/(\w+ said:)/, '<em>\1</em>')
+    text.gsub!(/\[\[(.+?)\]\]/) do
       match = $1
 
       if match =~ /(.+?)\|(.+)/
@@ -32,6 +32,7 @@ module ApplicationHelper
         link_to match, :controller => "wiki", :action => "show", :title => match.gsub(/\s/, '_').downcase
       end
     end
+    text.gsub!(/<\/div>(?:<br>)+/, "</div>")
 
     return text
   end
@@ -41,15 +42,8 @@ module ApplicationHelper
       return ""
     end
 
-    if Object.const_defined?(:SuperRedCloth)
-      textilized = SuperRedCloth.new(text)
-      textilized.to_html
-    elsif Object.const_defined?(:RedCloth)
-      textilized = RedCloth.new(text)
-      textilized.to_html
-    else
-      text
-    end
+    textilized = RedCloth.new(text)
+    textilized.to_html
   end
 
   def id_to_color(id)
