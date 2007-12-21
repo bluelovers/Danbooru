@@ -1,6 +1,13 @@
 <div id="user-edit">
   <% form_tag(:controller => "user", :action => "update") do %>
     <table class="form">
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <%= submit_tag "Save" %> <%= submit_tag "Cancel" %>
+          </td>
+        </tr>
+      </tfoot>
       <tbody>
         <tr>
           <th width="15%">
@@ -52,13 +59,6 @@
           </td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2">
-            <%= submit_tag "Save" %> <%= submit_tag "Cancel" %>
-          </td>
-        </tr>
-      </tfoot>
     </table>
   <% end %>
 </div>

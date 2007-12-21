@@ -2,6 +2,11 @@
 
 <% form_tag({:action => "index"}, :method => :get) do %>
   <table>
+    <tfoot>
+      <tr>
+        <td colspan="2"><%= submit_tag "Search" %></td>
+      </tr>
+    </tfoot>
     <tbody>
       <tr>
         <th>Name</th>
@@ -16,11 +21,6 @@
         <td><%= select_tag "order", options_for_select([["Name", "name"], ["Posts", "posts"], ["Notes", "notes"], ["Date", "date"]], params[:order]) %></td>
       </tr>
     </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="2"><%= submit_tag "Search" %></td>
-      </tr>
-    </tfoot>
   </table>
 <% end %>
 

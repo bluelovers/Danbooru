@@ -12,6 +12,11 @@
           <th width="90%">Last edited</th>
         </tr>       
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="2"><%= submit_tag "Compare" %></td>
+        </tr>
+      </tfoot>
       <tbody>
         <% @wiki_pages.each_with_index do |wiki_page, i| %>
           <tr class="<%= cycle 'even', 'odd' %>">
@@ -21,16 +26,10 @@
           </tr>
         <% end %>       
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2"><%= submit_tag "Compare" %></td>
-        </tr>
-      </tfoot>
     </table>
   <% end %>
 
   <script type="text/javascript">
-  //<![CDATA[
     var from;
     var to;
 
@@ -58,7 +57,6 @@
       elem.onclick = function() {return validateTo(this);};
       if(elem.checked) to = i;
     }
-  // ]]>
   </script>
 </div>
 

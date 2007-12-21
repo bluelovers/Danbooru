@@ -8,11 +8,9 @@
       <% end %>
     <% end %>
     <script type="text/javascript">
-    // <![CDATA[
       <% posts.each do |post| %>
         Post.register(<%= post.id %>, '<%= escape_javascript(post.cached_tags) %>', '<%= post.rating %>')
       <% end %>
-    // ]]>
     </script>
   <% end %>
   

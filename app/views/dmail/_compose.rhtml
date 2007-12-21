@@ -1,12 +1,18 @@
 <% form_tag(:action => "create") do %>
-  <%= hidden_field_tag "dmail[from_id]", from_id %>
-  <%= hidden_field_tag "dmail[parent_id]", @dmail.parent_id || @dmail.id %>
+  <%= hidden_field_tag "dmail[from_id]", from_id, :id => "dmail_from_id" %>
+  <%= hidden_field_tag "dmail[parent_id]", @dmail.parent_id || @dmail.id, :id => "dmail_parent_id" %>
 
   <table width="100%">
+    <tfoot>
+      <tr>
+        <td></td>
+        <td><%= submit_tag "Send" %></td>
+      </tr>
+    </tfoot>
     <tbody>
       <tr>
         <th><label for="dmail_to_name">To</label></th>
-        <td><%= text_field_with_auto_complete "dmail", "to_name", {:value => params[:to]}, :min_chars => 3 %></td>
+        <td><%= text_field_with_auto_complete "dmail", "to_name", {:value => params[:to]}, :min_chars => 3, :skip_style => true %></td>
       </tr>
       <tr>
         <th><label for="dmail_title">Title</label></th>
@@ -17,11 +23,5 @@
         <td><%= text_area "dmail", "body", :size => "50x25", :class => "default" %></td>
       </tr>
     </tbody>
-    <tfoot>
-      <tr>
-        <td></td>
-        <td><%= submit_tag "Send" %></td>
-      </tr>
-    </tfoot>
   </table>
 <% end %>

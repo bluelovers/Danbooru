@@ -4,7 +4,6 @@
 </form>
 
 <script type="text/javascript">
-// <![CDATA[
   function highlight_row(checkbox) {
     var row = checkbox.parentNode.parentNode
     if (row.original_class == null) {
@@ -17,7 +16,6 @@
       row.className = row.original_class
     }
   }
-// ]]>
 </script>
 
 <div style="margin-bottom: 2em;">
@@ -40,6 +38,16 @@
           <th width="69%">Tags</th>
         </tr>      
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="5">
+            <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
+          </td>
+        </tr>
+      </tfoot>
       <tbody>
         <% @pending_posts.each do |p| %>
           <tr class="<%= cycle 'even', 'odd' %>">
@@ -56,16 +64,6 @@
           </tr>
         <% end %>
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="7">
-            <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
-            <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
-            <%= submit_tag "Approve" %> 
-            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
-          </td>
-        </tr>
-      </tfoot>
     </table>
   </form>
 </div>
@@ -73,7 +71,7 @@
 <div>
   <h2>Flagged</h2>
   <form method="post" action="/post/moderate">
-    <%= hidden_field_tag "reason", "" %>
+    <%= hidden_field_tag "reason2", "" %>
 
     <table width="100%">
       <thead>
@@ -86,6 +84,16 @@
           <th width="59%">Tags</th>
         </tr>      
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="5">
+            <%= button_to_function "Select all", "document.getElementsByClassName('f').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "document.getElementsByClassName('f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason2').value = reason; return true} else {return false}" %>
+          </td>
+        </tr>
+      </tfoot>
       <tbody>
         <% @flagged_posts.each do |p| %>
           <tr class="<%= cycle 'even', 'odd' %>">
@@ -103,16 +111,6 @@
           </tr>
         <% end %>
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="7">
-            <%= button_to_function "Select all", "document.getElementsByClassName('f').each(function (i) {i.checked = true; highlight_row(i)})" %> 
-            <%= button_to_function "Invert selection", "document.getElementsByClassName('f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
-            <%= submit_tag "Approve" %> 
-            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
-          </td>
-        </tr>
-      </tfoot>
     </table>
   </form>
 </div>

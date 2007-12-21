@@ -142,7 +142,6 @@
         <div style="margin-bottom: 1em;">
           <p id="note-count"></p>
           <script type="text/javascript">
-          // <![CDATA[	NOTE: there is no CDATA in HTML. As long as this page is served as text/html, this does nothing.
             Note.post_id = <%= @post.id %>
 
             <% @post.active_notes.each do |note| %>
@@ -151,7 +150,6 @@
 
             Note.updateNoteCount()
             Note.show()
-          //]]>
           </script>
         </div>
       <% end %>

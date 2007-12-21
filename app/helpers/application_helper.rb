@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def simple_format(text)
+    text.to_s.gsub(/\r\n?/, "\n").gsub(/\n/, '<br>')
+  end
+  
   def format_text(text, options = {})
     text = h(text)
 

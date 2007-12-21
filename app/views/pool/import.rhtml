@@ -22,17 +22,13 @@
 </div>
 
 <script type="text/javascript">
-// <[CDATA[
-
-function removePost(id) {
-  if ($("delete-mode").checked) {
-    $("posts[" + id + "]").remove()
-    $("p" + id).remove()
-    return false;
-  } else {
-    return true;
+  function removePost(id) {
+    if ($("delete-mode").checked) {
+      $("posts[" + id + "]").remove()
+      $("p" + id).remove()
+      return false;
+    } else {
+      return true;
+    }
   }
-}
-
-// ]]>
 </script>

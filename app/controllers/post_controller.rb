@@ -87,7 +87,7 @@ class PostController < ApplicationController
             if params[:commit] == "Approve"
               Post.update(post_id, :status => "active")
             elsif params[:commit] == "Delete"
-              Post.update(post_id, :deletion_reason => params[:reason]) unless params[:reason].blank?
+              Post.update(post_id, :deletion_reason => (params[:reason] || params[:reason2])) unless params[:reason].blank? && params[:reason2].blank?
               Post.destroy(post_id)
             end
           end

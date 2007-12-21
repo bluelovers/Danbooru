@@ -24,6 +24,13 @@
   
   <% form_tag(:controller => "user", :action => "create") do %>
     <table class="form">
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <input type="submit" value="Signup">
+          </td>
+        </tr>
+      </tfoot>
       <tbody>
         <tr>
           <th width="15%">
@@ -63,13 +70,6 @@
           </td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2">
-            <input type="submit" value="Signup">
-          </td>
-        </tr>
-      </tfoot>
     </table>
   <% end %>
 <% end %>
