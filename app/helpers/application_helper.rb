@@ -108,6 +108,24 @@ module ApplicationHelper
     end
   end
 
+  def fast_pagination_links(page, is_last_page, options = {})
+    links = []
+    params = options[:params]
+
+    page = page.to_i
+    page = 1 if page < 1
+
+    if page > 1
+      links << link_to("&lt;&lt;", params.merge(:page => page - 1), :class => "arrow")
+    end
+
+    if is_last_page == false
+      links << link_to("&gt;&gt;", params.merge(:page => page + 1), :class => "arrow")
+    end
+
+    return links.join(" ")
+  end
+
   def custom_pagination_links(paginator, options = {})
     options = {:link_to_current_page => false, :always_show_anchors => true, :window_size => 2, :params => {}}.merge(options)
 
