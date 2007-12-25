@@ -1,12 +1,16 @@
 module PostHelper
   def print_preview(post, options = {})
+    if post.status == "deleted"
+      return ""
+    end
+
     if hide_explicit? && post.rating == "e"
       return ""
     end
-    
+
     image_class = "preview"
-    image_class += " pending" if post.is_pending?
     image_class += " flagged" if post.is_flagged?
+    image_class += " pending" if post.is_pending?
     image_class += " has-children" if post.has_children?
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
