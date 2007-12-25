@@ -180,7 +180,7 @@ class Post < ActiveRecord::Base
         q = Tag.parse_query(q)
       end
 
-      conds = ["p.status > 'deleted'"]
+      conds = ["true"]
       joins = ["posts p"]
       join_params = []
       cond_params = []
@@ -244,11 +244,6 @@ class Post < ActiveRecord::Base
           conds << "ept#{i}.tag_id IS NULL"
           join_params << etag
         end
-      end
-
-      if options[:hide_explicit]
-        conds << "p.rating <> 'e'"
-        conds << "p.status = 'active'"
       end
 
       if q[:rating].is_a?(String)
@@ -340,7 +335,7 @@ class Post < ActiveRecord::Base
   
   module CountMethods
     module ClassMethods
-      def fast_count(tags = nil, hide_explicit = false)
+      def fast_count(tags = nil, hide_explicit = false, always_calculate = true)
         if hide_explicit
           prefix = "non-explicit_"
         else
@@ -351,7 +346,7 @@ class Post < ActiveRecord::Base
           return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
         else
           c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-          if c == 0
+          if c == 0 && always_calculate
             return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
           else
             return c

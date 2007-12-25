@@ -109,8 +109,10 @@ class ApplicationController < ActionController::Base
       end
 
       yield
-      
-      Cache.put(key, response.body, expiry)
+
+      if response.headers['Status'] =~ /^200/
+        Cache.put(key, response.body, expiry)
+      end
     else
       yield
     end

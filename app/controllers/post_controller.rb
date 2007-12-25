@@ -1,7 +1,7 @@
 class PostController < ApplicationController
   layout 'default'
 
- verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
   before_filter :mod_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
@@ -174,37 +174,57 @@ class PostController < ApplicationController
   end
 
   def index
-    set_title "/" + params[:tags].to_s.tr("_", " ")
+    tags = params[:tags].to_s
+    split_tags = tags.scan(/\S+/)
+    page = params[:page].to_i
+    page = 1 if page < 1
+    limit = params[:limit].to_i
+    limit = 16 if limit == 0
+    limit = 1000 if limit > 1000
 
-    if (@current_user == nil || !@current_user.privileged?) && params[:tags]
-      tags = params[:tags].scan(/\S+/)
+    set_title "/" + tags.tr("_", " ")
 
-      if tags.size > 2
-        flash[:notice] = "You need a privileged account to search for more than two tags at a time."
+    if @current_user == nil
+      if page > 1
+        flash[:notice] = "You need an account to look beyond the first page."
+        redirect_to :controller => "user", :action => "login"
+        return
+      end
+
+      if split_tags.size > 1
+        flash[:notice] = "You need an account to search for more than one tag at once."
+        redirect_to :controller => "user", :action => "login"
+        return
+      end
+
+    elsif !@current_user.privileged?
+      if split_tags.size > 2
+        flash[:notice] = "You need a privileged account to search for more than two tags at once."
         redirect_to :controller => "user", :action => "login"
         return
       end
     end
 
-    limit = params[:limit].to_i
-    if limit == 0 || limit > 100
-      limit = 16
+    @ambiguous = Tag.select_ambiguous(tags)
+    count = Post.fast_count(tags, hide_explicit?, false)
+
+    if count > 0
+      @pages = Paginator.new(self, Post.fast_count(tags, hide_explicit?), limit, page)
+      @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
+    else
+      @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))
     end
 
-    @ambiguous = Tag.select_ambiguous(params[:tags])
-    @pages = Paginator.new(self, Post.fast_count(params[:tags], hide_explicit?), limit, params[:page])
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page, :hide_explicit => hide_explicit?))
-
-    if @posts.empty? && !params[:tags].blank? && params[:page].to_i < 2
-      @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + params[:tags].to_escaped_for_sql_like + "%"], :order => "name", :limit => 10).map {|x| x.name}
+    if @posts.empty? && split_tags.any? && page == 1
+      @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + tags.to_escaped_for_sql_like + "%"], :order => "name", :limit => 10).map {|x| x.name}
     else
       @suggestions = []
     end
 
     respond_to do |fmt|
       fmt.html do        
-        if params[:tags]
-          @tags = Tag.parse_query(params[:tags])
+        if split_tags.any?
+          @tags = Tag.parse_query(tags)
         else
           if CONFIG["enable_caching"]
             @tags = Cache.get("poptags:#{hide_explicit?}", 1.day) do
