@@ -1,126 +1,122 @@
-RelatedTags = {}
+RelatedTags = {
+  user_tags: [],
+  recent_tags: [],
+  recent_search: {},
 
-RelatedTags.user_tags = []
+  init: function(user_tags, artist_url) {
+    this.user_tags = user_tags.match(/\S+/g)
+    this.recent_tags = Cookie.get("recent_tags").match(/\S+/g).sort().uniq(true)
 
-RelatedTags.recent_tags = []
-
-RelatedTags.recent_search = {}
-
-RelatedTags.init = function(user_tags, artist_url) {
-  RelatedTags.user_tags = user_tags.match(/\S+/g)
-
-  if (Cookie.get("recent_tags").length > 0) {
-    RelatedTags.recent_tags = Cookie.unescape(Cookie.get("recent_tags")).match(/\S+/g).uniq().sort()
-  }
-
-  if ((artist_url != null) && (artist_url.match(/^http/))) {
-    RelatedTags.find_artist($F("post_source"))
-  } else {
-    RelatedTags.build_all({})
-  }
-}
-
-RelatedTags.toggle = function(link, field) {
-  var field = $(field)
-  var tags = field.value.match(/\S+/g) || []
-  var tag = link.innerHTML
-
-  if (tags.include(tag)) {
-    field.value = tags.without(tag).join(" ") + " "
-  } else {
-    field.value = tags.concat([tag]).join(" ") + " "
-  }
-
-  RelatedTags.build_all(RelatedTags.recent_search)
-  return false
-}
-
-RelatedTags.build_html = function(key, tags) {
-  if (tags == null || tags.length == 0) {
-    return ""
-  }
-
-  tags = tags.sort()
-  var html = ""
-  var current = $F("post_tags").match(/\S+/g) || []
-
-  html += '<h6><em>' + key + '</em></h6>'
-  html += '<p>'
-  
-  for (i=0; i<tags.length; ++i) {
-    var tag = tags[i]
-    html += ('<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
-    
-    if (current.include(tag)) {
-      html += ' style="background: rgb(0, 111, 250); color: white;"'
+    if ((artist_url != null) && (artist_url.match(/^http/))) {
+      this.find_artist($F("post_source"))
+    } else {
+      this.build_all({})
     }
-    
-    html += '>' + tag.replace(/>/g, "&gt;").replace(/</g, "&lt;") + '</a> '
-  }
-  html += '</p>'
+  },
 
-  return html
-}
+  toggle: function(link, field) {
+    var field = $(field)
+    var tags = field.value.match(/\S+/g) || []
+    var tag = (link.innerText || link.textContent).replace(/ /g, "_")
 
-RelatedTags.build_all = function(tags) {
-  RelatedTags.recent_search = tags
-  
-  var html = RelatedTags.build_html("My Tags", RelatedTags.user_tags) + RelatedTags.build_html("Recent Tags", RelatedTags.recent_tags)
-  var keys = []
-
-  for (key in tags) {
-    keys.push(key)
-  }
-  
-  keys.sort()
-
-  for (var i=0; i<keys.size(); ++i) {
-    html += RelatedTags.build_html(keys[i], tags[keys[i]])
-  }
-  
-  $("related").innerHTML = html
-}
-
-RelatedTags.find = function(field, type) {
-  $("related").innerHTML = "<em>Fetching...</em>"
-  var field = $(field)
-  var tags = field.value
-  var type_param = ""
-  
-  if (type != null) {
-    type_param = "&type=" + type
-  }
-  
-  new Ajax.Request("/tag/related.js", {
-    method: 'get',
-    parameters: "tags=" + tags + type_param,
-    onComplete: function(res) {
-      var resp = eval("(" + res.responseText + ")")
-      RelatedTags.build_all(RelatedTags.convert_related_js_response(resp))
+    if (tags.include(tag)) {
+      field.value = tags.without(tag).join(" ") + " "
+    } else {
+      field.value = tags.concat([tag]).join(" ") + " "
     }
-  })
-}
 
-RelatedTags.convert_related_js_response = function(resp) {
-  var converted = {}
-  
-  for (k in resp) {
-    var tags = resp[k].map(function(x) {return x[0]}).sort()
-    converted[k] = tags
-  }
-  
-  return converted
-}
+    this.build_all(this.recent_search)
+    return false
+  },
 
-RelatedTags.find_artist = function(url) {
-  if (url.match(/^http/)) {
-    new Ajax.Request("/artist/index.js", {
-      method: "get",
-      parameters: "url=" + url,
-      onComplete: function(res) {
-        var resp = eval(res.responseText)
-        RelatedTags.build_all({"Artist": resp.map(function(x) {return x.name})})
+  build_html: function(key, tags) {
+    if (tags == null || tags.size() == 0) {
+      return ""
+    }
+
+    tags = tags.sort()
+    var html = ""
+    var current = $F("post_tags").match(/\S+/g) || []
+
+    html += '<div class="tag-column">'
+    html += '<h6><em>' + key.replace(/_/g, " ") + '</em></h6>'
+  
+    for (var i=0; i<tags.size(); ++i) {
+      var tag = tags[i]
+      html += ('<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
+    
+      if (current.include(tag)) {
+        html += ' style="background: rgb(0, 111, 250); color: white;"'
       }
+    
+      html += '>' + tag.escapeHTML().replace(/_/g, " ") + '</a><br> '
+    }
+    html += '</div>'
+
+    return html
+  },
+
+  build_all: function(tags) {
+    this.recent_search = tags
+  
+    var html = this.build_html("My Tags", this.user_tags) + this.build_html("Recent Tags", this.recent_tags)
+    var keys = []
+
+    for (key in tags) {
+      keys.push(key)
+    }
+  
+    keys.sort()
+
+    for (var i=0; i<keys.size(); ++i) {
+      html += this.build_html(keys[i], tags[keys[i]])
+    }
+  
+    $("related").update(html)
+  },
+
+  find: function(field, type) {
+    $("related").update("<em>Fetching...</em>")
+    var field = $(field)
+    var tags = field.value
+  
+    new Ajax.Request("/tag/related.js", {
+      method: 'get',
+      parameters: {
+        "tags": tags,
+        "type": type
+      },
+      onComplete: function(resp) {
+        var resp = resp.responseJSON
+        var converted = this.convert_related_js_response(resp)
+        this.build_all(converted)
+      }.bind(this)
     })
+  },
+
+  convert_related_js_response: function(resp) {
+    var converted = {}
+  
+    for (k in resp) {
+      var tags = resp[k].map(function(x) {return x[0]}).sort()
+      converted[k] = tags
+    }
+
+    return converted
+  },
+
+  find_artist: function(url) {
+    if (url.match(/^http/)) {
+      new Ajax.Request("/artist/index.js", {
+        method: "get",
+        parameters: {
+          "url": url
+        },
+        onComplete: function(resp) {
+          var resp = resp.responseJSON
+          this.build_all({"Artist": resp.map(function(x) {return x.name})})
+        }.bind(this)
+      })
+    }
   }
 }

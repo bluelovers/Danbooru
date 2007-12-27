@@ -132,8 +132,8 @@ class PoolController < ApplicationController
       
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post removed from pool"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
+        fmt.xml {render :xml => {:success => true, :post_id => params[:post_id]}.to_xml(:root => "response")}
+        fmt.js {render :json => {:success => true, :post_id => params[:post_id]}.to_json}
       end
     else
       @pool = Pool.find(params[:pool_id])

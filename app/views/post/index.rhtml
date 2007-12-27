@@ -39,10 +39,6 @@
           </select>          
         </div>
       </form>
-
-      <script type="text/javascript">
-        PostModeMenu.init()
-      </script>
     </div>
 
     <%= render :partial => 'tags' %>
@@ -52,12 +48,14 @@
       <%= CONFIG["ad_code_index_top"] %>
     <% end %>
         
-    <div id="edit-panel" style="display: none; margin-bottom: 1em;">
+    <div id="quick-edit" style="display: none; margin-bottom: 1em;">
       <h4>Edit Tags</h4>
-      <%= hidden_field_tag "edit_post_id", "" %>
-      <%= text_area_tag "edit_tags", "", :size => "60x2" %> 
-      <%= button_to_function "Update", "$('edit-panel').hide(); Post.update($F('edit_post_id'), 'post[tags]=' + $F('edit_tags'))" %>
-      <%= button_to_function "Cancel", "$('edit-panel').hide()" %>
+      <% form_tag(:action => "update") do %>
+        <%= hidden_field_tag "id", "" %>
+        <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
+        <%= submit_tag "Update" %>
+        <%= button_to_function "Cancel", "$('quick-edit').hide()" %>
+      <% end %>
     </div>
 
     <%= render :partial => "posts", :locals => {:posts => @posts} %>
@@ -82,3 +80,21 @@
   </div>
 </div>
 
+<script type="text/javascript">
+  $("quick-edit").down("form").observe("submit", function(e) {
+    new Ajax.Request("/post/update.js", {
+      parameters: $("quick-edit").down("form").serialize(),
+      onSuccess: function() {
+        notice("Post updated")
+        $("quick-edit").hide()
+      },
+      onError: function(resp) {
+        var resp = resp.responseJSON
+        notice("Error: " + resp.reason)
+      }
+    })
+    e.stop()
+  })
+  Post.observe_text_area("post_tags")
+  PostModeMenu.init()
+</script>

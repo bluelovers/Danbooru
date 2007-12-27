@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
           cache_version = Cache.get("$cache_version").to_i
           key = "p/i/p=#{page}&v=#{cache_version}"
         end
-      else        
+      else
         if page > 10
           expiry = (rand(4) + 3) * 1.day
           key = "p/i/p=#{page}&t=#{tags.join(',')}"

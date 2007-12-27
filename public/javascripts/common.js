@@ -1,6 +1,5 @@
 function notice(msg) {
-  $('notice').show()
-  $('notice').innerHTML = msg
+  $('notice').update(msg).show()
 }
 
 var ClipRange = Class.create()
@@ -16,4 +15,3 @@ ClipRange.prototype = {
       return x
   }
 }
-
