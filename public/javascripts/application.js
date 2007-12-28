@@ -6276,19 +6276,28 @@ function notice(msg) {
   $('notice').update(msg).show()
 }
 
-var ClipRange = Class.create()
-ClipRange.prototype = {
+var ClipRange = Class.create({
   initialize: function(min, max) {
-    if (min > max) throw "paramError"
-      this.min = min
-      this.max = max
-    },
-    clip: function(x) {
-      if (x < this.min) return this.min
-      if (x > this.max) return this.max
-      return x
+    if (min > max)  {
+      throw "paramError"
+    }
+
+    this.min = min
+    this.max = max
+  },
+
+  clip: function(x) {
+    if (x < this.min) {
+      return this.min
+    }
+    
+    if (x > this.max) {
+      return this.max
+    }
+    
+    return x
   }
-}
+})
 
 Cookie = {
   put: function(name, value, days) {
@@ -6461,214 +6470,156 @@ Forum = {
   }
 }
 
-var Note = Class.create()
-Note.zindex = 0
-Note.counter = -1
-Note.all = []
-Note.display = true
-
-Note.show = function() {
-/* 	for (var i=0; i<Note.all.length; ++i) { */
-/* 		Note.all[i].bodyHide() */
-/* 		Note.all[i].elements.box.style.display = "block" */
-/* 	} */
-	$('note-container').style.visibility = "visible"
-}
-
-Note.hide = function() {
-/* 	for (var i=0; i<Note.all.length; ++i) { */
-/* 		Note.all[i].bodyHide() */
-/* 		Note.all[i].elements.box.style.display = "none" */
-/* 	} */
-	$('note-container').style.visibility = "hidden"
-}
-
-Note.find = function(id) {
-	for (var i = 0; i<Note.all.length; ++i) {
-		if (Note.all[i].id == id) {
-			return Note.all[i]
-		}
-	}
-
-	return null
-}
-
-Note.toggle = function() {
-	if (Note.display) {
-		Note.hide()
-		Note.display = false
-	} else {
-		Note.show()
-		Note.display = true
-	}
-}
-
-Note.updateNoteCount = function() {
-	if (Note.all.length > 0) {
-		var label = ""
-
-		if (Note.all.length == 1)
-			label = "note"
-		else
-			label = "notes"
-
-		$('note-count').innerHTML = "This post has <a href=\"/note/history?post_id=" + Note.post_id + "\">" + Note.all.length + " " + label + "</a>"
-	} else {
-		$('note-count').innerHTML = ""
-	}
-};
-
-Note.create = function() {
-	var note = ''
-	note += '<div class="note-box unsaved" style="width: 150px; height: 150px; '
-	note += 'top: ' + ($('image').clientHeight / 2 - 75) + 'px; '
-	note += 'left: ' + ($('image').clientWidth / 2 - 75) + 'px;" '
-	note += 'id="note-box-' + Note.counter + '">'
-	note += '<div class="note-corner" id="note-corner-' + Note.counter + '"></div>'
-	note += '</div>'
-	note += '<div class="note-body" title="Click to edit" id="note-body-' + Note.counter + '"></div>'
-	new Insertion.Bottom('note-container', note)
-	Note.all.push(new Note(Note.counter, true, ''))
-	Note.counter -= 1
-};
-
-Note.prototype = {
-	// Necessary because addEventListener/removeEventListener don't play nice with
-	// different instantiations of the same method.
-	bind: function(method_name) {
-		if (!this.bound_methods) {
-			this.bound_methods = new Object()
-		}
-
-		if (!this.bound_methods[method_name]) {
-			this.bound_methods[method_name] = this[method_name].bindAsEventListener(this)
-		}
-
-		return this.bound_methods[method_name]
-	},
-
+// The following are instance methods and variables
+var Note = Class.create({
 	initialize: function(id, is_new, raw_body) {
+	  if (Note.debug) {
+	    console.debug("Note#initialize (id=%d)", id)
+    }
+	  
 		this.id = id
 		this.is_new = is_new
 
-		// get the elements
+		// Cache the elements
 		this.elements = {
-			box:		$('note-box-' + this.id),
-			corner:		$('note-corner-' + this.id),
-			body:		$('note-body-' + this.id),
-			image:		$('image')
+			box: $('note-box-' + this.id),
+			corner: $('note-corner-' + this.id),
+			body: $('note-body-' + this.id),
+			image: $('image')
 		}
 
-		// for scaling
+		// Cache the dimensions
 		this.fullsize = {
-			left:           this.elements.box.offsetLeft,
-			top:            this.elements.box.offsetTop,
-			width:          this.elements.box.clientWidth,
-			height:         this.elements.box.clientHeight
+			left: this.elements.box.offsetLeft,
+			top: this.elements.box.offsetTop,
+			width: this.elements.box.clientWidth,
+			height: this.elements.box.clientHeight
 		}
-		if (this.elements.image.scale_factor == null)
+		
+		if (this.elements.image.scale_factor == null) {
 			this.elements.image.scale_factor = 1
+		}
 
-		// store the data
+		// Store the original values (in case the user clicks Cancel)
 		this.old = {
-			raw_body:       raw_body,
+			raw_body: raw_body,
 			formatted_body: this.elements.body.innerHTML
 		}
-		for (p in this.fullsize)
+		for (p in this.fullsize) {
 			this.old[p] = this.fullsize[p]
+		}
 
-		// IE opacity
-		if(/MSIE/.test(navigator.userAgent) && !window.opera)
-			Element.setStyle(this.elements.box, {opacity: 0.5})
+    // Make the note translucent
+    if (is_new) {
+      this.elements.box.setOpacity(0.2)
+    } else {
+      this.elements.box.setOpacity(0.5)      
+    }
 
-		// reposition the box to be relative to the image
-		// is this needed? in what browsers?
-		this.elements.box.style.top = this.elements.box.offsetTop + "px"
-		this.elements.box.style.left = this.elements.box.offsetLeft + "px"
-		
 		if (is_new && raw_body == '') {
 			this.bodyfit = true
 			this.elements.body.style.height = "100px"
 		}
 
-		// attach the event listeners
-		Event.observe(this.elements.box, "mousedown", this.bind("dragStart"), false)
-		Event.observe(this.elements.box, "mouseout", this.bind("bodyHideTimer"), false)
-		Event.observe(this.elements.box, "mouseover", this.bind("bodyShow"), false)
-		Event.observe(this.elements.corner, "mousedown", this.bind("resizeStart"), false)
-		Event.observe(this.elements.body, "mouseover", this.bind("bodyShow"), false)
-		Event.observe(this.elements.body, "mouseout", this.bind("bodyHideTimer"), false)
-		Event.observe(this.elements.body, "click", this.bind("showEditBox"), false)
+		// Attach the event listeners
+    this.elements.box.observe("mousedown", this.dragStart.bindAsEventListener(this))
+    this.elements.box.observe("mouseout", this.bodyHideTimer.bindAsEventListener(this))
+    this.elements.box.observe("mouseover", this.bodyShow.bindAsEventListener(this))
+    this.elements.corner.observe("mousedown", this.resizeStart.bindAsEventListener(this))
+    this.elements.body.observe("mouseover", this.bodyShow.bindAsEventListener(this))
+    this.elements.body.observe("mouseout", this.bodyHideTimer.bindAsEventListener(this))
+    this.elements.body.observe("click", this.showEditBox.bindAsEventListener(this))
 	},
 
+  // Returns the raw text value of this note
 	textValue: function() {
-		return this.old.raw_body.replace(/(?:^\s+|\s+$)/, '')
+	  if (Note.debug) {
+	    console.debug("Note#textValue (id=%d)", this.id)
+    }
+    
+		return this.old.raw_body.strip()
 	},
 
+  // Removes the edit box
 	hideEditBox: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#hideEditBox (id=%d)", this.id)
+    }
+	    
 		var editBox = $('edit-box')
 
 		if (editBox != null) {
 			var boxid = editBox.noteid
-			// redundant?
-			Event.stopObserving('edit-box', 'mousedown', this.bind("editDragStart"), false)
-			Event.stopObserving('note-save-' + boxid, 'click', this.bind("save"), false)
-			Event.stopObserving('note-cancel-' + boxid, 'click', this.bind("cancel"), false)
-			Event.stopObserving('note-remove-' + boxid, 'click', this.bind("remove"), false)
-			Event.stopObserving('note-history-' + boxid, 'click', this.bind("history"), false)
-			this.elements.editBox = null
 
-			Element.remove('edit-box')
+      $("edit-box").stopObserving()
+      $("note-save-" + boxid).stopObserving()
+      $("note-cancel-" + boxid).stopObserving()
+      $("note-remove-" + boxid).stopObserving()
+      $("note-history-" + boxid).stopObserving()
+			$("edit-box").remove()
 		}
-
 	},
 
+  // Shows the edit box
 	showEditBox: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#showEditBox (id=%d)", this.id)
+    }
+    
 		this.hideEditBox(e)
 
-		var inject = ''
-		Position.prepare()
+    var insertionPosition = Note.getInsertionPosition()
+    var top = insertionPosition[0]
+    var left = insertionPosition[1]
+    var html = ""
 
-		var top = Position.deltaY
-		var left = Position.deltaX + 25
+		html += '<div id="edit-box" style="top: '+top+'px; left: '+left+'px; position: absolute; visibility: visible; z-index: 100; background: white; border: 1px solid black; padding: 12px;">'
+		html += '<form onsubmit="return false;" style="padding: 0; margin: 0;">'
+		html += '<textarea rows="7" id="edit-box-text" style="width: 350px; margin: 2px 2px 12px 2px;">' + this.textValue() + '</textarea>'
+		html += '<input type="submit" value="Save" name="save" id="note-save-' + this.id + '">'
+		html += '<input type="submit" value="Cancel" name="cancel" id="note-cancel-' + this.id + '">'
+		html += '<input type="submit" value="Remove" name="remove" id="note-remove-' + this.id + '">'
+		html += '<input type="submit" value="History" name="history" id="note-history-' + this.id + '">'
+		html += '</form>'
+		html += '</div>'
 
-		inject += '<div id="edit-box" style="top: '+top+'px; left: '+left+'px; position: absolute; visibility: visible; z-index: 100; background: white; border: 1px solid black; padding: 12px;">'
-		inject += '<form onsubmit="return false;" style="padding: 0; margin: 0;">'
-		inject += '<textarea rows="7" id="edit-box-text" style="width: 350px; margin: 2px 2px 12px 2px;">' + this.textValue() + '</textarea>'
-		inject += '<input type="submit" value="Save" name="save" id="note-save-' + this.id + '" />'
-		inject += '<input type="submit" value="Cancel" name="cancel" id="note-cancel-' + this.id + '" />'
-		inject += '<input type="submit" value="Remove" name="remove" id="note-remove-' + this.id + '" />'
-		inject += '<input type="submit" value="History" name="history" id="note-history-' + this.id + '" />'
-		inject += '</form>'
-		inject += '</div>'
-
-		new Insertion.Bottom('note-container', inject)
-
+    $("note-container").insert({bottom: html})
 		$('edit-box').noteid = this.id
-
-		Event.observe('edit-box', 'mousedown', this.bind("editDragStart"), false)
-
-		Event.observe('note-save-' + this.id, 'click', this.bind("save"), false)
-		Event.observe('note-cancel-' + this.id, 'click', this.bind("cancel"), false)
-		Event.observe('note-remove-' + this.id, 'click', this.bind("remove"), false)
-		Event.observe('note-history-' + this.id, 'click', this.bind("history"), false)
+    $("edit-box").observe("mousedown", this.editDragStart.bindAsEventListener(this))
+    $("note-save-" + this.id).observe("click", this.save.bindAsEventListener(this))
+    $("note-cancel-" + this.id).observe("click", this.cancel.bindAsEventListener(this))
+    $("note-remove-" + this.id).observe("click", this.remove.bindAsEventListener(this))
+    $("note-history-" + this.id).observe("click", this.history.bindAsEventListener(this))
 		$("edit-box-text").focus()
 	},
 
+  // Shows the body text for the note
 	bodyShow: function(e) {
-		if (this.dragging)
+	  if (Note.debug) {
+	    console.debug("Note#bodyShow (id=%d)", this.id)
+    }
+    
+		if (this.dragging) {
 			return
+		}
 
 		if (this.hideTimer) {
 			clearTimeout(this.hideTimer)
 			this.hideTimer = null
 		}
 
-		if (Note.noteShowingBody == this) return
-		if (Note.noteShowingBody) Note.noteShowingBody.bodyHide()
+		if (Note.noteShowingBody == this) {
+		  return
+	  }
+	  
+		if (Note.noteShowingBody) {
+		  Note.noteShowingBody.bodyHide()
+	  }
+	  
 		Note.noteShowingBody = this
-		
-		if (Note.zindex >= 9) {		/* don't use more than 10 layers (+1 for the body, which will always be above all notes) */
+
+		if (Note.zindex >= 9) {
+		  /* don't use more than 10 layers (+1 for the body, which will always be above all notes) */
 			Note.zindex = 0
 			for (var i=0; i< Note.all.length; ++i) {
 				Note.all[i].elements.box.style.zIndex = 0
@@ -6681,13 +6632,12 @@ Note.prototype = {
 		this.elements.body.style.left = 0 + "px"
 
 		var dw = document.documentElement.scrollWidth
-//		alert([document.body.scrollWidth, document.body.offsetWidth, document.body.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth, document.documentElement.clientWidth])
 		this.elements.body.style.visibility = "hidden"
 		this.elements.body.style.display = "block"
 		if (!this.bodyfit) {
 			this.elements.body.style.height = "auto"
 			this.elements.body.style.minWidth = "140px"
-			var w, h, lo, hi, x, last
+			var w = null, h = null, lo = null, hi = null, x = null, last = null
 			w = this.elements.body.offsetWidth
 			h = this.elements.body.offsetHeight
 			if (w/h < 1.6180339887) {
@@ -6702,8 +6652,9 @@ Note.prototype = {
 					if (w/h < 1.6180339887) lo = x
 					else hi = x
 				} while ((lo < hi) && (w > last))
-			} else if (this.elements.body.scrollWidth <= this.elements.body.clientWidth) {	/* scroll test required by Firefox */
-				/* for short notes (often a single line), make the box no wider than necessary */
+			} else {
+			  /* scroll test required by Firefox */
+				/* for short notes (often a single line), make the box no wider than necessary */				
 				lo = 20, hi = w
 				do {
 					x = (lo+hi)/2
@@ -6717,7 +6668,7 @@ Note.prototype = {
 			this.bodyfit = true
 		}
 		this.elements.body.style.top = (this.elements.box.offsetTop + this.elements.box.clientHeight + 5) + "px"
-		/* keep the box within the document's width */
+		// keep the box within the document's width
 		var l = 0, e = this.elements.box
 		do { l += e.offsetLeft } while (e = e.offsetParent)
 		l += this.elements.body.offsetWidth + 10 - dw
@@ -6728,39 +6679,53 @@ Note.prototype = {
 		this.elements.body.style.visibility = "visible"
 	},
 
+  // Creates a timer that will hide the body text for the note
 	bodyHideTimer: function(e) {
-		this.hideTimer = setTimeout(this.bind("bodyHide"), 250)
+	  if (Note.debug) {
+	    console.debug("Note#bodyHideTimer (id=%d)", this.id)
+    }
+		this.hideTimer = setTimeout(this.bodyHide.bindAsEventListener(this), 250)
 	},
 
+  // Hides the body text for the note
 	bodyHide: function(e) {
-		this.elements.body.style.display = "none"
-		if (Note.noteShowingBody == this) Note.noteShowingBody = null
+	  if (Note.debug) {
+	    console.debug("Note#bodyHide (id=%d)", this.id)
+    }
+    
+	  this.elements.body.hide()
+		if (Note.noteShowingBody == this) {
+		  Note.noteShowingBody = null
+	  }
 	},
 
+  // Start dragging the note
 	dragStart: function(e) {
-		Event.observe(document.documentElement, 'mousemove', this.bind("drag"), false)
-		Event.observe(document.documentElement, 'mouseup', this.bind("dragStop"), false)
-		document.onselectstart = function() {return false}
+	  if (Note.debug) {
+	    console.debug("Note#dragStart (id=%d)", this.id)
+    }
+    
+    document.observe("mousemove", this.drag.bindAsEventListener(this))
+    document.observe("mouseup", this.dragStop.bindAsEventListener(this))
+    document.observe("selectstart", function() {return false})
 
-		this.cursorStartX = Event.pointerX(e)
-		this.cursorStartY = Event.pointerY(e)
+		this.cursorStartX = e.pointerX()
+		this.cursorStartY = e.pointerY()
 		this.boxStartX = this.elements.box.offsetLeft
 		this.boxStartY = this.elements.box.offsetTop
-		this.boundsX = new ClipRange(5,
-			this.elements.image.clientWidth
-			- this.elements.box.clientWidth - 5)
-		this.boundsY = new ClipRange(5,
-			this.elements.image.clientHeight
-			- this.elements.box.clientHeight - 5)
+		this.boundsX = new ClipRange(5, this.elements.image.clientWidth - this.elements.box.clientWidth - 5)
+		this.boundsY = new ClipRange(5, this.elements.image.clientHeight - this.elements.box.clientHeight - 5)
 		this.dragging = true
-
 		this.bodyHide()
 	},
 
+  // Stop dragging the note
 	dragStop: function(e) {
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), false)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("dragStop"), false)
-		document.onselectstart = function() {return true}
+	  if (Note.debug) {
+	    console.debug("Note#dragStop (id=%d)", this.id)
+    }
+    
+    document.stopObserving()
 
 		this.cursorStartX = null
 		this.cursorStartY = null
@@ -6773,53 +6738,113 @@ Note.prototype = {
 		this.bodyShow()
 	},
 
+  // Scale the notes for when the image gets resized
 	adjustScale: function() {
+	  if (Note.debug) {
+	    console.debug("Note#adjustScale (id=%d)", this.id)
+	  }
+	  
 		var ratio = this.elements.image.scale_factor
-		for (p in this.fullsize)
+		for (p in this.fullsize) {
 			this.elements.box.style[p] = this.fullsize[p] * ratio + 'px'
+		}
 	},
 
+  // Update the note's position as it gets dragged
 	drag: function(e) {
-		var left = this.boxStartX + Event.pointerX(e) - this.cursorStartX
-		var top = this.boxStartY + Event.pointerY(e) - this.cursorStartY
+		var left = this.boxStartX + e.pointerX() - this.cursorStartX
+		var top = this.boxStartY + e.pointerY() - this.cursorStartY
 		left = this.boundsX.clip(left)
 		top = this.boundsY.clip(top)
-		
+
 		this.elements.box.style.left = left + 'px'
 		this.elements.box.style.top = top + 'px'
 		var ratio = this.elements.image.scale_factor
 		this.fullsize.left = left / ratio
 		this.fullsize.top = top / ratio
 
-		Event.stop(e)
+    e.stop()
+	},
+	
+	// Start dragging the edit box
+	editDragStart: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#editDragStart (id=%d)", this.id)
+	  }
+	  
+		var node = e.element.nodeName
+		if (node != 'FORM' && node != 'DIV') {
+			return
+		}
+
+    document.observe("mousemove", this.editDrag.bindAsEventListener(this))
+    document.observe("mouseup", this.editDragStop.bindAsEventListener(this))
+    document.observe("selectstart", function() {return false})
+
+		this.elements.editBox = $('edit-box');
+		this.cursorStartX = e.pointerX()
+		this.cursorStartY = e.pointerY()
+		this.editStartX = this.elements.editBox.offsetLeft
+		this.editStartY = this.elements.editBox.offsetTop
+		this.dragging = true
 	},
 
+  // Stop dragging the edit box
+	editDragStop: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#editDragStop (id=%d)", this.id)
+	  }
+    document.stopObserving()
+
+		this.cursorStartX = null
+		this.cursorStartY = null
+		this.editStartX = null
+		this.editStartY = null
+		this.dragging = false
+	},
+
+  // Update the edit box's position as it gets dragged
+	editDrag: function(e) {
+		var left = this.editStartX + e.pointerX() - this.cursorStartX
+		var top = this.editStartY + e.pointerY() - this.cursorStartY
+
+		this.elements.editBox.style.left = left + 'px'
+		this.elements.editBox.style.top = top + 'px'
+
+    e.stop()
+	},
+
+  // Start resizing the note
 	resizeStart: function(e) {
-		this.cursorStartX = Event.pointerX(e)
-		this.cursorStartY = Event.pointerY(e)
+	  if (Note.debug) {
+	    console.debug("Note#resizeStart (id=%d)", this.id)
+	  }
+	  
+		this.cursorStartX = e.pointerX()
+		this.cursorStartY = e.pointerY()
 		this.boxStartWidth = this.elements.box.clientWidth
 		this.boxStartHeight = this.elements.box.clientHeight
 		this.boxStartX = this.elements.box.offsetLeft
 		this.boxStartY = this.elements.box.offsetTop
-		this.boundsX = new ClipRange(10,
-			this.elements.image.clientWidth - this.boxStartX - 5)
-		this.boundsY = new ClipRange(10,
-			this.elements.image.clientHeight - this.boxStartY - 5)
+		this.boundsX = new ClipRange(10, this.elements.image.clientWidth - this.boxStartX - 5)
+		this.boundsY = new ClipRange(10, this.elements.image.clientHeight - this.boxStartY - 5)
 		this.dragging = true
 
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("drag"), false)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("dragStop"), false)
-		Event.observe(document.documentElement, 'mousemove', this.bind("resize"), false)
-		Event.observe(document.documentElement, 'mouseup', this.bind("resizeStop"), false)
-
-		Event.stop(e)
-
+    document.stopObserving()
+    document.observe("mousemove", this.resize.bindAsEventListener(this))
+    document.observe("mouseup", this.resizeStop.bindAsEventListener(this))
+    
+    e.stop()
 		this.bodyHide()
 	},
 
+  // Stop resizing teh note
 	resizeStop: function(e) {
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("resize"), false)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("resizeStop"), false)
+	  if (Note.debug) {
+	    console.debug("Note#resizeStop (id=%d)", this.id)
+	  }
+	  
+    document.stopObserving()
 
 		this.boxCursorStartX = null
 		this.boxCursorStartY = null
@@ -6831,12 +6856,13 @@ Note.prototype = {
 		this.boundsY = null
 		this.dragging = false
 
-		Event.stop(e)
+    e.stop()
 	},
 
+  // Update the note's dimensions as it gets resized
 	resize: function(e) {
-		var width = this.boxStartWidth + Event.pointerX(e) - this.cursorStartX
-		var height = this.boxStartHeight + Event.pointerY(e) - this.cursorStartY
+		var width = this.boxStartWidth + e.pointerX() - this.cursorStartX
+		var height = this.boxStartHeight + e.pointerY() - this.cursorStartY
 		width = this.boundsX.clip(width)
 		height = this.boundsY.clip(height)
 
@@ -6846,110 +6872,79 @@ Note.prototype = {
 		this.fullsize.width = width / ratio
 		this.fullsize.height = height / ratio
 
-		Event.stop(e)
+    e.stop()
 	},
 
-	editDragStart: function(e) {
-		var node = Event.element(e).nodeName
-		if (node != 'FORM' && node != 'DIV')
-			return
-
-		Event.observe(document.documentElement, 'mousemove', this.bind("editDrag"), false)
-		Event.observe(document.documentElement, 'mouseup', this.bind("editDragStop"), false)
-		document.onselectstart = function() {return false}
-
-		this.elements.editBox = $('edit-box');
-		this.cursorStartX = Event.pointerX(e)
-		this.cursorStartY = Event.pointerY(e)
-		this.editStartX = this.elements.editBox.offsetLeft
-		this.editStartY = this.elements.editBox.offsetTop
-		this.dragging = true
-	},
-
-	editDragStop: function(e) {
-		Event.stopObserving(document.documentElement, 'mousemove', this.bind("editDrag"), false)
-		Event.stopObserving(document.documentElement, 'mouseup', this.bind("editDragStop"), false)
-		document.onselectstart = function() {return true}
-
-		this.cursorStartX = null
-		this.cursorStartY = null
-		this.editStartX = null
-		this.editStartY = null
-		this.dragging = false
-	},
-
-	editDrag: function(e) {
-		var left = this.editStartX + Event.pointerX(e) - this.cursorStartX
-		var top = this.editStartY + Event.pointerY(e) - this.cursorStartY
-
-		this.elements.editBox.style.left = left + 'px'
-		this.elements.editBox.style.top = top + 'px'
-
-		Event.stop(e)
-	},
-
+  // Save the note to the database
 	save: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#save (id=%d)", this.id)
+	  }
+	  
 		var note = this
-		for (p in this.fullsize)
+		for (p in this.fullsize) {
 			this.old[p] = this.fullsize[p]
+		}
 		this.old.raw_body = $('edit-box-text').value
 		this.old.formatted_body = this.textValue()
-		this.elements.body.innerHTML = this.textValue()	// FIXME? this is not quite how the note will look (filtered elems, <tn>...). the user won't input a <script> that only damages him, but it might be nice to "preview" the <tn> here
+		// FIXME: this is not quite how the note will look (filtered elems, <tn>...). the user won't input a <script> that only damages him, but it might be nice to "preview" the <tn> here
+		this.elements.body.update(this.textValue())
 
 		this.hideEditBox(e)
 		this.bodyHide()
 		this.bodyfit = false
 
-		var params = []
-		params.push("note%5Bx%5D=" + this.old.left)
-		params.push("note%5By%5D=" + this.old.top)
-		params.push("note%5Bwidth%5D=" + this.old.width)
-		params.push("note%5Bheight%5D=" + this.old.height)
-		params.push("note%5Bbody%5D=" + encodeURIComponent(this.old.raw_body))
-
+		var params = {
+		  "id": this.id,
+		  "note[x]": this.old.left,
+		  "note[y]": this.old.top,
+		  "note[width]": this.old.width,
+		  "note[height]": this.old.height,
+		  "note[body]": this.old.raw_body
+	  }
+	  
 		if (this.is_new) {
-			params.push("note%5Bpost_id%5D=" + Note.post_id)
+		  params["note[post_id]"] = Note.post_id
 		}
 
 		notice("Saving note...")
-		new Ajax.Request('/note/update/' + this.id, {
-			asynchronous: true,
-			method: 'post',
-			parameters: params.join("&"),
-			onFailure: function(req) {
-				if (req.responseText) {
-					var response = eval("(" + req.responseText + ")")
-					notice("Error: " + response.reason)
-				} else if (req.status) {
-					notice("Error: " + req.status + " " + req.statusText)
-				} else {
-					notice("Error: unknown")
-				}
-				note.elements.box.addClassName('unsaved')
-			},
-			onException: function(req,exc) {
-				notice("Exception: <pre>"+exc+"</pre>")
-				note.elements.box.addClassName('unsaved')
-			},
-			onSuccess: function(req) {
-				notice("Note saved")
-				var response = eval("(" + req.responseText + ")")
-				if (response.old_id < 0) {
-					note.is_new = false
-					note.id = response.new_id
-					note.elements.box.id = 'note-box-' + note.id
-					note.elements.body.id = 'note-body-' + note.id
-					note.elements.corner.id = 'note-corner-' + note.id
-				}
-				note.elements.body.innerHTML = response.formatted_body
-				note.elements.box.removeClassName('unsaved')
+
+		new Ajax.Request('/note/update.js', {
+			parameters: params,
+			
+			onComplete: function(resp) {
+			  var resp = resp.responseJSON
+			  
+			  if (resp.success) {
+			    notice("Note saved")
+			    var note = Note.find(resp.old_id)
+
+  				if (resp.old_id < 0) {
+  					note.is_new = false
+  					note.id = resp.new_id
+  					note.elements.box.id = 'note-box-' + note.id
+  					note.elements.body.id = 'note-body-' + note.id
+  					note.elements.corner.id = 'note-corner-' + note.id
+  				}
+  				note.elements.body.innerHTML = resp.formatted_body
+  				note.elements.box.setOpacity(0.5)
+  				note.elements.box.removeClassName('unsaved')
+			  } else {
+			    notice("Error: " + resp.reason)
+  				note.elements.box.addClassName('unsaved')
+			  }
 			}
 		})
 
-		Event.stop(e)
+    e.stop()
 	},
 
+  // Revert the note to the last saved state
 	cancel: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#cancel (id=%d)", this.id)
+	  }
+	  
 		this.hideEditBox(e)
 		this.bodyHide()
 
@@ -6960,12 +6955,17 @@ Note.prototype = {
 		}
 		this.elements.body.innerHTML = this.old.formatted_body
 
-		Event.stop(e)
+    e.stop()
 	},
 
+  // Remove all references to the note from the page
 	removeCleanup: function() {
-		Element.remove(this.elements.box)
-		Element.remove(this.elements.body)
+	  if (Note.debug) {
+	    console.debug("Note#removeCleanup (id=%d)", this.id)
+	  }
+	  
+	  this.elements.box.remove()
+	  this.elements.body.remove()
 
 		var allTemp = []
 		for (i=0; i<Note.all.length; ++i) {
@@ -6978,7 +6978,12 @@ Note.prototype = {
 		Note.updateNoteCount()
 	},
 
+  // Removes a note from the database
 	remove: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#remove (id=%d)", this.id)
+	  }
+	  
 		this.hideEditBox(e)
 		this.bodyHide()
 
@@ -6990,27 +6995,30 @@ Note.prototype = {
 			notice("Removing note...")
 
 			new Ajax.Request('/note/update/' + this.id, {
-				asynchronous: true,
-				method: 'post',
-				postBody: 'note[is_active]=0',
-				onComplete: function(req) {
-					var resp = eval("(" + req.responseText + ")")
-					if (req.status == 403) {
-						notice("Access denied")
-					} else if (req.status == 500) {
-						notice("Error: " + resp.reason)
-					} else {
-						Note.find(parseInt(resp.old_id)).removeCleanup()
-						notice("Note removed")
-					}
+			  parameters: {
+			    "note[is_active]": "0"
+			  },
+				onComplete: function(resp) {
+				  var resp = resp.responseJSON
+				  
+				  if (resp.success) {
+				    notice("Note removed")
+				  } else {
+				    notice("Error: " + resp.reason)
+				  }
 				}
 			})
 		}
 
-		Event.stop(e)
+    e.stop()
 	},
 
+  // Redirect to the note's history
 	history: function(e) {
+	  if (Note.debug) {
+	    console.debug("Note#history (id=%d)", this.id)
+	  }
+	  
 		this.hideEditBox(e)
 
 		if (this.is_new) {
@@ -7018,8 +7026,145 @@ Note.prototype = {
 		} else {
 			location.pathname = '/note/history/' + this.id
 		}
+		
+		e.stop()
 	}
-}
+})
+
+// The following are class methods and variables
+Object.extend(Note, {
+  zindex: 0,
+  counter: -1,
+  all: [],
+  display: true,
+  debug: false,
+
+  // Show all notes
+  show: function() {
+    if (Note.debug) {
+	    console.debug("Note.show")
+	  }
+	  
+    $("note-container").show()
+  },
+
+  // Hide all notes
+  hide: function() {
+    if (Note.debug) {
+	    console.debug("Note.hide")
+	  }
+
+    $("note-container").hide()
+  },
+
+  // Find a note instance based on the id number
+  find: function(id) {
+    if (Note.debug) {
+	    console.debug("Note.find")
+	  }
+    
+  	for (var i=0; i<Note.all.size(); ++i) {
+  		if (Note.all[i].id == id) {
+  			return Note.all[i]
+  		}
+  	}
+
+  	return null
+  },
+
+  // Toggle the display of all notes
+  toggle: function() {
+    if (Note.debug) {
+	    console.debug("Note.toggle")
+	  }
+    
+  	if (Note.display) {
+  		Note.hide()
+  		Note.display = false
+  	} else {
+  		Note.show()
+  		Note.display = true
+  	}
+  },
+
+  // Update the text displaying the number of notes a post has
+  updateNoteCount: function() {
+    if (Note.debug) {
+	    console.debug("Note.updateNoteCount")
+	  }
+    
+  	if (Note.all.length > 0) {
+  		var label = ""
+
+  		if (Note.all.length == 1)
+  			label = "note"
+  		else
+  			label = "notes"
+
+  		$('note-count').innerHTML = "This post has <a href=\"/note/history?post_id=" + Note.post_id + "\">" + Note.all.length + " " + label + "</a>"
+  	} else {
+  		$('note-count').innerHTML = ""
+  	}
+  },
+
+  // Create a new note
+  create: function() {
+    if (Note.debug) {
+	    console.debug("Note.create")
+	  }
+    
+    var insertion_position = Note.getInsertionPosition()
+    var top = insertion_position[0]
+    var left = insertion_position[1]
+  	var html = ''
+  	html += '<div class="note-box unsaved" style="width: 150px; height: 150px; '
+  	html += 'top: ' + top + 'px; '
+  	html += 'left: ' + left + 'px;" '
+  	html += 'id="note-box-' + Note.counter + '">'
+  	html += '<div class="note-corner" id="note-corner-' + Note.counter + '"></div>'
+  	html += '</div>'
+  	html += '<div class="note-body" title="Click to edit" id="note-body-' + Note.counter + '"></div>'
+  	$("note-container").insert({bottom: html})
+  	var note = new Note(Note.counter, true, "")
+    Note.all.push(note)
+  	Note.counter -= 1
+  },
+  
+  // Find a suitable position to insert new notes
+  getInsertionPosition: function() {
+    if (Note.debug) {
+	    console.debug("Note.getInsertionPosition")
+	  }
+    
+    // We want to show the edit box somewhere on the screen, but not outside the image.
+    var scroll_x = $("image").cumulativeScrollOffset()[0]
+    var scroll_y = $("image").cumulativeScrollOffset()[1]
+    var image_left = $("image").positionedOffset()[0]
+    var image_top = $("image").positionedOffset()[1]
+    var image_right = image_left + $("image").width
+    var image_bottom = image_top + $("image").height
+    var left = 0
+    var top = 0
+    
+    if (scroll_x > image_left) {
+      left = scroll_x
+    } else {
+      left = image_left
+    }
+    
+    if (scroll_y > image_top) {
+      top = scroll_y
+    } else {
+      top = image_top + 20
+    }
+    
+    if (top > image_bottom) {
+      top = image_top + 20
+    }
+    
+    return [top, left]
+  }
+})
 
 Pool = {
   add_post: function(post_id, pool_id) {
@@ -7068,11 +7213,10 @@ Post = {
 
   update: function(post_id, params) {
     notice('Updating post #' + post_id)
+    params["id"] = post_id
 
     new Ajax.Request('/post/update.js', {
-      parameters: params.merge({
-        "id": post_id,
-      }),
+      parameters: params,
 
       onComplete: function(resp) {
         var resp = resp.responseJSON
@@ -7338,7 +7482,12 @@ RelatedTags = {
 
   init: function(user_tags, artist_url) {
     this.user_tags = user_tags.match(/\S+/g)
-    this.recent_tags = Cookie.get("recent_tags").match(/\S+/g).sort().uniq(true)
+    this.recent_tags = Cookie.get("recent_tags").match(/\S+/g)
+    if (this.recent_tags) {
+      this.recent_tags = this.recent_tags.sort().uniq(true)
+    } else {
+      this.recent_tags = []
+    }
 
     if ((artist_url != null) && (artist_url.match(/^http/))) {
       this.find_artist($F("post_source"))
@@ -7479,22 +7628,22 @@ Dmail = {
   }
 }
 
-UserRecord = {}
+UserRecord = {
+  destroy: function(id) {
+    notice('Deleting record #' + id)
 
-UserRecord.destroy = function(id) {
-  notice('Deleting record #' + id)
-
-  new Ajax.Request('/user_record/destroy.js', {
-    asynchronous: true,
-    method: 'post',
-    postBody: 'id=' + id,
-    onComplete: function(resp) {
-      if (resp.status == 200) {
-        notice("Record deleted")
-      } else {
-        notice("Access denied")
+    new Ajax.Request('/user_record/destroy.js', {
+      parameters: {
+        "id": id
+      },
+      onComplete: function(resp) {
+        if (resp.status == 200) {
+          notice("Record deleted")
+        } else {
+          notice("Access denied")
+        }
       }
-    }
-  })
+    })
+  }
 }
 

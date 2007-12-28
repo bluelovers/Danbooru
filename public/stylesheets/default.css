@@ -535,7 +535,7 @@ div#post-view > div#right-col > div > div#note-container > div.note-body {
   position: absolute;
   padding: 5px;
   cursor: pointer;
-  overflow: auto;
+  overflow: visible;
 }
 
 div#post-view > div#right-col > div > div#note-container > div.note-body > p.tn {
@@ -550,7 +550,6 @@ div#post-view > div#right-col > div > div#note-container > div.note-box {
   height: 150px;
   cursor: move;
   background: #FFE;
-  opacity: 0.5;
 }
 
 div#post-view > div#right-col > div > div#note-container > div.note-box > div.note-corner {
@@ -565,7 +564,6 @@ div#post-view > div#right-col > div > div#note-container > div.note-box > div.no
 
 div#post-view > div#right-col > div > div#note-container > div.unsaved {
   background: #FFF;
-  opacity: 0.33;
   border: 1px solid red;
 }
 

@@ -3,11 +3,10 @@ Post = {
 
   update: function(post_id, params) {
     notice('Updating post #' + post_id)
+    params["id"] = post_id
 
     new Ajax.Request('/post/update.js', {
-      parameters: params.merge({
-        "id": post_id,
-      }),
+      parameters: params,
 
       onComplete: function(resp) {
         var resp = resp.responseJSON

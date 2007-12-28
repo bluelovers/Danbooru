@@ -5,7 +5,12 @@ RelatedTags = {
 
   init: function(user_tags, artist_url) {
     this.user_tags = user_tags.match(/\S+/g)
-    this.recent_tags = Cookie.get("recent_tags").match(/\S+/g).sort().uniq(true)
+    this.recent_tags = Cookie.get("recent_tags").match(/\S+/g)
+    if (this.recent_tags) {
+      this.recent_tags = this.recent_tags.sort().uniq(true)
+    } else {
+      this.recent_tags = []
+    }
 
     if ((artist_url != null) && (artist_url.match(/^http/))) {
       this.find_artist($F("post_source"))
