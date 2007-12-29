@@ -330,12 +330,12 @@ class Post < ActiveRecord::Base
   
   module CountMethods
     module ClassMethods
-      def fast_count(tags = nil, hide_explicit = false, always_calculate = true)
+      def fast_count(tags = nil, force_calculation = true)
         if tags.blank?
           return connection.select_value("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
         else
           c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-          if c == 0 && always_calculate
+          if c == 0 && force_calculation
             return Post.count_by_sql(Post.generate_sql(tags, :count => true))
           else
             return c

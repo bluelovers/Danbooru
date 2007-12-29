@@ -42,8 +42,8 @@ Cookie = {
   },
 
   setup: function() {
-    if (location.href.match(/localhost:3000\/(comment|pool|note|post)/) && this.get("tos") != "1") {
-     location.href = "http://localhost:3000/static/terms_of_service?url=" + location.href
+    if (location.href.match(/danbooru\.donmai\.us\/(comment|pool|note|post)/) && this.get("tos") != "1") {
+     location.href = "http://danbooru.donmai.us/static/terms_of_service?url=" + location.href
      return
     }
     

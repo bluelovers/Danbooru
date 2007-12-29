@@ -206,10 +206,10 @@ class PostController < ApplicationController
     end
 
     @ambiguous = Tag.select_ambiguous(tags)
-    count = Post.fast_count(tags, false, false)
+    count = Post.fast_count(tags, false)
 
     if count > 0
-      @pages = Paginator.new(self, Post.fast_count(tags, false), limit, page)
+      @pages = Paginator.new(self, Post.fast_count(tags), limit, page)
       @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
     else
       @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))

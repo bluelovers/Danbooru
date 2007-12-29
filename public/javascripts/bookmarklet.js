@@ -4209,6 +4209,6 @@ images.invoke("observe", "click", function(e) {
     img_url = el_parent.href
   }
 
-  window.open("http://localhost.opnet.com:3000/post/upload?url=" + encodeURIComponent(img_url) + "&ref=" + encodeURIComponent(ref))
+  window.open("http://danbooru.donmai.us/post/upload?url=" + encodeURIComponent(img_url) + "&ref=" + encodeURIComponent(ref))
   e.stop()
 })
