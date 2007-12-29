@@ -7609,7 +7609,8 @@ RelatedTags = {
       new Ajax.Request("/artist/index.js", {
         method: "get",
         parameters: {
-          "url": url
+          "url": url,
+          "limit": "10"
         },
         onComplete: function(resp) {
           var resp = resp.responseJSON

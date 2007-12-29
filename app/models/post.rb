@@ -630,6 +630,7 @@ class Post < ActiveRecord::Base
   end
 
   before_validation_on_create :auto_download
+  before_validation_on_create :validate_content_type
   before_validation_on_create :generate_hash
   before_validation_on_create :generate_preview
   before_validation_on_create :get_image_dimensions
@@ -649,25 +650,10 @@ class Post < ActiveRecord::Base
   attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status, :deletion_reason
   
   
-  def validate_file_existence
-    uri = URI.parse(self.file_url)
-    Net::HTTP.start(uri.host, uri.port) do |http|
-      resp = http.request_head(uri.path)
-      unless resp.is_a?(Net::HTTPSuccess)
-        self.errors.add(:file, "not found")
-        self.delete_file()
-        return false
-      end
-    end
-
-    uri = URI.parse(self.preview_url)
-    Net::HTTP.start(uri.host, uri.port) do |http|
-      resp = http.request_head(uri.path)
-      unless resp.is_a?(Net::HTTPSuccess)
-        self.errors.add(:preview, "not found")
-        self.delete_file()
-        return false
-      end
+  def validate_content_type
+    unless %w(jpg jpeg png gif swf).include?(self.file_ext.downcase)
+      self.errors.add(:file, "is an invalid content type")
+      return false
     end
   end
   
