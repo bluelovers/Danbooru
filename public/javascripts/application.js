@@ -7303,7 +7303,7 @@ Post = {
   },
 
   hide_blacklisted: function() {
-    var blacklist = Cookie.get("blacklisted_tags").match(/\S+/g)
+    var blacklist = Cookie.get("blacklisted_tags").replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s").match(/\S+/g)
   
     if (blacklist == null) {
       return
@@ -7311,7 +7311,9 @@ Post = {
   
     this.posts.each(function(pair) {
       if (pair.value.tags.intersect(blacklist).size() > 0) {
-        $("p" + pair.key).hide()
+        if ($("p" + pair.key)) {
+          $("p" + pair.key).hide()
+        }
       }
     })
   },
