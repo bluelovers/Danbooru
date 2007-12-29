@@ -197,12 +197,12 @@ var Note = Class.create({
 			
 			if (Prototype.Browser.IE) {
 			  // IE7 adds scrollbars if the box is too small, obscuring the text
-			  if (this.elements.body.offsetHeight < 50) {
-			    this.elements.body.style.minHeight = "50px"
+			  if (this.elements.body.offsetHeight < 35) {
+			    this.elements.body.style.minHeight = "35px"
 			  }
 			  
-			  if (this.elements.body.offsetWidth < 100) {
-			    this.elements.body.style.minWidth = "100px"
+			  if (this.elements.body.offsetWidth < 47) {
+			    this.elements.body.style.minWidth = "47px"
 			  }
 			}
 			this.bodyfit = true
