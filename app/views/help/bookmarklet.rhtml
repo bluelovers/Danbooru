@@ -2,13 +2,14 @@
   <h1>Help: Bookmarklet</h1>
 
   <div class="section">
-    <p>Bookmark the following link: <a href="javascript:location.href='http://<%= CONFIG['server_host'] %>/post/upload?url='+encodeURIComponent(location.href);">Post to Danbooru</a>.</p>
+    <p>Bookmark the following link: <a href="javascript:(function(){var%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('src', 'http://danbooru.donmai.us/javascripts/bookmarklet.js');document.body.appendChild(e)})()">Post to Danbooru</a>.</p>
   
     <div class="section">
       <h4>How to Use</h4>
       <ul>
-        <li>Right click on the image you want to upload and select View Image from the menu (this step will vary depending on the browser).</li>
-        <li>When the URL to the image is in your browser's URL bar, open this bookmarklet.</li>
+        <li>Click on the bookmarklet.</li>
+        <li>All images that can be uploaded to Danbooru will get a thick dashed blue border.</li>
+        <li>Click on an image to upload it to Danbooru.</li>
         <li>You'll be redirected to the upload page where you can fill out the tags, the title, and set the rating.</li>
       </ul>
     </div>

@@ -938,4 +938,8 @@ class Post < ActiveRecord::Base
   def is_active?
     self.status == "active"
   end
+  
+  def is_loli?
+    return self.rating != "s" && self.cached_tags.include?("loli")
+  end
 end

@@ -4,7 +4,7 @@ module PostHelper
       return ""
     end
 
-    if hide_explicit? && post.rating == "e"
+    if hide_explicit? && post.is_loli?
       return ""
     end
 

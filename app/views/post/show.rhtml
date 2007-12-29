@@ -1,5 +1,5 @@
 <div id="post-view">
-  <% if @post.nil? %>
+  <% if @post == nil %>
     <h2>Nobody here but us chickens!</h2>
   <% else %>    
     <% if @post.is_flagged? %>
@@ -115,7 +115,9 @@
 
       <% unless @post.is_deleted? %>
         <div>
-          <% if @post.image? %>
+          <% if hide_explicit? && @post.is_loli? %>
+            <p>You need a privileged account to see this post.</p>
+          <% elsif @post.image? %>
             <div id="note-container">
               <% @post.active_notes.each do |note| %>
                 <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
@@ -131,7 +133,7 @@
               <embed src="<%= @post.file_url %>" width="<%= @post.width %>" height="<%= @post.height %>" allowScriptAccess="never"></embed>
             </object>
 
-            <p><%= link_to "Save this flash (right-click and save)", @post.file_url %></p>
+            <p><%= link_to "Save this flash (right click and save)", @post.file_url %></p>
           <% else %>
             <h2><a href="<%= @post.file_url %>">Download</a></h2>
             <p>You must download this file manually.</p>

@@ -42,6 +42,11 @@ Cookie = {
   },
 
   setup: function() {
+    if (this.get("tos") != "1") {
+      location.pathname = "/static/terms_of_service?url=" + encodeURIComponent(location.href)
+      return
+    }
+    
     if (this.get("has_mail") == "1") {
       $("has-mail-notice").show()
     }

@@ -180,7 +180,7 @@ var Note = Class.create({
 					if (w/h < 1.6180339887) lo = x
 					else hi = x
 				} while ((lo < hi) && (w > last))
-			} else if (true || this.elements.body.scrollWidth <= this.elements.body.clientWidth) {
+			} else if (this.elements.body.scrollWidth <= this.elements.body.clientWidth) {
 			  /* scroll test required by Firefox */
 				/* for short notes (often a single line), make the box no wider than necessary */				
 				lo = 20, hi = w
@@ -300,7 +300,7 @@ var Note = Class.create({
 	    console.debug("Note#editDragStart (id=%d)", this.id)
 	  }
 	  
-		var node = e.element.nodeName
+		var node = e.element().nodeName
 		if (node != 'FORM' && node != 'DIV') {
 			return
 		}
