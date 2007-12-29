@@ -4185,34 +4185,30 @@ Element.addMethods();
 
 /*--------------------------------------------------------------------------*/
 
-if (!window.danbooru_observing) {
-  window.danbooru_observing = true
-  
-  var images = $$("img")
-  images = images.select(function(x) {
-    return x.width > 100 && x.height > 100 && x.src.match(/\.(jpg|gif|png)$/i)
-  })
+var images = $$("img")
+images = images.select(function(x) {
+  return x.width > 100 && x.height > 100 && x.src.match(/\.(jpg|gif|png)$/i)
+})
 
-  images.invoke("setStyle", {cursor: "pointer", border: "5px dashed blue"})
-  images.invoke("observe", "mouseover", function(e) {
-    var el = e.element()
-    el.setStyle({border: "5px dashed red"})
-  })
-  images.invoke("observe", "mouseout", function(e) {
-    var el = e.element()
-    el.setStyle({border: "5px dashed blue"})
-  })
-  images.invoke("observe", "click", function(e) {
-    var el = e.element()
-    var el_parent = el.up()
-    var img_url = el.src
-    var ref = location.href
+images.invoke("setStyle", {cursor: "pointer", border: "5px dashed blue"})
+images.invoke("observe", "mouseover", function(e) {
+  var el = e.element()
+  el.setStyle({border: "5px dashed red"})
+})
+images.invoke("observe", "mouseout", function(e) {
+  var el = e.element()
+  el.setStyle({border: "5px dashed blue"})
+})
+images.invoke("observe", "click", function(e) {
+  var el = e.element()
+  var el_parent = el.up()
+  var img_url = el.src
+  var ref = location.href
 
-    if (el_parent.nodeName == "A" && el_parent.href.match(/\.(jpg|gif|png)$/i)) {
-      img_url = el_parent.href
-    }
+  if (el_parent.nodeName == "A" && el_parent.href.match(/\.(jpg|gif|png)$/i)) {
+    img_url = el_parent.href
+  }
 
-    window.open("http://localhost.opnet.com:3000/post/upload?url=" + encodeURIComponent(img_url) + "&ref=" + encodeURIComponent(ref))
-    e.stop()
-  })
-}
+  window.open("http://localhost.opnet.com:3000/post/upload?url=" + encodeURIComponent(img_url) + "&ref=" + encodeURIComponent(ref))
+  e.stop()
+})

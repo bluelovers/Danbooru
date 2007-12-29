@@ -42,8 +42,8 @@ Cookie = {
   },
 
   setup: function() {
-    if (this.get("tos") != "1") {
-      location.pathname = "/static/terms_of_service?url=" + encodeURIComponent(location.href)
+    if (location.href.match(/danbooru\.donmai\.us/) && this.get("tos") != "1") {
+      location.href = "http://danbooru.donmai.us/static/terms_of_service?url=" + location.href
       return
     }
     

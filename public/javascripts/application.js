@@ -6343,8 +6343,8 @@ Cookie = {
   },
 
   setup: function() {
-    if (this.get("tos") != "1") {
-      location.pathname = "/static/terms_of_service?url=" + encodeURIComponent(location.href)
+    if (location.href.match(/danbooru\.donmai\.us/) && this.get("tos") != "1") {
+      location.href = "http://danbooru.donmai.us/static/terms_of_service?url=" + location.href
       return
     }
     
@@ -6658,9 +6658,10 @@ var Note = Class.create({
 					else hi = x
 				} while ((lo < hi) && (w > last))
 			} else if (this.elements.body.scrollWidth <= this.elements.body.clientWidth) {
-			  /* scroll test required by Firefox */
-				/* for short notes (often a single line), make the box no wider than necessary */				
-				lo = 20, hi = w
+				/* for short notes (often a single line), make the box no wider than necessary */	
+			  // scroll test necessary for Firefox
+		    lo = 20, hi = w
+	
 				do {
 					x = (lo+hi)/2
 					this.elements.body.style.minWidth = x + "px"
@@ -6669,6 +6670,17 @@ var Note = Class.create({
 				} while ((hi - lo) > 4)
 				if (this.elements.body.offsetHeight > h)
 					this.elements.body.style.minWidth = hi + "px"
+			}
+			
+			if (Prototype.Browser.IE) {
+			  // IE7 adds scrollbars if the box is too small, obscuring the text
+			  if (this.elements.body.offsetHeight < 50) {
+			    this.elements.body.style.minHeight = "50px"
+			  }
+			  
+			  if (this.elements.body.offsetWidth < 100) {
+			    this.elements.body.style.minWidth = "100px"
+			  }
 			}
 			this.bodyfit = true
 		}
