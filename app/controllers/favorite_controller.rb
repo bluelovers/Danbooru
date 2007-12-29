@@ -17,11 +17,7 @@ class FavoriteController < ApplicationController
     
     set_title "#{@user.pretty_name}'s Favorites"
     
-    if hide_explicit?
-      @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ? AND posts.rating <> 'e' AND posts.status = 'active'", @user.id], :select => "posts.*"
-    else
-      @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", @user.id], :select => "posts.*"
-    end
+    @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", @user.id], :select => "posts.*"
 
     respond_to do |fmt|
       fmt.html

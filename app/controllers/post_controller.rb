@@ -206,10 +206,10 @@ class PostController < ApplicationController
     end
 
     @ambiguous = Tag.select_ambiguous(tags)
-    count = Post.fast_count(tags, hide_explicit?, false)
+    count = Post.fast_count(tags, false, false)
 
     if count > 0
-      @pages = Paginator.new(self, Post.fast_count(tags, hide_explicit?), limit, page)
+      @pages = Paginator.new(self, Post.fast_count(tags, false), limit, page)
       @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
     else
       @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))
@@ -227,11 +227,11 @@ class PostController < ApplicationController
           @tags = Tag.parse_query(tags)
         else
           if CONFIG["enable_caching"]
-            @tags = Cache.get("poptags:#{hide_explicit?}", 1.day) do
-              {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_explicit => hide_explicit?)}
+            @tags = Cache.get("$poptags", 1.day) do
+              {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25)}
             end
           else
-            @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25, :hide_explicit => hide_explicit?)}
+            @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25)}
           end
         end
       end
@@ -246,7 +246,7 @@ class PostController < ApplicationController
       return
     end
     
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC", :hide_explicit => hide_explicit?))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
     render :layout => false
   end
 

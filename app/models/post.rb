@@ -102,11 +102,6 @@ class Post < ActiveRecord::Base
       @tag_cache = TagImplication.with_implied(@tag_cache).uniq
 
       transaction do
-        if (@tag_cache & CONFIG["explicit_tags"]).any? && self.rating != 'e'
-          connection.execute("UPDATE posts SET rating = 'e' WHERE id = #{self.id}")
-          Cache.expire(:tags => @tag_cache.join(" "), :post_id => self.id) if CONFIG["enable_caching"]
-        end
-
         connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
         tag_list = []
 
@@ -336,18 +331,12 @@ class Post < ActiveRecord::Base
   module CountMethods
     module ClassMethods
       def fast_count(tags = nil, hide_explicit = false, always_calculate = true)
-        if hide_explicit
-          prefix = "non-explicit_"
-        else
-          prefix = ""
-        end
-
         if tags.blank?
-          return connection.select_value("SELECT row_count FROM table_data WHERE name = '#{prefix}posts'").to_i
+          return connection.select_value("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
         else
           c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
           if c == 0 && always_calculate
-            return Post.count_by_sql(Post.generate_sql(tags, :count => true, :hide_explicit => hide_explicit))
+            return Post.count_by_sql(Post.generate_sql(tags, :count => true))
           else
             return c
           end
@@ -360,29 +349,14 @@ class Post < ActiveRecord::Base
     end
     
     def update_count
-      if @old_rating
-        if @old_rating != "e" && self.rating == "e"
-          connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")      
-        elsif @old_rating == "e" && self.rating != "e"
-          connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")      
-        end
-      end
     end
 
     def increment_count
       connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
-
-      if self.rating != "e"
-        connection.execute("update table_data set row_count = row_count + 1 where name = 'non-explicit_posts'")
-      end
     end
 
     def decrement_count
       connection.execute("update table_data set row_count = row_count - 1 where name = 'posts'")
-
-      if self.rating != "e"
-        connection.execute("update table_data set row_count = row_count - 1 where name = 'non-explicit_posts'")
-      end
     end
   end
   

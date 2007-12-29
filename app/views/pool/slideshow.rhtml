@@ -7,12 +7,7 @@
   <% end %>
 
   function loadPost() {
-    if (<%= hide_explicit? %> && posts[i][2] == 'e') {
-      notice("You cannot view this post")
-    } else {
-      $("img").src = posts[i][1]
-    }
-
+    $("img").src = posts[i][1]
     $("link").href = '/post/show/' + posts[i][0]
     $("current-post").innerHTML = i + 1
   }

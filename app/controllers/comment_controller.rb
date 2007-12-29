@@ -92,10 +92,10 @@ class CommentController < ApplicationController
 
     respond_to do |fmt|
       fmt.html do
-        if hide_explicit?
-          @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND rating <> 'e' AND status = 'active'", :per_page => 10
-        else
-          @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10
+        @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10
+        
+        if (@current_user == nil || !@current_user.privileged?)
+          @posts.reject! {|x| x.is_loli?}
         end
       end
       fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_xml(:root => "comments")}

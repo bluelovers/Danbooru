@@ -256,29 +256,17 @@ class User < ActiveRecord::Base
   def uploaded_posts(offset, limit, options = {})
     extra_sql = ""
     
-    if options[:hide_explicit]
-      extra_sql = "AND p.status = 'active' AND p.rating <> 'e'"
-    end
-    
     Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} #{extra_sql} ORDER BY p.id DESC OFFSET #{offset} LIMIT #{limit}")
   end
 
   def favorite_posts(offset, limit, options = {})
     extra_sql = ""
     
-    if options[:hide_explicit]
-      extra_sql = "AND p.status = 'active' AND p.rating <> 'e'"
-    end
-    
     Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql} ORDER BY f.id DESC OFFSET #{offset} LIMIT #{limit}")
   end
 
   def favorite_post_count(options = {})
     extra_sql = ""
-    
-    if options[:hide_explicit]
-      extra_sql = "AND p.status = 'active' AND p.rating <> 'e'"
-    end
     
     Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql}")
   end

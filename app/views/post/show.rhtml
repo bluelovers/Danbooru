@@ -115,8 +115,8 @@
 
       <% unless @post.is_deleted? %>
         <div>
-          <% if hide_explicit? && @post.is_loli? %>
-            <p>You need a privileged account to see this post.</p>
+          <% if (@current_user == nil || !@current_user.privileged?) && @post.is_loli? %>
+            <p>You need a privileged account to see this image.</p>
           <% elsif @post.image? %>
             <div id="note-container">
               <% @post.active_notes.each do |note| %>

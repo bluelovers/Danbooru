@@ -108,12 +108,20 @@
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5, :hide_explicit => hide_explicit?)} %>
+  <% if (@current_user == nil || !@current_user.privileged?) %>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5).reject {|x| x.is_loli?}} %>
+  <% else %>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5)} %>
+  <% end %>
 </div>
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5, :hide_explicit => hide_explicit?)} %>
+  <% if (@current_user == nil || !@current_user.privileged?) %>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5).reject {|x| x.is_loli?}} %>
+  <% else %>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5)} %>
+  <% end %>
 </div>
 
 <div id="footer">

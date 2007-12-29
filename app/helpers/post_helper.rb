@@ -4,7 +4,7 @@ module PostHelper
       return ""
     end
 
-    if hide_explicit? && post.is_loli?
+    if (@current_user == nil || !@current_user.privileged?) && post.is_loli?
       return ""
     end
 

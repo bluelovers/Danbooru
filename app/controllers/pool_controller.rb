@@ -14,6 +14,9 @@ class PoolController < ApplicationController
   def slideshow
     @pool = Pool.find(params[:id])
     @posts = Post.find(:all, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", @pool.id], :select => "posts.*")
+    if @current_user == nil || !@current_user.privileged?
+      @posts.reject! {|x| x.is_loli?}
+    end
   end
   
   def show
@@ -71,7 +74,7 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if !@pool.is_public? && (@current_user == nil || @current_user.id != @pool.user_id)
+      if @current_user == nil || @current_user.id != @pool.user_id
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
           fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 401}

@@ -6,16 +6,11 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   local_addresses.clear
   
-  helper_method :hide_explicit?
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
 
   protected
-  def hide_explicit?
-    CONFIG["hide_explicit_posts"] && (@current_user == nil || !@current_user.privileged?)
-  end
-
   def render_error(record)
     @record = record
     render :status => 500, :layout => "bare", :inline => "<%= error_messages_for('record') %>"
