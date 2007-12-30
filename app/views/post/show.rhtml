@@ -81,7 +81,7 @@
             <li><%= link_to "Add to Pool", :controller => "pool", :action => "add_post", :post_id => @post.id %></li>
           <% end %>
           <% if @post.is_pending? && @current_user && @current_user.mod? %>
-            <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, 'post[status]=active')}" %></li>
+            <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.update(#{@post.id}, {'post[status]': 'active'})}" %></li>
           <% end %>
         </ul>
       </div>
