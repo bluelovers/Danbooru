@@ -4205,7 +4205,7 @@ images.invoke("observe", "click", function(e) {
   var img_url = el.src
   var ref = location.href
 
-  if ((el.width < 200) && (el_parent.nodeName == "A") && (el_parent.href.match(/\.(jpg|gif|png)$/i))) {
+  if ((el.width < 100) && (el_parent.nodeName == "A") && (el_parent.href.match(/\.(jpg|gif|png)$/i))) {
     img_url = el_parent.href
   }
 
