@@ -104,10 +104,6 @@ class ArtistController < ApplicationController
       @pages, @artists = paginate :artists, :order => order, :per_page => 25
     end
 
-    if params[:limit]
-      @artists.slice!(0, params[:limit].to_i)
-    end
-
     respond_to do |fmt|
       fmt.html
       fmt.xml {render :xml => @artists.to_xml(:root => "artists")}

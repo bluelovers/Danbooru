@@ -157,12 +157,11 @@ class Artist < ActiveRecord::Base
     artists = []
 
     while artists.empty? && url.size > 10
-      puts url
       u = url.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
       artists += Artist.find(:all, :conditions => ["url_a LIKE ? ESCAPE '\\\\' OR url_b LIKE ? ESCAPE '\\\\' OR url_c LIKE ? ESCAPE '\\\\'", u, u, u], :order => "name")
       url = File.dirname(url)
     end
 
-    return artists
+    return artists[0, 10]
   end
 end

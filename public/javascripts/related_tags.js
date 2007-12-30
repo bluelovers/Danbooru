@@ -39,7 +39,6 @@ RelatedTags = {
       return ""
     }
 
-    tags = tags.sort()
     var html = ""
     var current = $F("post_tags").match(/\S+/g) || []
 
