@@ -2,19 +2,15 @@
   <% form_tag(:controller => "admin", :action => "edit_account") do %>
     <table class="form">
       <tr>
-        <th>
-          <label class="block" for="user_name">User</label>
-        </th>
-        <td>
-          <%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %>
-        </td>
+        <th width="15%"><label class="block" for="user_name">User</label></th>
+        <td width="85%"><%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %></td>
       </tr>
       <tr>
         <th>
           <label class="block" for="user_level">Level</label>
         </th>
         <td>
-          <%= select "user", "level", [["Member", User::LEVEL_MEMBER], ["Blocked", User::LEVEL_BLOCKED]] %>
+          <%= select "user", "level", [["Blocked", User::LEVEL_BLOCKED], ["Member", User::LEVEL_MEMBER], ["Privileged", User::LEVEL_PRIVILEGED], ["Moderator", User::LEVEL_MOD], ["Administrator", User::LEVEL_ADMIN]] %>
         </td>
       </tr>
       <tr>

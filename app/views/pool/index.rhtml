@@ -6,12 +6,13 @@
     <% end %>
   </div>
   
-  <table style="width: 60em;">
+  <table width="100%" class="highlightable">
     <thead>
       <tr>
         <th width="70%">Name</th>
-        <th width="20%">Creator</th>
+        <th width="15%">Creator</th>
         <th width="10%">Posts</th>
+        <th width="5%">Public</th>
       </tr>
     </thead>
     <tbody>
@@ -20,6 +21,7 @@
           <td><%= link_to h(p.pretty_name), :action => "show", :id => p.id %></td>
           <td><%= h(p.user.pretty_name) %></td>
           <td><%= p.post_count %></td>
+          <td><%= p.is_public? ? "Yes" : "No" %></td>
         </tr>
       <% end %>
     </tbody>

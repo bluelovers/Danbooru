@@ -26,15 +26,11 @@ class AdminController < ApplicationController
       @user = User.find_by_name(params[:user][:name])
       
       if @user
-        if @user.email.blank?
-          flash[:notice] = "User never supplied an email address"
-          redirect_to :action => "index"
-        else
-          new_password = @user.reset_password
+        new_password = @user.reset_password
+        flash[:notice] = "Password reset to #{new_password}"
+        
+        unless @user.email.blank?
           UserMailer.deliver_new_password(@user, new_password)
-
-          flash[:notice] = "Password reset"
-          redirect_to :action => "index"
         end
       else
         flash[:notice] = "That account does not exist"

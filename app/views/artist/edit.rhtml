@@ -32,7 +32,10 @@
         <td><%= text_area "artist", "notes", :size => "40x6" %></td>
       </tr>
       <tr>
-        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
+        <td colspan="2">
+          <%= submit_tag "Save" %>
+          <%= button_to_function "Cancel", "history.back()" %>
+        </td>
       </tr>
     </table>
   <% end %>

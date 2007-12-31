@@ -1,2 +1,2 @@
-page.visual_effect(:fade, "artist-#{@artist.id}", :duration => 1)
+page.hide("artist-#{@artist.id}")
 page.call(:notice, "Artist deleted")

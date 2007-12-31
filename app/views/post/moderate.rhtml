@@ -31,11 +31,12 @@
     <table width="100%">
       <thead>
         <tr>
-          <th width="1%"></th>
+          <th width="5%"></th>
           <th width="10%"></th>
           <th width="10%">Author</th>
           <th width="10%">Rating</th>
-          <th width="69%">Tags</th>
+          <th width="5%">Age</th>
+          <th width="60%">Tags</th>
         </tr>      
       </thead>
       <tfoot>
@@ -53,9 +54,10 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"></td>
             <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-            <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
+            <td><%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</td>
             <td><%= p.pretty_rating %></td>
-            <td>
+            <td><%= time_ago_in_words(p.created_at) %></td>
+            <td class="checkbox-cell">
               <% if p.parent_id %>
                 parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
               <% end %>
@@ -102,7 +104,7 @@
             <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
             <td><%= p.pretty_rating %></td>
             <td><%= format_text(p.deletion_reason, :skip_simple_format => true) %></td>
-            <td>
+            <td class="checkbox-cell">
               <% if p.parent_id %>
                 parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
               <% end %>
@@ -113,4 +115,9 @@
       </tbody>
     </table>
   </form>
+  
+  <script type="text/javascript">
+    var cells = $$(".checkbox-cell")
+    $$(".checkbox-cell").invoke("observe", "click", function(e) {this.up().firstDescendant().down("input").click()})
+  </script>
 </div>

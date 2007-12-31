@@ -1,12 +1,20 @@
 class ArtistController < ApplicationController
   layout "default"
 
-  before_filter :privileged_only, :only => [:destroy]
-  before_filter :member_only, :only => [:update, :create]
+  before_filter :member_only, :only => [:update, :create, :destroy]
   verify :method => :post, :only => [:destroy, :update, :create]
   helper :post, :wiki
 
+  def delete
+    @artist = Artist.find(params[:id])
+  end
+
   def destroy
+    if params[:commit] == "No"
+      redirect_to :action => "show", :id => params[:id]
+      return
+    end
+    
     @artist = Artist.find(params[:id])
     @artist.destroy
 

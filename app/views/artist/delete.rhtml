@@ -1,0 +1,7 @@
+<% form_tag(:action => "destroy") do %>
+  <%= hidden_field_tag "id", params[:id] %>
+  <h4>Delete Artist</h4>
+  <p>Do you wish to delete the artist "<%= h(@artist.name) %>"?</p>
+  <%= submit_tag "Yes" %>
+  <%= submit_tag "No" %>
+<% end %>

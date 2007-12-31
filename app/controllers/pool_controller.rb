@@ -27,11 +27,12 @@ class PoolController < ApplicationController
   def update
     @pool = Pool.find(params[:id])
 
+    unless @current_user.has_permission?(@pool)
+      access_denied()
+      return
+    end
+
     if request.post?
-      unless @current_user.has_permission?(@pool)
-        access_denied()
-        return
-      end
     
       @pool.update_attributes(params[:pool])
       redirect_to :action => "show", :id => params[:id]
@@ -74,7 +75,7 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if @current_user == nil || @current_user.id != @pool.user_id
+      if !@pool.is_public? && (@current_user == nil || @current_user.id != @pool.user_id)
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
           fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 401}
