@@ -20,9 +20,16 @@ CONFIG["enable_turbo_mode"] = false
 # Set to true to allow new account signups.
 CONFIG["enable_signups"] = true
 
-# Enable this if you want explicit posts to be hidden from unprivileged members
-# and anonymous visitors.
+# Enable this if you want explicit posts to be hidden from unprivileged users.
 CONFIG["hide_explicit_posts"] = false
+
+# Enable this if you want explicit and questionable posts to be hidden from
+# unprivileged users.
+CONFIG["hide_questionable_posts"] = false
+
+# Enable this if you want posts tagged with loli or shota to be hidden from
+# unprivileged users.
+CONFIG["hide_loli_posts"] = false
 
 # Newly created users start at this level. Set this to 3 if you want everyone
 # to start out as a privileged member.

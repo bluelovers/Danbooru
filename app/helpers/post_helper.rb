@@ -3,9 +3,19 @@ module PostHelper
     if post.status == "deleted"
       return ""
     end
+    
+    if @current_user.nil? || !@current_user.privileged?
+      if CONFIG["hide_loli_posts"] && post.is_loli?
+        return ""
+      end
 
-    if (@current_user == nil || !@current_user.privileged?) && post.is_loli?
-      return ""
+      if CONFIG["hide_questionable_posts"] && post.rating != 's'
+        return ""
+      end
+      
+      if CONFIG["hide_explicit_posts"] && post.rating == 'e'
+        return ""
+      end
     end
 
     image_class = "preview"
