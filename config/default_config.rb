@@ -12,11 +12,6 @@ CONFIG["enable_account_email_validation"] = false
 # This is a salt used to make dictionary attacks on account passwords harder.
 CONFIG["password_salt"] = "choujin-steiner"
 
-# Enabling this disables: tag type lookup, intersecting related tag search,
-# and forum update notices. It also sets the minimum related tag cache duration
-# to 8 hours.
-CONFIG["enable_turbo_mode"] = false
-
 # Set to true to allow new account signups.
 CONFIG["enable_signups"] = true
 
@@ -43,6 +38,8 @@ CONFIG["starting_invite_count"] = 2
 # local_hierarchy: Store every image in a hierarchical directory,
 # based on the post's MD5 hash. On some file systems this may be
 # faster.
+# local_hierarchy_with_s3: Store every image in a hierarchical
+# directory, but also save to an Amazon S3 account for backup.
 # amazon_s3: Save files to an Amazon S3 account.
 # remote_hierarchy: Some images will be stored on separate image
 # servers using a hierarchical directory.
