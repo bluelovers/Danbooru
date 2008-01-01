@@ -10,14 +10,6 @@ class PoolController < ApplicationController
       @pages, @pools = paginate :pools, :order => "updated_at desc", :per_page => 20
     end
   end
-
-  def slideshow
-    @pool = Pool.find(params[:id])
-    @posts = Post.find(:all, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", @pool.id], :select => "posts.*")
-    if @current_user == nil || !@current_user.privileged?
-      @posts.reject! {|x| x.is_loli?}
-    end
-  end
   
   def show
     @pool = Pool.find(params[:id])
@@ -33,7 +25,6 @@ class PoolController < ApplicationController
     end
 
     if request.post?
-    
       @pool.update_attributes(params[:pool])
       redirect_to :action => "show", :id => params[:id]
     end
@@ -196,6 +187,7 @@ class PoolController < ApplicationController
         fmt.html
         fmt.js do
           @posts = Post.find_by_tags(params[:query], :order => "id desc", :limit => 100)
+          @posts = @posts.select {|x| x.can_view?(@current_user)}
           render :action => "import.rjs"
         end
       end

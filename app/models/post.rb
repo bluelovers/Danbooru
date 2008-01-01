@@ -899,6 +899,20 @@ class Post < ActiveRecord::Base
     self.status == "active"
   end
   
+  def can_view?(user)
+    if user == nil || !user.privileged?
+      if CONFIG["hide_explicit_posts"] && self.rating == 'e'
+        return false
+      elsif CONFIG["hide_questionable_posts"] && self.rating != 's'
+        return false
+      elsif CONFIG["hide_loli_posts"] && self.is_loli?
+        return false
+      end
+    end
+    
+    return true
+  end
+  
   def is_loli?
     return self.rating != "s" && self.cached_tags =~ /\b(?:loli|shota)\b/
   end
