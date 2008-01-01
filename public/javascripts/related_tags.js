@@ -83,13 +83,14 @@ RelatedTags = {
     $("related").update("<em>Fetching...</em>")
     var field = $(field)
     var tags = field.value
+    var params = {"tags": tags}
+    if (type) {
+      params["type"] = type
+    }
   
     new Ajax.Request("/tag/related.js", {
       method: 'get',
-      parameters: {
-        "tags": tags,
-        "type": type
-      },
+      parameters: params,
       onComplete: function(resp) {
         var resp = resp.responseJSON
         var converted = this.convert_related_js_response(resp)
