@@ -252,6 +252,7 @@ class PostController < ApplicationController
     end
     
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
+    @headers["Content-Type"] = "application/atom+xml"
     render :layout => false
   end
 
