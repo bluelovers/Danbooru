@@ -21,7 +21,8 @@ struct coefficient {
 
 static float g_weights[DANBOORU_BIN_SIZE];
 
-static gint compare_coefficients(gconstpointer a, gconstpointer b) {
+static gint 
+compare_coefficients(gconstpointer a, gconstpointer b) {
   struct coefficient * ca = (struct coefficient *)a;
   struct coefficient * cb = (struct coefficient *)b;
   
@@ -34,7 +35,8 @@ static gint compare_coefficients(gconstpointer a, gconstpointer b) {
   return 1;
 }
 
-static gint reverse_compare_coefficients(gconstpointer a, gconstpointer b) {
+static gint 
+reverse_compare_coefficients(gconstpointer a, gconstpointer b) {
   struct coefficient * ca = (struct coefficient *)a;
   struct coefficient * cb = (struct coefficient *)b;
   
@@ -52,7 +54,8 @@ struct danbooru_matrix {
   float * data;
 };
 
-static G_GNUC_MALLOC struct danbooru_matrix * danbooru_matrix_create(int n) {
+static G_GNUC_MALLOC struct danbooru_matrix * 
+danbooru_matrix_create(int n) {
   struct danbooru_matrix * m = g_try_new(struct danbooru_matrix, 1);
   
   if (m == NULL) {
@@ -70,7 +73,8 @@ static G_GNUC_MALLOC struct danbooru_matrix * danbooru_matrix_create(int n) {
   return m;
 }
 
-static void danbooru_matrix_destroy(struct danbooru_matrix * m) {
+static void 
+danbooru_matrix_destroy(struct danbooru_matrix * m) {
   if (m != NULL) {
     g_free(m->data);
     g_free(m);
@@ -86,7 +90,8 @@ static void danbooru_matrix_destroy(struct danbooru_matrix * m) {
  * 1) <a> will be decomposed.
  * 2) 0 is returned if no errors were encountered, 1 otherwise.
  */
-static int danbooru_array_decompose(float * a, int size) {
+static int 
+danbooru_array_decompose(float * a, int size) {
   int i;
   
   for (i=0; i<size; ++i) {
@@ -126,7 +131,8 @@ static int danbooru_array_decompose(float * a, int size) {
  * 1) <a> will be transposed.
  * 2) 0 is returned if no errors were encountered, 1 otherwise.
  */
-static int danbooru_matrix_transpose(float * a, int n) {
+static int 
+danbooru_matrix_transpose(float * a, int n) {
   int size = n * n;
   float * ap = g_try_new(float, size);
   
@@ -159,7 +165,8 @@ static int danbooru_matrix_transpose(float * a, int n) {
  * 1) <a> will be decomposed.
  * 2) 0 is returned if no errors were encountered, 1 otherwise.
  */
-static int danbooru_matrix_decompose(struct danbooru_matrix * m) {
+static int 
+danbooru_matrix_decompose(struct danbooru_matrix * m) {
   int i;
   int n = m->n;
   float * ap;
@@ -199,7 +206,8 @@ static int danbooru_matrix_decompose(struct danbooru_matrix * m) {
  *    largest positive coefficients found in <m>.
  * 2) The caller is responsible for deallocating the returned array.
  */
-static G_GNUC_MALLOC struct coefficient * danbooru_matrix_find_largest_coefficients(struct danbooru_matrix * m, int positive) {
+static G_GNUC_MALLOC struct coefficient * 
+danbooru_matrix_find_largest_coefficients(struct danbooru_matrix * m, int positive) {
   GHeap * heap = NULL;
   
   if (positive) {
@@ -250,7 +258,7 @@ static G_GNUC_MALLOC struct coefficient * danbooru_matrix_find_largest_coefficie
 
   g_heap_destroy(heap);
   g_free(coefficients);
-    
+  
   return largest;
 }
 
@@ -261,7 +269,8 @@ struct danbooru_image {
   struct danbooru_matrix * b;
 };
 
-static G_GNUC_MALLOC struct danbooru_image * danbooru_image_create(int w, int h) {
+static G_GNUC_MALLOC struct danbooru_image * 
+danbooru_image_create(int w, int h) {
   int max = MAX(w, h);
   int n = 1;
   
@@ -291,14 +300,16 @@ static G_GNUC_MALLOC struct danbooru_image * danbooru_image_create(int w, int h)
   return img;
 }
 
-static void danbooru_image_destroy(struct danbooru_image * img) {
+static void 
+danbooru_image_destroy(struct danbooru_image * img) {
   danbooru_matrix_destroy(img->r);
   danbooru_matrix_destroy(img->g);
   danbooru_matrix_destroy(img->b);
   g_free(img);
 }
 
-static void danbooru_image_print(struct danbooru_image * img) {
+static void 
+danbooru_image_print(struct danbooru_image * img) {
   int x, y;
   int n = img->n;
   
@@ -327,7 +338,8 @@ static void danbooru_image_print(struct danbooru_image * img) {
   }
 }
 
-static G_GNUC_MALLOC struct danbooru_image * danbooru_image_load(const char * ext, const char * filename) {
+static G_GNUC_MALLOC struct danbooru_image * 
+danbooru_image_load(const char * ext, const char * filename) {
   gdImagePtr img = NULL;
   FILE * f = fopen(filename, "rb");
   
@@ -381,28 +393,33 @@ static G_GNUC_MALLOC struct danbooru_image * danbooru_image_load(const char * ex
   return db_img;
 }
 
-static void danbooru_image_decompose(struct danbooru_image * img) {
+static void 
+danbooru_image_decompose(struct danbooru_image * img) {
   danbooru_matrix_decompose(img->r);
   danbooru_matrix_decompose(img->g);
   danbooru_matrix_decompose(img->b);
 }
 
-static int danbooru_rank_query() {
+static int 
+danbooru_rank_query() {
   // For the given combination of weights, m, and bin size, find the ranking
   // between images O and T.
   return 0;
 }
 
-static int danbooru_select_bin(int x, int y) {
+static int 
+danbooru_select_bin(int x, int y) {
   int max = MAX(x, y);
   return MIN(DANBOORU_BIN_SIZE, max);
 }
 
-static int danbooru_normalize_float(float f) {
+static int 
+danbooru_normalize_float(float f) {
   return (int)(round(f * DANBOORU_FLOAT_SCALE));
 }
 
-static void danbooru_generate_coefficient_sql(FILE * f, const char * filename, const char * ext, int post_id) {
+static void 
+danbooru_generate_coefficient_sql(FILE * f, const char * filename, const char * ext, int post_id) {
   struct danbooru_image * img = danbooru_image_load(ext, filename);
   
   if (img == NULL) {
