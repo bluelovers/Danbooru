@@ -11,6 +11,10 @@ class PostController < ApplicationController
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
+
+  def die
+    raise "ERROR"
+  end
   
   def create
     if @current_user.level == User::LEVEL_MEMBER && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]

@@ -42,7 +42,7 @@ module ApplicationHelper
       return ""
     end
 
-    textilized = RedCloth.new(text)
+    textilized = SuperRedCloth.new(text)
     textilized.to_html
   end
 

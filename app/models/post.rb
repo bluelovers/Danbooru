@@ -609,10 +609,6 @@ class Post < ActiveRecord::Base
         return true
       end
 
-      def file_hierarchy
-        "%s/%s" % [md5[0,2], md5[2,2]]
-      end
-
       def file_path
         "#{RAILS_ROOT}/public/data/#{file_name}"
       end
