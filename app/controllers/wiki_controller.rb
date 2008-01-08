@@ -222,7 +222,7 @@ class WikiController < ApplicationController
       return
     end
 
-    if params[:title] == nil
+    if params[:title].blank? || params[:to].blank? || params[:from].blank?
       flash[:notice] = "No title was specificed"
       redirect_to :action => "index"
       return
