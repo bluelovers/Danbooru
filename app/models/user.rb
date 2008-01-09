@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   end
   validates_presence_of :ip_addr, :on => :create
   validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
-  validates_length_of :name, :minimum => 2, :on => :create
+  validates_length_of :name, :within => 2..20, :on => :create
   validates_format_of :password, :with => /\d/, :if => lambda {|rec| rec.password}, :message => "must have at least one number"
   validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
   validates_uniqueness_of :name, :case_sensitive => false, :on => :create

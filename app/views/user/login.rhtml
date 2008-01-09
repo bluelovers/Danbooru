@@ -1,21 +1,25 @@
 <div id="user-login">
-
-<% form_tag({:action => "authenticate"}, :class => "simple-form") do %>
-  <table class="form">
-    <tr>
-      <th width="15%"><label class="block" for="user_name">Name</label></th>
-      <td width="85%"><%= text_field "user", "name", :tabindex => 1 %></td>
-    </tr>
-    <tr>
-      <th>
-        <label class="block" for="user_password">Password</label>
-        <p>If you've forgotten your password, you can <%= link_to "reset it", :action => "reset_password" %> (provided you gave an email address during signup).</p>
-      </th>
-      <td><%= password_field "user", "password", :tabindex => 1 %></td>
-    </tr>
-    <tr>
-      <td colspan="2"><%= submit_tag "Login", :tabindex => 1 %></td>
-    </tr>
-  </table>
-<% end %>
+  <% form_tag({:action => "authenticate"}, :class => "simple-form") do %>
+    <table class="form">
+      <tr>
+        <th width="15%"><label class="block" for="user_name">Name</label></th>
+        <td width="85%"><%= text_field "user", "name", :tabindex => 1 %></td>
+      </tr>
+      <tr>
+        <th>
+          <label class="block" for="user_password">Password</label>
+          <p>If you've forgotten your password, you can <%= link_to "reset it", :action => "reset_password" %>.</p>
+        </th>
+        <td><%= password_field "user", "password", :tabindex => 1 %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "Login", :tabindex => 1 %></td>
+      </tr>
+    </table>
+  <% end %>
+  <% if CONFIG["enable_signups"] %>
+    <div>
+      <p>Don't have an account? <a href="/user/signup">Signup is easy</a>.</p>
+    </div>
+  <% end %>
 </div>
