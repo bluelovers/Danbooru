@@ -38,7 +38,7 @@ CONFIG["starting_invite_count"] = 2
 # local_hierarchy: Store every image in a hierarchical directory,
 # based on the post's MD5 hash. On some file systems this may be
 # faster.
-# local_hierarchy_with_s3: Store every image in a hierarchical
+# local_flat_with_amazon_s3_backup: Store every image in a flat
 # directory, but also save to an Amazon S3 account for backup.
 # amazon_s3: Save files to an Amazon S3 account.
 # remote_hierarchy: Some images will be stored on separate image

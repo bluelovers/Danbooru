@@ -101,10 +101,10 @@ class PostController < ApplicationController
       redirect_to :action => "moderate"
     else
       if params[:query]
-        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
+        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "score desc, id desc"))
         @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
       else
-        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id desc")
+        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "score desc, id desc")
         @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id desc")
       end
     end
@@ -387,8 +387,10 @@ class PostController < ApplicationController
   def vote
     p = Post.find(params[:id])
     score = params[:score].to_i
-
-    unless score == 1 || score == -1
+    
+    if @current_user && @current_user.mod?
+      score = score * 5
+    elsif score != 1 && score != -1
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id])}
         fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml(:root => "response"), :status => 409}

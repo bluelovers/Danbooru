@@ -29,19 +29,9 @@
     </div>
 
     <table width="100%">
-      <thead>
-        <tr>
-          <th width="5%"></th>
-          <th width="10%"></th>
-          <th width="10%">Author</th>
-          <th width="10%">Rating</th>
-          <th width="5%">Age</th>
-          <th width="60%">Tags</th>
-        </tr>      
-      </thead>
       <tfoot>
         <tr>
-          <td colspan="5">
+          <td colspan="3">
             <%= button_to_function "Select all", "document.getElementsByClassName('p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
             <%= button_to_function "Invert selection", "document.getElementsByClassName('p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
             <%= submit_tag "Approve" %> 
@@ -54,14 +44,16 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"></td>
             <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-            <td><%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</td>
-            <td><%= p.pretty_rating %></td>
-            <td><%= time_ago_in_words(p.created_at) %></td>
             <td class="checkbox-cell">
-              <% if p.parent_id %>
-                parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
-              <% end %>
-              <%= h p.cached_tags %>
+              <ul>
+                <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li>Rating: <%= p.pretty_rating %></li>
+                <% if p.parent_id %>
+                  <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+                <% end %>
+                <li>Tags: <%= h p.cached_tags %></li>
+                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
+              </ul>
             </td>
           </tr>
         <% end %>
@@ -76,19 +68,9 @@
     <%= hidden_field_tag "reason2", "" %>
 
     <table width="100%">
-      <thead>
-        <tr>
-          <th width="1%"></th>
-          <th width="10%"></th>
-          <th width="10%">Author</th>
-          <th width="10%">Rating</th>
-          <th width="10%">Reason</th>
-          <th width="59%">Tags</th>
-        </tr>      
-      </thead>
       <tfoot>
         <tr>
-          <td colspan="5">
+          <td colspan="3">
             <%= button_to_function "Select all", "document.getElementsByClassName('f').each(function (i) {i.checked = true; highlight_row(i)})" %> 
             <%= button_to_function "Invert selection", "document.getElementsByClassName('f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
             <%= submit_tag "Approve" %> 
@@ -101,14 +83,17 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><input type="checkbox" class="f" name="ids[<%= p.id %>]" onclick="highlight_row(this)"></td>
             <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
-            <td><%= link_to h(p.author), :action => "moderate", :query => "user:#{p.author}" %></td>
-            <td><%= p.pretty_rating %></td>
-            <td><%= format_text(p.deletion_reason, :skip_simple_format => true) %></td>
             <td class="checkbox-cell">
-              <% if p.parent_id %>
-                parent:<%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %>
-              <% end %>
-              <%= h p.cached_tags %>
+              <ul>
+                <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li>Rating: <%= p.pretty_rating %></li>
+                <% if p.parent_id %>
+                  <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+                <% end %>
+                <li>Tags: <%= h p.cached_tags %></li>
+                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
+                <li>Reason: <%= format_text(p.deletion_reason, :skip_simple_format => true) %></li>
+              </ul>
             </td>
           </tr>
         <% end %>
