@@ -431,9 +431,9 @@ class PostController < ApplicationController
     
     10.times do
       if @current_user && @current_user.privileged?
-        post = Post.find(:first, :conditions => ["id = ?", rand(max_id)], :select => "id")
+        post = Post.find(:first, :conditions => ["id = ?", rand(max_id)], :select => "id, cached_tags")
       else
-        post = Post.find(:first, :conditions => ["id = ? and rating <> 'e'", rand(max_id)], :select => "id")
+        post = Post.find(:first, :conditions => ["id = ? and rating <> 'e'", rand(max_id)], :select => "id, cached_tags")
       end
 
       if post != nil

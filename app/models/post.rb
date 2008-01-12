@@ -67,7 +67,7 @@ class Post < ActiveRecord::Base
   module TagMethods
     # Returns the tags in a URL suitable string
     def tag_title
-      return cached_tags.gsub(/[^a-z0-9]+/, "-")[0, 50]
+      return self.cached_tags.gsub(/[^a-z0-9]+/, "-")[0, 50]
     end
 
     def append_tags(t)
