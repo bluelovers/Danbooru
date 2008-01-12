@@ -71,7 +71,7 @@ class Post < ActiveRecord::Base
     end
 
     def append_tags(t)
-      @tag_cache = self.cached_tags + " " + t
+      @new_tags = self.cached_tags + " " + t
     end
     
     def tags
@@ -83,29 +83,36 @@ class Post < ActiveRecord::Base
     end
 
     def tags=(t)
-      @tag_cache = t || ""
+      @new_tags = t || ""
     end
     
     # commits the tag changes to the database
     def commit_tags
-      if @tag_cache == nil
+      if @new_tags == nil
         if self.new_record?
-          @tag_cache = "tagme"
+          @new_tags = "tagme"
         else
           return
         end
       end
 
-      @tag_cache = Tag.scan_tags(@tag_cache)
-      @tag_cache = ["tagme"] if @tag_cache.empty?
-      @tag_cache = TagAlias.to_aliased(@tag_cache).uniq
-      @tag_cache = TagImplication.with_implied(@tag_cache).uniq
+      @new_tags = Tag.scan_tags(@new_tags)
+      
+      if self.old_tags
+        current_tags = self.cached_tags.scan(/\S+/)
+        self.old_tags = Tag.scan_tags(self.old_tags)
+        @new_tags = (current_tags + @new_tags) - self.old_tags + (current_tags & @new_tags)
+      end
+      
+      @new_tags = ["tagme"] if @new_tags.empty?
+      @new_tags = TagAlias.to_aliased(@new_tags).uniq
+      @new_tags = TagImplication.with_implied(@new_tags).uniq
 
       transaction do
         connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
         tag_list = []
 
-        @tag_cache.each do |t|
+        @new_tags.each do |t|
           if t =~ /^rating:([qse])/
             connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
           elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
@@ -697,14 +704,13 @@ class Post < ActiveRecord::Base
   after_update :update_neighbor_links_on_update
   attr_accessor :updater_ip_addr
   attr_accessor :updater_user_id
+  attr_accessor :old_tags
   after_save :commit_tags
   after_save :blank_image_board_sources
   after_create :increment_count
   after_destroy :decrement_count
   after_save :update_count
-  attr_accessible :parent_id, :source, :rating, :next_post_id, :prev_post_id, :file, :tags, :is_rating_locked, :is_note_locked, :updater_user_id, :updater_ip_addr, :user_id, :ip_addr, :status, :deletion_reason
-  
-  
+    
   def validate_content_type
     unless %w(jpg jpeg png gif swf).include?(self.file_ext.downcase)
       self.errors.add(:file, "is an invalid content type")
