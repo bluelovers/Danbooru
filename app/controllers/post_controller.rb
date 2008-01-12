@@ -101,10 +101,10 @@ class PostController < ApplicationController
       redirect_to :action => "moderate"
     else
       if params[:query]
-        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "score desc, id desc"))
+        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
         @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
       else
-        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "score desc, id desc")
+        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id desc")
         @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id desc")
       end
     end
