@@ -39,7 +39,7 @@ class PostController < ApplicationController
       if params[:md5] && @post.md5 != params[:md5].downcase
         @post.destroy
         respond_to do |fmt|
-          fmt.html {flash[:notice] = "MD5 mismatch"; redirect_to(:controller => "post", :action => "index")}
+          fmt.html {flash[:notice] = "MD5 mismatch"; redirect_to(:controller => "post", :action => "index", :tag_title => @post.tag_title)}
           fmt.xml {render :xml => {:success => false, :reason => "md5 mismatch"}.to_xml(:root => "response")}
           fmt.js {render :json => {:success => false, :reason => "md5 mismatch"}.to_json}
         end
@@ -47,7 +47,7 @@ class PostController < ApplicationController
         respond_to do |fmt|
           fmt.html do
             flash[:notice] = "Post successfully uploaded"
-            redirect_to(:controller => "post", :action => "show", :id => @post.id)
+            redirect_to(:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
           end
           fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
           fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
@@ -65,7 +65,7 @@ class PostController < ApplicationController
       respond_to do |fmt|
         fmt.html do
           flash[:notice] = "That post already exists"
-          redirect_to(:controller => "post", :action => "show", :id => p.id)
+          redirect_to(:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title)
         end
         fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
@@ -120,7 +120,7 @@ class PostController < ApplicationController
     
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id)}
+        fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id, :tag_title => @post.tag_title)}
         fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
@@ -344,7 +344,7 @@ class PostController < ApplicationController
     @post.update_attributes(:tags => @post.tag_history.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
     respond_to do |fmt|
-      fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "show", :id => @post.id)}
+      fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "show", :id => @post.id, :tag_title => @post.tag_title)}
       fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
       fmt.js {render :json => {:success => true}.to_json}
     end
@@ -389,7 +389,7 @@ class PostController < ApplicationController
       score = score * 5
     elsif score != 1 && score != -1
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id])}
+        fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
         fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml(:root => "response"), :status => 409}
         fmt.js {render :json => {:success => false, :reason => "invalid score"}.to_json, :status => 409}
       end
@@ -398,13 +398,13 @@ class PostController < ApplicationController
 
     if p.vote!(score, request.remote_ip)
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Vote saved"; redirect_to(:action => "show", :id => params[:id])}
+        fmt.html {flash[:notice] = "Vote saved"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
         fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => p.id}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true, :score => p.score, :post_id => p.id}.to_json}
       end
     else
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:action => "show", :id => params[:id])}
+        fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
         fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml(:root => "response"), :status => 409}
         fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
       end
@@ -437,7 +437,7 @@ class PostController < ApplicationController
       end
 
       if post != nil
-        redirect_to :action => "show", :id => post.id
+        redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title
         return
       end
     end
