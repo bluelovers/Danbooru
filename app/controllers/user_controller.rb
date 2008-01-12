@@ -141,8 +141,13 @@ class UserController < ApplicationController
       save_cookies(user)
 
       if CONFIG["enable_account_email_activation"]
-        UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
-        notice = "New account created. Confirmation email sent to #{user.email}"
+        begin
+          UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
+          notice = "New account created. Confirmation email sent to #{user.email}"
+        rescue Net::SMTPSyntaxError
+          notice = "Could not send confirmation email; account creation canceled"
+          user.destroy
+        end
       else
         notice = "New account created"
       end
@@ -206,10 +211,17 @@ class UserController < ApplicationController
           flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"
           redirect_to :action => "login"
         else
-          new_password = @user.reset_password
-          UserMailer.deliver_new_password(@user, new_password)
-
-          flash[:notice] = "Password reset. Check your email in a few minutes"
+          begin
+            User.transaction do
+              # If the email is invalid, abort the password reset
+              new_password = @user.reset_password
+              UserMailer.deliver_new_password(@user, new_password)
+              flash[:notice] = "Password reset. Check your email in a few minutes"
+            end
+          rescue Net::SMTPSyntaxError
+            flash[:notice] = "Your email address was invalid"
+          end
+          
           redirect_to :action => "login"
         end
       else
