@@ -221,8 +221,16 @@ table th {
   white-space: nowrap;
 }
 
+table tr.bad {
+  background: rgb(255, 230, 230);
+}
+
 table tr.even {
   background: rgb(247, 247, 247);
+}
+
+table tr.good {
+  background: rgb(230, 255, 230);
 }
 
 table tr.highlight {

@@ -41,7 +41,7 @@
       </tfoot>
       <tbody>
         <% @pending_posts.each do |p| %>
-          <tr class="<%= cycle 'even', 'odd' %>">
+          <tr class="<% if p.score > 2 %>good<% elsif p.score < -2 %>bad<% else %><%= cycle 'even', 'odd' %><% end %>">
             <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"></td>
             <td><%= link_to image_tag(p.preview_url), :controller => "post", :action => "show", :id => p.id %></td>
             <td class="checkbox-cell">
@@ -52,11 +52,7 @@
                   <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
                 <% end %>
                 <li>Tags: <%= h p.cached_tags %></li>
-                <li>
-                  <% if p.score > 2 %><strong><% end %>
-                  Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)
-                  <% if p.score > 2 %></strong><% end %>
-                </li>
+                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
               </ul>
             </td>
           </tr>
