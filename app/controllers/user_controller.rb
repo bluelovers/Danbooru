@@ -144,7 +144,7 @@ class UserController < ApplicationController
         begin
           UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
           notice = "New account created. Confirmation email sent to #{user.email}"
-        rescue Net::SMTPSyntaxError
+        rescue Net::SMTPSyntaxError, Net::SMTPFatalError
           notice = "Could not send confirmation email; account creation canceled"
           user.destroy
         end
@@ -218,7 +218,7 @@ class UserController < ApplicationController
               UserMailer.deliver_new_password(@user, new_password)
               flash[:notice] = "Password reset. Check your email in a few minutes"
             end
-          rescue Net::SMTPSyntaxError
+          rescue Net::SMTPSyntaxError, Net::SMTPFatalError
             flash[:notice] = "Your email address was invalid"
           end
           
