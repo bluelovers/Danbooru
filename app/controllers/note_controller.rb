@@ -44,7 +44,7 @@ class NoteController < ApplicationController
       @notes = NoteVersion.find(:all, :order => "id desc", :conditions => ["post_id = ?", params[:post_id].to_i], :offset => @pages.current.offset, :limit => @pages.items_per_page)
     elsif params[:user_id]
       @pages = Paginator.new self, NoteVersion.count(["user_id = ?", params[:user_id]]), 50, params[:page]
-      @notes = NoteVersion.find(:all, :order => "notes.id desc, note_versions.version desc", :joins => "JOIN notes ON notes.id = note_versions.note_id", :select => "note_versions.*", :conditions => ["notes.user_id = ?", params[:user_id]], :limit => @pages.items_per_page, :offset => @pages.current.offset)
+      @notes = NoteVersion.find(:all, :order => "note_id desc, version desc", :conditions => ["user_id = ?", params[:user_id]], :limit => @pages.items_per_page, :offset => @pages.current.offset)
     else
       @pages = Paginator.new self, NoteVersion.count, 25, params[:page]
       @notes = NoteVersion.find(:all, :order => "id desc", :limit => @pages.items_per_page, :offset => @pages.current.offset)
