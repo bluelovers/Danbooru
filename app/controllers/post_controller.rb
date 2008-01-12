@@ -117,10 +117,7 @@ class PostController < ApplicationController
     else
       user_id = nil
     end
-
-    # Make sure this gets assigned first in case we want to change this and change the post's rating at once.
-    @post.is_rating_locked = params[:post][:is_rating_locked] if params[:post][:is_rating_locked]
-
+    
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id)}
