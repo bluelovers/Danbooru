@@ -22,6 +22,7 @@ module PostHelper
     image_class += " flagged" if post.is_flagged?
     image_class += " pending" if post.is_pending?
     image_class += " has-children" if post.has_children?
+    image_class += " has-parent" if post.parent_id
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
     link_onclick = options[:onclick]

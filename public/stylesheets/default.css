@@ -107,6 +107,10 @@ img.has-children {
   border: 3px solid #0F0;
 }
 
+img.has-parent {
+  border: 3px solid #CC0;
+}
+
 img.pending {
   border: 3px solid #00F;
 }
