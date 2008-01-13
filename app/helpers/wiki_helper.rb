@@ -2,7 +2,7 @@ module WikiHelper
   def wikilize(text)
     fmt = hs(text)
 
-    fmt = fmt.gsub(/\[\[(.+?)\]\]/) do
+    fmt.gsub!(/\[\[(.+?)\]\]/) do
       match = $1
 
       if match =~ /(.+?)\|(.+)/

@@ -42,6 +42,9 @@ module ApplicationHelper
       return ""
     end
 
+    text = text.gsub(/&lt;notextile&gt;/, "<notextile>")
+    text = text.gsub(/&lt;\/notextile&gt;/, "</notextile>")
+
     textilized = SuperRedCloth.new(text)
     textilized.to_html
   end
