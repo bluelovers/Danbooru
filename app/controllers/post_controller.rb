@@ -385,9 +385,7 @@ class PostController < ApplicationController
     p = Post.find(params[:id])
     score = params[:score].to_i
     
-    if @current_user && @current_user.mod?
-      score = score * 5
-    elsif score != 1 && score != -1
+    if (@current_user == nil || !@current_user.mod?) && score != 1 && score != -1
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
         fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml(:root => "response"), :status => 409}

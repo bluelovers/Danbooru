@@ -52,7 +52,7 @@
                   <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
                 <% end %>
                 <li>Tags: <%= h p.cached_tags %></li>
-                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
+                <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span> (vote <%= link_to_function "down", "Post.vote(-5, #{p.id})" %>)</li>
               </ul>
             </td>
           </tr>

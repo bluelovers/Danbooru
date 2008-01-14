@@ -117,6 +117,7 @@ class Post < ActiveRecord::Base
             connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
           elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
             connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
+            connection.execute("update posts set has_children = true where id = #{$1}")
           elsif t =~ /^pool:(\S+)/
             begin
               pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
