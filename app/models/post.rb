@@ -976,6 +976,6 @@ class Post < ActiveRecord::Base
   end
   
   def is_loli?
-    return self.rating != "s" && self.cached_tags =~ /\b(?:loli|shota)\b/
+    return self.cached_tags =~ /\b(?:loli|shota)\b/
   end
 end

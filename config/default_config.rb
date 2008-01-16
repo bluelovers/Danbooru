@@ -81,3 +81,6 @@ CONFIG["member_comment_limit"] = 2
 # requires manually updating the post counts stored in table_data by
 # periodically running the script/maintenance script.
 CONFIG["enable_parent_posts"] = false
+
+# Show only the first page of post/index to visitors.
+CONFIG["show_only_first_page"] = false

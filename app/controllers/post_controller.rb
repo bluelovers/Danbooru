@@ -186,7 +186,7 @@ class PostController < ApplicationController
     set_title "/" + tags.tr("_", " ")
 
     if @current_user == nil
-      if page > 1
+      if CONFIG["show_only_first_page"] && page > 1
         flash[:notice] = "You need an account to look beyond the first page."
         redirect_to :controller => "user", :action => "login"
         return

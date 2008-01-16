@@ -217,22 +217,24 @@
                 <th><label class="block" for="post_source">Source</label></th>
                 <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
               </tr>
-              <tr>
-                <th>
-                  <label class="block" for="post_tags">Tags</label>
-                  <% unless @current_user && @current_user.privileged? %>
-                    <p>Separate tags with spaces (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
-                  <% end %>
-                </th>
-                <td>
-                  <%= text_area "post", "tags", :size => "50x2", :value => @post.cached_tags, :tabindex => 10 %>
-                  <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
-                  <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
-                  <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
-                  <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> |
-                  <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
-                </td>
-              </tr>
+              <% if @post.can_view?(@current_user) %>
+                <tr>
+                  <th>
+                    <label class="block" for="post_tags">Tags</label>
+                    <% unless @current_user && @current_user.privileged? %>
+                      <p>Separate tags with spaces (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+                    <% end %>
+                  </th>
+                  <td>
+                    <%= text_area "post", "tags", :size => "50x2", :value => @post.cached_tags, :tabindex => 10 %>
+                    <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
+                    <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
+                    <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
+                    <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> |
+                    <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+                  </td>
+                </tr>
+              <% end %>
             </tbody>
           </table>
           <div>
