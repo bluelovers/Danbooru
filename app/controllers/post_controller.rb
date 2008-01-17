@@ -265,7 +265,7 @@ class PostController < ApplicationController
       set_title @post.cached_tags.tr("_", " ")
     rescue ActiveRecord::RecordNotFound
       flash.now[:notice] = "That post ID was not found"
-      render :status => 04
+      render :status => 404
     end
   end
 
