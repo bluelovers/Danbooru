@@ -2,7 +2,10 @@ class Post < ActiveRecord::Base
   module ParentMethods
     def parent_id=(pid)
       @old_parent_id = self.parent_id
-      write_attribute(:parent_id, pid)
+      
+      if Post.exists?(pid)
+        write_attribute(:parent_id, pid)
+      end
     end
 
     def update_parent_on_create
