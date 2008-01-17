@@ -264,8 +264,8 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags.tr("_", " ")
     rescue ActiveRecord::RecordNotFound
-      @nocache = true
       flash.now[:notice] = "That post ID was not found"
+      render :status => 04
     end
   end
 

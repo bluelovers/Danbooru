@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   def cache_action
     # RubyProf.start
     
-    if (@current_user == nil || !@current_user.privileged?) && @nocache != true && request.method == :get && !%w(xml js).include?(params[:format])
+    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
       
       key, expiry = cache_key()
       cached = Cache.get(key)
