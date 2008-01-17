@@ -74,10 +74,13 @@ class Artist < ActiveRecord::Base
 
   def alias
     if self.alias_id
-      return Artist.find(self.alias_id).name
-    else
-      nil
+      begin
+        return Artist.find(self.alias_id).name
+      rescue ActiveRecord::RecordNotFound
+      end
     end
+    
+    return nil
   end
 
   def alias=(n)
