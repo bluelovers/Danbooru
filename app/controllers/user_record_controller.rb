@@ -28,7 +28,7 @@ class UserRecordController < ApplicationController
   def destroy
     if request.post?
       @user_record = UserRecord.find(params[:id])
-      if @current_user.mod? || @current_user.id == @user_record.created_by
+      if @current_user.mod? || @current_user.id == @user_record.reported_by
         UserRecord.destroy(params[:id])
       
         respond_to do |fmt|
