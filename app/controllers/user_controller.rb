@@ -191,7 +191,7 @@ class UserController < ApplicationController
     else
       error = @current_user.errors.full_messages.join(", ")
       flash[:notice] = "Error: " + error
-      redirect_to :back
+      redirect_to :action => "edit"
     end
   end
 
