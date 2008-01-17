@@ -230,7 +230,7 @@ class Post < ActiveRecord::Base
       if q[:pool].is_a?(String)
         joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
         conds << "pools.name ILIKE ? ESCAPE '\\\\'"
-        cond_params << "%" << q[:pool].to_escaped_for_sql_like << "%"
+        cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
       end
 
       if q[:include].any?
