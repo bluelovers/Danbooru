@@ -3,9 +3,12 @@ class Post < ActiveRecord::Base
     def parent_id=(pid)
       @old_parent_id = self.parent_id
       
-      if Post.exists?(pid)
-        write_attribute(:parent_id, pid)
-      end
+      pid = "" if pid.to_i == self.id
+      write_attribute(:parent_id, pid)
+    end
+    
+    def validate_parent
+      errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
     end
 
     def update_parent_on_create
@@ -693,6 +696,7 @@ class Post < ActiveRecord::Base
     include ParentMethods
     after_create :update_parent_on_create
     after_update :update_parent_on_update
+    validate :validate_parent
   end
 
   before_validation_on_create :auto_download
