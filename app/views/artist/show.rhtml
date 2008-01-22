@@ -10,19 +10,19 @@
      <tbody>
       <% unless @artist.url_a.blank? %>
         <tr>
-          <th>URL #1</th>
+          <th>Site URL</th>
           <td><%= link_to h(@artist.url_a), h(@artist.url_a) %></td>
         </tr>
       <% end %>
       <% unless @artist.url_b.blank? %>
         <tr>
-          <th>URL #2</th>
+          <th>Image URL</th>
           <td><%= link_to h(@artist.url_b), h(@artist.url_b) %></td>
         </tr>     
       <% end %>
       <% unless @artist.url_c.blank? %>
         <tr>
-          <th>URL #3</th>
+          <th>Extra URL</th>
           <td><%= link_to h(@artist.url_c), h(@artist.url_c) %></td>
         </tr>
       <% end %>
