@@ -12,8 +12,21 @@ class PostController < ApplicationController
 
   helper :wiki, :tag, :comment, :pool, :favorite
 
-  def die
-    raise "ERROR"
+  def verify_action(options)
+    redirect_to_proc = false
+    
+    if options[:redirect_to] && options[:redirect_to][:id].is_a?(Proc)
+  	  redirect_to_proc = options[:redirect_to][:id]
+  	  options[:redirect_to][:id] = options[:redirect_to][:id].call(self)
+    end
+    
+  	result = super(options)
+  	
+  	if redirect_to_proc
+  	  options[:redirect_to][:id] = redirect_to_proc
+	  end
+	  
+	  return result
   end
   
   def create
