@@ -14,7 +14,9 @@
       <%= hidden_field_tag "comment[post_id]", post_id, :id => "comment_post_id_#{post_id}" %>
       <%= text_area "comment", "body", :size => "60x7", :id => "reply-text-#{post_id}"%>
       <%= submit_tag "Post" %>
-      <%= submit_tag "Post as Anonymous" %>
+      <% if @current_user && @current_user.privileged? %>
+        <%= submit_tag "Post as Anonymous" %>
+      <% end %>
       <%= check_box_tag "comment[do_not_bump_post]", "1", false, :id => "nobump-#{post_id}" %>
       <%= content_tag "label", "Do not bump", :for => "nobump-#{post_id}" %>
     <% end %>

@@ -44,7 +44,7 @@ class CommentController < ApplicationController
       return
     end
 
-    if params[:commit] == "Post as Anonymous"
+    if params[:commit] == "Post as Anonymous" && @current_user.privileged?
       user_id = nil
     else
       user_id = session[:user_id]
