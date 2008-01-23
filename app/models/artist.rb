@@ -8,9 +8,12 @@ class Artist < ActiveRecord::Base
 
   def self.normalize_url(url)
     if url
-      url.gsub(/\/$/, "")
+      url = url.gsub(/\/$/, "")
+      url = url.gsub(/^http:\/\/blog\d+\.fc2/, "http://blog.fc2")
+      url = url.gsub(/^http:\/\/blog-img-\d+\.fc2/, "http://blog.fc2")
+      return url
     else
-      nil
+      return nil
     end
   end
 
