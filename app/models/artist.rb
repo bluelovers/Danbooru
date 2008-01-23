@@ -10,7 +10,7 @@ class Artist < ActiveRecord::Base
     if url
       url = url.gsub(/\/$/, "")
       url = url.gsub(/^http:\/\/blog\d+\.fc2/, "http://blog.fc2")
-      url = url.gsub(/^http:\/\/blog-img-\d+\.fc2/, "http://blog.fc2")
+      url = url.gsub(/^http:\/\/blog-imgs-\d+\.fc2/, "http://blog.fc2")
       return url
     else
       return nil
