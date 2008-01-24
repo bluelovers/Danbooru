@@ -260,6 +260,19 @@ class Tag < ActiveRecord::Base
 
       return q
     end
+    
+    def usage_stats(start, stop, options = {})
+      extra_sql = ["TRUE"]
+      
+      if options[:type]
+        tag_type = Tag.types[options[:type]]
+        extra_sql << "tags.tag_type = #{tag_type}"
+      end
+      
+      extra_sql = extra_sql.join(" AND ")
+      
+      self.connection.select_all("SELECT tags.name, COUNT(*) as post_count FROM tags JOIN posts_tags ON posts_tags.tag_id = tags.id JOIN posts ON posts.id = posts_tags.post_id WHERE posts.created_at BETWEEN '#{start.to_s}' AND '#{stop.to_s}' AND #{extra_sql} GROUP BY tags.name ORDER BY post_count DESC LIMIT 8")
+    end
   end
   
   def update_related_tags(length)
