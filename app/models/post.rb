@@ -214,8 +214,8 @@ class Post < ActiveRecord::Base
       end
 
       if q[:source].is_a?(String)
-        conds << "p.source ILIKE ? ESCAPE '\\\\'"
-        cond_params << q[:source]
+        conds << "p.source LIKE ? ESCAPE '\\\\'"
+        cond_params << Artist.normalize_url(q[:source])
       end
 
       if q[:fav].is_a?(String)
@@ -834,6 +834,9 @@ class Post < ActiveRecord::Base
         File.open(tempfile_path, 'wb') do |out|
           out.write(res.body)
         end
+
+        self.source = Artist.normalize_url(source)
+
         return true
       rescue Exception => x
         delete_tempfile
