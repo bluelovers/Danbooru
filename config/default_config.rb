@@ -84,3 +84,5 @@ CONFIG["enable_parent_posts"] = false
 
 # Show only the first page of post/index to visitors.
 CONFIG["show_only_first_page"] = false
+
+CONFIG["enable_reporting"] = false
