@@ -229,6 +229,14 @@ class PostController < ApplicationController
 
     if count > 0
       @pages = Paginator.new(self, count, limit, page)
+      if !@pages.has_page_number?(page)
+        respond_to do |fmt|
+          fmt.html {flash[:notice] = "Invalid page"; redirect_to(:action => "index", :id => params[:tags])}
+          fmt.xml {render :xml => {:success => false, :reason => "invalid page"}.to_xml(:root => "response"), :status => 404}
+          fmt.js {render :json => {:success => false, :reason => "invalid page"}.to_json, :status => 404}
+        end
+        return
+      end
       @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
     else
       @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))
@@ -254,7 +262,15 @@ class PostController < ApplicationController
           end
         end
       end
-      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
+      fmt.xml do
+        x = Builder::XmlMarkup.new(:indent => 2)
+        x.instruct!
+        render :xml => x.posts(:count => count, :offset => (limit * (page - 1))) {
+          @posts.each { |e|
+            e.to_xml(:builder => x, :skip_instruct => true)
+          }
+        }
+      end
       fmt.js {render :json => @posts.to_json}
     end
   end
