@@ -96,6 +96,8 @@ class Post < ActiveRecord::Base
     def commit_tags
       return if @new_tags == nil
 
+      logger.error "@new_tags = #{@new_tags}"
+
       @new_tags = Tag.scan_tags(@new_tags)
       
       if self.old_tags
@@ -129,18 +131,13 @@ class Post < ActiveRecord::Base
 
       transaction do
         # TODO: be more selective in deleting from the join table
-        connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
-        tag_list = []
-
-        @new_tags.each do |t|
-          record = Tag.find_or_create_by_name(t)
-          unless tag_list.include?(record.name)
-            tag_list << record.name
-            connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{record.id})")
-          end
+        connection.execute("DELETE FROM posts_tags WHERE post_id = #{self.id}")
+        @new_tags = @new_tags.map {|x| Tag.find_or_create_by_name(x)}
+        @new_tags.each do |x|
+          connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{self.id}, #{x.id})")
         end
 
-        tag_string = tag_list.sort.uniq.join(" ")
+        tag_string = @new_tags.map {|x| x.name}.sort.join(" ")
 
         unless PostTagHistory.disable_versioning || connection.select_value("SELECT tags FROM post_tag_histories WHERE post_id = #{id} ORDER BY id DESC LIMIT 1") == tag_string
           PostTagHistory.create(:post_id => self.id, :tags => tag_string, :user_id => self.updater_user_id, :ip_addr => self.updater_ip_addr)
