@@ -145,4 +145,8 @@ class CommentController < ApplicationController
       fmt.js {render :json => {:success => true}.to_json}
     end
   end
+  
+  def edit
+    @comment = Comment.find(params[:id])
+  end
 end
