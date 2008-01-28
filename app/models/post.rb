@@ -94,48 +94,47 @@ class Post < ActiveRecord::Base
     
     # commits the tag changes to the database
     def commit_tags
-      if @new_tags == nil
-        if self.new_record?
-          @new_tags = "tagme"
-        else
-          return
-        end
-      end
-
-      @new_tags = Tag.scan_tags(@new_tags)
+      @new_tags = Tag.scan_tags(@new_tags.to_s)
       
       if self.old_tags
+        # If someone else committed changes to this post before we did, 
+        # try to merge the tag changes together.
         current_tags = self.cached_tags.scan(/\S+/)
         self.old_tags = Tag.scan_tags(self.old_tags)
         @new_tags = (current_tags + @new_tags) - self.old_tags + (current_tags & @new_tags)
       end
       
-      @new_tags = ["tagme"] if @new_tags.empty?
+      metatags, @new_tags = @new_tags.partition {|x| x =~ /^(?:rating|parent|pool):/}
+      
+      metatags.each do |t|
+        if t =~ /^rating:([qse])/
+          connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
+        elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
+          connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
+          connection.execute("update posts set has_children = true where id = #{$1}")
+        elsif t =~ /^pool:(.+)/
+          begin
+            pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
+            pool.add_post(self.id) if pool
+          rescue Pool::PostAlreadyExistsError
+          end
+        end
+      end
+
+      @new_tags << "tagme" if @new_tags.empty?
       @new_tags = TagAlias.to_aliased(@new_tags).uniq
       @new_tags = TagImplication.with_implied(@new_tags).uniq
 
       transaction do
+        # TODO: be more selective in deleting from the join table
         connection.execute("DELETE FROM posts_tags WHERE post_id = #{id}")
         tag_list = []
 
         @new_tags.each do |t|
-          if t =~ /^rating:([qse])/
-            connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
-          elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
-            connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
-            connection.execute("update posts set has_children = true where id = #{$1}")
-          elsif t =~ /^pool:(\S+)/
-            begin
-              pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
-              pool.add_post(self.id) if pool
-            rescue Pool::PostAlreadyExistsError
-            end
-          else
-            record = Tag.find_or_create_by_name(t)
-            unless tag_list.include?(record.name)
-              tag_list << record.name
-              connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{record.id})")
-            end
+          record = Tag.find_or_create_by_name(t)
+          unless tag_list.include?(record.name)
+            tag_list << record.name
+            connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{id}, #{record.id})")
           end
         end
 
