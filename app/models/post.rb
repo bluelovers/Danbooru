@@ -94,7 +94,9 @@ class Post < ActiveRecord::Base
     
     # commits the tag changes to the database
     def commit_tags
-      @new_tags = Tag.scan_tags(@new_tags.to_s)
+      return if @new_tags == nil
+
+      @new_tags = Tag.scan_tags(@new_tags)
       
       if self.old_tags
         # If someone else committed changes to this post before we did, 
