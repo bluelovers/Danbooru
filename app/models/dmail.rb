@@ -25,11 +25,13 @@ class Dmail < ActiveRecord::Base
   
   def to_name=(name)
     user = User.find_by_name(name)
+    return if user.nil?
     self.to_id = user.id
   end
   
   def from_name=(name)
     user = User.find_by_name(name)
+    return if user.nil?
     self.from_id = user.id
   end
   
