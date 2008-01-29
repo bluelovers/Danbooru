@@ -105,6 +105,7 @@
             <li><%= link_to "Parent", :controller => "post", :action => "show", :id => @post.parent_id %></li>
           <% end %>
           <li><%= link_to "Random", :controller => "post", :action => "random" %></li>
+          <li><%= link_to "Similar", "http://haruhidoujins.yi.org/db-search.php?url=#{@post.preview_url}" %></li>
         </ul>
       </div>
     </div>

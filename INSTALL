@@ -1,21 +1,8 @@
-Installing Danbooru from scratch is not for the faint of heart. You should be comfortable with the Linux command line. Installing on Windows is possible but is not officially supported. If you want something similar to Danbooru that is easier to install, try Shimmie (http://trac.shishnet.org/shimmie2). Shimmie uses PHP and MySQL and should be straightforward to install on most hosts.
+It is recommended that you install Danbooru on a Debian-based system (Lenny or newer) since most of the required packages are available on APT. Although Danbooru has been successfully installed on Fedora, CentOS, FreeBSD, and OS X, the following instructions will assume you're installing on Debian. Install docs for other platforms are provided, but these are user contributed and may not be up to date. If you want something similar to Danbooru that is easier to install, try Shimmie (http://trac.shishnet.org/shimmie2). Shimmie uses PHP and MySQL and should be straightforward to install on most hosts.
 
-For best performance, you will need at least 256MB of RAM for PostgreSQL and Rails. The memory requirement will grow as your database gets bigger; the main Danbooru database takes up around 400MB of memory by itself.
+For best performance, you will need at least 256MB of RAM for PostgreSQL and Rails. The memory requirement will grow as your database gets bigger; the main Danbooru database takes up around 200MB of memory by itself.
 
-Danbooru has the following general dependencies:
-- ruby-1.8.6
-- libgd
-- PostgreSQL 8.3
-
-Some conventions used in this document: shell commands are enclosed in {...} blocks. This makes it so you can easily copy and paste these commands into the terminal.
-
-If you are installing on a Debian or Ubuntu system, please consult INSTALL.debian for some commands you can copy and paste.
-
-Once you've downloaded and installed everything, get the latest copy of Danbooru using Subversion:
-
-{
-svn co svn://danbooru.donmai.us/danbooru/trunk
-}
+If you are installing on a Debian system, run the INSTALL.debian script as root. This will install all the necessary packages and Ruby gems. It will also create a Danbooru user account, set up the web server, set up a default Danbooru config files, 
 
 Now it's time to configure your copy. Change into the config directory and edit the following files: database.yml, local_config.rb. Example files are provided.
 
