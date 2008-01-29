@@ -86,3 +86,6 @@ CONFIG["enable_parent_posts"] = false
 CONFIG["show_only_first_page"] = false
 
 CONFIG["enable_reporting"] = false
+
+# Enable some web server specific optimizations. Possible values include: apache, nginx, lighttpd.
+CONFIG["web_server"] = "apache"

@@ -57,14 +57,22 @@ class TagController < ApplicationController
       conds << "id = ?"
       cond_params << params[:id]
     end
-
+    
     respond_to do |fmt|
       fmt.html do
         @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params]
       end
       fmt.xml do
         order = nil if params[:order] == nil
-        render :xml => Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params]).to_xml(:root => "tags")
+        conds = conds.join(" AND ")
+        if conds == "true" && CONFIG["web_server"] == "nginx" && File.exists?("#{RAILS_ROOT}/public/tags.xml")
+          # Special case: instead of rebuilding a list of every tag every time, cache it locally and tell the web
+          # server to stream it directly. This only works on Nginx.
+          response.headers["X-Accel-Redirect"] = "#{RAILS_ROOT}/public/tags.xml"
+          render :nothing => true
+        else
+          render :xml => Tag.find(:all, :order => order, :limit => limit, :conditions => [conds, *cond_params]).to_xml(:root => "tags")
+        end
       end
       fmt.js do
         @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
