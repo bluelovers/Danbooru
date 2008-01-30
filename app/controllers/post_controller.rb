@@ -159,14 +159,14 @@ class PostController < ApplicationController
         @post.update_attribute(:deletion_reason, params[:reason])
       end
 
-      if @post.status == "deleted"
+      if @post.status == "deleted" || @post.user_id == @current_user.id
         @post.delete_from_database
       else
         @post.destroy
       end
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "show", :id => @post.id)}
+        fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "index")}
         fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => true}.to_json}
       end
