@@ -1,47 +1,27 @@
 class Post < ActiveRecord::Base  
   module ParentMethods
-    def parent_id=(pid)
-      @old_parent_id = self.parent_id
-      
-      pid = "" if pid.to_i == self.id
-      write_attribute(:parent_id, pid)
-    end
-    
     def validate_parent
       errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
     end
-
-    def update_parent_on_create
-      if self.parent_id
-        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
-      end
+    
+    def parent_id=(pid)
+      @old_parent_id = self.parent_id
+      self[:parent_id] = pid
     end
-  
-    def update_parent_on_update
-      if @old_parent_id && nil == connection.select_value("select 1 from posts where parent_id = #{@old_parent_id} limit 1")
-        connection.execute("update posts set has_children = false where id = #{@old_parent_id}")
+
+    def update_parent
+      if @old_parent_id && !Post.exists?(["parent_id = #{@old_parent_id}"])
+        connection.execute("UPDATE posts SET has_children = false WHERE id = #{@old_parent_id}")
       end
     
       if self.parent_id
-        connection.execute("update posts set has_children = true where id = #{self.parent_id}")
+        connection.execute("UPDATE posts SET has_children = true WHERE id = #{self.parent_id}")
       end
     end
   end
   
   module CacheMethods
-    def expire_cache_on_create
-      unless self.is_pending?
-        Cache.expire(:tags => self.cached_tags, :post_id => self.id)
-      end
-    end
-
-    def expire_cache_on_update
-      unless self.is_pending?
-        Cache.expire(:tags => self.cached_tags, :post_id => self.id)
-      end
-    end
-
-    def expire_cache_on_destroy
+    def expire_cache
       unless self.is_pending?
         Cache.expire(:tags => self.cached_tags, :post_id => self.id)
       end
@@ -96,8 +76,6 @@ class Post < ActiveRecord::Base
     def commit_tags
       return if @new_tags == nil
 
-      logger.error "@new_tags = #{@new_tags}"
-
       @new_tags = Tag.scan_tags(@new_tags)
       
       if self.old_tags
@@ -111,11 +89,11 @@ class Post < ActiveRecord::Base
       metatags, @new_tags = @new_tags.partition {|x| x =~ /^(?:rating|parent|pool):/}
       
       metatags.each do |t|
-        if t =~ /^rating:([qse])/
+        if t =~ /^rating:([qse])/ && $1 != self.rating
           connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
         elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
-          connection.execute(Post.sanitize_sql(["UPDATE posts SET parent_id = ? WHERE id = ?", $1, self.id]))
-          connection.execute("update posts set has_children = true where id = #{$1}")
+          self.parent_id = $1.to_i
+          connection.execute("UPDATE posts SET parent_id = #{self.parent_id} WHERE id = #{self.id}")
         elsif t =~ /^pool:(.+)/
           begin
             pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
@@ -133,9 +111,7 @@ class Post < ActiveRecord::Base
         # TODO: be more selective in deleting from the join table
         connection.execute("DELETE FROM posts_tags WHERE post_id = #{self.id}")
         @new_tags = @new_tags.map {|x| Tag.find_or_create_by_name(x)}
-        @new_tags.each do |x|
-          connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES (#{self.id}, #{x.id})")
-        end
+        connection.execute("INSERT INTO posts_tags (post_id, tag_id) VALUES " + @new_tags.map {|x| ("(#{self.id}, #{x.id})")}.join(", "))
 
         tag_string = @new_tags.map {|x| x.name}.sort.join(" ")
 
@@ -359,10 +335,7 @@ class Post < ActiveRecord::Base
     def self.included(m)
       m.extend(ClassMethods)
     end
-    
-    def update_count
-    end
-
+  
     def increment_count
       connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
     end
@@ -683,39 +656,34 @@ class Post < ActiveRecord::Base
   
   image_store(CONFIG["image_store"])
   
-  if CONFIG["enable_caching"]
-    include CacheMethods
-    after_create :expire_cache_on_create
-    after_update :expire_cache_on_update
-    before_destroy :expire_cache_on_destroy
-  end
-
-  if CONFIG["enable_parent_posts"]
-    include ParentMethods
-    after_create :update_parent_on_create
-    after_update :update_parent_on_update
-    validate :validate_parent
-  end
-
-  before_validation_on_create :auto_download
+  before_validation_on_create :download_source
   before_validation_on_create :validate_content_type
   before_validation_on_create :generate_hash
   before_validation_on_create :generate_preview
   before_validation_on_create :get_image_dimensions
   before_validation_on_create :move_file
-  # before_validation_on_create :validate_file_existence
   before_destroy :delete_file
   before_destroy :update_status_on_destroy
   after_create :update_neighbor_links_on_create
   after_update :update_neighbor_links_on_update
+  after_save :commit_tags
+  after_create :increment_count
+  after_destroy :decrement_count
   attr_accessor :updater_ip_addr
   attr_accessor :updater_user_id
   attr_accessor :old_tags
-  after_save :commit_tags
-  after_save :blank_image_board_sources
-  after_create :increment_count
-  after_destroy :decrement_count
-  after_save :update_count
+  
+  if CONFIG["enable_caching"]
+    include CacheMethods
+    after_save :expire_cache
+    after_destroy :expire_cache
+  end
+
+  if CONFIG["enable_parent_posts"]
+    include ParentMethods
+    after_save :update_parent
+    validate :validate_parent
+  end
     
   def validate_content_type
     unless %w(jpg jpeg png gif swf).include?(self.file_ext.downcase)
@@ -731,12 +699,6 @@ class Post < ActiveRecord::Base
 
   def favorited_by
     User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", self.id], :order => "lower(users.name)")
-  end
-
-  def blank_image_board_sources
-    if self.source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
-      connection.execute("UPDATE posts SET source = '' WHERE id = #{self.id}")
-    end
   end
 
   def rating=(r)
@@ -820,7 +782,7 @@ class Post < ActiveRecord::Base
   end
 
 # automatically downloads from the source url if it's a URL
-  def auto_download
+  def download_source
     if source =~ /^http:\/\// && file_ext.blank?
       begin
         url = URI.parse(source)
@@ -833,6 +795,10 @@ class Post < ActiveRecord::Base
           out.write(res.body)
         end
 
+        if self.source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
+          self.source = "Image board"
+        end
+        
         self.source = Artist.normalize_url(source)
 
         return true
