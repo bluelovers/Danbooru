@@ -178,6 +178,10 @@ class Post < ActiveRecord::Base
         conds << "p.md5 = ?"
         cond_params << q[:md5]
       end
+      
+      if q[:deleted_only] == true
+        conds << "p.status = 'deleted'"
+      end
 
       if q[:parent_id].is_a?(Integer)
         conds << "(p.parent_id = ? or p.id = ?)"
