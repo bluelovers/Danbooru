@@ -3,18 +3,18 @@
 
 development:
   adapter: postgresql
-  database: danbooru
-  username: albert
+  database: danbooru_dev
+  username: danbooru
   host: 127.0.0.1
 
 test:
   adapter: postgresql
-  database: danbooru
-  username: albert
+  database: danbooru_test
+  username: danbooru
   host: 127.0.0.1
 
 production:
   adapter: postgresql
   database: danbooru
-  username: albert
+  username: danbooru
   host: 127.0.0.1

@@ -288,7 +288,15 @@ class PostController < ApplicationController
 
   def show
     begin
-      @post = Post.find(params[:id])
+      if params[:md5]
+        @post = Post.find_by_md5(params[:md5].downcase)
+        if @post.nil?
+          raise ActiveRecord::RecordNotFound
+        end
+      else
+        @post = Post.find(params[:id])
+      end
+      
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags.tr("_", " ")
