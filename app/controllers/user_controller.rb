@@ -277,7 +277,7 @@ class UserController < ApplicationController
       users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
-          user.update_attribute(:level, User::LEVEL_MEMBER)
+          user.update_attribute(:level, CONFIG["starting_level"])
           flash[:notice] = "Account has been activated"
           break
         end
