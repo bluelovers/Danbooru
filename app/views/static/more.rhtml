@@ -20,10 +20,6 @@
       <li><a href="http://unbuffered.info/danbooruup">Firefox Extension</a></li>
       <li><a href="/help/api">API Documentation</a></li>
     </ul>
-    <ul>
-      <li><h4>Statistics</h4></li>
-      <li><a href="/stats/awstats.danbooru.html">Site</a></li>
-    </ul>
   </div>
   <div>
     <ul>
@@ -59,7 +55,9 @@
       <li><a href="/help/comments">Help</a></li>
       <li><a href="/comment/index">List</a></li>
       <li><a href="/comment/moderate">Moderate</a></li>
-      <li><a href="http://trac.donmai.us/tracbooru">Trac</a></li>
+      <% if CONFIG["enable_trac"] %>
+        <li><a href="http://trac.donmai.us">Trac</a></li>
+      <% end %>
     </ul>
     <ul>
       <li><h4>Forum</h4></li>

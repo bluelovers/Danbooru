@@ -89,3 +89,6 @@ CONFIG["enable_reporting"] = false
 
 # Enable some web server specific optimizations. Possible values include: apache, nginx, lighttpd.
 CONFIG["web_server"] = "apache"
+
+# Show a link to Trac.
+CONFIG["enable_trac"] = true
