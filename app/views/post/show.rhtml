@@ -48,6 +48,7 @@
       <div id="stats">
         <h5>Statistics</h5>
         <ul>
+          <li>Id: <%= @post.id %></li>
           <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
           <% unless @post.source.blank? %>
             <% if @post.source[/^http/] %>
