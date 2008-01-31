@@ -12,6 +12,29 @@ class WikiPage < ActiveRecord::Base
   TAG_NEWLINE = "<img src=\"/images/nl.png\" alt=\"newline\">\n"
   TAG_BREAK = "<br>\n"
   
+  class << self
+    def generate_sql(options)
+      joins = []
+      conds = []
+      params = []
+      
+      if options[:title]
+        conds << "wiki_pages.title = ?"
+        params << options[:title]
+      end
+      
+      if options[:user_id]
+        conds << "wiki_pages.user_id = ?"
+        params << options[:user_id]
+      end
+      
+      joins = joins.join(" ")
+      conds = [conds.join(" AND "), *params]
+      
+      return joins, conds
+    end
+  end
+  
   def make_title_canonical
     self.title = title.tr(" ", "_").downcase
   end
