@@ -386,25 +386,6 @@ class PostController < ApplicationController
     end
   end
 
-  def tag_history
-    set_title "Tag History"
-
-    params[:limit] ||= 100
-    params[:limit] = params[:limit].to_i
-
-    if params[:post_id]
-      conditions = ["post_id = ? ", params[:post_id]]
-    else
-      conditions = nil
-    end
-
-    respond_to do |fmt|
-      fmt.html {@pages, @changes = paginate :post_tag_histories, :order => "id DESC", :per_page => params[:limit], :conditions => conditions}
-      fmt.xml {render :xml => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_xml(:root => "posts")}
-      fmt.js {render :json => PostTagHistory.find(:all, :limit => params[:limit], :offset => params[:offset], :order => "id DESC", :conditions => conditions).to_json}
-    end
-  end
-
   def favorites
     set_title "Users who favorited this post"
     @post = Post.find(params["id"])
