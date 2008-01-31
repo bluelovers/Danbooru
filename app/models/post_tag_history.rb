@@ -3,6 +3,30 @@ class PostTagHistory < ActiveRecord::Base
 
   class << self
     attr_accessor :disable_versioning
+    
+    def report_usage(start, stop, options = {})
+      conds = ["created_at BETWEEN ? AND ?"]
+      params = [start, stop]
+
+      users = connection.select_all(sanitize_sql(["SELECT user_id, COUNT(*) as change_count FROM post_tag_histories WHERE " + conds.join(" AND ") + " GROUP BY user_id ORDER BY change_count DESC LIMIT 9", *params]))
+
+      conds << "user_id NOT IN (?)"
+      params << users.map {|x| x["user_id"]}
+
+      other_count = connection.select_value(sanitize_sql(["SELECT COUNT(*) FROM post_tag_histories WHERE " + conds.join(" AND "), *params]))
+      
+      users << {"user_id" => nil, "change_count" => other_count}
+      
+      users.each do |user|
+        if user["user_id"]
+          user["name"] = User.find(:first, :conditions => ["id = ?", user["user_id"]], :select => "name").name
+        else
+          user["name"] = "Other"
+        end
+      end
+      
+      return users
+    end
   end
 
   def author

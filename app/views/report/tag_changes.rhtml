@@ -1,0 +1,22 @@
+<div style="float: left; width: 700px;">
+  <img src="<%= h @tag_changes_url %>" width="600" height="300"/>  
+</div>
+
+<div style="float: left; width: 200px;">
+  <table width="100%">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Changes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= h(user["name"]) %></td>
+          <td><%= user["change_count"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
