@@ -1,8 +1,6 @@
 module WikiHelper
   def wikilize(text)
-    fmt = hs(text)
-
-    fmt.gsub!(/\[\[(.+?)\]\]/) do
+    text = text.gsub(/\[\[(.+?)\]\]/) do
       match = $1
 
       if match =~ /(.+?)\|(.+)/
@@ -12,7 +10,7 @@ module WikiHelper
       end
     end
 
-    textilize(fmt)
+    return hs(textilize(text))
   end
 
   def linked_from(to)
