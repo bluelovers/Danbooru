@@ -1,7 +1,6 @@
 module FavoriteHelper
-  def favorite_list(post)
+  def favorite_list(users)
     html = ""
-    users = post.favorited_by
 
     if users.empty?
       html << "no one"

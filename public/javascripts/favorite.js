@@ -15,6 +15,11 @@ Favorite = {
           if ($("favorited-by")) {
             $("favorited-by").update(resp.favorited)
           }
+          
+          if ($("add-to-favs")) {
+            $("add-to-favs").hide()
+            $("remove-from-favs").show()
+          }
         
           if ($("post-score-" + resp.post_id)) {
             $("post-score-" + resp.post_id).update(resp.score)
@@ -40,6 +45,11 @@ Favorite = {
         
         if ($("favorited-by")) {
           $("favorited-by").update(resp.favorited)
+        }
+        
+        if ($("add-to-favs")) {
+          $("add-to-favs").show()
+          $("remove-from-favs").hide()
         }
         
         if ($("post-score-" + resp.post_id)) {

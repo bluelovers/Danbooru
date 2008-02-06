@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
       id = params[:id]
       key = "p/s/#{id}"
       return [key, 0]
-      
+    
     else
       raise "Unknown action"
     end
