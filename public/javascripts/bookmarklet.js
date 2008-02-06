@@ -4185,6 +4185,8 @@ Element.addMethods();
 
 /*--------------------------------------------------------------------------*/
 
+var host = $$("script").pop().src.split('/').slice(0, 3).join('/');
+
 var images = $$("img")
 images = images.select(function(x) {
   return x.width > 100 && x.height > 100 && x.src.match(/\.(jpg|gif|png)$/i)
@@ -4209,6 +4211,6 @@ images.invoke("observe", "click", function(e) {
     img_url = el_parent.href
   }
 
-  window.open("http://danbooru.donmai.us/post/upload?url=" + encodeURIComponent(img_url) + "&ref=" + encodeURIComponent(ref))
+  window.open(host + "/post/upload?url=" + encodeURIComponent(img_url) + "&ref=" + encodeURIComponent(ref))
   e.stop()
 })
