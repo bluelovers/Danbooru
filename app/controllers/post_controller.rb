@@ -297,7 +297,6 @@ class PostController < ApplicationController
         @post = Post.find(params[:id])
       end
       
-      @favorited_by = @post.favorited_by
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags.tr("_", " ")

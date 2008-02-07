@@ -1,7 +1,7 @@
 <div id="post-view">
-  <% if @post == nil %>
+  <% if @post.nil? %>
     <h2>Nobody here but us chickens!</h2>
-  <% else %>    
+  <% else %>
     <% if @post.is_flagged? %>
       <div class="status-notice">
         This post was flagged for deletion. Reason: <%= format_text(@post.deletion_reason, :skip_simple_format => true) %>
@@ -59,7 +59,7 @@
           <% end %>
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
-          <li id="favorited-by">Favorited by: <%= favorite_list(@favorited_by) %></li>
+          <li id="favorited-by">Favorited by: <%= favorite_list(@post.favorited_by) %></li>
         </ul>
       </div>
       <div>
@@ -250,24 +250,26 @@
         <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
       </div>
     </div>
+
+    <% content_for("post_cookie_javascripts") do %>
+      <script type="text/javascript">
+        Post.observe_text_area("post_tags")
+
+        <% if @post %>
+          var current_user = Cookie.get("login")
+          var favorited_by = <%= @post.favorited_by.map {|x| x.name}.to_json %>
+          if (favorited_by.include(current_user)) {
+            $("add-to-favs").hide()
+          } else {
+            $("remove-from-favs").hide()
+          }
+        <% end %>
+
+        RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
+        if (Cookie.get('resize_image') == '1') {
+          Post.resize_image()
+        }
+      </script>
+    <% end %>
   <% end %>
 </div>
-
-<% content_for("post_cookie_javascripts") do %>
-  <script type="text/javascript">
-    Post.observe_text_area("post_tags")
-    
-    var current_user = Cookie.get("login")
-    var favorited_by = <%= @favorited_by.map {|x| x.name}.to_json %>
-    if (favorited_by.include(current_user)) {
-      $("add-to-favs").hide()
-    } else {
-      $("remove-from-favs").hide()
-    }
-
-    RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
-    if (Cookie.get('resize_image') == '1') {
-      Post.resize_image()
-    }
-  </script>
-<% end %>

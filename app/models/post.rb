@@ -702,7 +702,12 @@ class Post < ActiveRecord::Base
   end
 
   def favorited_by
-    User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", self.id], :order => "lower(users.name)")
+    # Cache results
+    if @favorited_by.nil?
+      @favorited_by = User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", self.id], :order => "lower(users.name)")
+    end
+
+    return @favorited_by
   end
 
   def rating=(r)
