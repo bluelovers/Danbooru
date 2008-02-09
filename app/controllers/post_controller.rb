@@ -297,6 +297,7 @@ class PostController < ApplicationController
         @post = Post.find(params[:id])
       end
       
+      @favorited_by = @post.favorited_by
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags.tr("_", " ")
@@ -445,11 +446,7 @@ class PostController < ApplicationController
     max_id = Post.maximum(:id)
     
     10.times do
-      if @current_user && @current_user.privileged?
-        post = Post.find(:first, :conditions => ["id = ?", rand(max_id)], :select => "id, cached_tags")
-      else
-        post = Post.find(:first, :conditions => ["id = ? and rating <> 'e'", rand(max_id)], :select => "id, cached_tags")
-      end
+      post = Post.find(:first, :conditions => ["id = ?", rand(max_id) + 1], :select => "id, cached_tags")
 
       if post != nil
         redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title
