@@ -18,7 +18,13 @@ class ForumPost < ActiveRecord::Base
   def self.lock(id, status)
     status = status ? true : false
     id = id.to_i
-    connection.execute("update forum_posts set is_locked = #{status} where id = #{id}")
+    connection.execute("UPDATE forum_posts SET is_locked = #{status} WHERE id = #{id}")
+  end
+  
+  def self.stick(id, status)
+    status = status ? true : false
+    id = id.to_i
+    connection.execute("UPDATE forum_posts SET is_sticky = #{status} WHERE id = #{id}")
   end
   
   def validate_lock

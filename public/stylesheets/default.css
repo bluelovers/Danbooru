@@ -177,6 +177,10 @@ span.thumb {
   vertical-align: middle;
 }
 
+span.plid {
+  display: none;
+}
+
 strong.divider {
   font-weight: bold;
   color: gray;

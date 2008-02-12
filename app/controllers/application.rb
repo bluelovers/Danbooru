@@ -76,6 +76,34 @@ class ApplicationController < ActionController::Base
       
       return [key, 0]
       
+    when "post/piclens"
+      page = params[:page].to_i
+      tags = params[:tags].to_s.downcase.scan(/\S+/).sort
+      
+      if tags.empty?
+        if page > 10
+          expiry = (rand(4) + 3) * 1.day
+          key = "p/p/p=#{page}"
+        else
+          cache_version = Cache.get("$cache_version").to_i
+          key = "p/p/p=#{page}&v=#{cache_version}"
+        end
+      else
+        if page > 10
+          expiry = (rand(4) + 3) * 1.day
+          key = "p/p/p=#{page}&t=#{tags.join(',')}"
+        else
+          versioned_tags = tags.map do |x|
+            version = Cache.get("tag:#{x}").to_i
+            "#{x}:#{version}"
+          end
+
+          key = "p/p/p=#{page}&t=#{versioned_tags.join(',')}"
+        end
+      end
+      
+      return [key, expiry]
+      
     when "post/show"
       if params[:md5]
         id = params[:md5]

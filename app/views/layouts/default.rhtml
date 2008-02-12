@@ -6,6 +6,9 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
   <%= navigation_links { |type, title, href| '<link rel="%s" title="%s" href="%s">' % [type, title, url_for(href)] } %>
+  <%- if @params[:controller] == 'post' && @params[:action] == 'index' -%>
+  <%= auto_discovery_link_tag_with_id :rss, {:controller => "post", :action => "piclens", :tags => params[:tags], :page => params[:page]}, {:id=>'pl'} %>
+  <%- end -%>
   <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
   <%= stylesheet_link_tag "default" %>
   <%= javascript_include_tag "application" %>
@@ -32,9 +35,9 @@
       <li><a href="/tag/cloud">Tags</a></li>
       <li><a href="/wiki/show?title=Help%3AHome">Wiki</a></li>
       <li><a href="/forum/index" id="forum-link">Forum</a></li>
-      <% if CONFIG["enable_trac"] %>
+      <%- if CONFIG["enable_trac"] -%>
         <li><a href="http://trac.donmai.us">Trac</a></li>
-      <% end %>
+      <%- end -%>
       <li><a href="/help/index">Help</a></li>
       <li><a href="/static/more">More &raquo;</a></li>
     </ul>

@@ -1,4 +1,15 @@
 module PostHelper
+  def auto_discovery_link_tag_with_id(type = :rss, url_options = {}, tag_options = {})
+    tag(
+      "link",
+      "rel"   => tag_options[:rel] || "alternate",
+      "type"  => tag_options[:type] || "application/#{type}+xml",
+      "title" => tag_options[:title] || type.to_s.upcase,
+      "id"    => tag_options[:id],
+      "href"  => url_options.is_a?(Hash) ? url_for(url_options.merge(:only_path => false)) : url_options
+    )
+  end
+
   def print_preview(post, options = {})
     if post.status == "deleted"
       return ""
@@ -29,7 +40,8 @@ module PostHelper
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
 
     image = %{<img src="#{post.preview_url}" alt="#{h(post.cached_tags)}" class="#{image_class}" title="#{h(post.cached_tags)}" #{image_id}>}
-    link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>#{image}</a>}
+    plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
+    link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>#{image}#{plid}</a>}
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}
     return span
   end

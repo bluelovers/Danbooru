@@ -7,7 +7,7 @@ class PostController < ApplicationController
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
   if CONFIG["enable_caching"]
-    around_filter :cache_action, :only => [:index, :atom, :show]
+    around_filter :cache_action, :only => [:index, :atom, :show, :piclens]
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
@@ -130,7 +130,7 @@ class PostController < ApplicationController
     else
       user_id = nil
     end
-    
+
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id, :tag_title => @post.tag_title)}
@@ -283,6 +283,42 @@ class PostController < ApplicationController
     
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
     @headers["Content-Type"] = "application/atom+xml"
+    render :layout => false
+  end
+
+  def piclens
+    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 2
+      render :nothing => true, :status => 500
+      return
+    end
+ 
+    @tags = params[:tags].to_s
+    page = params[:page].to_i
+    limit = 16
+    page = 1 if page < 1
+
+    if @current_user == nil || !@current_user.privileged?
+      count = Post.fast_count(@tags, false)
+    else
+      count = Post.fast_count(@tags)
+    end
+
+    if count > 0
+      @pages = Paginator.new(self, count, limit, page)
+      if !@pages.has_page_number?(page)
+        respond_to do |fmt|
+          fmt.html {flash[:notice] = "Invalid page"; redirect_to(:action => "index", :id => params[:tags])}
+          fmt.xml {render :xml => {:success => false, :reason => "invalid page"}.to_xml(:root => "response"), :status => 404}
+          fmt.js {render :json => {:success => false, :reason => "invalid page"}.to_json, :status => 404}
+        end
+        return
+      end
+      @posts = Post.find_by_sql(Post.generate_sql(@tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
+    else
+      @posts = Post.find_by_sql(Post.generate_sql(@tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))
+    end
+    
+    @headers["Content-Type"] = "application/rss+xml"
     render :layout => false
   end
 
