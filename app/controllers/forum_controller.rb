@@ -5,15 +5,13 @@ class ForumController < ApplicationController
   before_filter :member_only, :only => [:create, :destroy, :update, :edit, :add]
 
   def stick
-    @forum_post = ForumPost.find(params[:id])
-    @forum_post.update_attributes(:is_sticky => true, :last_updated_by => @current_user.id)
+    ForumPost.stick(params[:id], true)
     flash[:notice] = "Topic stickied"
     redirect_to :action => "show", :id => params[:id]
   end
 
   def unstick
-    @forum_post = ForumPost.find(params[:id])
-    @forum_post.update_attributes(:is_sticky => false, :last_updated_by => @current_user.id)
+    ForumPost.stick(params[:id], false)
     flash[:notice] = "Topic unstickied"
     redirect_to :action => "show", :id => params[:id]
   end
