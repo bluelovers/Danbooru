@@ -446,7 +446,7 @@ class PostController < ApplicationController
     max_id = Post.maximum(:id)
     
     10.times do
-      post = Post.find(:first, :conditions => ["id = ?", rand(max_id) + 1], :select => "id, cached_tags")
+      post = Post.find(:first, :conditions => ["id = ? AND status <> 'deleted'", rand(max_id) + 1], :select => "id, cached_tags")
 
       if post != nil
         redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title

@@ -19,7 +19,7 @@
 
   <div id="footer">
     <% unless @forum_post.is_locked? %>
-      <%= link_to_function "Respond", "Element.toggle('reply')" %> |
+      <%= link_to_function "Quote", "Element.toggle('reply')" %> |
     <% end %>
     <%= link_to "New Topic", :action => "add" %> |
     <%= link_to "Help", :controller => "help", :action => "forum" %>
