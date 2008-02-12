@@ -20,12 +20,14 @@
       <li><a href="http://unbuffered.info/danbooruup">Firefox Extension</a></li>
       <li><a href="/help/api">API Documentation</a></li>
     </ul>
-    <ul>
-      <li><h4>Reports</h4></li>
-      <li><a href="/report/note_changes">Note Changes</a></li>
-      <li><a href="/report/tag_changes">Tag Changes</a></li>
-      <!-- <li><a href="/report/wiki_changes">Wiki Changes</a></li> -->
-    </ul>
+    <% if CONFIG["enable_reporting"] %>
+      <ul>
+        <li><h4>Reports</h4></li>
+        <li><a href="/report/note_changes">Note Changes</a></li>
+        <li><a href="/report/tag_changes">Tag Changes</a></li>
+        <!-- <li><a href="/report/wiki_changes">Wiki Changes</a></li> -->
+      </ul>
+    <% end %>
   </div>
   <div>
     <ul>
@@ -99,7 +101,9 @@
     <% if @current_user && @current_user.admin? %>
       <ul>
         <li><h4>Admin</h4></li>
-        <li><a href="/admin/cache_stats">Cache Stats</a></li>
+        <% if CONFIG["enable_caching"] %>
+          <li><a href="/admin/cache_stats">Cache Stats</a></li>
+        <% end %>
         <li><a href="/admin/edit_account">Edit Account</a></li>   
         <li><a href="/admin/reset_password">Reset Password</a></li>     
       </ul>
