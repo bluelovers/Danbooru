@@ -77,7 +77,12 @@ class ApplicationController < ActionController::Base
       return [key, 0]
       
     when "post/show"
-      id = params[:id]
+      if params[:md5]
+        id = params[:md5]
+      else
+        id = params[:id]
+      end
+      
       key = "p/s/#{id}"
       return [key, 0]
     
