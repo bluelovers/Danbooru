@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss" xmlns:atom="http://www.w3.org/2005/Atom"> 
+<channel> 
+<title><%= h CONFIG["app_name"] %></title> 
+<link>http://<%= h CONFIG["server_host"] %>/</link> 
+<description><%= h CONFIG["app_name"] %> PicLens RSS Feed</description> 
+<%- if !@pages.nil? -%> 
+<%-     if !@pages.current.first? -%> 
+<atom:link rel="previous" href="<%= url_for :only_path => false, :controller => 'post', :action => 'piclens', :page => @pages.current.number-1, :tags => @tags %>"/> 
+<%-     end -%> 
+<%-     if !@pages.current.last? -%> 
+<atom:link rel="next" href="<%= url_for :only_path => false, :controller => 'post', :action => 'piclens', :page => @pages.current.number+1, :tags => @tags %>"/> 
+<%-     end -%> 
+<%- end -%> 
+
+<%- @posts.each do |post| -%> 
+<item> 
+<title><%= h post.cached_tags %></title> 
+<link>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></link> 
+<guid>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></guid> 
+<media:thumbnail url="<%= post.preview_url %>"/> 
+<media:content url="<%= post.file_url %>" type=""/> 
+</item> 
+<%- end -%> 
+</channel> 
+</rss> 
