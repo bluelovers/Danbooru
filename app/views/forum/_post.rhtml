@@ -29,7 +29,7 @@
           | <%= link_to "Lock", {:action => "lock", :id => post.id}, :method => :post %>
         <% end %>
       <% end %>
-      | <%= link_to_function "Respond", "Forum.quote(#{post.id})" %>
+      | <%= link_to_function "Quote", "Forum.quote(#{post.id})" %>
     </div>
   </div>
 </div>

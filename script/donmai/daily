@@ -1,0 +1,25 @@
+#!/bin/bash
+
+export RAILS_ENV=production
+cd /var/www/danbooru
+script/donmai/downbooru
+mongrel_rails cluster::stop
+psql danbooru -c "delete from tags where post_count = 0 and id not in (select alias_id from tag_aliases union select predicate_id from tag_implications union select consequent_id from tag_implications)"
+psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null) where name = 'posts'"
+# sudo script/donmai/process_logs
+script/donmai/backup_db
+script/donmai/backup_db_to_s3
+script/donmai/backup_svn_to_s3
+sudo script/donmai/rotate_logs
+script/donmai/prune_unapproved_posts
+script/donmai/prune_unactivated_users
+script/donmai/prune_backup_dbs
+if [[ `date '+%d'` -eq '01' ]] ; then 
+  script/donmai/dump_related_tags
+fi
+if [[ `date '+%d'` -eq '01' ]] ; then
+  script/donmai/dump_tags
+fi
+mongrel_rails cluster::start
+sleep 5
+script/donmai/upbooru

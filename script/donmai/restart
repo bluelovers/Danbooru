@@ -1,0 +1,8 @@
+#!/bin/sh
+
+script/donmai/downbooru
+mongrel_rails cluster::stop
+sleep 5
+mongrel_rails cluster::start
+sleep 15
+script/donmai/upbooru

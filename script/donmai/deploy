@@ -1,0 +1,10 @@
+#!/bin/sh
+
+script/donmai/downbooru
+mongrel_rails cluster::stop
+svn update
+sleep 5
+RAILS_ENV=production rake db:migrate
+mongrel_rails cluster::start
+sleep 15
+script/donmai/upbooru
