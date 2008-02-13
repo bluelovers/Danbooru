@@ -1,10 +1,10 @@
 #!/bin/sh
 
-echo -n "Enter the hostname for this server: "
-read db_hostname
+echo -n "Enter the hostname for this server (ex: danbooru.donmai.us): "
+read hostname
 
 # Install packages
-apt-get -y install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev ssl-cert libperl-dev tcl8.4-dev libxslt1-dev libssl-dev libpam0g-dev libkrb5-dev libldap2-dev libxslt1-dev libossp-uuid-dev python-dev bzip2 postgresql-8.3 ruby ruby1.8-dev ri irb rdoc libdbm-ruby libgdbm-ruby libopenssl-ruby rubygems ragel memcached libmemcache-dev subversion nginx devscripts cdbs debhelper
+apt-get -y install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev bzip2 postgresql-8.3 ruby ruby1.8-dev ri irb rdoc rubygems ragel memcached libmemcache-dev subversion nginx
 
 # Install Ruby gems
 for i in postgres diff-lcs html5 mongrel memcache-client aws-s3 gchartrb ; do gem install $i ; done
@@ -14,10 +14,90 @@ gem install superredcloth --source http://code.whytheluckystiff.net
 
 # Create danbooru account
 echo "Creating danbooru user account..."
+useradd -m danbooru
+cat <<EOS > /etc/postgresql/8.3/main/pg_hba.conf
+local    all         postgres,danbooru                              trust
+host     all         postgres,danbooru          127.0.0.1/32        trust
+EOS
+/etc/init.d/postgresql restart
 
-# adduser --disabled-login danbooru
-# cd /var/www
-# svn co svn://donmai.us/danbooru/trunk danbooru
-# chown -R danbooru:danbooru danbooru
-# cd /etc/nginx/sites-enabled
-# wget http://danbooru.donmai.us/config/danbooru.conf
+# Install Danbooru
+cd /var/www
+svn co svn://donmai.us/danbooru/trunk danbooru
+chown -R danbooru:danbooru danbooru
+cd config
+cp database.yml.example database.yml
+cp local_config.rb.example local_config.rb
+sed -i -e "s/DAN_HOSTNAME/$hostname/g" local_config.rb
+cat <<EOS > mongrel_cluster.yml
+--- 
+cwd: /var/www/danbooru
+port: "8050"
+environment: production
+address: 127.0.0.1
+servers: 3
+num_processors: 10
+EOS
+cd ..
+mongrel_rails cluster::start
+
+# Set up nginx
+cat <<EOS > /etc/nginx/sites-enabled/danbooru.conf
+upstream mongrel {
+  server 127.0.0.1:8050;
+  server 127.0.0.1:8051;
+  server 127.0.0.1:8052;
+}
+server {
+  listen 80;
+  server_name $hostname;
+  root /var/www/danbooru/public;
+  index index.html;
+  access_log /var/www/danbooru/log/server.access.log;
+  error_log /var/www/danbooru/log/server.error.log;
+  client_max_body_size 30m;
+
+  location /stylesheets {
+    expires max;
+    break;
+  }
+
+  location /javascripts {
+    expires max;
+    break;
+  }
+
+  location /data {
+    valid_referers none $hostname;
+    if (\$invalid_referer) {
+      return 403;
+    }
+    expires max;
+    break;
+  }
+
+  location /maintenance.html {
+    expires 10;
+   }
+
+  if (-f \$document_root/maintenance.html) {
+    rewrite ^(.*)\$ /maintenance.html last;
+    break;
+  }
+
+  location / {
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
+    proxy_redirect false;
+
+    if (!-f \$request_filename) {
+      proxy_pass http://mongrel;
+    }
+  }
+
+  error_page 404 /404.html;
+  error_page 500 502 503 504 /500.html;
+}
+EOS
+/etc/init.d/nginx restart
