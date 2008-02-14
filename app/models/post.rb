@@ -390,18 +390,22 @@ class Post < ActiveRecord::Base
       end
 
       def preview_path
-        if image?
+        if status == "deleted"
+          "#{RAILS_ROOT}/public/data/preview/deleted.jpg"
+        elsif image?
           "#{RAILS_ROOT}/public/data/preview/#{md5}.jpg"
         else
-          "#{RAILS_ROOT}/public/data/preview/default.png"
+          "#{RAILS_ROOT}/public/data/preview/download.png"
         end
       end
 
       def preview_url
-        if image?
+        if status == "deleted"
+          CONFIG["url_base"] + "/data/preview/deleted.png"
+        elsif image?
           CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
         else
-          CONFIG["url_base"] + "/data/preview/default.png"
+          CONFIG["url_base"] + "/data/preview/download.png"
         end
       end
 
@@ -437,18 +441,22 @@ class Post < ActiveRecord::Base
       end
 
       def preview_path
-        if image?
+        if status == "deleted"
+          "#{RAILS_ROOT}/public/data/preview/deleted.jpg"
+        elsif image?
           "#{RAILS_ROOT}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
-          "#{RAILS_ROOT}/public/data/preview/default.png"
+          "#{RAILS_ROOT}/public/data/preview/download.png"
         end
       end
 
       def preview_url
-        if image?
+        if status == "deleted"
+          CONFIG["url_base"] + "/data/preview/deleted.jpg"
+        elsif image?
           CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
-          CONFIG["url_base"] + "/data/preview/default.png"
+          CONFIG["url_base"] + "/data/preview/download.png"
         end
       end
 
@@ -494,25 +502,32 @@ class Post < ActiveRecord::Base
       end
 
       def preview_path
-        if image?
+        if status == "deleted"
+          "#{RAILS_ROOT}/public/data/preview/deleted.png"
+        elsif image?
           "#{RAILS_ROOT}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
-          "#{RAILS_ROOT}/public/data/preview/default.png"
+          "#{RAILS_ROOT}/public/data/preview/download.png"
         end
       end
 
       def preview_url
         if self.is_warehoused?
-          if image?
+          if status == "deleted"
+            select_random_image_server() + "/data/preview/deleted.png"
+
+          elsif image?
             select_random_image_server() + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
           else
-            select_random_image_server() + "/data/preview/default.png"
+            select_random_image_server() + "/data/preview/download.png"
           end
         else
-          if image?
+          if status == "deleted"
+            CONFIG["url_base"] + "/data/preview/deleted.png"
+          elsif image?
             CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
           else
-            CONFIG["url_base"] + "/data/preview/default.png"
+            CONFIG["url_base"] + "/data/preview/download.png"
           end
         end
       end
@@ -560,10 +575,12 @@ class Post < ActiveRecord::Base
       end
 
       def preview_url
-        if self.image?
+        if status == "deleted"
+          "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/deleted.png"
+        elsif self.image?
           "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
         else
-          "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/default.png"
+          "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
         end
       end
 
@@ -607,18 +624,22 @@ class Post < ActiveRecord::Base
       end
 
       def preview_path
-        if image?
+        if status == "deleted"
+          "#{RAILS_ROOT}/public/data/preview/deleted.png"
+        elsif image?
           "#{RAILS_ROOT}/public/data/preview/#{md5}.jpg"
         else
-          "#{RAILS_ROOT}/public/data/preview/default.png"
+          "#{RAILS_ROOT}/public/data/preview/download.png"
         end
       end
 
       def preview_url
-        if image?
+        if status == "deleted"
+          CONFIG["url_base"] + "/data/preview/deleted.png"
+        elsif image?
           CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
         else
-          CONFIG["url_base"] + "/data/preview/default.png"
+          CONFIG["url_base"] + "/data/preview/download.png"
         end
       end
 
