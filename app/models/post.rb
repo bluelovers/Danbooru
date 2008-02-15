@@ -391,7 +391,7 @@ class Post < ActiveRecord::Base
 
       def preview_path
         if status == "deleted"
-          "#{RAILS_ROOT}/public/data/preview/deleted.jpg"
+          "#{RAILS_ROOT}/public/data/preview/deleted.png"
         elsif image?
           "#{RAILS_ROOT}/public/data/preview/#{md5}.jpg"
         else
@@ -442,7 +442,7 @@ class Post < ActiveRecord::Base
 
       def preview_path
         if status == "deleted"
-          "#{RAILS_ROOT}/public/data/preview/deleted.jpg"
+          "#{RAILS_ROOT}/public/data/preview/deleted.png"
         elsif image?
           "#{RAILS_ROOT}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
@@ -452,7 +452,7 @@ class Post < ActiveRecord::Base
 
       def preview_url
         if status == "deleted"
-          CONFIG["url_base"] + "/data/preview/deleted.jpg"
+          CONFIG["url_base"] + "/data/preview/deleted.png"
         elsif image?
           CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else

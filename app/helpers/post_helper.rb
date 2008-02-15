@@ -11,10 +11,6 @@ module PostHelper
   end
 
   def print_preview(post, options = {})
-    if post.status == "deleted"
-      return ""
-    end
-    
     if @current_user.nil? || !@current_user.privileged?
       if CONFIG["hide_loli_posts"] && post.is_loli?
         return ""
