@@ -14,7 +14,11 @@
       <% @changes.each do |change| %>
         <tr class="<%= cycle 'even', 'odd' %>">
           <td style="background: <%= id_to_color(change.post_id) %>;"></td>
-          <td><%= link_to change.post_id, :action => "index", :post_id => change.post_id %></td>
+          <% if params[:post_id] %>
+            <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
+          <% else %>
+            <td><%= link_to change.post_id, :action => "index", :post_id => change.post_id %></td>
+          <% end %>
           <td><%= change.created_at.strftime("%b %e") %></td>
           <td><%= h change.author %></td>
           <td><%= h change.tags %></td>
