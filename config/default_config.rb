@@ -80,7 +80,7 @@ CONFIG["hide_questionable_posts"] = false
 CONFIG["hide_loli_posts"] = false
 
 # TAKES EFFECT IN DANBOORU 1.13.0
-# Defines the various user levels. You should not remove any of the default ones. Additional levels are mainly for additional access control with CONFIG["can_see_posts"].
+# Defines the various user levels. You should not remove any of the default ones. When Danbooru starts up, the User model will have several methods automatically defined based on what this config contains. For this reason you should only use letters, numbers, and spaces (spaces will be replaced with underscores). Example: is_member?, is_member_or_lower?, is_member_or_higher?
 CONFIG["user_levels"] = {
   "Unactivated" => -1,
   "Blocked" => 0,
@@ -91,17 +91,32 @@ CONFIG["user_levels"] = {
 }
 
 # TAKES EFFECT IN DANBOORU 1.13.0
-# Determine who can see a post.
+# Defines the various tag types.
+CONFIG["tag_types"] = {
+  "General" => 0,
+  "Artist" => 1,
+  "Copyright" => 3,
+  "Character" => 4
+}
+
+# TAKES EFFECT IN DANBOORU 1.13.0
+# Determine who can see a post. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_post"] = lambda do |user, post|
   # By default, only deleted posts are hidden.
-  post.status != 'deleted'
+  break post.status != 'deleted'
   
   # Some examples:
   #
   # Hide post if user isn't privileged and post is not safe:
-  # post.rating != 'e' || (user != nil && user.privileged?)
+  # break post.rating != 'e' || (user != nil && user.privileged?)
   #
   # Hide post if user isn't a mod and post has the loli tag:
-  # post.cached_tags =~ /(?:^|\s)loli(?:$|\s)/ || 
-  user != nil && (user.mod? || post.cached_tags =~ /(?:^|\s)loli(?:$|\s)/)
+  # break post.has_tag?("loli") 
+end
+
+# TAKES EFFECT IN DANBOORU 1.13.0
+# Determines who can see ads. Action will be a symbol, either :show (for post/show) or :index (for post/index). For post/show, post_or_params will be the post. For post/index, post_or_params will be the parameters. Note that since this is a block, return won't work. Use break.
+CONFIG["can_see_ads"] = lambda do |user, action, post_or_params|
+  # By default, only show ads to non-priv users.
+  break user == nil || user.is_member_or_lower?
 end
