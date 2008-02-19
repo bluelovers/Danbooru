@@ -820,6 +820,9 @@ class Post < ActiveRecord::Base
           http.read_timeout = 10
           http.get(url.request_uri)
         end
+        
+        raise "HTTP error code: #{res.code} #{res.message}" unless res.code == "200"
+        
         self.file_ext = content_type_to_file_ext(res.content_type) || find_ext(source)
         File.open(tempfile_path, 'wb') do |out|
           out.write(res.body)
@@ -1003,5 +1006,9 @@ class Post < ActiveRecord::Base
   
   def is_loli?
     return self.cached_tags =~ /\b(?:loli|shota)\b/
+  end
+  
+  def has_tag?(tag)
+    return self.cached_tags.scan(/\S+/).any? {|x| x == tag}
   end
 end
