@@ -152,7 +152,7 @@ class Artist < ActiveRecord::Base
     if p == nil
       return []
     else
-      artist_type = Tag.types[:artist]
+      artist_type = CONFIG["tag_types"]["Artist"]
       artists = p.tags.select {|x| x.tag_type == artist_type}.map {|x| x.name}
       return Artist.find_all_by_name(artists)
     end

@@ -125,7 +125,7 @@ class WikiController < ApplicationController
 
     tag_type = Tag.find_by_name(params[:title]).tag_type rescue nil
 
-    if tag_type == Tag.types[:artist] && params[:noredirect] == nil
+    if tag_type == CONFIG["tag_types"]["Artist"] && params[:noredirect] == nil
       artist = Artist.find_by_name(params[:title])
 
       if artist == nil

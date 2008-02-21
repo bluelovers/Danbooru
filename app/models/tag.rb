@@ -1,29 +1,7 @@
 class Tag < ActiveRecord::Base
-  @tag_types = {
-    :general    => 0,
-    "general"   => 0,
-    "gen"       => 0,
-
-    :artist     => 1,
-    "artist"    => 1,
-    "art"       => 1,
-
-    :copyright  => 3,
-    "copyright" => 3,
-    "copy"      => 3,
-    "co"        => 3,
-
-    :character  => 4,
-    "character" => 4,
-    "char"      => 4,
-    "ch"        => 4
-  }
+  @type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}
 
   class << self
-    def types
-      @tag_types
-    end
-    
     def find_type(name)
       tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
       if tag == nil
@@ -34,22 +12,10 @@ class Tag < ActiveRecord::Base
     end
     
     def type_name(tag_type, general_string = true)
-      case tag_type
-      when Tag.types[:artist]
-        "artist"
-
-      when Tag.types[:character]
-        "character"
-
-      when Tag.types[:copyright]
-        "copyright"
-
+      if tag_type == 0 && !general_string
+        return ""
       else
-        if general_string
-          "general"
-        else
-          nil
-        end
+        return @type_map[tag_type]
       end
     end
     
@@ -69,16 +35,16 @@ class Tag < ActiveRecord::Base
         is_amb = false
       end
 
-      tag_type = types[name[/^(.+?):/, 1]]
+      tag_type = CONFIG["tag_types"][name[/^(.+?):/, 1]]
       if tag_type == nil
-        tag_type = types[:general]
+        tag_type = 0
       else
         name.gsub!(/^.+?:/, "")
       end
 
       t = find_by_name(name)
       if t != nil
-        if t.tag_type == types[:general] && t.tag_type != tag_type
+        if t.tag_type == 0 && t.tag_type != tag_type
           t.update_attributes(:tag_type => tag_type, :is_ambiguous => is_amb)
         end
         return t

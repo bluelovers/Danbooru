@@ -17,21 +17,10 @@ module TagHelper
     end
     
     type_map = {}
-    type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec| 
-      h[rec.name] = case rec.tag_type
-      when Tag.types[:artist]
-        "artist"
-      
-      when Tag.types[:character]
-        "character"
-      
-      when Tag.types[:copyright]
-        "copyright"
-      
-      else
-        nil
+    type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec|
+      unless rec.tag_type == 0
+        h[rec.name] = Tag.type_name(rec.tag_type)
       end
-    
       h
     end
 

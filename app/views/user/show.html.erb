@@ -75,34 +75,22 @@
       <th>Favorite Tags</th>
       <td><%= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
     </tr>
-    <tr>
-      <th>Favorite Artists</th>
-      <td><%= @user.favorite_tags(:type => Tag.types[:artist]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
-    </tr>
-    <tr>
-      <th>Favorite Characters</th>
-      <td><%= @user.favorite_tags(:type => Tag.types[:character]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
-    </tr>
-    <tr>
-      <th>Favorite Copyrights</th>
-      <td><%= @user.favorite_tags(:type => Tag.types[:copyright]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
-    </tr>
+    <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General"}.each do |name, value| %>
+      <tr>
+        <th>Favorite <%= name.pluralize %></th>
+        <td><%= @user.favorite_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+      </tr>
+    <% end %>
     <tr>
       <th>Uploaded Tags</th>
       <td><%= @user.uploaded_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
     </tr>
-    <tr>
-      <th>Uploaded Artists</th>
-      <td><%= @user.uploaded_tags(:type => Tag.types[:artist]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
-    </tr>
-    <tr>
-      <th>Uploaded Characters</th>
-      <td><%= @user.uploaded_tags(:type => Tag.types[:character]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
-    </tr>
-    <tr>
-      <th>Uploaded Copyrights</th>
-      <td><%= @user.uploaded_tags(:type => Tag.types[:copyright]).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
-    </tr>
+    <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General"}.each do |name, value| %>
+      <tr>
+        <th>Uploaded <%= name.pluralize %></th>
+        <td><%= @user.uploaded_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+      </tr>
+    <% end %>
   </table>
 </div>
 

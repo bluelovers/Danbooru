@@ -67,19 +67,6 @@ CONFIG["web_server"] = "apache"
 # Show a link to Trac.
 CONFIG["enable_trac"] = true
 
-# DEPRECATED IN DANBOORU 1.13.0
-# Enable this if you want explicit posts to be hidden from unprivileged users.
-CONFIG["hide_explicit_posts"] = false
-
-# DEPRECATED IN DANBOORU 1.13.0
-# Enable this if you want explicit and questionable posts to be hidden from unprivileged users.
-CONFIG["hide_questionable_posts"] = false
-
-# DEPRECATED IN DANBOORU 1.13.0
-# Enable this if you want posts tagged with loli or shota to be hidden from unprivileged users.
-CONFIG["hide_loli_posts"] = false
-
-# TAKES EFFECT IN DANBOORU 1.13.0
 # Defines the various user levels. You should not remove any of the default ones. When Danbooru starts up, the User model will have several methods automatically defined based on what this config contains. For this reason you should only use letters, numbers, and spaces (spaces will be replaced with underscores). Example: is_member?, is_member_or_lower?, is_member_or_higher?
 CONFIG["user_levels"] = {
   "Unactivated" => 0,
@@ -90,16 +77,18 @@ CONFIG["user_levels"] = {
   "Admin" => 50
 }
 
-# TAKES EFFECT IN DANBOORU 1.13.0
-# Defines the various tag types.
+# Defines the various tag types. You can also define shortcuts.
 CONFIG["tag_types"] = {
   "General" => 0,
   "Artist" => 1,
   "Copyright" => 3,
-  "Character" => 4
+  "Character" => 4,
+  
+  "art" => 1,
+  "copy" => 3,
+  "char" => 4
 }
 
-# TAKES EFFECT IN DANBOORU 1.13.0
 # Determine who can see a post. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_post"] = lambda do |user, post|
   # By default, only deleted posts are hidden.
@@ -114,7 +103,6 @@ CONFIG["can_see_post"] = lambda do |user, post|
   # break post.has_tag?("loli") 
 end
 
-# TAKES EFFECT IN DANBOORU 1.13.0
 # Determines who can see ads. Action will be a symbol, either :show (for post/show) or :index (for post/index). For post/show, post_or_params will be the post. For post/index, post_or_params will be the parameters. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_ads"] = lambda do |user, action, post_or_params|
   # By default, only show ads to non-priv users.
@@ -124,7 +112,8 @@ end
 # Enable the artists interface.
 CONFIG["enable_artists"] = true
 
+# This is required for Rails 2.0.
 CONFIG["session_secret_key"] = "This should be at least 30 characters long"
 
 # Users cannot search for more than X regular tags at a time.
-CONFIG["tag_query_limit"] = 4
+CONFIG["tag_query_limit"] = 6
