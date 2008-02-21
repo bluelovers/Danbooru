@@ -34,7 +34,7 @@ class CommentController < ApplicationController
   end
 
   def create
-    if @current_user.level == User::LEVEL_MEMBER && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
+    if @current_user.is_member_or_higher? && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
       respond_to do |fmt|
         fmt.html {flash[:notice] = "You cannot post more than #{CONFIG['member_comment_limit']} comments in an hour"; redirect_to(:controller => "comment", :action => "index")}
         fmt.xml {render :xml => {:success => false, :reason => "hourly limit exceeded"}.to_xml(:root => "response"), :status => 500}

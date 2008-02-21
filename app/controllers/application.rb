@@ -166,7 +166,7 @@ class ApplicationController < ActionController::Base
         cookies["forum_updated"] = "0"
       end
 
-      if @current_user.level == User::LEVEL_BLOCKED
+      if @current_user.is_blocked?
         cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime('%Y-%m-%d')}"
       else
         cookies["block_reason"] = ""

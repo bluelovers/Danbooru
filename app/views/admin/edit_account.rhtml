@@ -10,7 +10,7 @@
           <label class="block" for="user_level">Level</label>
         </th>
         <td>
-          <%= select "user", "level", [["Blocked", User::LEVEL_BLOCKED], ["Member", User::LEVEL_MEMBER], ["Privileged", User::LEVEL_PRIVILEGED], ["Moderator", User::LEVEL_MOD], ["Administrator", User::LEVEL_ADMIN]] %>
+          <%= select "user", "level", CONFIG["user_levels"].to_a %>
         </td>
       </tr>
       <tr>

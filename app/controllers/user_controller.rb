@@ -19,7 +19,7 @@ class UserController < ApplicationController
 
   public
   def auto_complete_for_member_name
-    @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ilike ? escape '\\\\'", User::LEVEL_MEMBER, params[:member][:name] + "%"])
+    @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ilike ? escape '\\\\'", CONFIG["user_levels"]["Member"], params[:member][:name] + "%"])
     render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
   end
 
@@ -41,13 +41,13 @@ class UserController < ApplicationController
             return
           end
           
-          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", user.id, User::LEVEL_MOD]) > 0 && !@current_user.is_mod_or_higher?
+          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", user.id, CONFIG["user_levels"]["Mod"]]) > 0 && !@current_user.is_mod_or_higher?
             flash[:notice] = "This user has negative feedback on his record and can only be invited by a moderator"
             redirect_to :action => "invites"
             return
           end
 
-          user.level = User::LEVEL_PRIVILEGED
+          user.level = CONFIG["user_levels"]["Privileged"]
           user.invited_by = @current_user.id
           User.transaction do
             user.save!
@@ -243,7 +243,7 @@ class UserController < ApplicationController
         return
       end
       
-      @user.update_attribute(:level, User::LEVEL_BLOCKED)
+      @user.update_attribute(:level, CONFIG["user_levels"]["Blocked"])
       Ban.create(params[:ban].merge(:banned_by => @current_user.id))
       redirect_to :action => "show", :id => @user.id
     else
@@ -274,7 +274,7 @@ class UserController < ApplicationController
 
       flash[:notice] = "Invalid confirmation code"
       
-      users = User.find(:all, :conditions => ["level = ?", User::LEVEL_UNACTIVATED])
+      users = User.find(:all, :conditions => ["level = ?", CONFIG["user_levels"]["Unactivated"]])
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
           user.update_attribute(:level, CONFIG["starting_level"])

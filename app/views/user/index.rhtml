@@ -14,7 +14,7 @@
       </tr>
       <tr>
         <th>Level</th>
-        <td><%= select_tag "level", options_for_select([["Any", "any"], ["Blocked", User::LEVEL_BLOCKED], ["Member", User::LEVEL_MEMBER], ["Privileged", User::LEVEL_PRIVILEGED], ["Moderator", User::LEVEL_MOD], ["Administrator", User::LEVEL_ADMIN]], params[:level]) %></td>
+        <td><%= select_tag "level", options_for_select([["Any", "any"], *CONFIG["user_levels"].to_a], params[:level]) %></td>
       </tr>
       <tr>
         <th>Order</th>
