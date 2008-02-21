@@ -11,7 +11,7 @@ module PostHelper
   end
 
   def print_preview(post, options = {})
-    if @current_user.nil? || !@current_user.privileged?
+    if @current_user.nil? || !@current_user.is_privileged_or_higher?
       if CONFIG["hide_loli_posts"] && post.is_loli?
         return ""
       end

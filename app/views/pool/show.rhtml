@@ -3,7 +3,7 @@
   <% unless @pool.description.blank? %>
     <div style="margin-bottom: 2em;"><%= @pool.description %></div>
   <% end %>
-  <% if @pool.is_public? || (@current_user && @current_user.has_permission?(@pool)) %>
+  <% if @pool.is_public? || @current_user.has_permission?(@pool) %>
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
     <label for="del-mode">Delete Mode</label>
     <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>

@@ -89,7 +89,7 @@
       <li><a href="/user/index">List</a></li>
       <li><a href="/user/login">Login</a></li>
       <li><a href="/user/logout">Logout</a></li>
-      <% if @current_user %>
+      <% unless @current_user.nil? %>
         <li><a href="/user/show/<%= @current_user.id %>">My Profile</a></li>
       <% end %>
       <li><a href="/user_record/index">Records</a></li>
@@ -98,7 +98,7 @@
       <li><a href="/user/signup">Signup</a></li>
       <li><a href="/static/terms_of_service">Terms of Service</a></li>
     </ul>
-    <% if @current_user && @current_user.admin? %>
+    <% if @current_user.is_admin_or_higher? %>
       <ul>
         <li><h4>Admin</h4></li>
         <% if CONFIG["enable_caching"] %>

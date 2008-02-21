@@ -1,7 +1,7 @@
 CONFIG = {}
 
 # The version of this Danbooru.
-CONFIG["version"] = "1.12.1"
+CONFIG["version"] = "1.13.0"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"
@@ -120,3 +120,6 @@ CONFIG["can_see_ads"] = lambda do |user, action, post_or_params|
   # By default, only show ads to non-priv users.
   break user == nil || user.is_member_or_lower?
 end
+
+# Enable the artists interface.
+CONFIG["enable_artists"] = true

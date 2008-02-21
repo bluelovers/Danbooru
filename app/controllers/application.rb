@@ -126,7 +126,7 @@ class ApplicationController < ActionController::Base
   def cache_action
     # RubyProf.start
     
-    if (@current_user == nil || !@current_user.privileged?) && request.method == :get && !%w(xml js).include?(params[:format])
+    if !@current_user.is_privileged_or_higher? && request.method == :get && !%w(xml js).include?(params[:format])
       
       key, expiry = cache_key()
       cached = Cache.get(key)
@@ -160,7 +160,7 @@ class ApplicationController < ActionController::Base
         cookies["has_mail"] = "0"
       end
 
-      if @current_user.privileged? && ForumPost.updated?(@current_user)
+      if @current_user.is_privileged_or_higher? && ForumPost.updated?(@current_user)
         cookies["forum_updated"] = "1"
       else
         cookies["forum_updated"] = "0"

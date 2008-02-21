@@ -8,7 +8,7 @@ class FavoriteController < ApplicationController
   def show
     if params[:id]
       @user = User.find(params[:id])
-    elsif @current_user
+    elsif !@current_user.is_anonymous?
       @user = @current_user
     else
       flash[:notice] = "No user specified"

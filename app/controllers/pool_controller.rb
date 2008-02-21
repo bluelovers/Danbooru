@@ -66,7 +66,7 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if !@pool.is_public? && (@current_user == nil || @current_user.id != @pool.user_id)
+      if !@pool.is_public? && @current_user.has_permission?(@pool)
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
           fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 401}
@@ -98,7 +98,7 @@ class PoolController < ApplicationController
         end
       end
     else
-      if @current_user
+      if !@current_user.is_anonymous?
         @pools = Pool.find(:all, :order => "name", :conditions => ["is_public = TRUE OR user_id = ?", @current_user.id])
       else
         @pools = Pool.find(:all, :order => "name", :conditions => "is_public = TRUE")
@@ -112,7 +112,7 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if !@pool.is_public? && (@current_user == nil || @current_user.id != @pool.user_id)
+      if !@pool.is_public? && @current_user.has_permission?(@pool)
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
           fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 401}
@@ -140,7 +140,7 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
 
     if request.post?
-      if @pool.is_public? || (@current_user && @pool.user_id == @current_user.id)
+      if @pool.is_public? || @current_user.has_permission?(@pool)
         PoolPost.transaction do
           params[:pool_post_sequence].each do |i, seq|
             PoolPost.update(i, :sequence => seq)
@@ -161,7 +161,7 @@ class PoolController < ApplicationController
   def import
     @pool = Pool.find(params[:id])
     
-    unless @pool.is_public? || (@current_user && @pool.user_id == @current_user.id)
+    unless @pool.is_public? || @current_user.has_permission?(@pool)
       access_denied()
       return
     end

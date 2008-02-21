@@ -991,7 +991,7 @@ class Post < ActiveRecord::Base
   end
   
   def can_view?(user)
-    if user == nil || !user.privileged?
+    if user == nil || !user.is_privileged_or_higher?
       if CONFIG["hide_explicit_posts"] && self.rating == 'e'
         return false
       elsif CONFIG["hide_questionable_posts"] && self.rating != 's'

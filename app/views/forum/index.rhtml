@@ -20,7 +20,7 @@
       <% @forum_posts.each do |fp| %>
         <% content_tag :tr, :class => cycle('even', 'odd') do %>
           <td>
-            <% if @current_user && fp.updated_at > @current_user.last_forum_topic_read_at %>
+            <% if @current_user.is_a?(User) && fp.updated_at > @current_user.last_forum_topic_read_at %>
               <strong><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></strong>
             <% else %>
               <% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %> 

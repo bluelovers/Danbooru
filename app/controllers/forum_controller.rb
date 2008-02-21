@@ -57,7 +57,7 @@ class ForumController < ApplicationController
   def update
     @forum_post = ForumPost.find(params[:id])
 
-    if !(@current_user && @current_user.has_permission?(@forum_post, :creator_id))
+    if !@current_user.has_permission?(@forum_post, :creator_id)
       access_denied()
       return
     end
@@ -74,7 +74,7 @@ class ForumController < ApplicationController
   def edit
     @forum_post = ForumPost.find(params[:id])
 
-    if !(@current_user && @current_user.has_permission?(@forum_post, :creator_id))
+    if !@current_user.has_permission?(@forum_post, :creator_id)
       access_denied()
     end
   end
@@ -84,7 +84,7 @@ class ForumController < ApplicationController
     set_title @forum_post.title
     @pages, @children = paginate :forum_posts, :order => "id", :per_page => 10, :conditions => ["parent_id = ?", params[:id]]
 
-    if @current_user != nil && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 3.seconds.ago
+    if !@current_user.is_anonymous? && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 3.seconds.ago
       @current_user.update_attribute(:last_forum_topic_read_at, @forum_post.updated_at)
     end
     

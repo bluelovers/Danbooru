@@ -40,7 +40,7 @@ class PostController < ApplicationController
       return
     end
 
-    if @current_user.privileged?
+    if @current_user.is_privileged_or_higher?
       status = "active"
     else
       status = "pending"
@@ -125,7 +125,7 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-    if @current_user
+    if !@current_user.is_anonymous?
       user_id = @current_user.id
     else
       user_id = nil
@@ -198,7 +198,7 @@ class PostController < ApplicationController
 
     set_title "/" + tags.tr("_", " ")
 
-    if @current_user == nil
+    if @current_user.is_anonymous?
       if CONFIG["show_only_first_page"] && page > 1
         flash[:notice] = "You need an account to look beyond the first page."
         redirect_to :controller => "user", :action => "login"
@@ -211,7 +211,7 @@ class PostController < ApplicationController
         return
       end
 
-    elsif !@current_user.privileged?
+    elsif !@current_user.is_privileged_or_higher?
       if split_tags.size > 2
         flash[:notice] = "You need a privileged account to search for more than two tags at once."
         redirect_to :controller => "user", :action => "login"
@@ -221,7 +221,7 @@ class PostController < ApplicationController
 
     @ambiguous = Tag.select_ambiguous(tags)
     
-    if @current_user == nil || !@current_user.privileged?
+    if !@current_user.is_privileged_or_higher?
       count = Post.fast_count(tags, false)
     else
       count = Post.fast_count(tags)
@@ -276,7 +276,7 @@ class PostController < ApplicationController
   end
 
   def atom
-    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 2
+    if !@current_user.is_privileged_or_higher? && params[:tags].to_s.scan(/\s+/).size > 2
       render :nothing => true, :status => 500
       return
     end
@@ -287,7 +287,7 @@ class PostController < ApplicationController
   end
 
   def piclens
-    if (@current_user == nil || !@current_user.privileged?) && params[:tags].to_s.scan(/\s+/).size > 2
+    if !@current_user.is_privileged_or_higher? && params[:tags].to_s.scan(/\s+/).size > 2
       render :nothing => true, :status => 500
       return
     end
@@ -297,7 +297,7 @@ class PostController < ApplicationController
     limit = 16
     page = 1 if page < 1
 
-    if @current_user == nil || !@current_user.privileged?
+    if !@current_user.is_privileged_or_higher?
       count = Post.fast_count(@tags, false)
     else
       count = Post.fast_count(@tags)
@@ -351,7 +351,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
-    if @current_user && @current_user.privileged?
+    if @current_user.is_privileged_or_higher?
       @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
     else
       @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
@@ -374,7 +374,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@start.year}/#{@start.month}/#{@start.day} - #{@end.year}/#{@end.month}/#{@end.day}"
 
-    if @current_user && @current_user.privileged?
+    if @current_user.is_privileged_or_higher?
       @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
     else
       @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
@@ -398,7 +398,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@start.year}/#{@start.month}"
 
-    if @current_user && @current_user.privileged?
+    if @current_user.is_privileged_or_higher?
       @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
     else
       @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
@@ -439,7 +439,7 @@ class PostController < ApplicationController
     p = Post.find(params[:id])
     score = params[:score].to_i
     
-    if (@current_user == nil || !@current_user.mod?) && score != 1 && score != -1
+    if !@current_user.is_mod_or_higher? && score != 1 && score != -1
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
         fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml(:root => "response"), :status => 409}

@@ -22,13 +22,21 @@ class User < ActiveRecord::Base
   after_destroy :decrement_count
   has_one :ban
   
-  # Users are in one of seven possible roles:
-  LEVEL_UNACTIVATED = -1
-  LEVEL_BLOCKED = 0
-  LEVEL_MEMBER = 2
-  LEVEL_PRIVILEGED = 3
-  LEVEL_MOD = 10
-  LEVEL_ADMIN = 20
+  # Defines various convenience methods for finding out the user's level
+  CONFIG["user_levels"].each do |name, value|
+    normalized_name = name.downcase.gsub(/ /, "_")
+    define_method("is_#{normalized_name}?") do
+      self.level == value
+    end
+    
+    define_method("is_#{normalized_name}_or_higher?") do
+      self.level >= value
+    end
+    
+    define_method("is_#{normalized_name}_or_lower?") do
+      self.level <= value
+    end
+  end
 
   @salt = CONFIG["password_salt"]
   
@@ -61,31 +69,18 @@ class User < ActiveRecord::Base
       Digest::SHA1.hexdigest("#{salt}--#{pass}--")
     end
   end
+  
+  # For compatibility with AnonymousUser class
+  def is_anonymous?
+    false
+  end
 
   def pretty_name
     self.name.tr("_", " ")
   end
 
   def pretty_level
-    case self.level
-    when LEVEL_UNACTIVATED
-      "Unactivated"
-      
-    when LEVEL_BLOCKED
-      "Blocked"
-      
-    when LEVEL_MEMBER
-      "Member"
-      
-    when LEVEL_PRIVILEGED
-      "Privileged"
-      
-    when LEVEL_MOD
-      "Moderator"
-      
-    when LEVEL_ADMIN
-      "Administrator"
-    end
+    return CONFIG["user_levels"].invert[self.level]
   end
 
   def invited_by_ancestors
@@ -217,9 +212,9 @@ class User < ActiveRecord::Base
   
   def set_role
     if User.fast_count == 0
-      self.level = LEVEL_ADMIN
+      self.level = CONFIG["user_levels"]["Admin"]
     elsif CONFIG["enable_account_email_activation"]
-      self.level = LEVEL_UNACTIVATED
+      self.level = CONFIG["user_levels"]["Unactivated"]
     else
       self.level = CONFIG["starting_level"]
     end
@@ -270,33 +265,9 @@ class User < ActiveRecord::Base
     
     Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} #{extra_sql}")
   end
-
-  def activated?
-    self.level > LEVEL_UNACTIVATED
-  end
-
-  def blocked?
-    self.level <= LEVEL_BLOCKED
-  end
-
-  def member?
-    self.level >= LEVEL_MEMBER
-  end
-
-  def privileged?
-    self.level >= LEVEL_PRIVILEGED
-  end
-  
-  def mod?
-    self.level >= LEVEL_MOD
-  end
-  
-  def admin?
-    self.level >= LEVEL_ADMIN
-  end
   
   def has_permission?(record, foreign_key = :user_id)
-    if self.mod?
+    if self.is_mod_or_higher?
       true
     elsif record.respond_to?(foreign_key)
       record.__send__(foreign_key) == self.id

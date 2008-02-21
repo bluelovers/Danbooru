@@ -18,7 +18,7 @@
     <% end %>
     <tr>
       <td colspan="3">
-        <% if @current_user && @current_user.admin? %>
+        <% if @current_user.is_admin_or_higher? %>
           <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
           <%= submit_tag "Approve" %> 
           <%= submit_tag "Delete" %>

@@ -41,7 +41,7 @@ class UserController < ApplicationController
             return
           end
           
-          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", user.id, User::LEVEL_MOD]) > 0 && !@current_user.mod?
+          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", user.id, User::LEVEL_MOD]) > 0 && !@current_user.is_mod_or_higher?
             flash[:notice] = "This user has negative feedback on his record and can only be invited by a moderator"
             redirect_to :action => "invites"
             return
@@ -237,7 +237,7 @@ class UserController < ApplicationController
     @user = User.find(params[:id])
     
     if request.post?
-      if @user.mod?
+      if @user.is_mod_or_higher?
         flash[:notice] = "You can not ban other moderators or administrators"
         redirect_to :action => "block_account"
         return

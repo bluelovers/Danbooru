@@ -1,5 +1,5 @@
 <div id="post-add">
-  <% unless @current_user.privileged? %>
+  <% unless @current_user.is_privileged_or_higher? %>
     <div style="margin-bottom: 2em;">
       <h4>Upload Guidelines</h4>
       <p>Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.</p>
@@ -45,7 +45,7 @@
           <tr>
             <th>
               <label for="post_source">Source</label>
-              <% unless @current_user.privileged? %>
+              <% unless @current_user.is_privileged_or_higher? %>
                 <p>You can enter a URL here to download from a website.</p>
               <% end %>
             </th>
@@ -54,7 +54,7 @@
           <tr>
             <th>
               <label for="post_tags">Tags</label>
-              <% unless @current_user.privileged? %>
+              <% unless @current_user.is_privileged_or_higher? %>
                 <p>Separate tags with spaces. (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
               <% end %>
             </th>
@@ -75,7 +75,7 @@
           <tr>
             <th>
               <label for="post_rating_questionable">Rating</label>
-              <% unless @current_user.privileged? %>
+              <% unless @current_user.is_privileged_or_higher? %>
                 <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
               <% end %>
             </th>

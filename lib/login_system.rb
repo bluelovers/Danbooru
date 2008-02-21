@@ -1,4 +1,36 @@
-require_dependency "user"
+# This is a proxy class to make various nil checks unnecessary
+class AnonymousUser
+  def id
+    0
+  end
+  
+  def name
+    "Anonymous"
+  end
+  
+  def is_anonymous?
+    true
+  end
+  
+  def has_permission?(obj, foreign_key)
+    false
+  end
+  
+  CONFIG["user_levels"].each do |name, value|
+    normalized_name = name.downcase.gsub(/ /, "_")
+    define_method("is_#{normalized_name}?") do
+      false
+    end
+
+    define_method("is_#{normalized_name}_or_higher?") do
+      false
+    end
+
+    define_method("is_#{normalized_name}_or_lower?") do
+      false
+    end
+  end
+end
 
 module LoginSystem
   protected
@@ -27,7 +59,7 @@ module LoginSystem
       @current_user = User.authenticate(params[:user][:name], params[:user][:password])
     end
     
-    if @current_user
+    if @current_user && @current_user.is_a?(User)
       if @current_user.ip_addr != request.remote_ip
         @current_user.update_attribute(:ip_addr, request.remote_ip)
       end
@@ -36,17 +68,19 @@ module LoginSystem
         @current_user.update_attribute(:last_logged_in_at, Time.now)
       end
       
-      if @current_user.level == User::LEVEL_BLOCKED && @current_user.ban.expires_at < Time.now
-        @current_user.update_attribute(:level, User::LEVEL_MEMBER)
+      if @current_user.is_blocked_or_lower? && @current_user.ban.expires_at < Time.now
+        @current_user.update_attribute(:level, CONFIG["starting_level"])
         Ban.destroy_all("user_id = #{@current_user.id}")
       end
       
       session[:user_id] = @current_user.id
+    else
+      @current_user = AnonymousUser.new
     end
   end
 
   def member_only
-    if @current_user && @current_user.member?
+    if @current_user && @current_user.is_member_or_higher?
       return true
     else
       access_denied()
@@ -55,7 +89,7 @@ module LoginSystem
   end
   
   def privileged_only
-    if @current_user && @current_user.privileged?
+    if @current_user && @current_user.is_privileged_or_higher?
       return true
     else
       access_denied()
@@ -64,7 +98,7 @@ module LoginSystem
   end
 
   def mod_only
-    if @current_user && @current_user.mod?
+    if @current_user && @current_user.is_mod_or_higher?
       return true
     else
       access_denied()
@@ -73,7 +107,7 @@ module LoginSystem
   end
 
   def blocked_only
-    if @current_user && @current_user.level >= User::LEVEL_BLOCKED
+    if @current_user && @current_user.is_blocked_or_lower?
       return true
     else
       access_denied()
@@ -82,7 +116,7 @@ module LoginSystem
   end 
 
   def admin_only
-    if @current_user && @current_user.admin?
+    if @current_user && @current_user.is_admin_or_higher?
       return true
     else
       access_denied()

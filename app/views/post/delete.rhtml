@@ -1,6 +1,6 @@
 <h4>Delete Post</h4>
 
-<% unless (@current_user == nil || !@current_user.privileged?) && @post.is_loli? %>
+<% if !@current_user.nil? && @current_user.can_view?(@post) %>
   <%= image_tag @post.preview_url %>
 <% end %>
 

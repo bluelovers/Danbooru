@@ -44,7 +44,7 @@ class CommentController < ApplicationController
       return
     end
 
-    if params[:commit] == "Post as Anonymous" && @current_user.privileged?
+    if params[:commit] == "Post as Anonymous" && @current_user.is_privileged_or_higher?
       user_id = nil
     else
       user_id = session[:user_id]
@@ -94,7 +94,7 @@ class CommentController < ApplicationController
       fmt.html do
         @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10
         
-        if @current_user == nil || !@current_user.privileged?
+        if !@current_user.is_privileged_or_higher?
           if CONFIG["hide_loli_posts"]
             @posts.reject! {|x| x.is_loli?}
           end
