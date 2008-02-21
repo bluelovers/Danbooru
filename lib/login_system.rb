@@ -1,37 +1,3 @@
-# This is a proxy class to make various nil checks unnecessary
-class AnonymousUser
-  def id
-    0
-  end
-  
-  def name
-    "Anonymous"
-  end
-  
-  def is_anonymous?
-    true
-  end
-  
-  def has_permission?(obj, foreign_key)
-    false
-  end
-  
-  CONFIG["user_levels"].each do |name, value|
-    normalized_name = name.downcase.gsub(/ /, "_")
-    define_method("is_#{normalized_name}?") do
-      false
-    end
-
-    define_method("is_#{normalized_name}_or_higher?") do
-      false
-    end
-
-    define_method("is_#{normalized_name}_or_lower?") do
-      false
-    end
-  end
-end
-
 module LoginSystem
   protected
   def access_denied
@@ -59,7 +25,7 @@ module LoginSystem
       @current_user = User.authenticate(params[:user][:name], params[:user][:password])
     end
     
-    if @current_user && @current_user.is_a?(User)
+    if @current_user
       if @current_user.ip_addr != request.remote_ip
         @current_user.update_attribute(:ip_addr, request.remote_ip)
       end
@@ -68,7 +34,7 @@ module LoginSystem
         @current_user.update_attribute(:last_logged_in_at, Time.now)
       end
       
-      if @current_user.is_blocked_or_lower? && @current_user.ban.expires_at < Time.now
+      if @current_user.is_blocked? && @current_user.ban.expires_at < Time.now
         @current_user.update_attribute(:level, CONFIG["starting_level"])
         Ban.destroy_all("user_id = #{@current_user.id}")
       end

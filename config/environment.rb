@@ -1,10 +1,5 @@
-# Be sure to restart your webserver when you modify this file.
+RAILS_GEM_VERSION = "2.0.2"
 
-# Uncomment below to force Rails into production mode
-# (Use only when you can't set environment variables through your web/app server)
-# ENV['RAILS_ENV'] = 'production'
-
-# Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 require 'default_config'
 require 'local_config'
@@ -13,7 +8,7 @@ CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
 
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
-  config.frameworks -= [ :action_web_service ]
+  config.frameworks -= [:action_web_service]
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/app/services )
@@ -21,10 +16,6 @@ Rails::Initializer.run do |config|
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug
   config.log_level = :info
-
-  # Use the database for sessions instead of the file system
-  # (create the session table with 'rake create_sessions_table')
-  # config.action_controller.session_store = :active_record_store
 
   # Enable page/fragment caching by setting a file-based store
   # (remember to create the caching directory and make it readable to the application)
@@ -34,19 +25,12 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
 
   # Make Active Record use UTC-base instead of local time
-  #config.active_record.default_timezone = :utc
+  # config.active_record.default_timezone = :utc
 
   # Use Active Record's schema dumper instead of SQL when creating the test database
   # (enables use of different database adapters for development and test environments)
   # config.active_record.schema_format = :ruby
-
-  # See Rails::Configuration for more options
 end
-
-# Add new inflection rules using the following format
-# (all these examples are active by default):
-#Inflector.inflections do |inflect|
-#end
 
 ActiveRecord::Base.allow_concurrency = false
 
