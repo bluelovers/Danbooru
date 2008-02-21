@@ -57,5 +57,5 @@
 </table>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages, :params => {:level => params[:level], :order => params[:order], :name => params[:name], :controller => "user", :action => "index"}) %>
+  <%= will_pagiante(@users) %>
 </div>

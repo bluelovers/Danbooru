@@ -5,12 +5,6 @@
     </div>
   <% end %>
 
-  <% if @suggestions.any? %>
-    <div class="status-notice">
-      <p>Maybe you meant: <%= @suggestions.map {|x| link_to h(x), :controller => "post", :action => "index", :tags => x}.join(", ") %></p>
-    </div>
-  <% end %>
-  
   <div class="sidebar">
     <%= render :partial => "search" %>
     <% unless @current_user.is_privileged_or_higher? %>
@@ -61,11 +55,7 @@
     <%= render :partial => "posts", :locals => {:posts => @posts} %>
 
     <div id="paginator">
-      <% if @pages %>
-        <%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>
-      <% else %>
-        <%= fast_pagination_links(params[:page], @posts.size < 16, :params => {:controller => "post", :action => "index", :tags => params[:tags]}) %>
-      <% end %>
+      <%= will_paginate(@posts) %>
     </div>
 
     <div id="footer">
@@ -98,3 +88,7 @@
   Post.observe_text_area("post_tags")
   PostModeMenu.init()
 </script>
+
+<% content_for("html_header") do %>
+  <%= navigation_links(@posts) %>
+<% end %>

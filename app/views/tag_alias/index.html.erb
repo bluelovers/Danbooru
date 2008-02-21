@@ -33,7 +33,7 @@
 </div>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages, :params => {:controller => "tag_alias", :action => "index", :query => params[:query]}) %>
+  <%= will_paginate(@aliases) %>
 </div>
 
 <% content_for("footer") do %>

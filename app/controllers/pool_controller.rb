@@ -5,15 +5,15 @@ class PoolController < ApplicationController
   
   def index
     if params[:query]
-      @pages, @pools = paginate :pools, :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query].to_escaped_for_sql_like + "%"], :per_page => 20
+      @pools = Pool.paginate :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query].to_escaped_for_sql_like + "%"], :per_page => 20
     else
-      @pages, @pools = paginate :pools, :order => "updated_at desc", :per_page => 20
+      @pools = Pool.paginate :order => "updated_at desc", :per_page => 20
     end
   end
   
   def show
     @pool = Pool.find(params[:id])
-    @pages, @posts = paginate :posts, :per_page => 24, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*"
+    @posts = Post.paginate :per_page => 24, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*"
   end
 
   def update

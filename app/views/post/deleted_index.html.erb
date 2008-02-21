@@ -22,5 +22,5 @@
 </table>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages, :params => {:controller => "post", :action => "deleted_index", :user_id => params[:user_id]}) %>
+  <%= will_paginate(@posts) %>
 </div>

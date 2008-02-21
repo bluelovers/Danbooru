@@ -50,9 +50,9 @@ class WikiController < ApplicationController
 
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
+      @wiki_pages = WikiPage.paginate :order => order, :per_page => limit, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
     else
-      @pages, @wiki_pages = paginate :wiki_pages, :order => order, :per_page => limit
+      @wiki_pages = WikiPage.paginate :order => order, :per_page => limit
     end
 
     respond_to do |fmt|
@@ -193,7 +193,7 @@ class WikiController < ApplicationController
   def recent_changes
     set_title "Recent Changes"
 
-    @pages, @wiki_pages = paginate :wiki_pages, :order => "updated_at DESC", :per_page => (params[:per_page] || 25)
+    @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25)
     
     respond_to do |fmt|
       fmt.html

@@ -29,7 +29,7 @@
 </div>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages, :params => {:query => params[:query], :controller => "pool", :action => "index"}) %>
+  <%= will_paginate(@pools) %>
 </div>
 
 <%= render :partial => "footer" %>

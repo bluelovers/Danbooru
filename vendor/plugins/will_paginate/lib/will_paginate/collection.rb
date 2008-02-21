@@ -33,7 +33,7 @@ module WillPaginate
     #
     def initialize(page, per_page, total = nil)
       @current_page = page.to_i
-      raise InvalidPage.new(page, @current_page) if @current_page < 1
+      @current_page = 1 if @current_page < 1
       @per_page     = per_page.to_i
       raise ArgumentError, "`per_page` setting cannot be less than 1 (#{@per_page} given)" if @per_page < 1
       
@@ -105,6 +105,14 @@ module WillPaginate
     def total_entries=(number)
       @total_entries = number.to_i
       @total_pages   = (@total_entries / per_page.to_f).ceil
+    end
+    
+    def is_first_page?
+      return current_page == 1
+    end
+    
+    def is_last_page?
+      return current_page == page_count
     end
 
     # This is a magic wrapper for the original Array#replace method. It serves

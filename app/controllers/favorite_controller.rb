@@ -18,7 +18,7 @@ class FavoriteController < ApplicationController
     
     set_title "#{@user.pretty_name}'s Favorites"
     
-    @pages, @posts = paginate :posts, :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", @user.id], :select => "posts.*"
+    @posts = Post.paginate :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", @user.id], :select => "posts.*"
 
     respond_to do |fmt|
       fmt.html

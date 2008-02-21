@@ -51,7 +51,7 @@
 </table>
 
 <div id="paginator">
-  <%= custom_pagination_links(@pages, :params => {:controller => "tag", :action => "index", :order => params[:order], :type => params[:type], :name => params[:name]}) %>
+  <%= will_paginate(@tags) %>
 </div>
 
 <%= render :partial => "footer" %>

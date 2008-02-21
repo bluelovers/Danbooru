@@ -8,7 +8,7 @@ apt-get -y install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm 
 
 # Install Ruby gems
 for i in postgres diff-lcs html5 mongrel memcache-client aws-s3 gchartrb ; do gem install $i ; done
-gem install rails --version=1.2.6
+gem install rails --version=2.0.2
 gem install acts_as_versioned
 gem install superredcloth --source http://code.whytheluckystiff.net
 

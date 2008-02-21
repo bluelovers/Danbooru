@@ -44,7 +44,7 @@
   </table>
 
   <div id="paginator">
-    <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "index"}) %>
+    <%= will_paginate(@forum_posts) %>
   </div>
 
   <div id="footer">

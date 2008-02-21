@@ -219,6 +219,8 @@ class Post < ActiveRecord::Base
         conds << "ipt.tag_id IN (SELECT id FROM tags WHERE name IN (?))"
         cond_params << (q[:include] + q[:related])
       elsif q[:related].any?
+        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:related].size > CONFIG["tag_query_limit"]
+        
         q[:related].each_with_index do |rtag, i|
           joins << "JOIN posts_tags rpt#{i} ON rpt#{i}.post_id = p.id AND rpt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
           join_params << rtag
@@ -226,6 +228,7 @@ class Post < ActiveRecord::Base
       end
 
       if q[:exclude].any?
+        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
         q[:exclude].each_with_index do |etag, i|
           joins << "LEFT JOIN posts_tags ept#{i} ON p.id = ept#{i}.post_id AND ept#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
           conds << "ept#{i}.tag_id IS NULL"
@@ -322,12 +325,12 @@ class Post < ActiveRecord::Base
   
   module CountMethods
     module ClassMethods
-      def fast_count(tags = nil, force_calculation = true)
+      def fast_count(tags = nil)
         if tags.blank?
           return connection.select_value("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
         else
           c = connection.select_value(sanitize_sql(["SELECT post_count FROM tags WHERE name = ?", tags])).to_i
-          if c == 0 && force_calculation
+          if c == 0
             return Post.count_by_sql(Post.generate_sql(tags, :count => true))
           else
             return c

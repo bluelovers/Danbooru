@@ -181,9 +181,9 @@ class PostController < ApplicationController
   
   def deleted_index
     if params[:user_id]
-      @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted' and user_id = ? ", params[:user_id]]
+      @posts = Post.paginate(:per_page => 25, :order => "id DESC", :select => "posts.deletion_reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["status = 'deleted' AND user_id = ?", params[:user_id]], :page => params[:page])
     else
-      @pages, @posts = paginate :posts, :order => "id desc", :per_page => 25, :select => "deletion_reason, cached_tags, id, user_id", :conditions => ["status = 'deleted'"]
+      @posts = Post.paginate(:per_page => 25, :order => "id DESC", :select => "posts.deletion_reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["status = 'deleted'"], :page => params[:page])
     end
   end
 
@@ -198,127 +198,55 @@ class PostController < ApplicationController
 
     set_title "/" + tags.tr("_", " ")
 
-    if @current_user.is_anonymous?
-      if CONFIG["show_only_first_page"] && page > 1
-        flash[:notice] = "You need an account to look beyond the first page."
-        redirect_to :controller => "user", :action => "login"
-        return
-      end
-
-      if split_tags.size > 1
-        flash[:notice] = "You need an account to search for more than one tag at once."
-        redirect_to :controller => "user", :action => "login"
-        return
-      end
-
-    elsif !@current_user.is_privileged_or_higher?
-      if split_tags.size > 2
-        flash[:notice] = "You need a privileged account to search for more than two tags at once."
-        redirect_to :controller => "user", :action => "login"
-        return
-      end
+    if @current_user.is_anonymous? && CONFIG["show_only_first_page"] && page > 1
+      flash[:notice] = "You need an account to look beyond the first page."
+      redirect_to :controller => "user", :action => "login"
+      return
     end
 
     @ambiguous = Tag.select_ambiguous(tags)
     
-    if !@current_user.is_privileged_or_higher?
-      count = Post.fast_count(tags, false)
-    else
-      count = Post.fast_count(tags)
-    end
-
-    if count > 0
-      @pages = Paginator.new(self, count, limit, page)
-      if !@pages.has_page_number?(page)
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Invalid page"; redirect_to(:action => "index", :id => params[:tags])}
-          fmt.xml {render :xml => {:success => false, :reason => "invalid page"}.to_xml(:root => "response"), :status => 404}
-          fmt.js {render :json => {:success => false, :reason => "invalid page"}.to_json, :status => 404}
-        end
-        return
-      end
-      @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
-    else
-      @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))
-    end
-
-    if @posts.empty? && split_tags.any? && page == 1
-      @suggestions = Tag.find(:all, :select => "name", :conditions => ["name LIKE ? ESCAPE '\\\\'", "%" + tags.to_escaped_for_sql_like + "%"], :order => "name", :limit => 10).map {|x| x.name}
-    else
-      @suggestions = []
+    @posts = WillPaginate::Collection.create(page, limit, Post.fast_count(tags)) do |pager|
+      pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
 
     respond_to do |fmt|
       fmt.html do        
         if split_tags.any?
           @tags = Tag.parse_query(tags)
-        else
-          if CONFIG["enable_caching"]
-            @tags = Cache.get("$poptags", 1.day) do
-              {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25)}
-            end
-          else
-            @tags = {:include => Tag.count_by_period(3.days.ago, Time.now, :limit => 25)}
+        elsif CONFIG["enable_caching"]
+          @tags = Cache.get("$poptags", 1.hour) do
+            {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
           end
+        else
+          @tags = {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
         end
       end
       fmt.xml do
         x = Builder::XmlMarkup.new(:indent => 2)
         x.instruct!
-        render :xml => x.posts(:count => count, :offset => (limit * (page - 1))) {
-          @posts.each { |e|
+        render :xml => x.posts(:count => count, :offset => (limit * (page - 1))) do
+          @posts.each do |e|
             e.to_xml(:builder => x, :skip_instruct => true)
-          }
-        }
+          end
+        end
       end
       fmt.js {render :json => @posts.to_json}
     end
   end
 
   def atom
-    if !@current_user.is_privileged_or_higher? && params[:tags].to_s.scan(/\s+/).size > 2
-      render :nothing => true, :status => 500
-      return
-    end
-    
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
-    @headers["Content-Type"] = "application/atom+xml"
+    headers["Content-Type"] = "application/atom+xml"
     render :layout => false
   end
 
   def piclens
-    if !@current_user.is_privileged_or_higher? && params[:tags].to_s.scan(/\s+/).size > 2
-      render :nothing => true, :status => 500
-      return
-    end
- 
-    @tags = params[:tags].to_s
-    page = params[:page].to_i
-    limit = 16
-    page = 1 if page < 1
-
-    if !@current_user.is_privileged_or_higher?
-      count = Post.fast_count(@tags, false)
-    else
-      count = Post.fast_count(@tags)
-    end
-
-    if count > 0
-      @pages = Paginator.new(self, count, limit, page)
-      if !@pages.has_page_number?(page)
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Invalid page"; redirect_to(:action => "index", :id => params[:tags])}
-          fmt.xml {render :xml => {:success => false, :reason => "invalid page"}.to_xml(:root => "response"), :status => 404}
-          fmt.js {render :json => {:success => false, :reason => "invalid page"}.to_json, :status => 404}
-        end
-        return
-      end
-      @posts = Post.find_by_sql(Post.generate_sql(@tags, :order => "p.id DESC", :offset => @pages.current.offset, :limit => @pages.items_per_page))
-    else
-      @posts = Post.find_by_sql(Post.generate_sql(@tags, :order => "p.id DESC", :offset => (limit * (page -1)), :limit => limit))
+    @posts = WillPaginate::Collection.create(params[:page], 16, Post.fast_count(params[:tags])) do |pager|
+      pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     
-    @headers["Content-Type"] = "application/rss+xml"
+    headers["Content-Type"] = "application/rss+xml"
     render :layout => false
   end
 

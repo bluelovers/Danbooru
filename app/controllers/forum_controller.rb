@@ -82,7 +82,7 @@ class ForumController < ApplicationController
   def show
     @forum_post = ForumPost.find(params[:id])
     set_title @forum_post.title
-    @pages, @children = paginate :forum_posts, :order => "id", :per_page => 10, :conditions => ["parent_id = ?", params[:id]]
+    @children = ForumPost.paginate :order => "id", :per_page => 10, :conditions => ["parent_id = ?", params[:id]]
 
     if !@current_user.is_anonymous? && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 3.seconds.ago
       @current_user.update_attribute(:last_forum_topic_read_at, @forum_post.updated_at)
@@ -99,9 +99,9 @@ class ForumController < ApplicationController
     set_title CONFIG["app_name"] + " Forum"
   
     if params[:parent_id]
-      @pages, @forum_posts = paginate :forum_posts, :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]]
+      @forum_posts = ForumPost.paginate :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]]
     else
-      @pages, @forum_posts = paginate :forum_posts, :order => "is_sticky desc, updated_at DESC", :per_page => 20, :conditions => "parent_id IS NULL"
+      @forum_posts = ForumPost.paginate :order => "is_sticky desc, updated_at DESC", :per_page => 20, :conditions => "parent_id IS NULL"
     end
 
     respond_to do |fmt|
@@ -114,9 +114,9 @@ class ForumController < ApplicationController
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @pages, @forum_posts = paginate :forum_posts, :order => "id desc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
+      @forum_posts = ForumPost.paginate :order => "id desc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
     else
-      @pages, @forum_posts = paginate :forum_posts, :order => "id desc", :per_page => 25
+      @forum_posts = ForumPost.paginate :order => "id desc", :per_page => 25
     end
     
     respond_to do |fmt|

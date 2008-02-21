@@ -153,7 +153,7 @@ class ApplicationController < ActionController::Base
   end
   
   def init_cookies
-    if @current_user
+    unless @current_user.is_anonymous?
       if @current_user.has_mail?
         cookies["has_mail"] = "1"
       else

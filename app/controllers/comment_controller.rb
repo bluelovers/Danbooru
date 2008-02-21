@@ -92,7 +92,7 @@ class CommentController < ApplicationController
 
     respond_to do |fmt|
       fmt.html do
-        @pages, @posts = paginate :posts, :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10
+        @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10
         
         if !@current_user.is_privileged_or_higher?
           if CONFIG["hide_loli_posts"]

@@ -34,11 +34,9 @@
     </tbody>
   </table>
 
-  <% if @pages %>
-    <div id="paginator">
-      <%= custom_pagination_links(@pages, :params => {:controller => "user_record", :action => "index"}) %>
-    </div>
-  <% end %>
+  <div id="paginator">
+    <%= will_paginate(@user_records) %>
+  </div>
 
   <%= render :partial => "footer" %>  
 </div>

@@ -82,12 +82,12 @@ CONFIG["hide_loli_posts"] = false
 # TAKES EFFECT IN DANBOORU 1.13.0
 # Defines the various user levels. You should not remove any of the default ones. When Danbooru starts up, the User model will have several methods automatically defined based on what this config contains. For this reason you should only use letters, numbers, and spaces (spaces will be replaced with underscores). Example: is_member?, is_member_or_lower?, is_member_or_higher?
 CONFIG["user_levels"] = {
-  "Unactivated" => -1,
-  "Blocked" => 0,
-  "Member" => 2,
-  "Privileged" => 3,
-  "Mod" => 10,
-  "Admin" => 20
+  "Unactivated" => 0,
+  "Blocked" => 10,
+  "Member" => 20,
+  "Privileged" => 30,
+  "Mod" => 40,
+  "Admin" => 50
 }
 
 # TAKES EFFECT IN DANBOORU 1.13.0
@@ -123,3 +123,8 @@ end
 
 # Enable the artists interface.
 CONFIG["enable_artists"] = true
+
+CONFIG["session_secret_key"] = "This should be at least 30 characters long"
+
+# Users cannot search for more than X regular tags at a time.
+CONFIG["tag_query_limit"] = 4

@@ -328,36 +328,3 @@ class User < ActiveRecord::Base
   end
 end
 
-# This is a proxy class to make various nil checks unnecessary
-class AnonymousUser
-  def id
-    0
-  end
-  
-  def name
-    "Anonymous"
-  end
-  
-  def is_anonymous?
-    true
-  end
-  
-  def has_permission?(obj, foreign_key)
-    false
-  end
-  
-  CONFIG["user_levels"].each do |name, value|
-    normalized_name = name.downcase.gsub(/ /, "_")
-    define_method("is_#{normalized_name}?") do
-      false
-    end
-
-    define_method("is_#{normalized_name}_or_higher?") do
-      false
-    end
-
-    define_method("is_#{normalized_name}_or_lower?") do
-      false
-    end
-  end
-end

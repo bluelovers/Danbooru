@@ -7,7 +7,7 @@ class NoteController < ApplicationController
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @pages, @notes = paginate :notes, :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
+      @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query]
 
       respond_to do |fmt|
         fmt.html
@@ -21,9 +21,9 @@ class NoteController < ApplicationController
     set_title "Notes"
     
     if params[:post_id]
-      @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100
+      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100
     else
-      @pages, @posts = paginate :posts, :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 16
+      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 16
     end
 
     respond_to do |fmt|
@@ -37,17 +37,13 @@ class NoteController < ApplicationController
     set_title "Note History"
 
     if params[:id]
-      @pages = Paginator.new self, NoteVersion.count(["note_id = ?", params[:id].to_i]), 25, params[:page]
-      @notes = NoteVersion.find(:all, :order => "id desc", :limit => @pages.items_per_page, :offset => @pages.current.offset, :conditions => ["note_id = ?", params[:id].to_i])
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id]])
     elsif params[:post_id]
-      @pages = Paginator.new self, NoteVersion.count(["post_id = ?", params[:post_id].to_i]), 50, params[:page]
-      @notes = NoteVersion.find(:all, :order => "id desc", :conditions => ["post_id = ?", params[:post_id].to_i], :offset => @pages.current.offset, :limit => @pages.items_per_page)
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["post_id = ?", params[:post_id]])
     elsif params[:user_id]
-      @pages = Paginator.new self, NoteVersion.count(["user_id = ?", params[:user_id]]), 50, params[:page]
-      @notes = NoteVersion.find(:all, :order => "note_id desc, version desc", :conditions => ["user_id = ?", params[:user_id]], :limit => @pages.items_per_page, :offset => @pages.current.offset)
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["user_id = ?", params[:user_id]])
     else
-      @pages = Paginator.new self, NoteVersion.count, 25, params[:page]
-      @notes = NoteVersion.find(:all, :order => "id desc", :limit => @pages.items_per_page, :offset => @pages.current.offset)
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC")
     end
     
     respond_to do |fmt|

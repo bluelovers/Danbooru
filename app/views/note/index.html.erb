@@ -2,7 +2,7 @@
   <%= render :partial => "post/posts", :locals => {:posts => @posts} %>
 
   <div id="paginator">
-    <%= custom_pagination_links(@pages) %>
+    <%= will_paginate(@posts) %>
   </div>
 
   <%= render :partial => "footer" %>

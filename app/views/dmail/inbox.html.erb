@@ -38,7 +38,7 @@
 <% end %>
 
 <div id="paginator" style="margin-bottom: 1em;">
-  <%= custom_pagination_links(@pages, :params => {:controller => "dmail", :action => "inbox"}) %>
+  <%= will_pagiante(@dmails) %>
 </div>
 
 <%= render :partial => "footer" %>

@@ -30,6 +30,8 @@ Rails::Initializer.run do |config|
   # Use Active Record's schema dumper instead of SQL when creating the test database
   # (enables use of different database adapters for development and test environments)
   # config.active_record.schema_format = :ruby
+  
+  config.action_controller.session = {:session_key => CONFIG["app_name"], :secret => CONFIG["session_secret_key"]}
 end
 
 ActiveRecord::Base.allow_concurrency = false
@@ -70,6 +72,4 @@ if CONFIG["enable_caching"]
   
   CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
   CACHE.servers = CONFIG["memcache_servers"]
-  ActionController::Base.session_store = :mem_cache_store
-  ActionController::CgiRequest::DEFAULT_SESSION_OPTIONS.merge!({"cache" => CACHE})
 end

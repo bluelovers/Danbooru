@@ -110,86 +110,33 @@ module ApplicationHelper
       "over #{(distance_in_minutes / 525960).round} years"
     end
   end
-
-  def fast_pagination_links(page, is_last_page, options = {})
-    links = []
-    params = options[:params]
-
-    page = page.to_i
-    page = 1 if page < 1
-
-    if page > 1
-      links << link_to("&lt;&lt;", params.merge(:page => page - 1), :class => "arrow")
-    end
-
-    if is_last_page == false
-      links << link_to("&gt;&gt;", params.merge(:page => page + 1), :class => "arrow")
-    end
-
-    return links.join(" ")
-  end
-
-  def custom_pagination_links(paginator, options = {})
-    options = {:link_to_current_page => false, :always_show_anchors => true, :window_size => 2, :params => {}}.merge(options)
-
-    link_to_current_page = options[:link_to_current_page]
-    always_show_anchors = options[:always_show_anchors]
-    params = options[:params]
-    current_page = paginator.current_page
-    window_pages = current_page.window(options[:window_size]).pages
-
-    return if window_pages.length <= 1
-
-    first, last = paginator.first, paginator.last
-    html = ''
-
-    unless current_page.first?
-      html << link_to("&lt;&lt;", params.merge(:page => current_page.number - 1), :class => "arrow")
-    end
-
-    if always_show_anchors and not (wp_first = window_pages[0]).first?
-      html << link_to(first.number, params.merge(:page => first.number))
-      html << ' ... ' if wp_first.number - first.number > 1
-      html << ' '
-    end
-
-    window_pages.each do |page|
-      if current_page == page && !link_to_current_page
-        html << content_tag(:span, number_with_delimiter(page.number))
-      else
-        html << link_to(number_with_delimiter(page.number), params.merge(:page => page.number))
-      end
-      html << ' '
-    end
-
-    if always_show_anchors and not (wp_last = window_pages[-1]).last?
-      html << ' ... ' if last.number - wp_last.number > 1
-      html << link_to(number_with_delimiter(last.number), params.merge(:page => last.number))
-    end
-
-    unless current_page.last?
-      html << link_to("&gt;&gt;", params.merge(:page => current_page.number + 1), :class => "arrow")
-    end
-
-    html
-  end
-
-  # this assumes the paginator is called @pages
-  def navigation_links
+  
+  def navigation_links(post)
     html = []
-    if @pages
-      unless @pages.current.first?
-        html << yield('first', 'First Page',  params.merge(:page => @pages.first))
-        html << yield('prev', 'Previous Page',  params.merge(:page => @pages.current.number - 1))
+    
+    if post.is_a?(Post)
+      if post.prev_post_id
+        html << tag("link", :rel => "prev", :title => "Previous Post", :href => url_for(:controller => "post", :action => "show", :id => post.prev_post_id))
       end
-      unless @pages.current.last?
-        html << yield('next', 'Next Page',  params.merge(:page => @pages.current.number + 1))
-        html << yield('last', 'Last Page',  params.merge(:page => @pages.last))
+      
+      if post.next_post_id
+        html << tag("link", :rel => "next", :title => "Next Post", :href => url_for(:controller => "post", :action => "show", :id => post.next_post_id))
       end
-    elsif @post
-      html << yield('prev', 'Previous Post', :controller => "post", :action => "show", :id => @post.prev_post_id) if @post.prev_post_id
-      html << yield('next', 'Next Post', :controller => "post", :action => "show", :id => @post.next_post_id) if @post.next_post_id
+      
+    elsif post.is_a?(Array)
+      posts = post
+      
+      unless posts.previous_page.nil?
+        html << tag("link", params.merge(:page => 1, :rel => "first", :title => "First Page"))
+        html << tag("link", params.merge(:page => posts.previous_page, :rel => "prev", :title => "Previous Page"))
+      end
+
+      unless posts.next_page.nil?
+        html << tag("link", params.merge(:page => posts.next_page, :rel => "next", :title => "Next Page"))
+        html << tag("link", params.merge(:page => posts.page_count, :rel => "last", :title => "Last Page"))
+      end
     end
-    html.join("\n")
+
+    return html.join("\n")
   end
 end

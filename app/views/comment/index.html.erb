@@ -34,7 +34,7 @@
   <% end %>
 
   <div id="paginator">
-    <%= custom_pagination_links(@pages)  %>
+    <%= will_paginate(@comments) %>
   </div>
   
   <script type="text/javascript">

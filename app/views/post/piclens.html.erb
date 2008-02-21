@@ -4,23 +4,21 @@
 	<title><%= h CONFIG["app_name"] %>/<%= h params[:tags] %></title>
 	<link>http://<%= h CONFIG["server_host"] %>/</link>
 	<description><%= h CONFIG["app_name"] %>PicLens RSS Feed</description>
-	<%- if !@pages.nil? -%>
-	<%- 	if !@pages.current.first? -%>
-	<atom:link rel="previous" href="<%= url_for :only_path => false, :controller => 'post', :action => 'piclens', :page => @pages.current.number-1, :tags => @tags %>"/>
-	<%- 	end -%>
-	<%- 	if !@pages.current.last? -%>
-	<atom:link rel="next" href="<%= url_for :only_path => false, :controller => 'post', :action => 'piclens', :page => @pages.current.number+1, :tags => @tags %>"/>
-	<%- 	end -%>
-	<%- end -%>
+	<% unless @posts.is_first_page? %>
+	  <%= tag("atom:link", :rel => "previous", :href => url_for(:only_path => false, :controller => "post", :action => "piclens", :page => @posts.previous_page, :tags => params[:tags])) %>
+	<% end %>
+	<% unless @posts.is_last_page? %>
+    <%= tag("atom:link", :rel => "next", :href => url_for(:only_path => false, :controller => "post", :action => "piclens", :page => @posts.next_page, :tags => params[:tags])) %>
+  <% end %>
 
-	<%- @posts.each do |post| -%>
-	<item>
-		<title><%= h post.cached_tags %></title>
-		<link>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></link>
-		<guid>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></guid>
-		<media:thumbnail url="<%= post.preview_url %>"/>
-		<media:content url="<%= post.file_url %>" type=""/>
-	</item>
-	<%- end -%>
+	<% @posts.each do |post| %>
+  	<item>
+  		<title><%= h post.cached_tags %></title>
+  		<link>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></link>
+  		<guid>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></guid>
+  		<media:thumbnail url="<%= post.preview_url %>"/>
+  		<media:content url="<%= post.file_url %>" type=""/>
+  	</item>
+	<% end %>
 </channel>
 </rss>

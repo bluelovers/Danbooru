@@ -26,6 +26,6 @@
   </table>
 
   <div id="paginator">
-    <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "search", :query => params[:query]}) %>
+    <%= will_paginate(@forum_posts) %>
   </div>
 </div>

@@ -25,10 +25,8 @@
   </tbody>
 </table>
 
-<% if @pages %>
-  <div id="paginator">
-    <%= custom_pagination_links(@pages, :params => {:controller => "note", :action => "history", :user_id => params[:user_id], :post_id => params[:post_id]}) %>
-  </div>
-<% end %>
+<div id="paginator">
+  <%= will_paginate(@notes) %>
+</div>
 
 <%= render :partial => "footer" %>

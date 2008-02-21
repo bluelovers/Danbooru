@@ -14,7 +14,7 @@
   <% end %>
 
   <div id="paginator">
-    <%= custom_pagination_links(@pages, :params => {:controller => "forum", :action => "show", :id => params[:id]}) %>
+    <%= will_paginate(@children) %>
   </div>
 
   <div id="footer">
