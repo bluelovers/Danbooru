@@ -60,7 +60,7 @@ class TagController < ApplicationController
     
     respond_to do |fmt|
       fmt.html do
-        @pages, @tags = paginate :tags, :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params]
+        @tags = Tag.paginate :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params], :page => params[:page]
       end
       fmt.xml do
         order = nil if params[:order] == nil

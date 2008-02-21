@@ -96,7 +96,7 @@ class ArtistController < ApplicationController
       elsif params[:name] =~ /^[a-fA-F0-9]{32,32}$/
         @artists = Artist.find_all_by_md5(params[:name])
       else
-        @artists = Artist.paginate :conditions => ["name ILIKE ? ESCAPE '\\\\'", '%' + params[:name].to_escaped_for_sql_like + '%'], :order => "name", :per_page => 50
+        @artists = Artist.paginate :conditions => ["name ILIKE ? ESCAPE '\\\\'", '%' + params[:name].to_escaped_for_sql_like + '%'], :order => "name", :per_page => 50, :page => params[:page]
       end
     elsif params[:url]
       @artists = Artist.find_all_by_url(params[:url])
@@ -109,7 +109,7 @@ class ArtistController < ApplicationController
         order = "name"
       end
 
-      @artists = Artist.paginate :order => order, :per_page => 25
+      @artists = Artist.paginate :order => order, :per_page => 25, :page => params[:page]
     end
 
     respond_to do |fmt|

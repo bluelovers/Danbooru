@@ -36,9 +36,9 @@ class TagImplicationController < ApplicationController
     
     if params[:query]
       name = "%" + params[:query].to_escaped_for_sql_like + "%"
-      @implications = TagImplication.paginate :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50, :conditions => ["predicate_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\') OR consequent_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\')", name, name]
+      @implications = TagImplication.paginate :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50, :conditions => ["predicate_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\') OR consequent_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE '\\\\')", name, name], :page => params[:page]
     else
-      @implications = TagImplication.paginate :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50
+      @implications = TagImplication.paginate :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 50, :page => params[:page]
     end
 
     respond_to do |fmt|

@@ -26,8 +26,8 @@
               <% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %> 
             <% end %>
 
-            <% if fp.children_count > 10 %>
-              <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.children_count / 10.0).ceil}, :class => "last-page" %>
+            <% if fp.response_count > 10 %>
+              <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.response_count / 10.0).ceil}, :class => "last-page" %>
             <% end %>
 
             <% if fp.is_locked? %>
