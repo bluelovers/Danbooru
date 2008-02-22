@@ -49,7 +49,12 @@
                 <p>You can enter a URL here to download from a website.</p>
               <% end %>
             </th>
-            <td><%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %> <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %></td>
+            <td>
+              <%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %>
+              <% if CONFIG["enable_artists"] %>
+                <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+              <% end %>
+            </td>
           </tr>
           <tr>
             <th>
