@@ -15,7 +15,7 @@
         <td><%= link_to post.id, :action => "show", :id => post.id %></td>
         <td><%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></td>
         <td><%= h(post.cached_tags) %></td>
-        <td><%= h(post.deletion_reason) %></td>
+        <td><%= h(post.reason) %></td>
       </tr>
     <% end %>
   </tbody>

@@ -672,6 +672,7 @@ class Post < ActiveRecord::Base
   has_many :comments, :order => "id"
   has_many :notes, :order => "id desc"
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
+  has_one :flag_detail, :class_name => "FlaggedPostDetail", :table_name => "flagged_post_details"
   belongs_to :user
   
   include NeighborMethods
@@ -711,6 +712,20 @@ class Post < ActiveRecord::Base
     include ParentMethods
     after_save :update_parent
     validate :validate_parent
+  end
+  
+  def self.destroy_with_reason(id, reason, current_user)
+    flag_detail = FlaggedPostDetail.find_by_post_id(id)
+    
+    if flag_detail
+      if !reason.blank?
+        flag_detail.update(:user_id => current_user.id, :reason => reason)
+      end
+    else
+      FlaggedPostDetail.create(:post_id => id, :reason => reason, :user_id => current_user.id)
+    end
+    
+    Post.destroy(id)
   end
     
   def validate_content_type

@@ -102,10 +102,9 @@ class PostController < ApplicationController
         if params[:ids]
           params[:ids].keys.each do |post_id|
             if params[:commit] == "Approve"
-              Post.update(post_id, :status => "active", :approved_by => @current_user.id)
+              Post.update(post_id, :status => "active")
             elsif params[:commit] == "Delete"
-              Post.update(post_id, :deletion_reason => (params[:reason] || params[:reason2])) unless params[:reason].blank? && params[:reason2].blank?
-              Post.destroy(post_id)
+              Post.destroy_with_reason(post_id, params[:reason] || params[:reason2], @current_user)
             end
           end
         end
@@ -155,14 +154,10 @@ class PostController < ApplicationController
     @post = Post.find(params[:id])
 
     if @current_user.has_permission?(@post)
-      unless params[:reason].blank?
-        @post.update_attribute(:deletion_reason, params[:reason])
-      end
-
-      if @post.status == "deleted" || @post.user_id == @current_user.id
+      if @post.status == "deleted"
         @post.delete_from_database
       else
-        @post.destroy
+        Post.destroy_with_reason(@post.id, params[:reason], @current_user)
       end
 
       respond_to do |fmt|
@@ -181,9 +176,9 @@ class PostController < ApplicationController
   
   def deleted_index
     if params[:user_id]
-      @posts = Post.paginate(:per_page => 25, :order => "id DESC", :select => "posts.deletion_reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["status = 'deleted' AND user_id = ?", params[:user_id]], :page => params[:page])
+      @posts = Post.paginate(:per_page => 25, :order => "id DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ?", params[:user_id]], :page => params[:page])
     else
-      @posts = Post.paginate(:per_page => 25, :order => "id DESC", :select => "posts.deletion_reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["status = 'deleted'"], :page => params[:page])
+      @posts = Post.paginate(:per_page => 25, :order => "id DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted'"], :page => params[:page])
     end
   end
 
@@ -392,10 +387,11 @@ class PostController < ApplicationController
   end
   
   def flag
-    @post = Post.find(params[:id])
-    @post.status = 'flagged'
-    @post.deletion_reason = params[:reason]
-    @post.save
+    @flag_detail = FlaggedPostDetail.find_by_post_id(params[:id])
+    
+    unless @flag_detail
+      FlaggedPostDetail.create(:post_id => params[:id], :reason => params[:reason], :user_id => @current_user.id)
+    end
     
     respond_to do |fmt|
       fmt.js {render :json => {:success => true}.to_json}

@@ -4,7 +4,7 @@
   <% else %>
     <% if @post.is_flagged? %>
       <div class="status-notice">
-        This post was flagged for deletion. Reason: <%= format_text(@post.deletion_reason, :skip_simple_format => true) %>
+        This post was flagged for deletion. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>
       </div>
     <% elsif @post.is_pending? %>
       <div class="status-notice">
@@ -12,7 +12,7 @@
       </div>
     <% elsif @post.is_deleted? %>
       <div class="status-notice">
-        This post was deleted. Reason: <%= format_text(@post.deletion_reason, :skip_simple_format => true) %>. MD5: <%= @post.md5 %>
+        This post was deleted. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>. MD5: <%= @post.md5 %>
       </div>
     <% end %>
 
@@ -60,9 +60,6 @@
           <li>Rating: <%= @post.pretty_rating %></li>
           <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
           <li id="favorited-by">Favorited by: <%= favorite_list(@post.favorited_by) %></li>
-          <% if @post.approved_by && @current_user.is_mod_or_higher? %>
-            <li>Approved by: <%= h User.find(@post.approved_by).name %></li>
-          <% end %>
         </ul>
       </div>
       <div>

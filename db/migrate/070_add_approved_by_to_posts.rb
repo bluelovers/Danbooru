@@ -5,6 +5,6 @@ class AddApprovedByToPosts < ActiveRecord::Migration
   end
 
   def self.down
-    drop_column :posts, :approved_by
+    remove_column :posts, :approved_by
   end
 end
