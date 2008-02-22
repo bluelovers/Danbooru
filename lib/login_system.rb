@@ -60,14 +60,6 @@ module LoginSystem
     end
     
     if @current_user
-      if @current_user.ip_addr != request.remote_ip
-        @current_user.update_attribute(:ip_addr, request.remote_ip)
-      end
-      
-      if @current_user.last_logged_in_at < 1.week.ago
-        @current_user.update_attribute(:last_logged_in_at, Time.now)
-      end
-      
       if @current_user.is_blocked? && @current_user.ban.expires_at < Time.now
         @current_user.update_attribute(:level, CONFIG["starting_level"])
         Ban.destroy_all("user_id = #{@current_user.id}")

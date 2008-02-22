@@ -297,7 +297,6 @@ class User < ActiveRecord::Base
     
     pass << rand(100).to_s
 
-    connection.execute("UPDATE users SET login_count = 0 WHERE id = #{self.id}")
     connection.execute(User.sanitize_sql(["UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), self.id]))
     return pass
   end

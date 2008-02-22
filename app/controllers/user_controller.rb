@@ -118,7 +118,6 @@ class UserController < ApplicationController
 
   def authenticate
     save_cookies(@current_user)
-    @current_user.increment! :login_count
     
     respond_to do |fmt|
       fmt.html {flash[:notice] = "You are now logged in"; redirect_to(:action => "home")}
@@ -134,7 +133,6 @@ class UserController < ApplicationController
   def create
     user = User.new(params[:user])
     user.name = params[:user][:name]
-    user.ip_addr = request.remote_ip
     user.save
 
     if user.errors.empty?
