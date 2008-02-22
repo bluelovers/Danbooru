@@ -195,6 +195,7 @@ class PostController < ApplicationController
     limit = params[:limit].to_i
     limit = 16 if limit == 0
     limit = 1000 if limit > 1000
+    count = Post.fast_count(tags)
 
     set_title "/" + tags.tr("_", " ")
 
@@ -206,7 +207,7 @@ class PostController < ApplicationController
 
     @ambiguous = Tag.select_ambiguous(tags)
     
-    @posts = WillPaginate::Collection.create(page, limit, Post.fast_count(tags)) do |pager|
+    @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
 
@@ -223,13 +224,15 @@ class PostController < ApplicationController
         end
       end
       fmt.xml do
-        x = Builder::XmlMarkup.new(:indent => 2)
-        x.instruct!
-        render :xml => x.posts(:count => count, :offset => (limit * (page - 1))) do
-          @posts.each do |e|
-            e.to_xml(:builder => x, :skip_instruct => true)
+        builder = Builder::XmlMarkup.new(:indent => 2)
+        builder.instruct!
+        
+        xml = builder.posts(:count => count, :offset => (limit * (page - 1))) do
+          @posts.each do |post|
+            post.to_xml(:builder => builder, :skip_instruct => true, :root => "post")
           end
         end
+        render :xml => xml
       end
       fmt.js {render :json => @posts.to_json}
     end

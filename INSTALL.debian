@@ -15,10 +15,9 @@ gem install superredcloth --source http://code.whytheluckystiff.net
 # Create danbooru account
 echo "Creating danbooru user account..."
 useradd -m danbooru
-cat <<EOS > /etc/postgresql/8.3/main/pg_hba.conf
-local    all         postgres,danbooru                              trust
-host     all         postgres,danbooru          127.0.0.1/32        trust
-EOS
+PG_HBA_FILE="/etc/postgresql/8.3/main/pg_hba.conf"
+echo "local    all         postgres,danbooru                              trust" > $PG_HBA_FILE
+echo "host     all         postgres,danbooru          127.0.0.1/32        trust" >> $PG_HBA_FILE
 /etc/init.d/postgresql restart
 
 # Install Danbooru
@@ -29,75 +28,64 @@ cd config
 cp database.yml.example database.yml
 cp local_config.rb.example local_config.rb
 sed -i -e "s/DAN_HOSTNAME/$hostname/g" local_config.rb
-cat <<EOS > mongrel_cluster.yml
---- 
-cwd: /var/www/danbooru
-port: "8050"
-environment: production
-address: 127.0.0.1
-servers: 3
-num_processors: 10
-EOS
+echo "--- " > mongrel_cluste.ryml
+echo "cwd: /var/www/danbooru" >> mongrel_cluster.yml
+echo "port: \"8050\"" >> mongrel_cluster.yml
+echo "environment: production" >> mongrel_cluster.yml
+echo "address: 127.0.0.1" >> mongrel_cluster.yml
+echo "servers: 3" >> mongrel_cluster.yml
+echo "num_processors: 10" >> mongrel_cluster.yml
 cd ..
 mongrel_rails cluster::start
 
 # Set up nginx
-cat <<EOS > /etc/nginx/sites-enabled/danbooru.conf
-upstream mongrel {
-  server 127.0.0.1:8050;
-  server 127.0.0.1:8051;
-  server 127.0.0.1:8052;
-}
-server {
-  listen 80;
-  server_name $hostname;
-  root /var/www/danbooru/public;
-  index index.html;
-  access_log /var/www/danbooru/log/server.access.log;
-  error_log /var/www/danbooru/log/server.error.log;
-  client_max_body_size 30m;
-
-  location /stylesheets {
-    expires max;
-    break;
-  }
-
-  location /javascripts {
-    expires max;
-    break;
-  }
-
-  location /data {
-    valid_referers none $hostname;
-    if (\$invalid_referer) {
-      return 403;
-    }
-    expires max;
-    break;
-  }
-
-  location /maintenance.html {
-    expires 10;
-   }
-
-  if (-f \$document_root/maintenance.html) {
-    rewrite ^(.*)\$ /maintenance.html last;
-    break;
-  }
-
-  location / {
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header Host \$http_host;
-    proxy_redirect false;
-
-    if (!-f \$request_filename) {
-      proxy_pass http://mongrel;
-    }
-  }
-
-  error_page 404 /404.html;
-  error_page 500 502 503 504 /500.html;
-}
-EOS
+DANBOORU_CONF_FILE="/etc/nginx/sites-enabled/danbooru.conf"
+echo "upstream mongrel {" > $DANBOORU_CONF_FILE
+echo "  server 127.0.0.1:8050;" >> $DANBOORU_CONF_FILE
+echo "  server 127.0.0.1:8051;" >> $DANBOORU_CONF_FILE
+echo "  server 127.0.0.1:8052;" >> $DANBOORU_CONF_FILE
+echo "}" >> $DANBOORU_CONF_FILE
+echo "server {" >> $DANBOORU_CONF_FILE
+echo "  listen 80;" >> $DANBOORU_CONF_FILE
+echo "  server_name $hostname;" >> $DANBOORU_CONF_FILE
+echo "  root /var/www/danbooru/public;" >> $DANBOORU_CONF_FILE
+echo "  index index.html;" >> $DANBOORU_CONF_FILE
+echo "  access_log /var/www/danbooru/log/server.access.log;" >> $DANBOORU_CONF_FILE
+echo "  error_log /var/www/danbooru/log/server.error.log;" >> $DANBOORU_CONF_FILE
+echo "  client_max_body_size 30m;" >> $DANBOORU_CONF_FILE
+echo "  location /stylesheets {" >> $DANBOORU_CONF_FILE
+echo "    expires max;" >> $DANBOORU_CONF_FILE
+echo "    break;" >> $DANBOORU_CONF_FILE
+echo "  }" >> $DANBOORU_CONF_FILE
+echo "  location /javascripts {" >> $DANBOORU_CONF_FILE
+echo "    expires max;" >> $DANBOORU_CONF_FILE
+echo "    break;" >> $DANBOORU_CONF_FILE
+echo "  }" >> $DANBOORU_CONF_FILE
+echo "  location /data {" >> $DANBOORU_CONF_FILE
+echo "    valid_referers none $hostname;" >> $DANBOORU_CONF_FILE
+echo "    if (\$invalid_referer) {" >> $DANBOORU_CONF_FILE
+echo "      return 403;" >> $DANBOORU_CONF_FILE
+echo "    }" >> $DANBOORU_CONF_FILE
+echo "    expires max;" >> $DANBOORU_CONF_FILE
+echo "    break;" >> $DANBOORU_CONF_FILE
+echo "  }" >> $DANBOORU_CONF_FILE
+echo "  location /maintenance.html {" >> $DANBOORU_CONF_FILE
+echo "    expires 10;" >> $DANBOORU_CONF_FILE
+echo "   }" >> $DANBOORU_CONF_FILE
+echo "  if (-f \$document_root/maintenance.html) {" >> $DANBOORU_CONF_FILE
+echo "    rewrite ^(.*)\$ /maintenance.html last;" >> $DANBOORU_CONF_FILE
+echo "    break;" >> $DANBOORU_CONF_FILE
+echo "  }" >> $DANBOORU_CONF_FILE
+echo "  location / {" >> $DANBOORU_CONF_FILE
+echo "    proxy_set_header X-Real-IP \$remote_addr;" >> $DANBOORU_CONF_FILE
+echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >> $DANBOORU_CONF_FILE
+echo "    proxy_set_header Host \$http_host;" >> $DANBOORU_CONF_FILE
+echo "    proxy_redirect false;" >> $DANBOORU_CONF_FILE
+echo "    if (!-f \$request_filename) {" >> $DANBOORU_CONF_FILE
+echo "      proxy_pass http://mongrel;" >> $DANBOORU_CONF_FILE
+echo "    }" >> $DANBOORU_CONF_FILE
+echo "  }" >> $DANBOORU_CONF_FILE
+echo "  error_page 404 /404.html;" >> $DANBOORU_CONF_FILE
+echo "  error_page 500 502 503 504 /500.html;" >> $DANBOORU_CONF_FILE
+echo "}" >> $DANBOORU_CONF_FILE
 /etc/init.d/nginx restart
