@@ -261,6 +261,10 @@ class PostController < ApplicationController
         @post = Post.find(params[:id])
       end
       
+      unless CONFIG["can_see_post"].call(@current_user, @post)
+        raise ActiveRecord::RecordNotFound
+      end
+      
       @favorited_by = @post.favorited_by
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
@@ -279,11 +283,8 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
-    if @current_user.is_privileged_or_higher?
-      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
-    else
-      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
-    end
+    @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
+
     respond_to do |fmt|
       fmt.html
       fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
@@ -302,11 +303,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@start.year}/#{@start.month}/#{@start.day} - #{@end.year}/#{@end.month}/#{@end.day}"
 
-    if @current_user.is_privileged_or_higher?
-      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
-    else
-      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
-    end
+    @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
 
     respond_to do |fmt|
       fmt.html
@@ -326,11 +323,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@start.year}/#{@start.month}"
 
-    if @current_user.is_privileged_or_higher?
-      @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
-    else
-      @posts = Post.find(:all, :conditions => ["posts.rating = 's' AND posts.status = 'active' AND posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
-    end
+    @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
 
     respond_to do |fmt|
       fmt.html

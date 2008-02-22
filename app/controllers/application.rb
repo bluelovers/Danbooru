@@ -29,14 +29,15 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_key
-    case "#{controller_name}/#{action_name}"
-    when "post/index"
+    action = "#{controller_name}/#{action_name}"
+    
+    if action == "post/index"
       page = params[:page].to_i
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
       expiry = 0
       
       if tags.empty?
-        if page > 10
+        if page > 10 && CONFIG["enable_aggressive_caching"]
           expiry = (rand(4) + 3) * 1.day
           key = "p/i/p=#{page}"
         else
@@ -44,7 +45,7 @@ class ApplicationController < ActionController::Base
           key = "p/i/p=#{page}&v=#{cache_version}"
         end
       else
-        if page > 10
+        if page > 10 && CONFIG["enable_aggressive_caching"]
           expiry = (rand(4) + 3) * 1.day
           key = "p/i/p=#{page}&t=#{tags.join(',')}"
         else
@@ -59,7 +60,7 @@ class ApplicationController < ActionController::Base
       
       return [key, expiry]
       
-    when "post/atom"
+    elsif action == "post/atom"
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
       
       if tags.empty?
@@ -76,12 +77,12 @@ class ApplicationController < ActionController::Base
       
       return [key, 0]
       
-    when "post/piclens"
+    elsif action == "post/piclens"
       page = params[:page].to_i
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
       
       if tags.empty?
-        if page > 10
+        if page > 10 && CONFIG["enable_aggressive_caching"]
           expiry = (rand(4) + 3) * 1.day
           key = "p/p/p=#{page}"
         else
@@ -89,7 +90,7 @@ class ApplicationController < ActionController::Base
           key = "p/p/p=#{page}&v=#{cache_version}"
         end
       else
-        if page > 10
+        if page > 10 && CONFIG["enable_aggressive_caching"]
           expiry = (rand(4) + 3) * 1.day
           key = "p/p/p=#{page}&t=#{tags.join(',')}"
         else
@@ -104,18 +105,18 @@ class ApplicationController < ActionController::Base
       
       return [key, expiry]
       
-    when "post/show"
+    elsif action == "post/show" && CONFIG["enable_aggressive_caching"]
       if params[:md5]
         id = params[:md5]
       else
         id = params[:id]
       end
-      
+    
       key = "p/s/#{id}"
       return [key, 0]
     
     else
-      raise "Unknown action"
+      return nil
     end
   end
   
@@ -124,32 +125,26 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    # RubyProf.start
-    
-    if !@current_user.is_privileged_or_higher? && request.method == :get && !%w(xml js).include?(params[:format])
-      
+    if !@current_user.is_privileged_or_higher? && request.method == :get && params[:format] != "xml" && params[:format] != "js"      
       key, expiry = cache_key()
-      cached = Cache.get(key)
+      
+      if key
+        cached = Cache.get(key)
 
-      unless cached.blank?
-        render :text => cached, :layout => false
-        return false
+        unless cached.blank?
+          render :text => cached, :layout => false
+          return false
+        end
       end
 
       yield
 
-      if response.headers['Status'] =~ /^200/
+      if key && response.headers['Status'] =~ /^200/
         Cache.put(key, response.body, expiry)
       end
     else
       yield
     end
-    
-    # r = RubyProf.stop
-    # p = RubyProf::GraphHtmlPrinter.new(r)
-    # File.open("profile.html", "w") do |f|
-    #   p.print(f, 1)
-    # end
   end
   
   def init_cookies
@@ -181,10 +176,5 @@ class ApplicationController < ActionController::Base
       cookies["my_tags"] = @current_user.my_tags      
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags
     end
-  end
-  
-  public
-  def local_request?
-    false
   end
 end

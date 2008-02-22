@@ -93,20 +93,7 @@ class CommentController < ApplicationController
     respond_to do |fmt|
       fmt.html do
         @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10, :page => params[:page]
-        
-        if !@current_user.is_privileged_or_higher?
-          if CONFIG["hide_loli_posts"]
-            @posts.reject! {|x| x.is_loli?}
-          end
-          
-          if CONFIG["hide_questionable_posts"]
-            @posts.reject! {|x| x.rating != 's'}
-          end
-          
-          if CONFIG["hide_explicit_posts"]
-            @posts.reject! {|x| x.rating == 'e'}
-          end
-        end
+        @posts = @posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}
       end
       fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_xml(:root => "comments")}
       fmt.js {render :json => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_json}

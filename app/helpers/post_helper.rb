@@ -11,18 +11,8 @@ module PostHelper
   end
 
   def print_preview(post, options = {})
-    if @current_user.nil? || !@current_user.is_privileged_or_higher?
-      if CONFIG["hide_loli_posts"] && post.is_loli?
-        return ""
-      end
-
-      if CONFIG["hide_questionable_posts"] && post.rating != 's'
-        return ""
-      end
-      
-      if CONFIG["hide_explicit_posts"] && post.rating == 'e'
-        return ""
-      end
+    unless CONFIG["can_see_post"].call(@current_user, post)
+      return ""
     end
 
     image_class = "preview"

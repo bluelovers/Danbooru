@@ -17,7 +17,7 @@ CONFIG["enable_signups"] = true
 
 # Newly created users start at this level. Set this to 3 if you want everyone
 # to start out as a privileged member.
-CONFIG["starting_level"] = 2
+CONFIG["starting_level"] = 20
 
 # What method to use to store images.
 # local_flat: Store every image in one directory.
@@ -37,6 +37,11 @@ CONFIG["amazon_s3_bucket_name"] = ""
 
 # This enables various caching mechanisms. You must have memcache (and the memcache-client ruby gem) installed in order for caching to work.
 CONFIG["enable_caching"] = false
+
+# Enabling this will cause Danbooru to cache things longer:
+# - On post/index, any page after the first 10 will be cached for 3-7 days.
+# - post/show is cached
+CONFIG["enable_aggressive_caching"] = false
 
 # The server and port where the memcache client can be accessed. Only relevant if you enable caching.
 CONFIG["memcache_servers"] = ["localhost:4000"]
@@ -103,8 +108,8 @@ CONFIG["can_see_post"] = lambda do |user, post|
   # break post.has_tag?("loli") 
 end
 
-# Determines who can see ads. Action will be a symbol, either :show (for post/show) or :index (for post/index). For post/show, post_or_params will be the post. For post/index, post_or_params will be the parameters. Note that since this is a block, return won't work. Use break.
-CONFIG["can_see_ads"] = lambda do |user, action, post_or_params|
+# Determines who can see ads. Note that since this is a block, return won't work. Use break.
+CONFIG["can_see_ads"] = lambda do |user|
   # By default, only show ads to non-priv users.
   break user == nil || user.is_member_or_lower?
 end

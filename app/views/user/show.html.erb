@@ -96,20 +96,12 @@
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Favorites", :controller => "favorite", :action => "show", :id => @user.id %></h4>
-  <% if !@current_user.is_privileged_or_higher? %>
-    <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5).reject {|x| x.is_loli?}} %>
-  <% else %>
-    <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5)} %>
-  <% end %>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
-  <% if !@current_user.is_privileged_or_higher? %>
-    <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5).reject {|x| x.is_loli?}} %>
-  <% else %>
-    <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5)} %>
-  <% end %>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <div id="footer">

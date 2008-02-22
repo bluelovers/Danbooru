@@ -994,21 +994,7 @@ class Post < ActiveRecord::Base
   end
   
   def can_view?(user)
-    if user == nil || !user.is_privileged_or_higher?
-      if CONFIG["hide_explicit_posts"] && self.rating == 'e'
-        return false
-      elsif CONFIG["hide_questionable_posts"] && self.rating != 's'
-        return false
-      elsif CONFIG["hide_loli_posts"] && self.is_loli?
-        return false
-      end
-    end
-    
-    return true
-  end
-  
-  def is_loli?
-    return self.cached_tags =~ /\b(?:loli|shota)\b/
+    return CONFIG["can_see_post"].call(user, self)
   end
   
   def has_tag?(tag)

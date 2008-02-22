@@ -136,5 +136,12 @@ module WillPaginate
         end
       end
     end
+    
+    def select(&block)
+      arr = super(&block)
+      copy = Collection.new(@current_page, @per_page, @total_entries)
+      copy.replace(arr)
+      return copy
+    end
   end
 end

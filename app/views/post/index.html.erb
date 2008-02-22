@@ -7,7 +7,7 @@
 
   <div class="sidebar">
     <%= render :partial => "search" %>
-    <% unless @current_user.is_privileged_or_higher? %>
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
       <%= CONFIG["ad_code_index_side"] %>
     <% end %>
     <div style="margin-bottom: 1em;">
@@ -38,7 +38,7 @@
     <%= render :partial => 'tags' %>
   </div>
   <div class="content">
-    <% unless @current_user.is_privileged_or_higher? %>
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
       <%= CONFIG["ad_code_index_top"] %>
     <% end %>
         
