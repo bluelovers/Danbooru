@@ -8,22 +8,10 @@
   <div style="margin-bottom: 1em; clear: both;">
    <table class="form">
      <tbody>
-      <% unless @artist.url_a.blank? %>
+       <% @artist.artist_urls.each_with_index do |url, i| %>
         <tr>
-          <th>Site URL</th>
-          <td><%= link_to h(@artist.url_a), h(@artist.url_a) %></td>
-        </tr>
-      <% end %>
-      <% unless @artist.url_b.blank? %>
-        <tr>
-          <th>Image URL</th>
-          <td><%= link_to h(@artist.url_b), h(@artist.url_b) %></td>
-        </tr>     
-      <% end %>
-      <% unless @artist.url_c.blank? %>
-        <tr>
-          <th>Extra URL</th>
-          <td><%= link_to h(@artist.url_c), h(@artist.url_c) %></td>
+          <th>URL #<%= i + 1 %></th>
+          <td><%= link_to h(url.url), h(url.url) %></td>
         </tr>
       <% end %>
       <% if @artist.alias_id %>
@@ -67,10 +55,8 @@
       <%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %> |
       <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
     <% end %>
-    <% if !@artist.url_b.blank? %>
-      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(@artist.url_b.to_s), :name => @artist.name %>
-    <% else %>
-      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + @artist.url_a.to_s, :name => @artist.name %>
+    <% if @artist.artist_urls.any? %>
+      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(@artist.artist_urls[0].url), :name => @artist.name %>
     <% end %>
   </div>
 </div>

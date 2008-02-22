@@ -193,7 +193,7 @@ class Post < ActiveRecord::Base
 
       if q[:source].is_a?(String)
         conds << "p.source LIKE ? ESCAPE '\\\\'"
-        cond_params << Artist.normalize_url(q[:source])
+        cond_params << ArtistUrl.normalize(q[:source])
       end
 
       if q[:fav].is_a?(String)
@@ -835,7 +835,7 @@ class Post < ActiveRecord::Base
           self.source = "Image board"
         end
         
-        self.source = Artist.normalize_url(source)
+        self.source = ArtistUrl.normalize(source)
 
         return true
       rescue Exception => x

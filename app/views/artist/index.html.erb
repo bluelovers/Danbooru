@@ -6,15 +6,12 @@
   </div>
 
   <% if @artists.any? %>
-    <table class="highlightable">
+    <table class="highlightable" width="100%">
       <thead>
         <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Updated By</th>
-          <th>URL #1</th>
-          <th>URL #2</th>
-          <th>URL #3</th>
+          <th width="5%"></th>
+          <th width="40%">Name</th>
+          <th width="55%">Updated By</th>
         </tr>
       </thead>
       <tbody>
@@ -41,9 +38,6 @@
             <% else %>
               <td></td>
             <% end %>
-            <td><%= link_to_unless artist.url_a.nil?, h(artist.url_a.to_s.gsub(/http:\/\//, "")), h(artist.url_a) %></td>
-            <td><%= link_to_unless artist.url_b.nil?, h(artist.url_b.to_s.gsub(/http:\/\//, "")), h(artist.url_b) %></td>
-            <td><%= link_to_unless artist.url_c.nil?, h(artist.url_c.to_s.gsub(/http:\/\//, "")), h(artist.url_c) %></td>
           <% end %>
         <% end %>
       </tbody>

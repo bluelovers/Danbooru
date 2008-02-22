@@ -16,16 +16,8 @@
         <td><%= text_field "artist", "members", :size => 80, :value => @artist.members.join(", ") %></td>
       </tr>
       <tr>
-        <th><label for="artist_url_a">Site URL</label></th>
-        <td><%= text_field "artist", "url_a", :size => 80 %></td>
-      </tr>
-      <tr>
-        <th><label for="artist_url_b">Image URL</label></th>
-        <td><%= text_field "artist", "url_b", :size => 80 %></td>
-      </tr>
-      <tr>
-        <th><label for="artist_url_c">Extra URL</label></th>
-        <td><%= text_field "artist", "url_c", :size => 80 %></td>
+        <th><label for="artist_urls">URLs</label></th>
+        <td><%= text_area "artist", "urls", :size => "40x6" %></td>
       </tr>
       <tr>
         <th><label for="artist_notes">Notes</label></th>

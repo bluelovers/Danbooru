@@ -107,7 +107,7 @@ module LoginSystem
   end
 
   def blocked_only
-    if @current_user && @current_user.is_blocked_or_lower?
+    if @current_user && @current_user.is_blocked_or_higher?
       return true
     else
       access_denied()

@@ -3,25 +3,23 @@ class Artist < ActiveRecord::Base
   validates_uniqueness_of :name
   after_save :commit_relations
   after_save :commit_notes
+  after_save :commit_urls
   belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
+  has_many :artist_urls, :dependent => :delete_all
   attr_accessor :updater_ip_addr
-
-  def self.normalize_url(url)
-    if url
-      url = url.gsub(/\/$/, "")
-      url = url.gsub(/^http:\/\/blog\d+\.fc2/, "http://blog.fc2")
-      url = url.gsub(/^http:\/\/blog-imgs-\d+\.fc2/, "http://blog.fc2")
-      return url
-    else
-      return nil
-    end
-  end
 
   def normalize
     self.name = self.name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
-    self.url_a = self.class.normalize_url(self.url_a)
-    self.url_b = self.class.normalize_url(self.url_b)
-    self.url_c = self.class.normalize_url(self.url_c)
+  end
+  
+  def commit_urls    
+    if @urls
+      self.artist_urls.clear
+
+      @urls.scan(/\S+/).each do |url|
+        self.artist_urls.create(:url => url)
+      end
+    end
   end
 
   def commit_relations
@@ -57,6 +55,14 @@ class Artist < ActiveRecord::Base
         wp.update_attributes(:body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
       end
     end
+  end
+  
+  def urls=(urls)
+    @urls = urls
+  end
+  
+  def urls
+    artist_urls.map {|x| x.url}.join("\n")
   end
 
   def aliases=(names)
@@ -159,12 +165,12 @@ class Artist < ActiveRecord::Base
   end
 
   def self.find_all_by_url(url)
-    url = normalize_url(url)
+    url = ArtistUrl.normalize(url)
     artists = []
 
     while artists.empty? && url.size > 10
       u = url.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
-      artists += Artist.find(:all, :conditions => ["url_a LIKE ? ESCAPE '\\\\' OR url_b LIKE ? ESCAPE '\\\\' OR url_c LIKE ? ESCAPE '\\\\'", u, u, u], :order => "name")
+      artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artist_urls.normalized_url LIKE ? ESCAPE '\\\\'", u], :order => "artists.name")
       url = File.dirname(url)
     end
 
