@@ -28,7 +28,7 @@ module LoginSystem
       end
 
       define_method("is_#{normalized_name}_or_lower?") do
-        false
+        true
       end
     end
   end

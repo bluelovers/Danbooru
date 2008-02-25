@@ -62,7 +62,7 @@
       <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
     <% end %>
     <% if @artist.artist_urls.any? %>
-      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(@artist.artist_urls[0].url), :name => @artist.name %>
+      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(@artist.artist_urls[-1].url), :name => @artist.name %>
     <% end %>
   </div>
 </div>

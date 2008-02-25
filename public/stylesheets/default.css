@@ -10,7 +10,6 @@ h1, h2, h3, h4 {
 
 body {
   font-size: 80%;
-  background: white;
   padding: 1em 3em;
 }
 
@@ -202,7 +201,6 @@ table.form p {
 }
 
 table.form th {
-	background: white;
 	color: black;
 	white-space: normal;
   padding-right: 2em;

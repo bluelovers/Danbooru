@@ -125,7 +125,7 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    if !@current_user.is_privileged_or_higher? && request.method == :get && params[:format] != "xml" && params[:format] != "js"      
+    if @current_user.is_member_or_lower? && request.method == :get && params[:format] != "xml" && params[:format] != "js"      
       key, expiry = cache_key()
       
       if key
