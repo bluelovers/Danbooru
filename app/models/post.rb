@@ -672,7 +672,7 @@ class Post < ActiveRecord::Base
   has_many :comments, :order => "id"
   has_many :notes, :order => "id desc"
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
-  has_one :flag_detail, :class_name => "FlaggedPostDetail", :table_name => "flagged_post_details"
+  has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
   
   include NeighborMethods

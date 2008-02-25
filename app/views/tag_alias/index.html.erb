@@ -8,30 +8,36 @@
 
 <div id="aliases">
   <% form_tag(:action => "update") do %>
-    <table>
-      <tr>
-        <th></th>
-        <th>Alias</th>
-        <th>To</th>
-        <th>Reason</th>
-      </tr>
-      <% @aliases.each do |a| %>
-        <tr class="<%= cycle 'even', 'odd' %> <%= a.is_pending? ? 'pending-tag' : nil %>">
-          <td><input type="checkbox" name="aliases[<%= a.id %>]" value="1" <%= a.is_pending? ? 'class="pending"' : nil %>></td>
-          <td><%= a.name %></td>
-          <td><%= Tag.find(a.alias_id).name %></td>
-          <td><%= h a.reason %></td>
-        </tr>
-      <% end %>
-      <tr>
-        <td colspan="3">
-          <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
-          <% if @current_user.is_admin_or_higher? %>
-            <%= submit_tag "Approve" %> 
-            <%= submit_tag "Delete" %>
-          <% end %>
-        </td>
-      </tr>
+    <table width="100%" class="highlightable">
+      <thead>
+        <tr>
+          <th width="1%"></th>
+          <th width="19%">Alias</th>
+          <th width="20%">To</th>
+          <th width="60%">Reason</th>
+        </tr>        
+      </thead>
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
+            <% if @current_user.is_admin_or_higher? %>
+              <%= submit_tag "Approve" %> 
+              <%= submit_tag "Delete" %>
+            <% end %>
+          </td>
+        </tr>        
+      </tfoot>
+      <tbody>
+        <% @aliases.each do |a| %>
+          <tr class="<%= cycle 'even', 'odd' %> <%= a.is_pending? ? 'pending-tag' : nil %>">
+            <td><input type="checkbox" name="aliases[<%= a.id %>]" value="1" <%= a.is_pending? ? 'class="pending"' : nil %>></td>
+            <td><%= a.name %></td>
+            <td><%= Tag.find(a.alias_id).name %></td>
+            <td><%= h a.reason %></td>
+          </tr>
+        <% end %>        
+      </tbody>
     </table>
   <% end %>
 </div>

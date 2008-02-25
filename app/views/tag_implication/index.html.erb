@@ -5,30 +5,36 @@
 <% end %>
 
 <% form_tag(:action => "update") do %>
-  <table>
-    <tr>
-      <th></th>
-      <th>Predicate</th>
-      <th>Consequent</th>
-      <th>Reason</th>
-    </tr>
-    <% @implications.each do |i| %>
-      <tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
-        <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>></td>
-        <td><%= i.predicate.name %></td>
-        <td><%= i.consequent.name %></td>
-        <td><%= h i.reason %></td>
-      </tr>
-    <% end %>
-    <tr>
-      <td colspan="3">
-        <% if @current_user.is_admin_or_higher? %>
-          <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
-          <%= submit_tag "Approve" %> 
-          <%= submit_tag "Delete" %>
-        <% end %>
-      </td>
-    </tr>
+  <table class="highlightable" width="100%">
+    <thead>
+      <tr>
+        <th width="1%"></th>
+        <th width="19%">Predicate</th>
+        <th width="20%">Consequent</th>
+        <th width="60%">Reason</th>
+      </tr>      
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="3">
+          <% if @current_user.is_admin_or_higher? %>
+            <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete" %>
+          <% end %>
+        </td>
+      </tr>      
+    </tfoot>
+    <tbody>
+      <% @implications.each do |i| %>
+        <tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
+          <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>></td>
+          <td><%= i.predicate.name %></td>
+          <td><%= i.consequent.name %></td>
+          <td><%= h i.reason %></td>
+        </tr>
+      <% end %>      
+    </tbody>
   </table>
 <% end %>
 
