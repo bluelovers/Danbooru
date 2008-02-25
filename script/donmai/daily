@@ -1,7 +1,11 @@
 #!/bin/bash
 
+#sudo() {
+#	$*
+#}
+
 export RAILS_ENV=production
-cd /var/www/danbooru
+cd "$(dirname $0)/../"
 script/donmai/downbooru
 mongrel_rails cluster::stop
 psql danbooru -c "delete from tags where post_count = 0 and id not in (select alias_id from tag_aliases union select predicate_id from tag_implications union select consequent_id from tag_implications)"
