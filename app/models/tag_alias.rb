@@ -1,5 +1,10 @@
 class TagAlias < ActiveRecord::Base
+  before_create :normalize
   before_create :validate_uniqueness
+
+  def normalize
+    self.name = self.name.downcase
+  end
 
   def validate_uniqueness
     n = Tag.find_or_create_by_name(self.name)
