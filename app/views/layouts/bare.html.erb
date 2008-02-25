@@ -7,6 +7,7 @@
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
   <%= stylesheet_link_tag "default" %>
   <%= javascript_include_tag "application" %>
+  <%= CONFIG["custom_html_headers"] %>
 </head>
 <body>
   <% if flash[:notice] %>

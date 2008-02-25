@@ -7357,6 +7357,8 @@ Post = {
 }
 PostModeMenu = {
   init: function() {
+    this.original_background_color = document.body.getStyle("background-color")
+    
     if (Cookie.get("mode") == "") {
       Cookie.put("mode", "view")
       $("mode").value = "view"
@@ -7372,33 +7374,33 @@ PostModeMenu = {
     Cookie.put("mode", s, 7)
 
     if (s == "view") {
-      document.body.setStyle({background: "#FFF"})
+      document.body.setStyle({backgroundColor: this.original_background_color})
     } else if (s == "edit") {
-      document.body.setStyle({background: "#3A3"})
+      document.body.setStyle({backgroundColor: "#3A3"})
     } else if (s == "fav") {
-      document.body.setStyle({background: "#FFA"})
+      document.body.setStyle({backgroundColor: "#FFA"})
     } else if (s == "rating-q") {
-      document.body.setStyle({background: "#AAA"})
+      document.body.setStyle({backgroundColor: "#AAA"})
     } else if (s == "rating-s") {
-      document.body.setStyle({background: "#6F6"})
+      document.body.setStyle({backgroundColor: "#6F6"})
     } else if (s == "rating-e") {
-      document.body.setStyle({background: "#F66"})
+      document.body.setStyle({backgroundColor: "#F66"})
     } else if (s == "vote-down") {
-      document.body.setStyle({background: "#FAA"})
+      document.body.setStyle({backgroundColor: "#FAA"})
     } else if (s == "vote-up") {
-      document.body.setStyle({background: "#AFA"})
+      document.body.setStyle({backgroundColor: "#AFA"})
     } else if (s == "lock-rating") {
-      document.body.setStyle({background: "#AA3"})
+      document.body.setStyle({backgroundColor: "#AA3"})
     } else if (s == "lock-note") {
-      document.body.setStyle({background: "#3AA"})
+      document.body.setStyle({backgroundColor: "#3AA"})
     } else if (s == "flag") {
-      document.body.setStyle({background: "#F66"})
+      document.body.setStyle({backgroundColor: "#F66"})
   	} else if (s == "add-to-pool") {
-  		document.body.setStyle({background: "#26A"})
+  		document.body.setStyle({backgroundColor: "#26A"})
   	} else if (s == "apply-tag-script") {
-  		document.body.setStyle({background: "#A3A"})
+  		document.body.setStyle({backgroundColor: "#A3A"})
     } else if (s == "edit-tag-script") {
-  	  document.body.setStyle({background: "white"})
+  	  document.body.setStyle({backgroundColor: "white"})
 	  
   		var script = prompt("Enter a tag script")
 		
@@ -7409,7 +7411,7 @@ PostModeMenu = {
   		Cookie.put("mode", "view", 7)
   		$("mode").value = "view"
     } else {
-      document.body.setStyle({background: "#AFA"})
+      document.body.setStyle({backgroundColor: "#AFA"})
     }
   },
 
