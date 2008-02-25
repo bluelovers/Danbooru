@@ -1,5 +1,7 @@
 <% form_tag({:action => "index"}, :method => :get) do %>
-  <%= text_field_tag "query", params[:query] %> <%= submit_tag "Search" %>
+  <%= text_field_tag "query", params[:query] %> 
+  <%= submit_tag "Search Implications" %>  
+  <%= submit_tag "Search Aliases" %>
 <% end %>
 
 <% form_tag(:action => "update") do %>
@@ -8,12 +10,14 @@
       <th></th>
       <th>Predicate</th>
       <th>Consequent</th>
+      <th>Reason</th>
     </tr>
     <% @implications.each do |i| %>
       <tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
         <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>></td>
         <td><%= i.predicate.name %></td>
         <td><%= i.consequent.name %></td>
+        <td><%= h i.reason %></td>
       </tr>
     <% end %>
     <tr>

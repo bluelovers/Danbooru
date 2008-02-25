@@ -1,6 +1,8 @@
 <div>
   <% form_tag({:action => "index"}, :method => :get) do %>
-    <%= text_field_tag "query", params[:query] %> <%= submit_tag "Search" %>
+    <%= text_field_tag "query", params[:query] %> 
+    <%= submit_tag "Search Aliases" %>
+    <%= submit_tag "Search Implications" %>  
   <% end %>
 </div>
 
@@ -11,12 +13,14 @@
         <th></th>
         <th>Alias</th>
         <th>To</th>
+        <th>Reason</th>
       </tr>
       <% @aliases.each do |a| %>
         <tr class="<%= cycle 'even', 'odd' %> <%= a.is_pending? ? 'pending-tag' : nil %>">
           <td><input type="checkbox" name="aliases[<%= a.id %>]" value="1" <%= a.is_pending? ? 'class="pending"' : nil %>></td>
           <td><%= a.name %></td>
           <td><%= Tag.find(a.alias_id).name %></td>
+          <td><%= h a.reason %></td>
         </tr>
       <% end %>
       <tr>
