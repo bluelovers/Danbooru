@@ -107,7 +107,7 @@ class UserController < ApplicationController
     
     conds << "true" if conds.empty?
 
-    @users = User.paginate :order => order, :conditions => [conds.join(" and "), *cond_params], :per_page => 20
+    @users = User.paginate :order => order, :conditions => [conds.join(" and "), *cond_params], :per_page => 20, :page => params[:page]
 
     respond_to do |fmt|
       fmt.html
