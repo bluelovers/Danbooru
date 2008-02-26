@@ -309,15 +309,6 @@ class User < ActiveRecord::Base
     connection.execute("update table_data set row_count = row_count - 1 where name = 'users'")
   end
   
-  def block_reason
-    ban = Ban.find_by_user_id(self.id)
-    if ban
-      return ban.reason
-    else
-      return ""
-    end
-  end
-
   def to_xml(options = {})
     {:name => self.name, :id => self.id}.to_xml(options.merge(:root => "user"))
   end

@@ -10,7 +10,7 @@
       <th>Level</th>
       <td>
         <%= @user.pretty_level %>
-        <% if @user.is_blocked? %>
+        <% if @user.is_blocked? && @user.ban %>
           (reason: <%= h @user.ban.reason %>; expires: <%= @user.ban.expires_at.strftime("%Y-%m-%d") %>)
         <% end %>
       </td>
