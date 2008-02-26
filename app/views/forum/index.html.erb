@@ -21,9 +21,9 @@
         <% content_tag :tr, :class => cycle('even', 'odd') do %>
           <td>
             <% if @current_user.is_a?(User) && fp.updated_at > @current_user.last_forum_topic_read_at %>
-              <strong><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></strong>
+              <span class="forum-topic unread-topic"><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
             <% else %>
-              <% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %> 
+              <span class="forum-topic"><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
             <% end %>
 
             <% if fp.response_count > 10 %>
@@ -49,6 +49,9 @@
 
   <div id="footer">
     <%= link_to_function "New topic", "Element.toggle('reply')" %> |
+    <% unless @current_user.is_anonymous? %>
+      <%= link_to_function "Mark all read", "Forum.mark_all_read()" %> | 
+    <% end %>
     <%= link_to "Help", :controller => "help", :action => "forum" %>
   </div>
 

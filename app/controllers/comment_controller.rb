@@ -19,7 +19,6 @@ class CommentController < ApplicationController
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
       comment.destroy
-
       respond_to_success("Comment deleted", :controller => "post", :action => "show", :id => comment.post_id)
     else
       access_denied()

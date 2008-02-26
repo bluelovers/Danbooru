@@ -125,4 +125,9 @@ class ForumController < ApplicationController
     flash[:notice] = "Topic unlocked"
     redirect_to :action => "show", :id => params[:id]    
   end
+  
+  def mark_all_read
+    @current_user.update_attribute(:last_forum_topic_read_at, Time.now)
+    render :nothing => true
+  end
 end

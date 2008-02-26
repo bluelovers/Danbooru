@@ -1,4 +1,12 @@
 Forum = {
+  mark_all_read: function() {
+    new Ajax.Request("/forum/mark_all_read", {
+      onComplete: function() {
+        $$("span.forum-topic").invoke("removeClassName", "unread-topic")
+        notice("Marked all topics as read")
+      }
+    })
+  },
   quote: function(id) {
     new Ajax.Request("/forum/show.js", {
       method: 'get',

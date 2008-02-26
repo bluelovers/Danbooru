@@ -180,6 +180,10 @@ span.plid {
   display: none;
 }
 
+span.unread-topic {
+  font-weight: bold;
+}
+
 strong.divider {
   font-weight: bold;
   color: gray;
