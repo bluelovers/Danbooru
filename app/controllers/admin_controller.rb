@@ -6,15 +6,16 @@ class AdminController < ApplicationController
     set_title "Admin"
   end
 
-  def edit_account
-    set_title "Edit Account"
+  def edit_user
+    set_title "Edit User"
 
     if request.post?
       @user = User.find_by_name(params[:user][:name])
       @user.level = params[:user][:level]
 
       if @user.save
-        redirect_to :action => "edit_account"
+        flash[:notice] = "User updated"
+        redirect_to :action => "edit_user"
       else
         render_error(@user)
       end

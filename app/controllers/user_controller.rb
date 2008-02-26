@@ -4,7 +4,7 @@ class UserController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite, :unban]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
-  before_filter :mod_only, :only => [:invites, :block_account, :blocked_users]
+  before_filter :mod_only, :only => [:invites, :block, :unblock, :show_blocked_users]
   helper :post
   filter_parameter_logging :password
   auto_complete_for :user, :name
@@ -217,35 +217,35 @@ class UserController < ApplicationController
     end
   end
   
-  def block_account
+  def block
     @user = User.find(params[:id])
     
     if request.post?
       if @user.is_mod_or_higher?
         flash[:notice] = "You can not ban other moderators or administrators"
-        redirect_to :action => "block_account"
+        redirect_to :action => "block"
         return
       end
       
       @user.update_attribute(:level, CONFIG["user_levels"]["Blocked"])
       Ban.create(params[:ban].merge(:banned_by => @current_user.id))
-      redirect_to :action => "show", :id => @user.id
+      redirect_to :action => "show_blocked_users"
     else
       @ban = Ban.new(:user_id => @user.id, :duration => "1")
     end
   end
   
-  def blocked_users
-    @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
-  end
-  
-  def unblock_user
+  def unblock
     params[:user].keys.each do |user_id|
       Ban.destroy_all(["user_id = ?", user_id])
     end
     
-    redirect_to :action => "moderator_panel"
+    redirect_to :action => "show_blocked_users"
   end
+  
+  def show_blocked_users
+    @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
+  end  
   
   if CONFIG["enable_account_email_activation"]
     def resend_confirmation
