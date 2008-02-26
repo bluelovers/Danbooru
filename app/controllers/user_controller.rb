@@ -2,10 +2,9 @@ require 'digest/sha2'
 
 class UserController < ApplicationController
   layout "default"
-  verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite]
+  verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite, :unban]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
-  before_filter :privileged_only, :only => [:invites]
-  before_filter :mod_only, :only => [:block_account]
+  before_filter :mod_only, :only => [:invites, :block_account, :moderator_panel]
   helper :post
   filter_parameter_logging :password
   auto_complete_for :user, :name
@@ -234,6 +233,18 @@ class UserController < ApplicationController
     else
       @ban = Ban.new(:user_id => @user.id, :duration => "1")
     end
+  end
+  
+  def moderator_panel
+    @banned_users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
+  end
+  
+  def unban
+    params[:user].keys.each do |user_id|
+      Ban.destroy_all(["user_id = ?", user_id])
+    end
+    
+    redirect_to :action => "moderator_panel"
   end
   
   if CONFIG["enable_account_email_activation"]
