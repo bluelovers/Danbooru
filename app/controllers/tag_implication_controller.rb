@@ -46,10 +46,6 @@ class TagImplicationController < ApplicationController
       @implications = TagImplication.paginate :order => "is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)", :per_page => 30, :page => params[:page]
     end
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @implications.to_xml(:root => "implications")}
-      fmt.js {render :json => @implications.to_json}
-    end
+    respond_to_list("implications")
   end
 end

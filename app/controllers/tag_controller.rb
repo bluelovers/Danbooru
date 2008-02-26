@@ -86,11 +86,7 @@ class TagController < ApplicationController
 
     if request.post?
       if params[:start].blank?
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "You must fill the start tag field"; redirect_to(:action => "mass_edit")}
-          fmt.xml {render :xml => {:success => false, :reason => "start tag missing"}.to_xml(:root => "response"), :status => 500}
-          fmt.js {render :json => {:success => false, :reason => "start tag missing"}, :status => 500}
-        end
+        respond_to_error("Start tag missing", :action => "mass_edit")
         return
       end
 
@@ -101,11 +97,7 @@ class TagController < ApplicationController
         p.update_attributes(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => tags)
       end
 
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Tags updated"; redirect_to(:action => "mass_edit")}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Tags updated", :action => "mass_edit")
     end
   end
 
@@ -118,11 +110,7 @@ class TagController < ApplicationController
     tag = Tag.find_by_name(params[:tag][:name])
     tag.update_attributes(params[:tag]) if tag
 
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Tag updated"; redirect_to(:action => "index")}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("Tag updated", :action => "index")
   end
 
   def edit

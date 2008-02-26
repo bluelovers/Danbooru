@@ -67,35 +67,17 @@ class PoolController < ApplicationController
       @pool = Pool.find(params[:pool_id])
       
       if !@pool.is_public? && @current_user.has_permission?(@pool)
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-          fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 401}
-          fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 401}
-        end
-        
+        access_denied()
         return
       end
       
       begin
         @pool.add_post(params[:post_id])
-        
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Post added to pool"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-          fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-          fmt.js {render :json => {:success => true}.to_json}
-        end
+        respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Pool::PostAlreadyExistsError
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "That post already exists in the pool"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-          fmt.xml {render :xml => {:success => false, :reason => "already exists"}.to_xml(:root => "response"), :status => 409}
-          fmt.js {render :json => {:success => false, :reason => "already exists"}.to_json, :status => 409}
-        end
+        respond_to_error("Post already exists", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Exception => x
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Error"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-          fmt.xml {render :xml => {:success => false, :reason => "error: #{x.class}"}.to_xml(:root => "response"), :status => 500}
-          fmt.js {render :json => {:success => false, :reason => "error: #{x.class}"}.to_json, :status => 500}
-        end
+        respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
       end
     else
       if !@current_user.is_anonymous?
@@ -113,23 +95,13 @@ class PoolController < ApplicationController
       @pool = Pool.find(params[:pool_id])
       
       if !@pool.is_public? && @current_user.has_permission?(@pool)
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-          fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 401}
-          fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 401}
-        end
-        
+        access_denied()
         return
       end
       
       @pool.remove_post(params[:post_id])
       response.headers["X-Post-Id"] = params[:post_id]
-      
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post removed from pool"; redirect_to(:controller => "post", :action => "show", :id => params[:post_id])}
-        fmt.xml {render :xml => {:success => true, :post_id => params[:post_id]}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true, :post_id => params[:post_id]}.to_json}
-      end
+      respond_to_success("Post removed", :controller => "post", :action => "show", :id => params[:post_id])
     else
       @pool = Pool.find(params[:pool_id])
       @post = Post.find(params[:post_id])

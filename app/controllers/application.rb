@@ -11,29 +11,15 @@ class ApplicationController < ActionController::Base
   before_filter :init_cookies
 
   protected
-  def respond_to_success(notice, redirect_to_params, options = {})
+  def respond_to_success(notice, redirect_to_params)
     respond_to do |fmt|
-      if options[:html]
-        fmt.html(&options[:html])
-      else
-        fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
-      end
-
-      if options[:json]
-        fmt.js(&options[:json])
-      else
-        fmt.js {render :json => {:success => true}.to_json}
-      end
-      
-      if options[:xml]
-        fmt.xml(&options[:xml])
-      else
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      end
+      fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
+      fmt.js {render :json => {:success => true}.to_json}
+      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
     end
   end
   
-  def respond_to_error(obj, redirect_to_params, options = {})
+  def respond_to_error(obj, redirect_to_params)
     if obj.is_a?(ActiveRecord::Base)
       obj = obj.errors.full_messages.join(", ")
     end
@@ -41,47 +27,19 @@ class ApplicationController < ActionController::Base
     options[:status] ||= 500
 
     respond_to do |fmt|
-      if options[:html]
-        fmt.html(&options[:html])
-      else
-        fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
-      end
-    
-      if options[:json]
-        fmt.js(&options[:json])
-      else
-        fmt.js {render :json => {:success => false, :reason => obj}.to_json, :status => options[:status]}
-      end
-
-      if options[:xml]
-        fmt.xml(&options[:xml])
-      else
-        fmt.xml {render :xml => {:success => false, :reason => obj}.to_xml(:root => "response"), :status => options[:status]}
-      end
+      fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
+      fmt.js {render :json => {:success => false, :reason => obj}.to_json, :status => options[:status]}
+      fmt.xml {render :xml => {:success => false, :reason => obj}.to_xml(:root => "response"), :status => options[:status]}
     end
   end
   
-  def respond_to_list(inst_var_name, options = {})
+  def respond_to_list(inst_var_name)
     inst_var = instance_variable_get("@#{inst_var_name}")
     
     respond_to do |fmt|
-      if options[:html]
-        fmt.html(&options[:html])
-      else
-        fmt.html
-      end
-    
-      if options[:json]
-        fmt.js(&options[:json])
-      else
-        fmt.js {render :json => inst_var.to_json}
-      end
-    
-      if options[:xml]
-        fmt.xml(&options[:xml])
-      else
-        fmt.xml {render :xml => inst_var.to_xml(:root => (options[:root] || inst_var_name))}
-      end
+      fmt.html
+      fmt.js {render :json => inst_var.to_json}
+      fmt.xml {render :xml => inst_var.to_xml(:root => (options[:root] || inst_var_name))}
     end
   end
   

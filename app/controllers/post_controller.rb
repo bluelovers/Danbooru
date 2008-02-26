@@ -31,12 +31,7 @@ class PostController < ApplicationController
   
   def create
     if @current_user.is_member_or_higher? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "You cannot upload more than #{CONFIG['member_post_limit']} posts in a day"; redirect_to(:action => "upload")}
-        fmt.xml {render :xml => {:success => false, :reason => "daily limit exceeded"}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :json => {:success => false, :reason => "daily limit exceeded"}.to_json, :status => 500}
-      end
-
+      respond_to_error("Daily limit exceeded", :action => "upload")
       return
     end
 
@@ -51,17 +46,10 @@ class PostController < ApplicationController
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
         @post.destroy
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "MD5 mismatch"; redirect_to(:controller => "post", :action => "index", :tag_title => @post.tag_title)}
-          fmt.xml {render :xml => {:success => false, :reason => "md5 mismatch"}.to_xml(:root => "response")}
-          fmt.js {render :json => {:success => false, :reason => "md5 mismatch"}.to_json}
-        end
+        respond_to_error("MD5 mismatch", :action => "upload")
       else
         respond_to do |fmt|
-          fmt.html do
-            flash[:notice] = "Post successfully uploaded"
-            redirect_to(:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
-          end
+          fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title)}
           fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
           fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
         end
@@ -76,19 +64,12 @@ class PostController < ApplicationController
       end
 
       respond_to do |fmt|
-        fmt.html do
-          flash[:notice] = "That post already exists"
-          redirect_to(:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title)
-        end
+        fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title)}
         fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
         fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
       end
     else
-      respond_to do |fmt|
-        fmt.html {render_error(@post)}
-        fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
-      end
+      respond_to_error(@post)
     end
   end
 
@@ -131,17 +112,9 @@ class PostController < ApplicationController
     end
 
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post updated"; redirect_to(:action => "show", :id => @post.id, :tag_title => @post.tag_title)}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Post updated", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
     else
-      respond_to do |fmt|
-        fmt.html {render_error(@post)}
-        fmt.xml {render :xml => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :json => {:success => false, :reason => @post.errors.full_messages.join(" ")}.to_json, :status => 500}
-      end
+      respond_to_error(@post)
     end
   end
 
@@ -160,17 +133,9 @@ class PostController < ApplicationController
         Post.destroy_with_reason(@post.id, params[:reason], @current_user)
       end
 
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post deleted"; redirect_to(:action => "index")}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Post deleted", :action => "index")
     else
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Access denied"; redirect_to(:action => "show", :id => @post.id)}
-        fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
-        fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
-      end
+      access_denied()
     end
   end
   
@@ -283,11 +248,7 @@ class PostController < ApplicationController
 
     @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20, :include => [:user])
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
-      fmt.js {render :json => @posts.to_json}
-    end
+    respond_to_list("posts")
   end
 
   def popular_by_week
@@ -303,11 +264,7 @@ class PostController < ApplicationController
 
     @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
-      fmt.js {render :json => @posts.to_json}
-    end
+    respond_to_list("posts")
   end
 
   def popular_by_month
@@ -323,11 +280,7 @@ class PostController < ApplicationController
 
     @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20, :include => [:user])
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
-      fmt.js {render :json => @posts.to_json}
-    end
+    respond_to_list("posts")
   end
 
   def revert_tags
@@ -335,11 +288,7 @@ class PostController < ApplicationController
     @post = Post.find(params[:id])
     @post.update_attributes(:tags => @post.tag_history.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Tags reverted"; redirect_to(:action => "show", :id => @post.id, :tag_title => @post.tag_title)}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
   end
 
   def favorites
@@ -347,11 +296,7 @@ class PostController < ApplicationController
     @post = Post.find(params["id"])
     @users = User.find_people_who_favorited(params["id"])
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @users.to_xml(:root => "users")}
-      fmt.js {render :json => @users.to_json}
-    end
+    respond_to_list("users")
   end
 
   def vote
@@ -359,26 +304,14 @@ class PostController < ApplicationController
     score = params[:score].to_i
     
     if !@current_user.is_mod_or_higher? && score != 1 && score != -1
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Invalid score"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
-        fmt.xml {render :xml => {:success => false, :reason => "invalid score"}.to_xml(:root => "response"), :status => 409}
-        fmt.js {render :json => {:success => false, :reason => "invalid score"}.to_json, :status => 409}
-      end
+      respond_to_error("Invalid score", :action => "show", :id => params[:id], :tag_title => p.tag_title)
       return
     end
 
     if p.vote!(score, request.remote_ip)
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Vote saved"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
-        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => p.id}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true, :score => p.score, :post_id => p.id}.to_json}
-      end
+      respond_to_success("Vote saved", :action => "show", :id => params[:id], :tag_title => p.tag_title)
     else
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "You've already voted for this post"; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
-        fmt.xml {render :xml => {:success => false, :reason => "already voted"}.to_xml(:root => "response"), :status => 409}
-        fmt.js {render :json => {:success => false, :reason => "already voted"}.to_json, :status => 409}
-      end
+      respond_to_error("Already voted", :action => "show", :id => params[:id], :tag_title => p.tag_title)
     end
   end
 
@@ -393,9 +326,7 @@ class PostController < ApplicationController
       FlaggedPostDetail.create(:post_id => params[:id], :reason => params[:reason], :user_id => @current_user.id)
     end
     
-    respond_to do |fmt|
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("Post flagged", :action => "show", :id => params{:id})
   end
   
   def random

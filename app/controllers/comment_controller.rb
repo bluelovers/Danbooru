@@ -20,7 +20,7 @@ class CommentController < ApplicationController
     if @current_user.has_permission?(comment)
       comment.destroy
 
-      respond_to_success("Comment deleted", {:controller => "post", :action => "show", :id => comment.post_id})
+      respond_to_success("Comment deleted", :controller => "post", :action => "show", :id => comment.post_id)
     else
       access_denied()
     end
@@ -28,7 +28,7 @@ class CommentController < ApplicationController
 
   def create
     if @current_user.is_member_or_higher? && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
-      respond_to_error("Hourly limit exceeded", {:action => "index"})
+      respond_to_error("Hourly limit exceeded", :action => "index")
       return
     end
 
@@ -40,9 +40,9 @@ class CommentController < ApplicationController
 
     comment = Comment.create(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if comment.errors.empty?
-      respond_to_success("Comment created", {:action => "index"})
+      respond_to_success("Comment created", :action => "index")
     else
-      respond_to_error(comment, {:action => "index"})
+      respond_to_error(comment, :action => "index")
     end
   end
 
@@ -100,7 +100,7 @@ class CommentController < ApplicationController
     @comment = Comment.find(params[:id])
     @comment.update_attributes(:is_spam => true)
     
-    respond_to_success("Comment marked as spam", {:action => "index"})
+    respond_to_success("Comment marked as spam", :action => "index")
   end
   
   def edit

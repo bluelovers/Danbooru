@@ -88,11 +88,7 @@ class ForumController < ApplicationController
       @current_user.update_attribute(:last_forum_topic_read_at, @forum_post.updated_at)
     end
     
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @forum_post.to_xml(:root => "forum_post")}
-      fmt.js {render :json => @forum_post.to_json}
-    end
+    respond_to_list("forum_post")
   end
 
   def index
@@ -104,11 +100,7 @@ class ForumController < ApplicationController
       @forum_posts = ForumPost.paginate :order => "is_sticky desc, updated_at DESC", :per_page => 20, :conditions => "parent_id IS NULL", :page => params[:page]
     end
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @forum_posts.to_xml(:root => "forum_posts", :dasherize => false)}
-      fmt.js {render :json => @forum_posts.to_json}
-    end
+    respond_to_list("forum_posts")
   end
   
   def search
@@ -119,11 +111,7 @@ class ForumController < ApplicationController
       @forum_posts = ForumPost.paginate :order => "id desc", :per_page => 25, :page => params[:page]
     end
     
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @forum_posts.to_xml(:root => "forum_posts", :dasherize => false)}
-      fmt.js {render :json => @forum_posts.to_json}
-    end
+    respond_to_list("forum_posts")
   end
 
   def lock

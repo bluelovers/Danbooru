@@ -79,7 +79,7 @@
       </ul>
       <p>If the call fails, the following response reasons are possible:</p>
       <ul>
-        <li><strong>md5 mismatch</strong> This means you supplied an MD5 parameter and what Danbooru got doesn't match. Try uploading the file again.</li>
+        <li><strong>MD5 mismatch</strong> This means you supplied an MD5 parameter and what Danbooru got doesn't match. Try uploading the file again.</li>
         <li><strong>duplicate</strong> This post already exists in Danbooru (based on the MD5 hash). An additional attribute called <code>location</code> will be set, pointing to the (relative) URL of the original post.</li>
         <li><strong><em>other</em></strong> Any other error will have its error message printed.</li>
       </ul>
@@ -297,7 +297,7 @@
   
     <div class="section">
       <h4>Update</h4>
-      <p>The base URL is /wiki/update.xml. Potential error reasons: "page locked"</p>
+      <p>The base URL is /wiki/update.xml. Potential error reasons: "Page is locked"</p>
       <ul>
         <li><strong>title</strong> The title of the wiki page to update.</li>
         <li><strong>wiki_page[title]</strong> The new title of the wiki page.</li>
@@ -340,7 +340,7 @@
   
     <div class="section">
       <h4>Revert</h4>
-      <p>The base URL is /wiki/revert.xml. Potential error reasons: "page locked"</p>
+      <p>The base URL is /wiki/revert.xml. Potential error reasons: "Page is locked"</p>
       <ul>
         <li><strong>title</strong> The title of the wiki page to update.</li>
         <li><strong>version</strong> The version to revert to.</li>
@@ -391,7 +391,7 @@
 
     <div class="section">
       <h4>Revert</h4>
-      <p>The base URL is /note/revert.xml. Potential error reasons: "post is locked"</p>
+      <p>The base URL is /note/revert.xml. Potential error reasons: "Post is locked"</p>
       <ul>
         <li><strong>id</strong> The note id to update.</li>
         <li><strong>version</strong> The version to revert to.</li>
@@ -400,7 +400,7 @@
 
     <div class="section">
       <h4>Create/Update</h4>
-      <p>The base URL is /note/update.xml. Notes differ from the other controllers in that the interface for creation and updates is the same. If you supply an <code>id</code> parameter, then Danbooru will assume you're updating an existing note. Otherwise, it will create a new note. Potential error reasons: "post is locked"</p>
+      <p>The base URL is /note/update.xml. Notes differ from the other controllers in that the interface for creation and updates is the same. If you supply an <code>id</code> parameter, then Danbooru will assume you're updating an existing note. Otherwise, it will create a new note. Potential error reasons: "Post is locked"</p>
       <ul>
         <li><strong>id</strong> If you are updating a note, this is the note id number to update.</li>
         <li><strong>note[post_id]</strong> The post id number this note belongs to.</li>
@@ -453,7 +453,7 @@
     
     <div class="section">
       <h4>Add Post</h4>
-      <p>The base URL is /pool/add_post.xml. Potential error reasons: "already exists", "access denied"</p>
+      <p>The base URL is /pool/add_post.xml. Potential error reasons: "Post already exists", "access denied"</p>
       <ul>
         <li><strong>pool_id</strong> The pool to add the post to.</li>
         <li><strong>post_id</strong> The post to add.</li>

@@ -31,10 +31,7 @@ class UserRecordController < ApplicationController
       if @current_user.is_mod_or_higher? || @current_user.id == @user_record.reported_by
         UserRecord.destroy(params[:id])
       
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Record updated"; redirect_to(:action => "index", :user_id => params[:user_id])}
-          fmt.js {render :js => {:success => true}.to_json}
-        end
+        respond_to_success("Record updated", :action => "index", :user_id => params[:user_id])
       else
         access_denied()
       end

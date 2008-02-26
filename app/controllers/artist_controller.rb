@@ -18,7 +18,7 @@ class ArtistController < ApplicationController
     @artist = Artist.find(params[:id])
     @artist.destroy
 
-    respond_to_success("Artist deleted", {:action => "index", :params => params[:page]})
+    respond_to_success("Artist deleted", :action => "index", :params => params[:page])
   end
 
   def update
@@ -31,9 +31,9 @@ class ArtistController < ApplicationController
     artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
 
     if artist.errors.empty?
-      respond_to_success("Artist updated", {:action => "show", :id => artist.id})
+      respond_to_success("Artist updated", :action => "show", :id => artist.id)
     else
-      respond_to_error(artist, {:action => "edit", :id => artist.id})
+      respond_to_error(artist, :action => "edit", :id => artist.id)
     end
   end
 
@@ -41,9 +41,9 @@ class ArtistController < ApplicationController
     artist = Artist.create(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
 
     if artist.errors.empty?
-      respond_to_success("Artist created", {:action => "show", :id => artist.id})
+      respond_to_success("Artist created", :action => "show", :id => artist.id)
     else
-      respond_to_error(artist, {:action => "add", :alias_id => params[:alias_id]})
+      respond_to_error(artist, :action => "add", :alias_id => params[:alias_id])
     end
   end
 

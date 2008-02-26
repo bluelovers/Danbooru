@@ -7,34 +7,19 @@ class WikiController < ApplicationController
   def destroy
     page = WikiPage.find_page(params[:title])
     page.destroy
-
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Page deleted"; redirect_to(:action => "show", :title => params[:title])}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("Page deleted", :action => "show", :title => params[:title])
   end
 
   def lock
     page = WikiPage.find_page(params[:title])
     page.lock!
-
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Page locked"; redirect_to(:action => "show", :title => params[:title])}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("Page locked", :action => "show", :title => params[:title])
   end
 
   def unlock
     page = WikiPage.find_page(params["title"])
     page.unlock!
-
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Page unlocked"; redirect_to(:action => "show", :title => params[:title])}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("Page unlocked", :action => "show", :title => params[:title])
   end
 
   def index
@@ -55,11 +40,7 @@ class WikiController < ApplicationController
       @wiki_pages = WikiPage.paginate :order => order, :per_page => limit, :page => params[:page]
     end
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @wiki_pages.to_xml(:root => "wiki_pages")}
-      fmt.js {render :json => @wiki_pages.to_json}
-    end
+    respond_to_list("wiki_pages")
   end
 
   def preview
@@ -81,12 +62,7 @@ class WikiController < ApplicationController
         fmt.js {render :json => {:success => true, :location => location}.to_json}
       end
     else
-      respond_to do |fmt|
-        error = page.errors.full_messages.join(", ")
-        fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
-        fmt.xml {render :xml => {:success => false, :reason => error}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
-      end
+      respond_to_error(page)
     end
   end
 
@@ -94,25 +70,12 @@ class WikiController < ApplicationController
     @page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 
     if @page.is_locked?
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "This page is locked and cannot be edited"; redirect_to(:action => "show", :title => params[:title])}
-        fmt.xml {render :xml => {:success => false, :reason => "page locked"}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => false, :reason => "page locked"}.to_json}
-      end
+      respond_to_error("Page is locked", :action => "show", :title => params[:title])
     else
       if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Wiki page updated"; redirect_to(:action => "show", :title => @page.title)}
-          fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-          fmt.js {render :json => {:success => true}.to_json}
-        end
+        respond_to_success("Page created", :action => "show", :title => @page.title)
       else
-        respond_to do |fmt|
-          error = @page.errors.full_messages.join(", ")
-          fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
-          fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml(:root => "response"), :status => 500}
-          fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
-        end
+        respond_to_error(@page)
       end
     end
   end
@@ -163,29 +126,16 @@ class WikiController < ApplicationController
     @page = WikiPage.find_page(params[:title])
 
     if @page.is_locked?
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "This page is locked and cannot be edited"; redirect_to(:action => "show", :title => params[:title])}
-        fmt.xml {render :xml => {:success => false, :reason => "page locked"}.to_xml(:root => "response"), :status => 409}
-        fmt.js {render :json => {:success => false, :reason => "page locked"}.to_json, :status => 409}
-      end
+      respond_to_error("Page is locked", :action => "show", :title => params[:title])
     else
       @page.revert_to(params[:version])
       @page.ip_addr = request.remote_ip
       @page.user_id = @current_user.id
 
       if @page.save
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Wiki page was reverted"; redirect_to(:action => "show", :title => @page.title)}
-          fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-          fmt.js {render :json => {:success => true}.to_json}
-        end
+        respond_to_success("Page reverted", :action => "show", :title => params[:title])
       else
-        respond_to do |fmt|
-          error = @page.errors.full_messages.join(", ")
-          fmt.html {flash[:notice] = "Error: #{error}"; redirect_to(:action => "index")}
-          fmt.xml {render :xml => {:success => false, :reason => h(error)}.to_xml(:root => "response"), :status => 500}
-          fmt.js {render :json => {:success => false, :reason => escape_javascript(error)}.to_json, :status => 500}
-        end
+        respond_to_error(@page)
       end
     end
   end
@@ -194,12 +144,7 @@ class WikiController < ApplicationController
     set_title "Recent Changes"
 
     @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page]
-    
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @wiki_pages.to_xml(:root => "wiki_pages")}
-      fmt.js {render :json => @wiki_pages.to_json}
-    end
+    respond_to_list("wiki_pages")
   end
 
   def history
@@ -207,11 +152,7 @@ class WikiController < ApplicationController
 
     @wiki_pages = WikiPageVersion.find(:all, :conditions => ["title = ?", params[:title]], :order => "updated_at DESC")
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @wiki_pages.to_xml(:root => "wiki_pages")}
-      fmt.js {render :json => @wiki_pages.to_json}
-    end
+    respond_to_list("wiki_pages")
   end
 
   def diff

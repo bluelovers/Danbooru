@@ -109,21 +109,12 @@ class UserController < ApplicationController
 
     @users = User.paginate :order => order, :conditions => [conds.join(" and "), *cond_params], :per_page => 20, :page => params[:page]
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @users.to_xml(:root => "users")}
-      fmt.js {render :json => @users.to_json}
-    end
+    respond_to_list("users")
   end
 
   def authenticate
     save_cookies(@current_user)
-    
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "You are now logged in"; redirect_to(:action => "home")}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("You are now logged in", :action => "home")
   end
 
   def login
@@ -170,11 +161,7 @@ class UserController < ApplicationController
     cookies[:login] = nil
     cookies[:pass_hash] = nil
 
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "You are now logged out"; redirect_to(:action => "home")}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    respond_to_success("You are now logged out", :action => "home")
   end
 
   def update

@@ -26,11 +26,7 @@ class TagAliasController < ApplicationController
       @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 30, :page => params[:page]
     end
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @aliases.to_xml(:root => "aliases")}
-      fmt.js {render :json => @aliases.to_json}
-    end
+    respond_to_list("aliases")
   end
 
   def update

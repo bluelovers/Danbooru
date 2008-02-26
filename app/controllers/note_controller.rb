@@ -9,11 +9,7 @@ class NoteController < ApplicationController
       query = params[:query].scan(/\S+/).join(" & ")
       @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
 
-      respond_to do |fmt|
-        fmt.html
-        fmt.xml {render :xml => @notes.to_xml(:root => "notes")}
-        fmt.js {render :json => @notes.to_json}
-      end
+      respond_to_list("notes")
     end    
   end
   
@@ -46,22 +42,14 @@ class NoteController < ApplicationController
       @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC")
     end
     
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @notes.to_xml(:root => "notes")}
-      fmt.js {render :json => @notes.to_json}
-    end
+    respond_to_list("notes")
   end
 
   def revert
     note = Note.find(params[:id])
 
     if note.locked?
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "This post is locked and notes cannot be altered"; redirect_to(:action => "history", :id => note.id)}
-        fmt.xml {render :xml => {:success => false, :reason => "post is locked"}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :xml => {:success => false, :reason => "post is locked"}.to_json, :status => 500}
-      end
+      respond_to_error("Post is locked", :action => "history", :id => note.id)
       return
     end
 
@@ -70,11 +58,7 @@ class NoteController < ApplicationController
     note.user_id = @current_user.id
 
     if note.save
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Note reverted"; redirect_to(:action => "history", :id => note.id)}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Note reverted", :action => "history", :id => note.id)
     else
       render_error(note)
     end
@@ -88,10 +72,7 @@ class NoteController < ApplicationController
     end
 
     if note.locked?
-      respond_to do |fmt|
-        fmt.xml {render :xml => {:success => false, :reason => "post is locked"}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :json => {:success => false, :reason => "post is locked"}.to_json, :status => 500}
-      end
+      respond_to_error("Post is locked", :controller => "post", :action => "show", :id => note.post_id)
       return
     end
 
