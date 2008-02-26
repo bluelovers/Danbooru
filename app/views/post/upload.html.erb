@@ -10,7 +10,7 @@
         <li><%= link_to "Group doujinshi, manga pages, and similar game CGs together", :controller => "help", :action => "post_relationships" %></li>
         <li>Read the <%= link_to "tagging guidelines", :controller => "help", :action => "tags" %></li>
       </ul>
-      <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
+      <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
     </div>
   <% end %>
 
