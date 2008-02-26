@@ -7,8 +7,8 @@ Favorite = {
         id: post_id
       },
       onComplete: function(resp) {
-        var resp = resp.responseJSON
-        
+        var resp = eval("(" + decodeURIComponent(resp.responseText) + ")")
+        console.log("%o", resp)
         if (resp.success) {
           notice("Post #" + post_id + " added to favorites")
         
@@ -39,8 +39,8 @@ Favorite = {
         id: post_id
       },
       onComplete: function(resp) {
-        var resp = resp.responseJSON
-
+        var resp = eval("(" + decodeURIComponent(resp.responseText) + ")")
+        console.log("%o", resp)
         notice("Post #" + post_id + " removed from your favorites")
         
         if ($("favorited-by")) {

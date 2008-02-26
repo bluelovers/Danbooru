@@ -4,134 +4,95 @@ class ActiveRecord::Base
   end
 end
 
-module Danbooru
-  module CoreExtensions
-    module NilClassExtensions
-      def id
-        raise NoMethodError
-      end
-
-      def to_json(options = {})
-        "null"
-      end
-    end
-
-    module StringExtensions
-      def to_json(options = {})
-        return "\"" + to_escaped_js + "\""
-      end
-
-      def to_escaped_for_sql_like
-      # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
-        return self.gsub(/\\/, '\0\0').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
-      end
-
-      def to_escaped_js
-        return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\r|\n/, '\\n')
-      end
-    end
-
-    module SymbolExtensions
-      def to_json(options = {})
-        return "'" + to_s.to_escaped_js + "'"
-      end
-    end
-
-    module IntegerExtensions
-      def to_json(options = {})
-        return self
-      end
-    end
-
-    module TimeExtensions
-      def to_json(options = {})
-        return "'" + to_s + "'"
-      end
-    end
-
-    module ArrayExtensions
-      def to_json(options = {})
-        "[" + map {|x| x.to_json(options)}.join(",") + "]"
-      end
-    end
-    
-    module FalseClassExtensions
-      def to_json(options = {})
-        "false"
-      end
-    end
-    
-    module TrueClassExtensions
-      def to_json(options = {})
-        "true"
-      end
-    end
-    
-    module HashExtensions
-      def included(m)
-        m.alias_method :to_xml_orig, :to_xml
-      end
-
-      def to_xml(options = {})
-        if false == options.delete(:no_children)
-          to_xml_orig(options)
-        else
-          options[:indent] ||= 2
-          options[:no_children] ||= true
-          options[:root] ||= "hash"
-          dasherize = !options.has_key?(:dasherize) || options[:dasherize]
-          root = dasherize ? options[:root].dasherize : options[:root]
-          options.reverse_merge!({:builder => Builder::XmlMarkup.new(:indent => options[:indent]), :root => root})
-          options[:builder].instruct! unless options.delete(:skip_instruct)
-          options[:builder].tag!(root, self)
-        end
-      end
-
-      def to_json(options = {})
-        arr = []
-
-        each do |k, v|
-          arr << "#{k.to_json(options)}:#{v.to_json(options)}"
-        end
-
-        return "{" + arr.join(",") + "}"
-      end
-    end
-  end
-end
-
 class NilClass
-  include Danbooru::CoreExtensions::NilClassExtensions
+  def id
+    raise NoMethodError
+  end
+
+  # def to_json(options = {})
+  #   "null"
+  # end
 end
 
 class String
-  include Danbooru::CoreExtensions::StringExtensions
+  def to_json(options = {})
+    return "\"" + to_escaped_js + "\""
+  end
+
+  def to_escaped_for_sql_like
+    # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
+    return self.gsub(/\\/, '\0\0').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
+  end
+
+  def to_escaped_js
+    return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\r|\n/, '\\n')
+  end
 end
 
 class Symbol
-  include Danbooru::CoreExtensions::SymbolExtensions
+  def to_json(options = {})
+    return "'" + to_s.to_escaped_js + "'"
+  end
 end
 
-class Integer
-  include Danbooru::CoreExtensions::IntegerExtensions
-end
+# class Integer
+#   def to_json(options = {})
+#     return self
+#   end
+# end
 
-class Time
-  include Danbooru::CoreExtensions::TimeExtensions
-end
+# class TimeExtensions
+#   def to_json(options = {})
+#     return "'" + to_s + "'"
+#   end
+# end
 
-class Array
-  include Danbooru::CoreExtensions::ArrayExtensions
-end
+# class Array
+#   def to_json(options = {})
+#     "[" + map {|x| x.to_json(options)}.join(",") + "]"
+#   end
+# end
 
-class FalseClass
-  include Danbooru::CoreExtensions::FalseClassExtensions
-end
+# class FalseClass
+#   def to_json(options = {})
+#     "false"
+#   end
+# end
 
-class TrueClass
-  include Danbooru::CoreExtensions::TrueClassExtensions
-end
+# class TrueClass
+#   def to_json(options = {})
+#     "true"
+#   end
+# end
 
 class Hash
-  include Danbooru::CoreExtensions::HashExtensions
+  # def included(m)
+  #   m.alias_method :to_xml_orig, :to_xml
+  # end
+  
+  def to_xml(options = {})
+    if false == options.delete(:no_children)
+      to_xml_orig(options)
+    else
+      options[:indent] ||= 2
+      options[:no_children] ||= true
+      options[:root] ||= "hash"
+      dasherize = !options.has_key?(:dasherize) || options[:dasherize]
+      root = dasherize ? options[:root].dasherize : options[:root]
+      options.reverse_merge!({:builder => Builder::XmlMarkup.new(:indent => options[:indent]), :root => root})
+      options[:builder].instruct! unless options.delete(:skip_instruct)
+      options[:builder].tag!(root, self)
+    end
+  end
+  
+  # def to_json(options = {})
+  #   arr = []
+  # 
+  #   each do |k, v|
+  #     arr << "#{k.to_json(options)}:#{v.to_json(options)}"
+  #   end
+  # 
+  #   return "{" + arr.join(",") + "}"
+  # end
 end
+

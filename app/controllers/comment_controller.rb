@@ -9,10 +9,7 @@ class CommentController < ApplicationController
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
       comment.update_attributes(params[:comment])
-      respond_to do |fmt|
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Comment updated", {:action => "index"})
     else
       access_denied()
     end
@@ -23,11 +20,7 @@ class CommentController < ApplicationController
     if @current_user.has_permission?(comment)
       comment.destroy
 
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Comment deleted"; redirect_to(:controller => "post", :action => "show", :id => comment.post_id)}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Comment deleted", {:controller => "post", :action => "show", :id => comment.post_id})
     else
       access_denied()
     end
@@ -35,12 +28,7 @@ class CommentController < ApplicationController
 
   def create
     if @current_user.is_member_or_higher? && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "You cannot post more than #{CONFIG['member_comment_limit']} comments in an hour"; redirect_to(:controller => "comment", :action => "index")}
-        fmt.xml {render :xml => {:success => false, :reason => "hourly limit exceeded"}.to_xml(:root => "response"), :status => 500}
-        fmt.js {render :json => {:success => false, :reason => "hourly limit exceeded"}.to_json, :status => 500}
-      end
-
+      respond_to_error("Hourly limit exceeded", {:action => "index"})
       return
     end
 
@@ -52,18 +40,9 @@ class CommentController < ApplicationController
 
     comment = Comment.create(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if comment.errors.empty?
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Comment added"; redirect_to(:controller => "comment", :action => "index")}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Comment created", {:action => "index"})
     else
-      error_messages = comment.errors.full_messages.join(", ")
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: #{error_messages}"; redirect_to(:controller => "post", :action => "show", :id => comment.post_id)}
-        fmt.xml {render :xml => {:success => false, :reason => error_messages}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => false, :reason => error_messages}.to_json}
-      end
+      respond_to_error(comment, {:action => "index"})
     end
   end
 
@@ -71,32 +50,26 @@ class CommentController < ApplicationController
     set_title "Comment"
     @comment = Comment.find(params[:id])
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @comment.to_xml(:root => "comments")}
-      fmt.js {render :json => @comment.to_json}
-    end
+    respond_to_list("comment")
   end
   
   def index
     set_title "Comments"
-
-    params[:limit] ||= 25
-    cond = ["TRUE"]
-    cond_params = []
-
-    if params[:post_id]
-      cond << "post_id = ?"
-      cond_params << params[:post_id].to_i
-    end
-
-    respond_to do |fmt|
-      fmt.html do
-        @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10, :page => params[:page]
-        @posts = @posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}
+    
+    if params[:format] == "js" || params[:format] == "xml"
+      if params[:post_id]
+        conds = "post_id = ?"
+        cond_params = params[:post_id]
+      else
+        conds = "true"
+        cond_params = []
       end
-      fmt.xml {render :xml => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_xml(:root => "comments")}
-      fmt.js {render :json => Comment.find(:all, :conditions => [cond.join(" AND "), *cond_params], :limit => params[:limit], :order => "id DESC", :offset => params[:offset]).to_json}
+      
+      @comments = Comment.paginate(:conditions => [conds, *cond_params], :per_page => 25, :page => params[:page], :order => "id DESC")
+      respond_to_list("comments")
+    else
+      @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10, :page => params[:page]
+      @posts = @posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}
     end
   end
 
@@ -126,11 +99,8 @@ class CommentController < ApplicationController
   def mark_as_spam
     @comment = Comment.find(params[:id])
     @comment.update_attributes(:is_spam => true)
-
-    respond_to do |fmt|
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-      fmt.js {render :json => {:success => true}.to_json}
-    end
+    
+    respond_to_success("Comment marked as spam", {:action => "index"})
   end
   
   def edit

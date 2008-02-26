@@ -18,10 +18,7 @@ class ArtistController < ApplicationController
     @artist = Artist.find(params[:id])
     @artist.destroy
 
-    respond_to do |fmt|
-      fmt.html {flash[:notice] = "Artist deleted"; redirect_to(:action => "index", :page => params[:page])}
-      fmt.js
-    end
+    respond_to_success("Artist deleted", {:action => "index", :params => params[:page]})
   end
 
   def update
@@ -34,18 +31,9 @@ class ArtistController < ApplicationController
     artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
 
     if artist.errors.empty?
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Artist entry updated"; redirect_to(:action => "show", :id => artist.id)}
-        fmt.xml {render :xml => {:sucess => true}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true}.to_json}
-      end
+      respond_to_success("Artist updated", {:action => "show", :id => artist.id})
     else
-      errors = artist.errors.full_messages.join(", ")
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: " + errors; redirect_to(:action => "edit", :id => artist.id)}
-        fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => false, :reason => errors}.to_json}
-      end
+      respond_to_error(artist, {:action => "edit", :id => artist.id})
     end
   end
 
@@ -53,18 +41,9 @@ class ArtistController < ApplicationController
     artist = Artist.create(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
 
     if artist.errors.empty?
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Artist created"; redirect_to(:action => "show", :id => artist.id)}
-        fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
-        fmt.js {render :json > {:success => true}.to_json}
-      end
+      respond_to_success("Artist created", {:action => "show", :id => artist.id})
     else
-      errors = artist.errors.full_messages.join(", ")
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: " + errors; redirect_to(:action => "add", :alias_id => params[:alias_id])}
-        fmt.xml {render :xml => {:success => false, :reason => errors}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => false, :reason => errors}.to_json}
-      end
+      respond_to_error(artist, {:action => "add", :alias_id => params[:alias_id]})
     end
   end
 
@@ -114,11 +93,7 @@ class ArtistController < ApplicationController
       @artists = Artist.paginate :order => order, :per_page => 25, :page => params[:page]
     end
 
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @artists.to_xml(:root => "artists")}
-      fmt.js {render :json => @artists.to_json}
-    end
+    respond_to_list("artists")
   end
 
   def show

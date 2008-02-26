@@ -70,9 +70,9 @@ module LoginSystem
       @current_user = AnonymousUser.new
     end
   end
-
+  
   def member_only
-    if @current_user && @current_user.is_member_or_higher?
+    if @current_user.is_member_or_higher?
       return true
     else
       access_denied()
@@ -81,7 +81,7 @@ module LoginSystem
   end
   
   def privileged_only
-    if @current_user && @current_user.is_privileged_or_higher?
+    if @current_user.is_privileged_or_higher?
       return true
     else
       access_denied()
@@ -90,7 +90,7 @@ module LoginSystem
   end
 
   def mod_only
-    if @current_user && @current_user.is_mod_or_higher?
+    if @current_user.is_mod_or_higher?
       return true
     else
       access_denied()
@@ -99,7 +99,7 @@ module LoginSystem
   end
 
   def blocked_only
-    if @current_user && @current_user.is_blocked_or_higher?
+    if @current_user.is_blocked_or_higher?
       return true
     else
       access_denied()
@@ -108,7 +108,7 @@ module LoginSystem
   end 
 
   def admin_only
-    if @current_user && @current_user.is_admin_or_higher?
+    if @current_user.is_admin_or_higher?
       return true
     else
       access_denied()

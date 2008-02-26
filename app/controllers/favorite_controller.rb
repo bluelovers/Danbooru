@@ -40,17 +40,16 @@ class FavoriteController < ApplicationController
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
         fmt.js do
-          @post.reload
-          favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
+          favorited_users = @post.favorited_by.map {|x| %{<a href="/favorite/show/#{x.id}">#{CGI.escapeHTML(x.name)}</a>}}
           if favorited_users.empty?
             favorited_users = "Favorited by: no one"
           else
             favorited_users = "Favorited by: #{favorited_users.join(', ')}"
           end
 
-          render :json => {:success => true, :score => @post.score, :post_id => @post.id, :favorited => favorited_users}.to_json
+          render :json => {:success => true, :score => @post.score + 1, :post_id => @post.id, :favorited => favorited_users}.to_json
         end
-        fmt.xml {render :xml => {:success => true, :score => @post.score, :post_id => @post.id}.to_xml(:root => "response")}
+        fmt.xml {render :xml => {:success => true, :score => @post.score + 1, :post_id => @post.id}.to_xml(:root => "response")}
       end
     rescue User::AlreadyFavoritedError
       respond_to do |fmt|
@@ -67,8 +66,7 @@ class FavoriteController < ApplicationController
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
-      fmt.js do 
-        @post.reload
+      fmt.js do
         favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
         if favorited_users.empty?
           favorited_users = "Favorited by: no one"
@@ -76,7 +74,7 @@ class FavoriteController < ApplicationController
           favorited_users = "Favorited by: #{favorited_users.join(', ')}"
         end
         
-        render :json => {:success => true, :post_id => @post.id, :favorited => favorited_users, :score => @post.score}.to_json
+        render :json => {:success => true, :post_id => @post.id, :favorited => favorited_users, :score => @post.score - 1}.to_json
       end
       fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
     end
