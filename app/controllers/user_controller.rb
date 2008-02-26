@@ -4,7 +4,7 @@ class UserController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite, :unban]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
-  before_filter :mod_only, :only => [:invites, :block_account, :moderator_panel]
+  before_filter :mod_only, :only => [:invites, :block_account, :blocked_users]
   helper :post
   filter_parameter_logging :password
   auto_complete_for :user, :name
@@ -235,11 +235,11 @@ class UserController < ApplicationController
     end
   end
   
-  def moderator_panel
-    @banned_users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
+  def blocked_users
+    @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
   end
   
-  def unban
+  def unblock_user
     params[:user].keys.each do |user_id|
       Ban.destroy_all(["user_id = ?", user_id])
     end

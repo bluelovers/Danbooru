@@ -1,8 +1,6 @@
-<h4>Moderator Panel</h4>
-
 <div class="section">
-  <h6>Active Bans</h6>
-  <% form_tag(:action => "unban") do %>
+  <h6>Blocked Users</h6>
+  <% form_tag(:action => "unblock") do %>
     <table width="100%" class="highlightable">
       <thead>
         <tr>
@@ -14,11 +12,11 @@
       </thead>
       <tfoot>
         <tr>
-          <td colspan="4"><%= submit_tag "Unban" %></td>
+          <td colspan="4"><%= submit_tag "Unblock" %></td>
         </tr>
       </tfoot>
       <tbody>
-        <% @banned_users.each do |user| %>
+        <% @users.each do |user| %>
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= check_box_tag "user[#{user.id}]" %></td>
             <td><%= h user.name %></td>
