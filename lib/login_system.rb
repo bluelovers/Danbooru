@@ -8,6 +8,10 @@ module LoginSystem
     def name
       "Anonymous"
     end
+    
+    def pretty_name
+      "Anonymous"
+    end
 
     def is_anonymous?
       true

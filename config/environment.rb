@@ -34,20 +34,6 @@ Rails::Initializer.run do |config|
   config.action_controller.session = {:session_key => CONFIG["app_name"], :secret => CONFIG["session_secret_key"]}
 end
 
-ActiveRecord::Base.allow_concurrency = false
-
-ActionMailer::Base.default_charset = "utf-8"
-ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = {
-  :address => "localhost",
-  :port => 25,
-  :domain => "localhost"
-}
-
-ExceptionNotifier.exception_recipients = [CONFIG["admin_contact"]]
-ExceptionNotifier.sender_address = CONFIG["admin_contact"]
-ExceptionNotifier.email_prefix = "[" + CONFIG["app_name"] + "] "
-
 require 'base64'
 require 'diff/lcs/array'
 require 'image_size'
@@ -64,13 +50,3 @@ require 'superredcloth'
 require 'html_4_tags'
 require 'google_chart' if CONFIG["enable_reporting"]
 require 'core_extensions'
-
-if CONFIG["enable_caching"]
-  require 'memcache_util'
-  require 'cache'
-  require 'memcache_util_store'
-  
-  CACHE = MemCache.new :c_threshold => 10_000, :compression => true, :debug => false, :namespace => CONFIG["app_name"], :readonly => false, :urlencode => false
-  CACHE.servers = CONFIG["memcache_servers"]
-end
-

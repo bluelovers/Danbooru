@@ -1,5 +1,12 @@
 <div id="user-index">
-  <% if @current_user %>
+  <% if @current_user.is_anonymous? %>
+    <h2>You are not logged in.</h2>
+
+    <ul class="link-page">
+      <li><%= link_to "&raquo; Login", :action => "login" %></li>
+      <li><%= link_to "&raquo; Sign Up", :action => "signup" %></li>
+    </ul>
+  <% else %>
     <h2>Namasté <%= h(@current_user.pretty_name) %>!</h2>
     <p>From here you can access account-specific options and features.</p>
 
@@ -23,12 +30,5 @@
         </ul>
       </div>
     <% end %>
-  <% else %>
-    <h2>You are not logged in.</h2>
-
-    <ul class="link-page">
-      <li><%= link_to "&raquo; Login", :action => "login" %></li>
-      <li><%= link_to "&raquo; Sign Up", :action => "signup" %></li>
-    </ul>
   <% end %>
 </div>
