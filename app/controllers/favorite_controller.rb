@@ -23,7 +23,7 @@ class FavoriteController < ApplicationController
     respond_to do |fmt|
       fmt.html
       fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
-      fmt.js {render :json => @posts.to_json}
+      fmt.json {render :json => @posts.to_json}
       fmt.atom {render :action => "show_atom.rxml", :layout => false}
     end
   end
@@ -39,7 +39,7 @@ class FavoriteController < ApplicationController
 
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
-        fmt.js do
+        fmt.json do
           favorited_users = @post.favorited_by.map {|x| %{<a href="/favorite/show/#{x.id}">#{CGI.escapeHTML(x.name)}</a>}}
           if favorited_users.empty?
             favorited_users = "Favorited by: no one"
@@ -54,7 +54,7 @@ class FavoriteController < ApplicationController
     rescue User::AlreadyFavoritedError
       respond_to do |fmt|
         fmt.html {flash[:notice] = "You've already favorited this post"; redirect_to(:controller => "post", :action => "show", :id => params[:id])}
-        fmt.js {render :json => {:success => false, :reason => "already favorited"}.to_json, :status => 409}
+        fmt.json {render :json => {:success => false, :reason => "already favorited"}.to_json, :status => 409}
         fmt.xml {render :xml => {:success => false, :reason => "already favorited"}.to_xml(:root => "response"), :status => 409}
       end
     end
@@ -66,7 +66,7 @@ class FavoriteController < ApplicationController
 
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
-      fmt.js do
+      fmt.json do
         favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
         if favorited_users.empty?
           favorited_users = "Favorited by: no one"

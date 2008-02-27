@@ -74,7 +74,7 @@ class TagController < ApplicationController
           render :xml => Tag.find(:all, :order => order, :limit => limit, :conditions => [conds, *cond_params]).to_xml(:root => "tags")
         end
       end
-      fmt.js do
+      fmt.json do
         @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
         render :json => @tags.to_json
       end
@@ -155,7 +155,7 @@ class TagController < ApplicationController
         
         render :xml => xml
       end
-      fmt.js {render :json => @tags.to_json}
+      fmt.json {render :json => @tags.to_json}
     end
   end
 

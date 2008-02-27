@@ -48,7 +48,7 @@ class WikiPage < ActiveRecord::Base
   end
 
   def author
-    self.user.name rescue CONFIG["default_guest_name"]
+    return User.find_name(self.user_id)
   end
 
   def pretty_title

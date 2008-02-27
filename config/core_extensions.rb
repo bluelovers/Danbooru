@@ -15,9 +15,9 @@ class NilClass
 end
 
 class String
-  def to_json(options = {})
-    return "\"" + to_escaped_js + "\""
-  end
+  # def to_json(options = {})
+  #   return "\"" + to_escaped_js + "\""
+  # end
 
   def to_escaped_for_sql_like
     # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
@@ -30,45 +30,45 @@ class String
 end
 
 class Symbol
-  def to_json(options = {})
-    return "'" + to_s.to_escaped_js + "'"
-  end
+  # def to_json(options = {})
+  #   return "'" + to_s.to_escaped_js + "'"
+  # end
 end
 
-# class Integer
-#   def to_json(options = {})
-#     return self
-#   end
-# end
+class Integer
+  # def to_json(options = {})
+  #   return self
+  # end
+end
 
-# class TimeExtensions
-#   def to_json(options = {})
-#     return "'" + to_s + "'"
-#   end
-# end
+class TimeExtensions
+  # def to_json(options = {})
+  #   return "'" + to_s + "'"
+  # end
+end
 
-# class Array
-#   def to_json(options = {})
-#     "[" + map {|x| x.to_json(options)}.join(",") + "]"
-#   end
-# end
+class Array
+  # def to_json(options = {})
+  #   "[" + map {|x| x.to_json(options)}.join(",") + "]"
+  # end
+end
 
-# class FalseClass
-#   def to_json(options = {})
-#     "false"
-#   end
-# end
+class FalseClass
+  # def to_json(options = {})
+  #   "false"
+  # end
+end
 
-# class TrueClass
-#   def to_json(options = {})
-#     "true"
-#   end
-# end
+class TrueClass
+  # def to_json(options = {})
+  #   "true"
+  # end
+end
 
 class Hash
-  # def included(m)
-  #   m.alias_method :to_xml_orig, :to_xml
-  # end
+  def included(m)
+    m.alias_method :to_xml_orig, :to_xml
+  end
   
   def to_xml(options = {})
     if false == options.delete(:no_children)

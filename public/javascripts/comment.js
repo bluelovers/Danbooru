@@ -2,7 +2,7 @@ Comment = {
   flag: function(id) {
     notice("Flagging comment for deletion...")
 
-    new Ajax.Request("/comment/mark_as_spam.js", {
+    new Ajax.Request("/comment/mark_as_spam.json", {
       parameters: {
         "id": id,
         "comment[is_spam]": 1
@@ -20,7 +20,7 @@ Comment = {
   },
   
   quote: function(id) {
-    new Ajax.Request("/comment/show.js", {
+    new Ajax.Request("/comment/show.json", {
       method: "get",
       parameters: {
         "id": id

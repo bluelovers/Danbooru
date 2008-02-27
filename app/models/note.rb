@@ -32,16 +32,8 @@ class Note < ActiveRecord::Base
     end
   end
 
-  def self.author(user_id)
-    if user_id
-      connection.select_value("SELECT name FROM users WHERE id = #{user_id}")
-    else
-      CONFIG["default_guest_name"]
-    end
-  end
-
   def author
-    Note.author(self.user_id)
+    User.find_name(self.user_id)
   end
 
   def locked?

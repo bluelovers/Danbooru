@@ -8,7 +8,7 @@ Forum = {
     })
   },
   quote: function(id) {
-    new Ajax.Request("/forum/show.js", {
+    new Ajax.Request("/forum/show.json", {
       method: 'get',
       parameters: {
         "id": id

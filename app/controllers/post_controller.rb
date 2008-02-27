@@ -51,7 +51,7 @@ class PostController < ApplicationController
         respond_to do |fmt|
           fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title)}
           fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
-          fmt.js {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
+          fmt.json {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
         end
       end
     elsif @post.errors.invalid?(:md5)
@@ -66,7 +66,7 @@ class PostController < ApplicationController
       respond_to do |fmt|
         fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title)}
         fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
+        fmt.json {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
       end
     else
       respond_to_error(@post)
@@ -194,7 +194,7 @@ class PostController < ApplicationController
         end
         render :xml => xml
       end
-      fmt.js {render :json => @posts.to_json}
+      fmt.json {render :json => @posts.to_json}
     end
   end
 

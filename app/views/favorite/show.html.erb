@@ -1,7 +1,7 @@
 <script type="text/javascript">
   function deleteFav(post_id) {
     if ($("del-mode") && $("del-mode").checked == true) {
-      new Ajax.Request('/favorite/destroy.js', {
+      new Ajax.Request('/favorite/destroy.json', {
         asynchronous: true,
         method: 'post',
         postBody: 'id=' + post_id,

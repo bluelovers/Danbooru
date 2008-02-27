@@ -5,7 +5,7 @@ Post = {
     notice('Updating post #' + post_id)
     params["id"] = post_id
 
-    new Ajax.Request('/post/update.js', {
+    new Ajax.Request('/post/update.json', {
       parameters: params,
 
       onComplete: function(resp) {
@@ -23,7 +23,7 @@ Post = {
   vote: function(score, id) {
     notice('Voting for post #' + id + '...');
 
-    new Ajax.Request("/post/vote.js", {
+    new Ajax.Request("/post/vote.json", {
       parameters: {
         "id": id,
         "score": score
@@ -49,7 +49,7 @@ Post = {
       return false
     }
   
-    new Ajax.Request("/post/flag.js", {
+    new Ajax.Request("/post/flag.json", {
       parameters: {
         "id": id,
         "reason": reason

@@ -101,11 +101,7 @@ class ForumPost < ActiveRecord::Base
   end
   
   def author
-    if self.creator
-      self.creator.name
-    else
-      CONFIG["default_guest_name"]
-    end
+    return User.find_name(self.creator_id)
   end
   
   def to_json

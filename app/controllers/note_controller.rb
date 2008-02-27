@@ -25,7 +25,7 @@ class NoteController < ApplicationController
     respond_to do |fmt|
       fmt.html
       fmt.xml {render :xml => @posts.map {|x| x.notes}.flatten.to_xml(:root => "notes")}
-      fmt.js {render :json => @posts.map {|x| x.notes}.flatten.to_json}
+      fmt.json {render :json => @posts.map {|x| x.notes}.flatten.to_json}
     end
   end
 
@@ -83,7 +83,7 @@ class NoteController < ApplicationController
     if note.save
       respond_to do |fmt|
         fmt.xml {render :xml => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)}.to_xml(:root => "response")}
-        fmt.js {render :json => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)}.to_json}
+        fmt.json {render :json => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)}.to_json}
       end
     else
       render_error(note)

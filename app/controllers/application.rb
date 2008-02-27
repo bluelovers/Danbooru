@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   def respond_to_success(notice, redirect_to_params)
     respond_to do |fmt|
       fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
-      fmt.js {render :json => {:success => true}.to_json}
+      fmt.json {render :json => {:success => true}.to_json}
       fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
     end
   end
@@ -24,12 +24,10 @@ class ApplicationController < ActionController::Base
       obj = obj.errors.full_messages.join(", ")
     end
     
-    options[:status] ||= 500
-
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
-      fmt.js {render :json => {:success => false, :reason => obj}.to_json, :status => options[:status]}
-      fmt.xml {render :xml => {:success => false, :reason => obj}.to_xml(:root => "response"), :status => options[:status]}
+      fmt.json {render :json => {:success => false, :reason => obj}.to_json, :status => 500}
+      fmt.xml {render :xml => {:success => false, :reason => obj}.to_xml(:root => "response"), :status => 500}
     end
   end
   
@@ -38,7 +36,7 @@ class ApplicationController < ActionController::Base
     
     respond_to do |fmt|
       fmt.html
-      fmt.js {render :json => inst_var.to_json}
+      fmt.json {render :json => inst_var.to_json}
       fmt.xml {render :xml => inst_var.to_xml(:root => (options[:root] || inst_var_name))}
     end
   end

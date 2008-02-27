@@ -19,11 +19,7 @@ class Comment < ActiveRecord::Base
   end
 
   def author
-    if user_id
-      connection.select_value("SELECT name FROM users WHERE id = #{self.user_id}")
-    else
-      CONFIG["default_guest_name"]
-    end
+    return User.find_name(self.user_id)
   end
   
   def pretty_author

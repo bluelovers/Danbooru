@@ -2,17 +2,27 @@ class Tag < ActiveRecord::Base
   @type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}
 
   class << self
-    def find_type(name)
+    def find_type_helper(name)
       tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
       if tag == nil
-        return "general"
+        "general"
       else
-        return type_name(tag.tag_type)
+        @type_map[tag.tag_type]
       end
     end
     
-    def type_name(tag_type, general_string = true)
-      if tag_type == 0 && !general_string
+    def find_type(name)
+      if CONFIG["enable_caching"]
+        return Cache.get("tag_type:#{name}", 1.day) do
+          find_type_helper(name)
+        end
+      else
+        find_type_helper(name)
+      end
+    end
+    
+    def type_name(tag_type, print_general_type = true)
+      if tag_type == 0 && !print_general_type
         return ""
       else
         return @type_map[tag_type]

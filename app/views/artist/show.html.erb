@@ -11,7 +11,12 @@
        <% @artist.artist_urls.each_with_index do |url, i| %>
         <tr>
           <th>URL #<%= i + 1 %></th>
-          <td><%= link_to h(url.url), h(url.url) %></td>
+          <td>
+            <%= link_to h(url.url), h(url.url) %>
+            <% if @current_user.is_mod_or_higher? && url.url =~ /\.(?:jpg|jpeg|png|gif)/ %>
+              (<%= link_to "mass edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(url.url), :name => @artist.name %>)
+            <% end %>
+          </td>
         </tr>
       <% end %>
       <% if @artist.alias_id %>
@@ -60,9 +65,6 @@
     <% unless @artist.alias_id %>
       <%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %> |
       <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
-    <% end %>
-    <% if @artist.artist_urls.any? %>
-      <%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + File.dirname(@artist.artist_urls[-1].url), :name => @artist.name %>
     <% end %>
   </div>
 </div>

@@ -88,7 +88,7 @@ RelatedTags = {
       params["type"] = type
     }
   
-    new Ajax.Request("/tag/related.js", {
+    new Ajax.Request("/tag/related.json", {
       method: 'get',
       parameters: params,
       onComplete: function(resp) {
@@ -112,7 +112,7 @@ RelatedTags = {
 
   find_artist: function(url) {
     if (url.match(/^http/)) {
-      new Ajax.Request("/artist/index.js", {
+      new Ajax.Request("/artist/index.json", {
         method: "get",
         parameters: {
           "url": url,

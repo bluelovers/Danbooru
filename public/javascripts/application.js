@@ -6403,7 +6403,7 @@ Comment = {
   flag: function(id) {
     notice("Flagging comment for deletion...")
 
-    new Ajax.Request("/comment/mark_as_spam.js", {
+    new Ajax.Request("/comment/mark_as_spam.json", {
       parameters: {
         "id": id,
         "comment[is_spam]": 1
@@ -6421,7 +6421,7 @@ Comment = {
   },
   
   quote: function(id) {
-    new Ajax.Request("/comment/show.js", {
+    new Ajax.Request("/comment/show.json", {
       method: "get",
       parameters: {
         "id": id
@@ -6444,7 +6444,7 @@ Favorite = {
   create: function(post_id) {
     notice('Adding post #' + post_id)
 
-    new Ajax.Request('/favorite/create.js', {
+    new Ajax.Request('/favorite/create.json', {
       parameters: {
         id: post_id
       },
@@ -6475,7 +6475,7 @@ Favorite = {
   destroy: function(post_id) {
     notice('Removing post #' + post_id)
 
-    new Ajax.Request('/favorite/destroy.js', {
+    new Ajax.Request('/favorite/destroy.json', {
       parameters: {
         id: post_id
       },
@@ -6510,7 +6510,7 @@ Forum = {
     })
   },
   quote: function(id) {
-    new Ajax.Request("/forum/show.js", {
+    new Ajax.Request("/forum/show.json", {
       method: 'get',
       parameters: {
         "id": id
@@ -6979,7 +6979,7 @@ var Note = Class.create({
 
 		notice("Saving note...")
 
-		new Ajax.Request('/note/update.js', {
+		new Ajax.Request('/note/update.json', {
 			parameters: params,
 			
 			onComplete: function(resp) {
@@ -7240,7 +7240,7 @@ Pool = {
   add_post: function(post_id, pool_id) {
   	notice("Adding to pool...")
 
-  	new Ajax.Request("/pool/add_post.js", {
+  	new Ajax.Request("/pool/add_post.json", {
   	  parameters: {
   	    "post_id": post_id,
   	    "pool_id": pool_id
@@ -7259,7 +7259,7 @@ Pool = {
 
   remove_post: function(post_id, pool_id) {
     if ($("del-mode") && $("del-mode").checked == true) {
-      new Ajax.Request('/pool/remove_post.js', {
+      new Ajax.Request('/pool/remove_post.json', {
         parameters: {
           "post_id": post_id,
           "pool_id": pool_id
@@ -7285,7 +7285,7 @@ Post = {
     notice('Updating post #' + post_id)
     params["id"] = post_id
 
-    new Ajax.Request('/post/update.js', {
+    new Ajax.Request('/post/update.json', {
       parameters: params,
 
       onComplete: function(resp) {
@@ -7303,7 +7303,7 @@ Post = {
   vote: function(score, id) {
     notice('Voting for post #' + id + '...');
 
-    new Ajax.Request("/post/vote.js", {
+    new Ajax.Request("/post/vote.json", {
       parameters: {
         "id": id,
         "score": score
@@ -7329,7 +7329,7 @@ Post = {
       return false
     }
   
-    new Ajax.Request("/post/flag.js", {
+    new Ajax.Request("/post/flag.json", {
       parameters: {
         "id": id,
         "reason": reason
@@ -7639,7 +7639,7 @@ RelatedTags = {
       params["type"] = type
     }
   
-    new Ajax.Request("/tag/related.js", {
+    new Ajax.Request("/tag/related.json", {
       method: 'get',
       parameters: params,
       onComplete: function(resp) {
@@ -7663,7 +7663,7 @@ RelatedTags = {
 
   find_artist: function(url) {
     if (url.match(/^http/)) {
-      new Ajax.Request("/artist/index.js", {
+      new Ajax.Request("/artist/index.json", {
         method: "get",
         parameters: {
           "url": url,
@@ -7707,7 +7707,7 @@ UserRecord = {
   destroy: function(id) {
     notice('Deleting record #' + id)
 
-    new Ajax.Request('/user_record/destroy.js', {
+    new Ajax.Request('/user_record/destroy.json', {
       parameters: {
         "id": id
       },

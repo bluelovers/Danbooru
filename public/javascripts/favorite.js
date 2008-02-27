@@ -2,7 +2,7 @@ Favorite = {
   create: function(post_id) {
     notice('Adding post #' + post_id)
 
-    new Ajax.Request('/favorite/create.js', {
+    new Ajax.Request('/favorite/create.json', {
       parameters: {
         id: post_id
       },
@@ -33,7 +33,7 @@ Favorite = {
   destroy: function(post_id) {
     notice('Removing post #' + post_id)
 
-    new Ajax.Request('/favorite/destroy.js', {
+    new Ajax.Request('/favorite/destroy.json', {
       parameters: {
         id: post_id
       },

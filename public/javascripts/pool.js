@@ -2,7 +2,7 @@ Pool = {
   add_post: function(post_id, pool_id) {
   	notice("Adding to pool...")
 
-  	new Ajax.Request("/pool/add_post.js", {
+  	new Ajax.Request("/pool/add_post.json", {
   	  parameters: {
   	    "post_id": post_id,
   	    "pool_id": pool_id
@@ -21,7 +21,7 @@ Pool = {
 
   remove_post: function(post_id, pool_id) {
     if ($("del-mode") && $("del-mode").checked == true) {
-      new Ajax.Request('/pool/remove_post.js', {
+      new Ajax.Request('/pool/remove_post.json', {
         parameters: {
           "post_id": post_id,
           "pool_id": pool_id

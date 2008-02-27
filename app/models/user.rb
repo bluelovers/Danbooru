@@ -68,6 +68,26 @@ class User < ActiveRecord::Base
     def sha1(pass)
       Digest::SHA1.hexdigest("#{salt}--#{pass}--")
     end
+    
+    def find_name_helper(user_id)
+      user = User.find(:first, :conditions => ["id = ?", user_id], :select => "name")
+      
+      if user
+        return user.name
+      else
+        return CONFIG["default_guest_name"]
+      end
+    end
+    
+    def find_name(user_id)
+      if CONFIG["enable_caching"]
+        return Cache.get("user_name:#{user_id}") do
+          find_name_helper(user_id)
+        end
+      else
+        find_name_helper(user_id)
+      end
+    end
   end
   
   # For compatibility with AnonymousUser class

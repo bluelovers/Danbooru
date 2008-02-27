@@ -157,7 +157,7 @@ class PoolController < ApplicationController
     else
       respond_to do |fmt|
         fmt.html
-        fmt.js do
+        fmt.json do
           @posts = Post.find_by_tags(params[:query], :order => "id desc", :limit => 500)
           @posts = @posts.select {|x| x.can_view?(@current_user)}
           render :action => "import.rjs"

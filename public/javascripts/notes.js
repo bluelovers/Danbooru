@@ -449,7 +449,7 @@ var Note = Class.create({
 
 		notice("Saving note...")
 
-		new Ajax.Request('/note/update.js', {
+		new Ajax.Request('/note/update.json', {
 			parameters: params,
 			
 			onComplete: function(resp) {

@@ -897,14 +897,7 @@ class Post < ActiveRecord::Base
 
 # Returns either the author's name or the default guest name.
   def author
-    if @author
-      @author
-    elsif user_id
-      @author = connection.select_value("SELECT name FROM users WHERE id = #{self.user_id}")
-      @author
-    else
-      CONFIG["default_guest_name"]
-    end
+    return User.find_name(self.user_id)
   end
 
   def self.find_by_tags(tags, options = {})
