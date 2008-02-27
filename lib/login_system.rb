@@ -23,6 +23,7 @@ module LoginSystem
 
     CONFIG["user_levels"].each do |name, value|
       normalized_name = name.downcase.gsub(/ /, "_")
+      
       define_method("is_#{normalized_name}?") do
         false
       end
@@ -51,10 +52,6 @@ module LoginSystem
       @current_user = User.find(session[:user_id])
     end
 
-    if @current_user == nil && params[:login] && params[:password_hash]
-      @current_user = User.authenticate_hash(params[:login], params[:password_hash])
-    end
-
     if @current_user == nil && cookies[:login] && cookies[:pass_hash]
       @current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
     end
@@ -65,7 +62,7 @@ module LoginSystem
     
     if @current_user
       if @current_user.is_blocked? && @current_user.ban.expires_at < Time.now
-        @current_user.update_attribute(:level, CONFIG["starting_level"])
+        @current_user.update_attributes(:level => CONFIG["starting_level"])
         Ban.destroy_all("user_id = #{@current_user.id}")
       end
       
