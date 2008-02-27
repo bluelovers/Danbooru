@@ -10,7 +10,7 @@ class TagAlias < ActiveRecord::Base
     n = Tag.find_or_create_by_name(self.name)
     a = Tag.find(self.alias_id)
 
-    if self.class.find(:first, :conditions => ["name = ? OR name = ?", n.name, a.name])
+    if self.class.find(:first, :conditions => ["name = ? OR name = ? OR alias_id = ? OR alias_id = ?", n.name, a.name, n.id, a.id])
       self.errors.add_to_base("Alias already exists")
       return false
     end
