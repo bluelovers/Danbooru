@@ -20,7 +20,7 @@ module FavoriteHelper
       :order => "lower(name)", 
       :select => "users.name, users.id"
     )
-    s = users.map {|x| link_to(h(x.pretty_name), :controller => "favorite", :action => "show", :id => x.id)}.uniq.to_sentence
+    s = users.map {|x| link_to(h(x.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{x.name}")}.uniq.to_sentence
 
     if s.empty?
       return "no one"

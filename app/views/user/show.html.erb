@@ -25,7 +25,7 @@
     </tr>
     <tr>
       <th>Favorites</th>
-      <td><%= link_to Favorite.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "favorite", :action => "show", :id => @user.id %></td>
+      <td><%= link_to Favorite.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></td>
     </tr>
     <tr>
       <th>Comments</th>

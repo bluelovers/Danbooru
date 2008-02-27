@@ -3,6 +3,7 @@ Disallow: /artist/edit
 Disallow: /artist/update
 Disallow: /comment/show
 Disallow: /comment/create
+Disallow: /favorite
 Disallow: /pool/add_post
 Disallow: /pool/remove_post
 Disallow: /post/atom
@@ -20,6 +21,7 @@ Disallow: /wiki/update
 Disallow: /wiki/revert
 Disallow: /wiki/history
 Disallow: /wiki/rename
+Disallow: /user
 
 User-agent: HTTrack
 Disallow: /post

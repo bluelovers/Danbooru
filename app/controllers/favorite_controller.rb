@@ -4,29 +4,6 @@ class FavoriteController < ApplicationController
   verify :method => :post, :only => [:create, :destroy]
   verify :params => :id, :only => [:create]
   helper :post
-  
-  def show
-    if params[:id]
-      @user = User.find(params[:id])
-    elsif !@current_user.is_anonymous?
-      @user = @current_user
-    else
-      flash[:notice] = "No user specified"
-      redirect_to :controller => "post", :action => "index"
-      return
-    end
-    
-    set_title "#{@user.pretty_name}'s Favorites"
-    
-    @posts = Post.paginate :per_page => 16, :order => "favorites.id DESC", :joins => "JOIN favorites ON posts.id = favorites.post_id", :conditions => ["favorites.user_id = ?", @user.id], :select => "posts.*"
-
-    respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :xml => @posts.to_xml(:root => "posts")}
-      fmt.json {render :json => @posts.to_json}
-      fmt.atom {render :action => "show_atom.rxml", :layout => false}
-    end
-  end
 
   def index
     @users = User.find(:all, :order => "lower(name)", :conditions => "EXISTS (SELECT favorites.* FROM favorites WHERE favorites.user_id = users.id)")
@@ -38,9 +15,9 @@ class FavoriteController < ApplicationController
       @current_user.add_favorite(@post.id)
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
+        fmt.html {flash[:notice] = "Post added to favorites"; redirect_to(:controller => "post", :action => "index", :tags => "fav:#{@current_user.name}")}
         fmt.json do
-          favorited_users = @post.favorited_by.map {|x| %{<a href="/favorite/show/#{x.id}">#{CGI.escapeHTML(x.name)}</a>}}
+          favorited_users = @post.favorited_by.map {|x| %{<a href="/post/index/fav%3A#{CGI.escapeHTML(x.name)}">#{CGI.escapeHTML(x.name)}</a>}}
           if favorited_users.empty?
             favorited_users = "Favorited by: no one"
           else
@@ -67,7 +44,7 @@ class FavoriteController < ApplicationController
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Post deleted from your favorites"; redirect_to(:controller => "post", :action => "show", :id => @post.id)}
       fmt.json do
-        favorited_users = @post.favorited_by.map {|x| '<a href="/favorite/show/%s">%s</a>' % [x.id, CGI.escapeHTML(x.name)]}
+        favorited_users = @post.favorited_by.map {|x| %{<a href="/post/index/fav%3A#{CGI.escapeHTML(x.name)}">#{CGI.escapeHTML(x.name)}</a>}}
         if favorited_users.empty?
           favorited_users = "Favorited by: no one"
         else
