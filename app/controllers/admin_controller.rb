@@ -7,8 +7,6 @@ class AdminController < ApplicationController
   end
 
   def edit_user
-    set_title "Edit User"
-
     if request.post?
       @user = User.find_by_name(params[:user][:name])
       @user.level = params[:user][:level]

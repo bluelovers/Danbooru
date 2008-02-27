@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
     respond_to do |fmt|
       fmt.html
       fmt.json {render :json => inst_var.to_json}
-      fmt.xml {render :xml => inst_var.to_xml(:root => (options[:root] || inst_var_name))}
+      fmt.xml {render :xml => inst_var.to_xml(:root => inst_var_name)}
     end
   end
   
