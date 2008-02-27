@@ -61,10 +61,10 @@
   <div id="footer">
     <%= link_to "List", :action => "index" %> |
     <%= link_to "Edit", :action => "edit", :id => @artist.id %> |
-    <%= link_to "Delete", :action => "delete", :id => @artist.id %> |
+    <%= link_to "Delete", :action => "delete", :id => @artist.id %>
     <% unless @artist.alias_id %>
-      <%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %> |
-      <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %> |
+      | <%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %>
+      | <%= link_to "Create Alias", :action => "add", :alias_id => @artist.id %>
     <% end %>
   </div>
 </div>

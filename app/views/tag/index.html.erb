@@ -11,7 +11,7 @@
         </tr>
         <tr>
           <th><label for="type">Type</label></th>
-          <td><%= select_tag "type", options_for_select([["Any", ""], CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/}.to_a]) %></td>
+          <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}]) %></td>
         </tr>
         <tr>
           <th><label for="order">Order</label></th>
