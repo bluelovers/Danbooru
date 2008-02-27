@@ -125,13 +125,25 @@ class Artist < ActiveRecord::Base
       self.group_id = a.id
     end
   end
+  
+  def api_attributes
+    return {
+      :id => id, 
+      :name => name, 
+      :alias_id => alias_id, 
+      :group_id => group_id,
+      :urls => artist_urls.map {|x| x.url}
+    }
+  end
 
   def to_xml(options = {})
-    {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_xml(options.merge(:root => "artist"))
+    attribs = api_attributes
+    attribs[:urls] = attribs[:urls].join(" ")
+    attribs.to_xml(options.merge(:root => "artist"))
   end
 
   def to_json(options = {})
-    {:id => id, :name => name, :alias_id => alias_id, :group_id => group_id, :url_a => url_a, :url_b => url_b, :url_c => url_c}.to_json(options)
+    api_attributes.to_json(options)
   end
 
   def to_s
