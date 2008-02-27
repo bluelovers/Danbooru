@@ -59,7 +59,7 @@ class ArtistController < ApplicationController
 
       post = Post.find(:first, :conditions => ["id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?)) AND source LIKE 'http%'", params[:name]])
       unless post == nil || post.source.blank?
-        @artist.url_b = post.source
+        @artist.urls = post.source
       end
     end
 
@@ -98,7 +98,6 @@ class ArtistController < ApplicationController
 
   def show
     @artist = Artist.find(params[:id])
-    @posts = Post.find_by_tags(@artist.name, :limit => 7, :order => "id desc")
-    @posts = @posts.select {|x| x.can_view?(@current_user)}
+    @posts = Post.find_by_tags(@artist.name, :limit => 7, :order => "id desc").select {|x| x.can_view?(@current_user)}
   end
 end
