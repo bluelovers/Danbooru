@@ -33,8 +33,8 @@
                 [<%= link_to h(artist.group), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
               <% end %>             
             </td>
-            <% if artist.updater %>
-              <td><%= h(artist.updater.pretty_name) %></td>
+            <% if artist.updater_id %>
+              <td><%= h(User.find_name(artist.updater_id)) %></td>
             <% else %>
               <td></td>
             <% end %>
