@@ -80,7 +80,6 @@ module LoginSystem
       return true
     else
       access_denied()
-      return false
     end
   end
   
@@ -89,7 +88,6 @@ module LoginSystem
       return true
     else
       access_denied()
-      return false
     end
   end
 
@@ -98,7 +96,6 @@ module LoginSystem
       return true
     else
       access_denied()
-      return false
     end
   end
 
@@ -107,7 +104,6 @@ module LoginSystem
       return true
     else
       access_denied()
-      return false
     end
   end 
 
@@ -116,7 +112,6 @@ module LoginSystem
       return true
     else
       access_denied()
-      return false
     end
   end
 end

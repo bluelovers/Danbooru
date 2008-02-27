@@ -163,7 +163,7 @@ class ApplicationController < ActionController::Base
 
         unless cached.blank?
           render :text => cached, :layout => false
-          return false
+          return
         end
       end
 
