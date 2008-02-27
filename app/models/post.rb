@@ -715,17 +715,10 @@ class Post < ActiveRecord::Base
   end
   
   def self.destroy_with_reason(id, reason, current_user)
-    flag_detail = FlaggedPostDetail.find_by_post_id(id)
-    
-    if flag_detail
-      if !reason.blank?
-        flag_detail.update(:user_id => current_user.id, :reason => reason)
-      end
-    else
-      FlaggedPostDetail.create(:post_id => id, :reason => reason, :user_id => current_user.id)
-    end
-    
-    Post.destroy(id)
+    post = Post.find(id)
+    post.flag!(reason, current_user)
+    post.reload
+    post.destroy
   end
     
   def validate_content_type
@@ -735,8 +728,21 @@ class Post < ActiveRecord::Base
     end
   end
   
+  def flag!(reason, creator_id)
+    self.update_attributes(:status => "flagged")
+    
+    unless self.flag_detail
+      FlaggedPostDetail.create(:post_id => self.id, :reason => reason, :user_id => creator_id, :is_resolved => false)
+    end
+  end
+  
   def update_status_on_destroy
-    self.update_attribute(:status, "deleted")
+    self.update_attributes(:status => "deleted")
+    
+    if self.flag_detail
+      self.flag_detail.update_attributes(:is_resolved => true)
+    end
+    
     return false
   end
 
