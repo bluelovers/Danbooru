@@ -731,9 +731,19 @@ class Post < ActiveRecord::Base
   def flag!(reason, creator_id)
     self.update_attributes(:status => "flagged")
     
-    unless self.flag_detail
+    if self.flag_detail == nil
       FlaggedPostDetail.create(:post_id => self.id, :reason => reason, :user_id => creator_id, :is_resolved => false)
+    else
+      self.flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
     end
+  end
+  
+  def approve!
+    if self.flag_detail
+      self.flag_detail.update_attributes(:is_resolved => true)
+    end
+    
+    self.update_attributes(:status => "active")
   end
   
   def update_status_on_destroy

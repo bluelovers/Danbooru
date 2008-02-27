@@ -83,7 +83,8 @@ class PostController < ApplicationController
         if params[:ids]
           params[:ids].keys.each do |post_id|
             if params[:commit] == "Approve"
-              Post.update(post_id, :status => "active")
+              post = Post.find(post_id)
+              post.approve!
             elsif params[:commit] == "Delete"
               Post.destroy_with_reason(post_id, params[:reason] || params[:reason2], @current_user)
             end
@@ -222,10 +223,6 @@ class PostController < ApplicationController
         end
       else
         @post = Post.find(params[:id])
-      end
-      
-      unless CONFIG["can_see_post"].call(@current_user, @post)
-        raise ActiveRecord::RecordNotFound
       end
       
       @favorited_by = @post.favorited_by
