@@ -6309,6 +6309,12 @@ Form.Element.DelayedObserver = Class.create({
   }
 });
 
+var DANBOORU_VERSION = {
+  major: 1,
+  minor: 13,
+  build: 0
+}
+
 function notice(msg) {
   $('notice').update(msg).show()
 }

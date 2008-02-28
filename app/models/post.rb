@@ -175,8 +175,8 @@ class Post < ActiveRecord::Base
       generate_sql_range_helper(q[:date], "p.created_at::date", conds, cond_params)
 
       if q[:md5].is_a?(String)
-        conds << "p.md5 = ?"
-        cond_params << q[:md5]
+        conds << "p.md5 IN (?)"
+        cond_params << q[:md5].split(/,/)
       end
       
       if q[:deleted_only] == true
@@ -344,11 +344,11 @@ class Post < ActiveRecord::Base
     end
   
     def increment_count
-      connection.execute("update table_data set row_count = row_count + 1 where name = 'posts'")
+      connection.execute("UPDATE table_data SET row_count = row_count + 1 WHERE name = 'posts'")
     end
 
     def decrement_count
-      connection.execute("update table_data set row_count = row_count - 1 where name = 'posts'")
+      connection.execute("UPDATE table_data SET row_count = row_count - 1 WHERE name = 'posts'")
     end
   end
   
