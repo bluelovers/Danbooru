@@ -865,8 +865,6 @@ class Post < ActiveRecord::Base
         if self.source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
           self.source = "Image board"
         end
-        
-        self.source = ArtistUrl.normalize(source)
 
         return true
       rescue Exception => x
