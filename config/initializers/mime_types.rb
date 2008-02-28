@@ -1,1 +1,1 @@
-Mime::Type.register("application/json", :js)
+# Mime::Type.register("application/json", :js)
