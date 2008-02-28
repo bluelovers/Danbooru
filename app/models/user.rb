@@ -330,11 +330,11 @@ class User < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-    {:name => self.name, :id => self.id}.to_xml(options.merge(:root => "user"))
+    {:name => self.name, :blacklisted_tags => self.blacklisted_tags, :id => self.id}.to_xml(options.merge(:root => "user"))
   end
 
   def to_json(options = {})
-    {:name => self.name, :id => self.id}.to_json(options)
+    {:name => self.name, :blacklisted_tags => self.blacklisted_tags, :id => self.id}.to_json(options)
   end
 end
 
