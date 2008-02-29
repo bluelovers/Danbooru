@@ -249,16 +249,25 @@ class UserController < ApplicationController
   
   if CONFIG["enable_account_email_activation"]
     def resend_confirmation
-      user = @current_user
-      if user.activated?
-        flash[:notice] = "Account already activated"
+      if request.post?
+        user = User.find_by_email(params[:email])
+        
+        if user.nil?
+          flash[:notice] = "No account exists with that email"
+          redirect_to :action => "home"
+          return
+        end
+        
+        if user.is_blocked_or_higher?
+          flash[:notice] = "Your account is already activated"
+          redirect_to :action => "home"
+          return
+        end
+        
+        UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
+        flash[:notice] = "Confirmation email sent"
         redirect_to :action => "home"
-        return
       end
-
-      UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
-      flash[:notice] = "Confirmation email sent to #{user.email}"
-      redirect_to :action => "home"
     end
 
     def activate_user

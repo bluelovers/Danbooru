@@ -4,7 +4,15 @@
 
     <ul class="link-page">
       <li><%= link_to "&raquo; Login", :action => "login" %></li>
-      <li><%= link_to "&raquo; Sign Up", :action => "signup" %></li>
+      <% if CONFIG["enable_signups"] %>
+        <li><%= link_to "&raquo; Sign Up", :action => "signup" %></li>
+      <% else %>
+        <li>Signups are disabled</li>
+      <% end %>
+      <li><%= link_to "&raquo; Reset Password", :action => "reset_password" %></li>
+      <% if CONFIG["enable_account_email_activation"] %>
+        <li><%= link_to "&raquo; Resend Confirmation", :action => "resend_confirmation" %></li>
+      <% end %>
     </ul>
   <% else %>
     <h2>Namasté <%= h(@current_user.pretty_name) %>!</h2>

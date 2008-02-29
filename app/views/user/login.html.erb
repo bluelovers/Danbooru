@@ -6,20 +6,12 @@
         <td width="85%"><%= text_field "user", "name", :tabindex => 1 %></td>
       </tr>
       <tr>
-        <th>
-          <label class="block" for="user_password">Password</label>
-          <p>If you've forgotten your password, you can <%= link_to "reset it", :action => "reset_password" %>.</p>
-        </th>
+        <th><label class="block" for="user_password">Password</label></th>
         <td><%= password_field "user", "password", :tabindex => 1 %></td>
       </tr>
       <tr>
         <td colspan="2"><%= submit_tag "Login", :tabindex => 1 %></td>
       </tr>
     </table>
-  <% end %>
-  <% if CONFIG["enable_signups"] %>
-    <div>
-      <p>Don't have an account? <a href="/user/signup">Signup is easy</a>.</p>
-    </div>
-  <% end %>
+  <% end %>    
 </div>
