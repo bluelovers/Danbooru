@@ -305,7 +305,11 @@ class PostController < ApplicationController
     end
 
     if p.vote!(score, request.remote_ip)
-      respond_to_success("Vote saved", :action => "show", :id => params[:id], :tag_title => p.tag_title)
+      respond_to do |fmt|
+        fmt.html {flash[:notice] = "Vote saved" ; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
+        fmt.json {render :json => {:success => true, :score => p.score, :post_id => p.id}.to_json}
+        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => p.id}.to_xml(:root => "response")}
+      end
     else
       respond_to_error("Already voted", :action => "show", :id => params[:id], :tag_title => p.tag_title)
     end

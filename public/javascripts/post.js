@@ -34,7 +34,7 @@ Post = {
 
         if (resp.success) {
           notice("Vote saved for post #" + id);
-          $("post-score-" + resp.post_id).update(resp.score)
+          $("post-score-" + id).update(resp.score)
         } else {
           notice("Error: " + resp.reason)
         }
