@@ -56,6 +56,10 @@ module LoginSystem
       @current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
     end
 
+    if @current_user == nil && cookies[:login] && cookies[:password_hash]
+      @current_user = User.authenticate_hash(cookies[:login], cookies[:password_hash])
+    end
+
     if @current_user == nil && params[:user]
       @current_user = User.authenticate(params[:user][:name], params[:user][:password])
     end
