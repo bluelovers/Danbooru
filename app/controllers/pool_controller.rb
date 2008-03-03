@@ -100,7 +100,7 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if !@pool.is_public? && @current_user.has_permission?(@pool)
+      if !@pool.is_public? && !@current_user.has_permission?(@pool)
         access_denied()
         return
       end

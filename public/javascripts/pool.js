@@ -29,8 +29,12 @@ Pool = {
         onComplete: function(resp) {
           var resp = resp.responseJSON
           
-          notice("Post removed from pool")
-          $("p" + resp.post_id).remove()
+          if (resp.success) {
+            notice("Post removed from pool")
+            $("p" + post_id).remove()            
+          } else {
+            notice("Error: " + resp.reason)
+          }          
         }
       })
 
