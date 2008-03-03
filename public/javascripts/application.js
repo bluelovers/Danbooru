@@ -7451,7 +7451,8 @@ PostModeMenu = {
     } else if (s == "edit-tag-script") {
   	  document.body.setStyle({backgroundColor: "white"})
 	  
-  		var script = prompt("Enter a tag script")
+		var script = Cookie.get("tag-script")
+  		script = prompt("Enter a tag script", script)
 		
   		if (script) {
   			Cookie.put("tag-script", script)

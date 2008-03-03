@@ -152,7 +152,6 @@ class PostController < ApplicationController
     tags = params[:tags].to_s
     split_tags = tags.scan(/\S+/)
     page = params[:page].to_i
-    page = 1 if page < 1
     limit = params[:limit].to_i
     limit = 16 if limit == 0
     limit = 1000 if limit > 1000
