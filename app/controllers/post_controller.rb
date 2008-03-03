@@ -155,7 +155,14 @@ class PostController < ApplicationController
     limit = params[:limit].to_i
     limit = 16 if limit == 0
     limit = 1000 if limit > 1000
-    count = Post.fast_count(tags)
+    count = 0
+    begin
+      count = Post.fast_count(tags)
+    rescue => x
+      flash[:notice] = "Error: #{x}"
+      redirect_to :action => "index"
+      return
+    end
 
     set_title "/" + tags.tr("_", " ")
 
