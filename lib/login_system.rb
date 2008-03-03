@@ -43,7 +43,7 @@ module LoginSystem
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "user", :action => "login")}
       fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
-      fmt.js {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
+      fmt.json {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
     end
   end
 
