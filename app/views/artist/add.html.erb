@@ -14,10 +14,6 @@
         </tr>
       <% end %>
       <tr>
-        <th><label for="artist_pixiv_id">Pixiv Id</label></th>
-        <td><%= text_field "artist", "pixiv_id", :size => 10 %></td>
-      </tr>
-      <tr>
         <th><label for="artist_aliases">Jp Name/Aliases</label</th>
         <td><%= text_field "artist", "aliases", :size => 80, :value => params[:jp_name] %></td>
       </tr>

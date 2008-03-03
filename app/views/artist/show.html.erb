@@ -43,12 +43,6 @@
           <td><%= @artist.members.map {|x| link_to(h(x.name), :action => "show", :id => x.id)}.join(", ") %></td>
         </tr>
       <% end %>
-      <% if @artist.pixiv_id %>
-        <tr>
-          <th>Pixiv</th>
-          <td><%= link_to @artist.pixiv_id, "http://www.pixiv.net/member.php?id=#{@artist.pixiv_id}" %></td>
-        </tr>
-      <% end %>
      </tbody>
    </table>
   </div>
