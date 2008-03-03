@@ -69,7 +69,7 @@ class PostController < ApplicationController
         fmt.json {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
       end
     else
-      respond_to_error(@post)
+      respond_to_error(@post, :action => "upload")
     end
   end
 
@@ -115,7 +115,7 @@ class PostController < ApplicationController
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       respond_to_success("Post updated", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
     else
-      respond_to_error(@post)
+      respond_to_error(@post, :action => "show", :id => params[:id])
     end
   end
 
