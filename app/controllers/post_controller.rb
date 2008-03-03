@@ -159,18 +159,11 @@ class PostController < ApplicationController
     begin
       count = Post.fast_count(tags)
     rescue => x
-      flash[:notice] = "Error: #{x}"
-      redirect_to :action => "index"
+      respond_to_error("Error: #{x}", :action => "index")
       return
     end
 
     set_title "/" + tags.tr("_", " ")
-
-    if @current_user.is_anonymous? && CONFIG["show_only_first_page"] && page > 1
-      flash[:notice] = "You need an account to look beyond the first page."
-      redirect_to :controller => "user", :action => "login"
-      return
-    end
 
     @ambiguous = Tag.select_ambiguous(tags)
     
