@@ -30,8 +30,8 @@ class PostController < ApplicationController
   end
   
   def create
-    if @current_user.is_member_or_higher? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
-      respond_to_error("Daily limit exceeded", :action => "upload")
+    if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
+      respond_to_error("Daily limit exceeded", :action => "index")
       return
     end
 
