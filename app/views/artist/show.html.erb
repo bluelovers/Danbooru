@@ -1,5 +1,5 @@
 <div id="artist">
-  <h3>Artist: <%= h @artist.name %></h3>
+  <h3>Artist: <%= h @artist.name.tr("_", " ") %></h3>
   <% unless @artist.notes.blank? %>
     <div style="margin-bottom: 1em;">
       <%= wikilize(@artist.notes) %>

@@ -19,9 +19,16 @@ module TagHelper
     tags.each do |name, count|
       name = name || "UNKNOWN"
       
-      html << '<li class="tag-type-' + Tag.find_type(name) + '">'
-      html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
+      tag_type = Tag.find_type(name)
       
+      html << '<li class="tag-type-' + tag_type + '">'
+      
+      if CONFIG["enable_artists"] && tag_type == "artist"
+        html << %{<a href="/artist/show?name=#{u(name)}">?</a> }
+      else
+        html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
+      end
+
       if @current_user.is_privileged_or_higher?
         html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}">+</a> }
         html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}">&ndash;</a> }

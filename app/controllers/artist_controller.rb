@@ -95,7 +95,17 @@ class ArtistController < ApplicationController
   end
 
   def show
-    @artist = Artist.find(params[:id])
+    if params[:name]
+      @artist = Artist.find_by_name(params[:name])
+    else
+      @artist = Artist.find(params[:id])
+    end
+
+    if @artist.nil?
+      redirect_to :action => "add", :name => params[:name]
+      return
+    end
+    
     @posts = Post.find_by_tags(@artist.name, :limit => 7, :order => "id desc").select {|x| x.can_view?(@current_user)}
   end
 end
