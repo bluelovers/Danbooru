@@ -26,8 +26,8 @@ class ApplicationController < ActionController::Base
     
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
-      fmt.json {render :json => extra_api_params(:success => false, :reason => obj).to_json, :status => 500}
-      fmt.xml {render :xml => extra_api_params(:success => false, :reason => obj).to_xml(:root => "response"), :status => 500}
+      fmt.json {render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => 500}
+      fmt.xml {render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => 500}
     end
   end
   
