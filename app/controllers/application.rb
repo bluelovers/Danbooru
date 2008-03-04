@@ -11,7 +11,10 @@ class ApplicationController < ActionController::Base
   before_filter :init_cookies
 
   protected
-  def respond_to_success(notice, redirect_to_params, extra_api_params = {})
+  def respond_to_success(notice, redirect_to_params, options = {})
+    extra_api_params = options[:api] || {}
+    status = options[:status] || 200
+    
     respond_to do |fmt|
       fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
       fmt.json {render :json => extra_api_params.merge(:success => true).to_json}
@@ -19,15 +22,36 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def respond_to_error(obj, redirect_to_params, extra_api_params = {})
+  def respond_to_error(obj, redirect_to_params, options = {})
+    extra_api_params = options[:api] || {}
+    status = options[:status] || 500
+    
     if obj.is_a?(ActiveRecord::Base)
       obj = obj.errors.full_messages.join(", ")
+      status = 420
+    end
+    
+    case status
+    when 420
+      status = "420 Invalid Record"
+      
+    when 421
+      status = "421 User Throttled"
+      
+    when 422
+      status = "422 Locked"
+      
+    when 423
+      status = "423 Already Exists"
+      
+    when 424
+      status = "424 Invalid Parameters"
     end
     
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
-      fmt.json {render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => 500}
-      fmt.xml {render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => 500}
+      fmt.json {render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => status}
+      fmt.xml {render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => status}
     end
   end
   

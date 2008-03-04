@@ -43,7 +43,7 @@
     </ul>
   </div>
   <% if flash[:notice] %>
-    <div id="notice"><%= flash[:notice] %></div>
+    <div id="notice"><%= h flash[:notice] %></div>
   <% else %>
     <div id="notice" style="display: none;"></div>
   <% end %>

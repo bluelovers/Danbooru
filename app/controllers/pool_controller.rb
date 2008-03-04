@@ -81,7 +81,7 @@ class PoolController < ApplicationController
         @pool.add_post(params[:post_id])
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Pool::PostAlreadyExistsError
-        respond_to_error("Post already exists", :controller => "post", :action => "show", :id => params[:post_id])
+        respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => params[:post_id]}, :status => 423)
       rescue Exception => x
         respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
       end

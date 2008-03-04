@@ -49,7 +49,7 @@ class NoteController < ApplicationController
     note = Note.find(params[:id])
 
     if note.locked?
-      respond_to_error("Post is locked", :action => "history", :id => note.id)
+      respond_to_error("Post is locked", {:action => "history", :id => note.id}, :status => 422)
       return
     end
 
@@ -72,7 +72,7 @@ class NoteController < ApplicationController
     end
 
     if note.locked?
-      respond_to_error("Post is locked", :controller => "post", :action => "show", :id => note.post_id)
+      respond_to_error("Post is locked", {:controller => "post", :action => "show", :id => note.post_id}, :status => 422)
       return
     end
 
@@ -81,9 +81,9 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save
-      respond_to_success("Note updated", {:action => "index"}, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body))
+      respond_to_success("Note updated", {:action => "index"}, :api => {:new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)})
     else
-      render_error(note)
+      respond_to_error(note, :controller => "post", :action => "show", :id => note.post_id)
     end
   end
 end

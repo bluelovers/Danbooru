@@ -31,7 +31,7 @@ class PostController < ApplicationController
   
   def create
     if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
-      respond_to_error("Daily limit exceeded", :action => "index")
+      respond_to_error("Daily limit exceeded", {:action => "index"}, :status => 421)
       return
     end
 
@@ -46,9 +46,9 @@ class PostController < ApplicationController
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
         @post.destroy
-        respond_to_error("MD5 mismatch", :action => "upload")
+        respond_to_error("MD5 mismatch", {:action => "upload"}, :status => 420)
       else
-        respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :location => url_for(:controller => "post", :action => "show", :id => @post.id))
+        respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:location => url_for(:controller => "post", :action => "show", :id => @post.id)})
       end
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
@@ -59,7 +59,7 @@ class PostController < ApplicationController
         p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
       end
 
-      respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :location => url_for(:controller => "post", :action => "show", :id => p.id))
+      respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :api => {:location => url_for(:controller => "post", :action => "show", :id => p.id)}, :status => 423)
     else
       respond_to_error(@post, :action => "upload")
     end
@@ -292,14 +292,14 @@ class PostController < ApplicationController
     score = params[:score].to_i
     
     if !@current_user.is_mod_or_higher? && score != 1 && score != -1
-      respond_to_error("Invalid score", :action => "show", :id => params[:id], :tag_title => p.tag_title)
+      respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
       return
     end
 
     if p.vote!(score, request.remote_ip)
-      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :score => p.score, :post_id => p.id)
+      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
     else
-      respond_to_error("Already voted", :action => "show", :id => params[:id], :tag_title => p.tag_title)
+      respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
     end
   end
 

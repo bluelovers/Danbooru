@@ -2,7 +2,7 @@
   <h1>Help: API v1.13.0</h1>
 
   <div class="section">
-    <p>Danbooru offers a simple <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">REST-based API</a> to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
+    <p>Danbooru offers a simple API to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
     <p style="text-align: center;"><a href="#changelog">Change Log</a> | <a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a> | <a href="#forum">Forum</a> | <a href="#pools">Pools</a></p>
   </div>
 
@@ -25,6 +25,57 @@
       <div class="code">
         {success: false, reason: "duplicate"}
       </div>
+      <p>While you can usually determine success or failure based on the response object, you can also figure out what happened based on the HTTP status code. In addition to the standard ones, Danbooru uses some custom status codes in the 4xx and 5xx range.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Status Code</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>200 OK</td>
+            <td>Request was successful</td>
+          </tr>
+          <tr>
+            <td>403 Forbidden</td>
+            <td>Access denied</td>
+          </tr>
+          <tr>
+            <td>404 Not Found</td>
+            <td>Not found</td>
+          </tr>
+          <tr>
+            <td>420 Invalid Record</td>
+            <td>Record could not be saved</td>
+          </tr>
+          <tr>
+            <td>421 User Throttled</td>
+            <td>User is throttled, try again later</td>
+          </tr>
+          <tr>
+            <td>422 Locked</td>
+            <td>The resource is locked and cannot be modified</td>
+          </tr>
+          <tr>
+            <td>423 Already Exists</td>
+            <td>Resource already exists</td>
+          </tr>
+          <tr>
+            <td>424 Invalid Parameters</td>
+            <td>The given parameters were invalid</td>
+          </tr>
+          <tr>
+            <td>500 Internal Server Error</td>
+            <td>Some unknown error occurred on the server</td>
+          </tr>
+          <tr>
+            <td>503 Service Unavailable</td>
+            <td>Server cannot currently handle the request, try again later</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   
     <div class="section">

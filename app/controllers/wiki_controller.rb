@@ -65,7 +65,7 @@ class WikiController < ApplicationController
     @page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 
     if @page.is_locked?
-      respond_to_error("Page is locked", :action => "show", :title => params[:title])
+      respond_to_error("Page is locked", {:action => "show", :title => params[:title]}, :status => 422)
     else
       if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
         respond_to_success("Page created", :action => "show", :title => @page.title)
@@ -101,7 +101,7 @@ class WikiController < ApplicationController
     @page = WikiPage.find_page(params[:title])
 
     if @page.is_locked?
-      respond_to_error("Page is locked", :action => "show", :title => params[:title])
+      respond_to_error("Page is locked", {:action => "show", :title => params[:title]}, :status => 422)
     else
       @page.revert_to(params[:version])
       @page.ip_addr = request.remote_ip

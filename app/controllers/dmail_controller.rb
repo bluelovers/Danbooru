@@ -27,7 +27,7 @@ class DmailController < ApplicationController
       flash[:notice] = "Message sent to #{params[:dmail][:to_name]}"
       redirect_to :action => "inbox"
     else
-      flash[:notice] = "Error: " + CGI.escapeHTML(@dmail.errors.full_messages.join(", "))
+      flash[:notice] = "Error: " + @dmail.errors.full_messages.join(", ")
       render :action => "compose"
     end
   end

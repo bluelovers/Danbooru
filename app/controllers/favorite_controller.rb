@@ -29,7 +29,7 @@ class FavoriteController < ApplicationController
         fmt.xml {render :xml => {:success => true, :score => @post.score + 1, :post_id => @post.id}.to_xml(:root => "response")}
       end
     rescue User::AlreadyFavoritedError
-      respond_to_error("Already favorited", :controller => "post", :action => "show", :id => params[:id])
+      respond_to_error("Already favorited", {:controller => "post", :action => "show", :id => params[:id]}, :status => 423)
     end
   end
   

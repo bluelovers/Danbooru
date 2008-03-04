@@ -86,7 +86,7 @@ class TagController < ApplicationController
 
     if request.post?
       if params[:start].blank?
-        respond_to_error("Start tag missing", :action => "mass_edit")
+        respond_to_error("Start tag missing", {:action => "mass_edit"}, :status => 424)
         return
       end
 
