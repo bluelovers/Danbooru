@@ -48,7 +48,7 @@ class PostController < ApplicationController
         @post.destroy
         respond_to_error("MD5 mismatch", {:action => "upload"}, :status => 420)
       else
-        respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:location => url_for(:controller => "post", :action => "show", :id => @post.id)})
+        respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:post_id => @post.id, :location => url_for(:controller => "post", :action => "show", :id => @post.id)})
       end
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
