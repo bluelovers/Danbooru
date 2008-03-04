@@ -22,10 +22,11 @@ module PostHelper
     image_class += " has-parent" if post.parent_id
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
+    image_title = h(post.cached_tags)
     link_onclick = options[:onclick]
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
 
-    image = %{<img src="#{post.preview_url}" alt="#{h(post.cached_tags)}" class="#{image_class}" title="#{h(post.cached_tags)}" #{image_id}>}
+    image = %{<img src="#{post.preview_url}" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id}>}
     plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
     link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>#{image}#{plid}</a>}
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}
