@@ -11,23 +11,23 @@ class ApplicationController < ActionController::Base
   before_filter :init_cookies
 
   protected
-  def respond_to_success(notice, redirect_to_params)
+  def respond_to_success(notice, redirect_to_params, extra_api_params = {})
     respond_to do |fmt|
       fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
-      fmt.json {render :json => {:success => true}.to_json}
-      fmt.xml {render :xml => {:success => true}.to_xml(:root => "response")}
+      fmt.json {render :json => extra_api_params.merge(:success => true).to_json}
+      fmt.xml {render :xml => extra_api_params.merge(:success => true).to_xml(:root => "response")}
     end
   end
   
-  def respond_to_error(obj, redirect_to_params)
+  def respond_to_error(obj, redirect_to_params, extra_api_params = {})
     if obj.is_a?(ActiveRecord::Base)
       obj = obj.errors.full_messages.join(", ")
     end
     
     respond_to do |fmt|
       fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
-      fmt.json {render :json => {:success => false, :reason => obj}.to_json, :status => 500}
-      fmt.xml {render :xml => {:success => false, :reason => obj}.to_xml(:root => "response"), :status => 500}
+      fmt.json {render :json => extra_api_params(:success => false, :reason => obj).to_json, :status => 500}
+      fmt.xml {render :xml => extra_api_params(:success => false, :reason => obj).to_xml(:root => "response"), :status => 500}
     end
   end
   

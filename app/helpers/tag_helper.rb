@@ -15,24 +15,11 @@ module TagHelper
     when Tag
       tags = tags.map {|x| [x.name, x.post_count]}
     end
-    
-    type_map = {}
-    type_map = Tag.find(:all, :conditions => ["name in (?)", tags.map {|x| x[0]}], :select => "name, tag_type").inject({}) do |h, rec|
-      unless rec.tag_type == 0
-        h[rec.name] = Tag.type_name(rec.tag_type)
-      end
-      h
-    end
 
     tags.each do |name, count|
       name = name || "UNKNOWN"
       
-      if type_map[name]
-        html << '<li class="tag-type-' + type_map[name] + '">'
-      else
-        html << '<li>'
-      end
-      
+      html << '<li class="tag-type-' + Tag.find_type(name) + '">'
       html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
       
       if @current_user.is_privileged_or_higher?

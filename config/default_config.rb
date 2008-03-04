@@ -100,21 +100,24 @@ CONFIG["tag_types"] = {
 # Determine who can see a post. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_post"] = lambda do |user, post|
   # By default, only deleted posts are hidden.
-  break post.status != 'deleted'
+  post.status != 'deleted'
   
   # Some examples:
   #
   # Hide post if user isn't privileged and post is not safe:
-  # break post.rating != 'e' || (user != nil && user.privileged?)
+  # post.rating != "e" || user.is_privileged_or_higher?
   #
   # Hide post if user isn't a mod and post has the loli tag:
-  # break post.has_tag?("loli") 
+  # !post.has_tag?("loli") || user.is_mod_or_higher?
 end
 
 # Determines who can see ads. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_ads"] = lambda do |user|
   # By default, only show ads to non-priv users.
-  break user == nil || user.is_member_or_lower?
+  user.is_member_or_lower?
+  
+  # Show no ads at all
+  # false
 end
 
 # Enable the artists interface.
@@ -133,4 +136,4 @@ CONFIG["custom_html_headers"] = nil
 CONFIG["enable_asynchronous_tasks"] = false
 
 # The beanstalkd server to communicate with.
-CONFIG["beanstalkd_server"] = "locahost:4010"
+CONFIG["beanstalkd_server"] = "localhost:4010"

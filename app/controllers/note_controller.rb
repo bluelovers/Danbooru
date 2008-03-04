@@ -81,10 +81,7 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save
-      respond_to do |fmt|
-        fmt.xml {render :xml => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)}.to_xml(:root => "response")}
-        fmt.json {render :json => {:success => true, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)}.to_json}
-      end
+      respond_to_success("Note updated", {:action => "index"}, :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body))
     else
       render_error(note)
     end

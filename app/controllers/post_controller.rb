@@ -48,11 +48,7 @@ class PostController < ApplicationController
         @post.destroy
         respond_to_error("MD5 mismatch", :action => "upload")
       else
-        respond_to do |fmt|
-          fmt.html {flash[:notice] = "Post successfully uploaded"; redirect_to(:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title)}
-          fmt.xml {render :xml => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_xml(:root => "response")}
-          fmt.json {render :json => {:success => true, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}.to_json}
-        end
+        respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :location => url_for(:controller => "post", :action => "show", :id => @post.id)
       end
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
@@ -63,11 +59,7 @@ class PostController < ApplicationController
         p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
       end
 
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "That post already exists"; redirect_to(:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title)}
-        fmt.xml {render :xml => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_xml(:root => "response")}
-        fmt.json {render :json => {:success => false, :reason => "duplicate", :location => url_for(:controller => "post", :action => "show", :id => p.id)}.to_json}
-      end
+      respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :location => url_for(:controller => "post", :action => "show", :id => p.id))
     else
       respond_to_error(@post, :action => "upload")
     end
@@ -305,11 +297,7 @@ class PostController < ApplicationController
     end
 
     if p.vote!(score, request.remote_ip)
-      respond_to do |fmt|
-        fmt.html {flash[:notice] = "Vote saved" ; redirect_to(:action => "show", :id => params[:id], :tag_title => p.tag_title)}
-        fmt.json {render :json => {:success => true, :score => p.score, :post_id => p.id}.to_json}
-        fmt.xml {render :xml => {:success => true, :score => p.score, :post_id => p.id}.to_xml(:root => "response")}
-      end
+      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :score => p.score, :post_id => p.id)
     else
       respond_to_error("Already voted", :action => "show", :id => params[:id], :tag_title => p.tag_title)
     end
@@ -330,7 +318,7 @@ class PostController < ApplicationController
     10.times do
       post = Post.find(:first, :conditions => ["id = ? AND status <> 'deleted'", rand(max_id) + 1], :select => "id, cached_tags")
 
-      if post != nil
+      if post != nil && CONFIG["can_see_post"].call(@current_user, post)
         redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title
         return
       end

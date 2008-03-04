@@ -16,7 +16,7 @@
     </div>
 
     <ul class="flat-list">
-      <li><%= link_to_unless @page.first_version?, "&lt;&lt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1, :noredirect => 1 %></li>
+      <li><%= link_to_unless @page.first_version?, "&lt;&lt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1 %></li>
       <li><%= link_to "View posts", :controller => "post", :action => "index", :tags => @page.title %></li>
       <li><%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %></li>
       <% if @page.is_locked? %>
@@ -28,7 +28,7 @@
         <li><%= link_to "Lock", {:controller => "wiki", :action => "lock", :title => @page.title}, :method => :post %></li>
         <li><%= link_to "Rename", :action => "rename", :title => @page.title %></li>
       <% end %>
-      <li><%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1, :noredirect => 1 %></li>
+      <li><%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %></li>
     </ul>
     <div id="byline">Updated by <%= link_to h(@page.author), :controller => "user", :action => "show", :id => @page.user_id %> <%= time_ago_in_words(@page.updated_at) %> ago</div>
   <% end %>

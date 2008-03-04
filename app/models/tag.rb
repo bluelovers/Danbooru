@@ -1,175 +1,178 @@
 class Tag < ActiveRecord::Base
   @type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}
 
-  class << self
-    def find_type_helper(name)
-      tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
-      if tag == nil
-        "general"
-      else
-        @type_map[tag.tag_type]
-      end
+  def self.find_type_helper(name)
+    tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
+    if tag == nil
+      "general"
+    else
+      @type_map[tag.tag_type]
     end
-    
-    def find_type(name)
-      if CONFIG["enable_caching"]
-        return Cache.get("tag_type:#{name}", 1.day) do
-          find_type_helper(name)
-        end
-      else
+  end
+  
+  def self.find_type(name)
+    if CONFIG["enable_caching"]
+      return Cache.get("tag_type:#{name}", 1.day) do
         find_type_helper(name)
       end
+    else
+      find_type_helper(name)
+    end
+  end
+  
+  def self.type_name(tag_type, print_general_type = true)
+    if tag_type == 0 && !print_general_type
+      return ""
+    else
+      return @type_map[tag_type]
+    end
+  end
+  
+  def self.count_by_period(start, stop, options = {})
+    options[:limit] ||= 50
+
+    cond = ["p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id"]
+
+    counts = connection.select_all(sanitize_sql(["SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE " + cond.join(" and ") + " GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT #{options[:limit]}", start, stop]))
+  end
+
+  def self.find_or_create_by_name(name)
+    ambiguous = false
+    tag_type = nil
+    
+    if name =~ /^ambiguous:(.+)/
+      ambiguous = true
+      name = $1
     end
     
-    def type_name(tag_type, print_general_type = true)
-      if tag_type == 0 && !print_general_type
-        return ""
-      else
-        return @type_map[tag_type]
-      end
+    if name =~ /^(.+?):(.+)$/ && CONFIG["tag_types"][$1]
+      tag_type = CONFIG["tag_types"][$1]
+      name = $2
     end
+
+    tag = find_by_name(name)
     
-    def count_by_period(start, stop, options = {})
-      options[:limit] ||= 50
-
-      cond = ["p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id"]
-
-      counts = connection.select_all(sanitize_sql(["SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE " + cond.join(" and ") + " GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT #{options[:limit]}", start, stop]))
-    end
-
-    def find_or_create_by_name(name)
-      if name =~ /^ambiguous:(.+)/
-        is_amb = true
-        name = $1
-      else
-        is_amb = false
+    if tag
+      if tag_type
+        tag.update_attributes(:tag_type => tag_type)
       end
-
-      tag_type = CONFIG["tag_types"][name[/^(.+?):/, 1]]
-      if tag_type == nil
-        tag_type = 0
-      else
-        name.gsub!(/^.+?:/, "")
-      end
-
-      t = find_by_name(name)
-      if t != nil
-        if t.tag_type == 0 && t.tag_type != tag_type
-          t.update_attributes(:tag_type => tag_type, :is_ambiguous => is_amb)
-        end
-        return t
-      end
-
-      create(:name => name, :tag_type => tag_type, :cached_related_expires_on => Time.now.yesterday, :is_ambiguous => is_amb)
-    end
-
-    def calculate_related_by_type(tag, type, limit = 25)
-      sql = <<-EOS
-        SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name,
-        COUNT(pt0.tag_id) AS post_count
-        FROM posts_tags pt0, posts_tags pt1
-        WHERE pt0.post_id = pt1.post_id
-        AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)
-        AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?)
-        GROUP BY pt0.tag_id
-        ORDER BY post_count DESC
-        LIMIT #{limit}
-      EOS
-
-      return connection.select_all(sanitize_sql([sql, tag, type]))
-    end
-
-    def calculate_related(tags)
-      tags = [*tags]
-      return [] if tags.empty?
-
-      from = ["posts_tags pt0"]
-      cond = ["pt0.post_id = pt1.post_id"]
-      sql = ""
-
-      (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
-      (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
-      (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
-
-      sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
-      sql << " FROM " << from.join(", ")
-      sql << " WHERE " << cond.join(" AND ")
-      sql << " GROUP BY pt0.tag_id"
-      sql << " ORDER BY tag_count DESC LIMIT 25"
-
-      return connection.select_all(sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
-    end
-
-    def find_related(tags)
-      if tags.is_a?(Array) && tags.size > 1
-        return calculate_related(tags)
-      else
-        t = Tag.find_by_name(tags.to_s)
-        if t
-          return t.related
-        else
-          return []
-        end
-      end
-    end
-
-    def select_ambiguous(tags)
-      return [] if tags.blank?
-
-      tags = Tag.scan_query(tags)
-      return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags]))
-    end
-
-    def update_cached_tags(tags)
-      post_ids = connection.select_values(Tag.sanitize_sql(["SELECT pt.post_id FROM posts_tags pt, tags t WHERE pt.tag_id = t.id AND t.name IN (?)", tags]))
-      transaction do
-        post_ids.each do |i|
-          tags = connection.select_values("SELECT t.name FROM tags t, posts_tags pt WHERE t.id = pt.tag_id AND pt.post_id = #{i} ORDER BY t.name").join(" ")
-          connection.execute(Tag.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = ?", tags, i]))
-        end
-      end
-    end
-
-    def scan_query(query)
-      query.to_s.downcase.scan(/\S+/).uniq
-    end
-
-    def scan_tags(tags)
-      tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).map {|x| x.gsub(/^[-~]+/, "")}.uniq
-    end
-
-    def parse_helper(range, type = :integer)
-      cast = lambda do |x|
-        if type == :integer
-          x.to_i
-        elsif type == :date
-          x.to_date
-        end
-      end
-
-      case range
-      when /^([-\d]+)\.\.([-\d]+)$/
-        return [:between, cast[$1], cast[$2]]
-
-      when /^<([-\d]+)$/
-        return [:lt, cast[$1]]
-        
-      when /^<=([-\d]+)$/, /^\.\.([-\d]+)$/
-        return [:lte, cast[$1]]
       
-      when /^>([-\d]+)$/
-        return [:gt, cast[$1]]
-        
-      when /^>=([-\d]+)$/, /^([-\d]+)\.\.$/
-        return [:gte, cast[$1]]
-
-      when /^([-\d]+)$/
-        return [:eq, cast[$1]]
-
-      else
-        []
-
+      if ambiguous
+        tag.update_attributes(:is_ambiguous => ambiguous)
       end
+      
+      return tag
+    else
+      create(:name => name, :tag_type => tag_type || CONFIG["tag_types"]["General"], :cached_related_expires_on => Time.now.yesterday, :is_ambiguous => ambiguous)
+    end
+  end
+
+  def self.calculate_related_by_type(tag, type, limit = 25)
+    sql = <<-EOS
+      SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name,
+      COUNT(pt0.tag_id) AS post_count
+      FROM posts_tags pt0, posts_tags pt1
+      WHERE pt0.post_id = pt1.post_id
+      AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)
+      AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?)
+      GROUP BY pt0.tag_id
+      ORDER BY post_count DESC
+      LIMIT #{limit}
+    EOS
+
+    return connection.select_all(sanitize_sql([sql, tag, type]))
+  end
+
+  def self.calculate_related(tags)
+    tags = [*tags]
+    return [] if tags.empty?
+
+    from = ["posts_tags pt0"]
+    cond = ["pt0.post_id = pt1.post_id"]
+    sql = ""
+
+    (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
+    (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
+    (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
+
+    sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
+    sql << " FROM " << from.join(", ")
+    sql << " WHERE " << cond.join(" AND ")
+    sql << " GROUP BY pt0.tag_id"
+    sql << " ORDER BY tag_count DESC LIMIT 25"
+
+    return connection.select_all(sanitize_sql([sql, *tags])).map {|x| [x["tag"], x["tag_count"]]}
+  end
+
+  def self.find_related(tags)
+    if tags.is_a?(Array) && tags.size > 1
+      return calculate_related(tags)
+    else
+      t = Tag.find_by_name(tags.to_s)
+      if t
+        return t.related
+      else
+        return []
+      end
+    end
+  end
+
+  def self.select_ambiguous(tags)
+    return [] if tags.blank?
+
+    tags = Tag.scan_query(tags)
+    return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags]))
+  end
+
+  def self.update_cached_tags(tags)
+    post_ids = connection.select_values(Tag.sanitize_sql(["SELECT pt.post_id FROM posts_tags pt, tags t WHERE pt.tag_id = t.id AND t.name IN (?)", tags]))
+    transaction do
+      post_ids.each do |i|
+        tags = connection.select_values("SELECT t.name FROM tags t, posts_tags pt WHERE t.id = pt.tag_id AND pt.post_id = #{i} ORDER BY t.name").join(" ")
+        connection.execute(Tag.sanitize_sql(["UPDATE posts SET cached_tags = ? WHERE id = ?", tags, i]))
+      end
+    end
+  end
+
+  def self.scan_query(query)
+    query.to_s.downcase.scan(/\S+/).uniq
+  end
+
+  def self.scan_tags(tags)
+    tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).map {|x| x.gsub(/^[-~]+/, "")}.uniq
+  end
+
+  def self.parse_helper(range, type = :integer)
+    cast = lambda do |x|
+      if type == :integer
+        x.to_i
+      elsif type == :date
+        x.to_date
+      end
+    end
+
+    case range
+    when /^([-\d]+)\.\.([-\d]+)$/
+      return [:between, cast[$1], cast[$2]]
+
+    when /^<([-\d]+)$/
+      return [:lt, cast[$1]]
+      
+    when /^<=([-\d]+)$/, /^\.\.([-\d]+)$/
+      return [:lte, cast[$1]]
+    
+    when /^>([-\d]+)$/
+      return [:gt, cast[$1]]
+      
+    when /^>=([-\d]+)$/, /^([-\d]+)\.\.$/
+      return [:gte, cast[$1]]
+
+    when /^([-\d]+)$/
+      return [:eq, cast[$1]]
+
+    else
+      []
+
     end
 
 # Parses a query into three sets of tags: reject, union, and intersect.
