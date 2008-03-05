@@ -7,6 +7,14 @@ class Comment < ActiveRecord::Base
   after_save :expire_cache
   after_destroy :expire_cache
   attr_accessor :do_not_bump_post
+  
+  def self.build_conditions(params)
+    return Nagato::Builder.conditions do |cond|
+      if params[:post_id]
+        cond.add "post_id = ?", params[:post_id]
+      end
+    end
+  end
 
   def update_last_commented_at
     return if self.do_not_bump_post == "1"

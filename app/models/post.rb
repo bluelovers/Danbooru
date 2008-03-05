@@ -1019,6 +1019,10 @@ class Post < ActiveRecord::Base
     return CONFIG["can_see_post"].call(user, self)
   end
   
+  def can_be_seen_by?(user)
+    return can_view?(user)
+  end
+  
   def has_tag?(tag)
     return self.cached_tags.scan(/\S+/).any? {|x| x == tag}
   end

@@ -56,19 +56,11 @@ class CommentController < ApplicationController
     set_title "Comments"
     
     if params[:format] == "js" || params[:format] == "xml"
-      if params[:post_id]
-        conds = "post_id = ?"
-        cond_params = params[:post_id]
-      else
-        conds = "true"
-        cond_params = []
-      end
-      
-      @comments = Comment.paginate(:conditions => [conds, *cond_params], :per_page => 25, :page => params[:page], :order => "id DESC")
+      @comments = Comment.paginate(:conditions => Comment.build_conditions(params), :per_page => 25, :page => params[:page], :order => "id DESC")
       respond_to_list("comments")
     else
-      @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status > 'deleted'", :per_page => 10, :page => params[:page]
-      @posts = @posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}
+      @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status <> 'deleted'", :per_page => 10, :page => params[:page]
+      @posts = @posts.select {|x| x.can_be_seen_by?(@current_user)}
     end
   end
 
@@ -98,7 +90,6 @@ class CommentController < ApplicationController
   def mark_as_spam
     @comment = Comment.find(params[:id])
     @comment.update_attributes(:is_spam => true)
-    
     respond_to_success("Comment marked as spam", :action => "index")
   end
   
