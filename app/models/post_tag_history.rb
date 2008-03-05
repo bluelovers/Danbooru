@@ -1,10 +1,7 @@
 class PostTagHistory < ActiveRecord::Base
-  @disable_versioning = false
   belongs_to :user
 
   class << self
-    attr_accessor :disable_versioning
-    
     def generate_sql(options = {})
       joins = []
       conds = ["TRUE"]

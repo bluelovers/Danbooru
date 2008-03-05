@@ -318,7 +318,7 @@ class PostController < ApplicationController
     10.times do
       post = Post.find(:first, :conditions => ["id = ? AND status <> 'deleted'", rand(max_id) + 1], :select => "id, cached_tags")
 
-      if post != nil && CONFIG["can_see_post"].call(@current_user, post)
+      if post != nil && post.can_be_seen_by?(@current_user)
         redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title
         return
       end

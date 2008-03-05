@@ -22,9 +22,7 @@ class TagImplicationController < ApplicationController
       redirect_to :action => "index"
 
     when "Approve"
-      PostTagHistory.disable_versioning = true
       ids.each {|x| TagImplication.find(x).approve(@current_user.id, request.remote_ip)}
-      PostTagHistory.disable_versioning = false
 
       flash[:notice] = "Tag implications approved"
       redirect_to :action => "index"
@@ -35,7 +33,7 @@ class TagImplicationController < ApplicationController
     set_title "Tag Implications"
     
     if params[:commit] == "Search Aliases"
-      redirect_to :controller => "tag_alias", :action => "index", :query => params[:query]
+      redirect_to :action => "index", :query => params[:query]
       return
     end
     
