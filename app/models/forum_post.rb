@@ -74,7 +74,7 @@ class ForumPost < ActiveRecord::Base
   
   def last_updater
     if self.last_updated_by
-      User.find(self.last_updated_by).name
+      User.find_name(self.last_updated_by)
     else
       CONFIG["default_guest_name"]
     end
