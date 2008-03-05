@@ -2,17 +2,27 @@
 
 require 'mkmf'
 
-dir_config("gd")
 CONFIG['CC'] = "g++"
 
-have_header("gd.h")
+dir_config("gd")
+dir_config("jpeg")
+dir_config("png")
 
-have_library("gd")
-have_library("jpeg")
-have_library("png")
+ok = true
 
-have_func("gdImageCreateFromGif", "gd.h")
-have_func("gdImageJpeg", "gd.h")
+ok &&= have_header("gd.h")
+
+ok &&= have_library("gd")
+ok &&= have_library("jpeg")
+ok &&= have_library("png")
+
+ok &&= have_func("gdImageCreateFromGif", "gd.h")
+ok &&= have_func("gdImageJpeg", "gd.h")
+ok &&= have_func("jpeg_set_quality", ["stdlib.h", "stdio.h", "jpeglib-extern.h"])
+
+if !ok
+  raise "Missing prerequisites"
+end
 
 with_cflags("-O2 -fno-exceptions -Wall") {true}
 #with_cflags("-O0 -g -fno-exceptions -Wall") {true}

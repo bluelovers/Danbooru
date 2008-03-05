@@ -1,10 +1,10 @@
-#ifndef JPEG_H
-#define JPEG_H
+#ifndef JPEG_READER_H
+#define JPEG_READER_H
 
 #include <stdio.h>
 #include <stdint.h>
 #include <setjmp.h>
-#include <jpeglib.h>
+#include "jpeglib-extern.h"
 #include "Reader.h"
 
 struct jpeg_error
