@@ -18,7 +18,7 @@ class UserController < ApplicationController
 
   public
   def auto_complete_for_member_name
-    @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ilike ? escape '\\\\'", CONFIG["user_levels"]["Member"], params[:member][:name] + "%"])
+    @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ILIKE ? ESCAPE '\\\\'", CONFIG["user_levels"]["Member"], params[:member][:name] + "%"])
     render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
   end
 
@@ -69,44 +69,9 @@ class UserController < ApplicationController
   def index
     set_title "Users"
     
-    conds = []
-    cond_params = []
-    
-    if params[:name]
-      conds << "name ilike ? escape '\\\\'"
-      cond_params << "%" + params[:name].to_escaped_for_sql_like + "%"
-    end
-    
-    if params[:id]
-      conds << "id = ?"
-      cond_params << params[:id]
-    end
-    
-    if params[:level] && params[:level] != "any"
-      conds << "level = ?"
-      cond_params << params[:level]
-    end
-    
-    order = case params[:order]
-    when "name"
-      "lower(name)"
-      
-    when "posts"
-      "(select count(*) from posts where user_id = users.id) desc"
-      
-    when "favorites"
-      "(select count(*) from favorites where user_id = users.id) desc"
-      
-    when "notes"
-      "(select count(*) from note_versions where user_id = users.id) desc"
-      
-    else
-      "created_at desc"
-    end
-    
-    conds << "true" if conds.empty?
+    conditions, order = User.generate_sql(params)
 
-    @users = User.paginate :order => order, :conditions => [conds.join(" and "), *cond_params], :per_page => 20, :page => params[:page]
+    @users = User.paginate :order => order, :conditions => conditions, :per_page => 20, :page => params[:page]
 
     respond_to_list("users")
   end

@@ -688,8 +688,8 @@ class Post < ActiveRecord::Base
   before_validation_on_create :download_source
   before_validation_on_create :validate_content_type
   before_validation_on_create :generate_hash
-  before_validation_on_create :generate_preview
   before_validation_on_create :get_image_dimensions
+  before_validation_on_create :generate_preview
   before_validation_on_create :move_file
   before_destroy :delete_file
   before_destroy :update_status_on_destroy
@@ -822,27 +822,23 @@ class Post < ActiveRecord::Base
 
   def generate_preview
     return true unless image?
+    return true unless (self.width && self.height)
     
     unless File.exists?(tempfile_path)
       errors.add(:file, "not found")
       return false
     end
 
+    size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>150, :height=>150})
+
     begin
-      Timeout.timeout(120) do
-        retcode = Danbooru.resize_image(file_ext, tempfile_path, tempfile_preview_path)
-    
-        if retcode == 0
-          return true
-        else
-          errors.add "preview", "couldn't be generated (error code #{retcode})"
-          return false
-        end
-      end
-    rescue Timeout::Error
-      errors.add "preview", "timed out"
+      Danbooru.resize(file_ext, tempfile_path, tempfile_preview_path, size, 95)
+    rescue Exception => x
+      errors.add "preview", "couldn't be generated (error code #{x})"
       return false
     end
+
+    return true
   end
 
 # automatically downloads from the source url if it's a URL

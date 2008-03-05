@@ -44,6 +44,8 @@ module Nagato
   end
   
   class Builder
+    attr_reader :order, :limit, :offset
+    
     def initialize(table = nil)
       @build_full_sql = (table.nil? ? false : true)
       
@@ -119,6 +121,26 @@ module Nagato
       sql, params = sub.to_a
       @conditions << "(#{sql})"
       @condition_params += params if params
+    end
+    
+    def order(sql)
+      @order = sql
+    end
+    
+    def limit(amount)
+      @limit = amount
+    end
+    
+    def offset(amount)
+      @offset = amount
+    end
+    
+    def joins
+      return [@joins.join(" "), *@join_params]
+    end
+    
+    def conditions
+      return [@conditions.join(" AND "), *@condition_params]
     end
     
     def to_a
