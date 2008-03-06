@@ -273,9 +273,9 @@ class Tag < ActiveRecord::Base
     return self.cached_related.split(/,/).in_groups_of(2)
   end
 
-  # def to_s
-    # name
-  # end
+  def to_s
+    name
+  end
 
   def type_name
     self.class.type_name_from_value(tag_type)
