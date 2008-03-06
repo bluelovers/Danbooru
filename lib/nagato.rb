@@ -132,36 +132,14 @@ module Nagato
       @offset = amount.to_i
     end
     
-    def to_hash
-      hash = {}
-      
-      if @conditions.any?
-        hash[:conditions] = [@conditions.join(" AND "), *@condition_params]
-      end
-      
-      if @joins.any?
-        hash[:join] = [@joins.join(" "), *@join_params]
-      end
-      
-      if @limit
-        hash[:limit] = @limit
-      end
-      
-      if @offset
-        hash[:offset] = @offset
-      end
-      
-      if @order
-        hash[:order] = @order
-      end
-
-      return hash
-    end
-    
-    def to_cond
+    def conditions
       return [@conditions.join(" AND "), *@condition_params]
     end
 
+    def joins
+      return [@joins.join(" "), *@join_params]
+    end
+    
     def to_hash
       hash = {}
       hash[:conditions] = conditions if @conditions.any?
