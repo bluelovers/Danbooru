@@ -1,8 +1,19 @@
 class Tag < ActiveRecord::Base
+  # This maps integers to strings.
   @type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}
+  
+  if CONFIG["enable_caching"]
+    after_save :update_memcache
+  end
+  
+  # Find the type name for a type value.
+  def self.type_name_from_value(type_value)
+    @type_map[type_value]
+  end
 
-  def self.find_type_helper(name)
-    tag = Tag.find(:first, :conditions => ["name = ?", name], :select => "tag_type")
+  def self.type_name_helper(tag_name)
+    tag = Tag.find(:first, :conditions => ["name = ?", tag_name], :select => "tag_type")
+    
     if tag == nil
       "general"
     else
@@ -10,21 +21,14 @@ class Tag < ActiveRecord::Base
     end
   end
   
-  def self.find_type(name)
+  # Find the type for a tag. Returns a string.
+  def self.type_name(tag_name)
     if CONFIG["enable_caching"]
-      return Cache.get("tag_type:#{name}", 1.day) do
-        find_type_helper(name)
+      return Cache.get("tag_type:#{tag_name}", 1.day) do
+        type_name_helper(tag_name)
       end
     else
-      find_type_helper(name)
-    end
-  end
-  
-  def self.type_name(tag_type, print_general_type = true)
-    if tag_type == 0 && !print_general_type
-      return ""
-    else
-      return @type_map[tag_type]
+      type_name_helper(tag_name)
     end
   end
   
@@ -45,12 +49,19 @@ class Tag < ActiveRecord::Base
       name = $1
     end
     
-    if name =~ /^(.+?):(.+)$/ && CONFIG["tag_types"][$1]
-      tag_type = CONFIG["tag_types"][$1]
-      name = $2
+    if name =~ /^(.+?):(.+)$/ 
+      if CONFIG["tag_types"][$1]
+        tag_type = CONFIG["tag_types"][$1]
+        name = $2
+      end
     end
 
     tag = find_by_name(name)
+    
+    puts "-" * 40
+    puts "name = #{name}"
+    puts "tag_type = #{tag_type}"
+    puts "tag.class = #{tag.class}"
     
     if tag
       if tag_type
@@ -63,7 +74,7 @@ class Tag < ActiveRecord::Base
       
       return tag
     else
-      create(:name => name, :tag_type => tag_type || CONFIG["tag_types"]["General"], :cached_related_expires_on => Time.now.yesterday, :is_ambiguous => ambiguous)
+      create(:name => name, :tag_type => tag_type || CONFIG["tag_types"]["General"], :cached_related_expires_on => Time.now, :is_ambiguous => ambiguous)
     end
   end
 
@@ -267,12 +278,12 @@ class Tag < ActiveRecord::Base
     return self.cached_related.split(/,/).in_groups_of(2)
   end
 
-  def to_s
-    name
-  end
+  # def to_s
+    # name
+  # end
 
-  def type_name(general_string=true)
-    Tag.type_name(tag_type, general_string)
+  def type_name
+    Tag.type_name(tag_type)
   end
 
   def <=>(rhs)
@@ -285,5 +296,9 @@ class Tag < ActiveRecord::Base
 
   def to_json(options = {})
     {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_json(options)
+  end
+  
+  def update_memcache
+    Cache.put("tag_type:#{name}", self.class.type_name_from_value(tag_type))
   end
 end

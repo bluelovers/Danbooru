@@ -17,11 +17,11 @@ module TagHelper
     end
 
     tags.each do |name, count|
-      name = name || "UNKNOWN"
+      name ||= "UNKNOWN"
       
-      tag_type = Tag.find_type(name)
+      tag_type = Tag.type_name(name)
       
-      html << '<li class="tag-type-' + tag_type + '">'
+      html << %{<li class="tag-type-#{tag_type}">}
       
       if CONFIG["enable_artists"] && tag_type == "artist"
         html << %{<a href="/artist/show?name=#{u(name)}">?</a> }
