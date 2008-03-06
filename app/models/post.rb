@@ -96,7 +96,12 @@ class Post < ActiveRecord::Base
           connection.execute("UPDATE posts SET parent_id = #{self.parent_id} WHERE id = #{self.id}")
         elsif t =~ /^pool:(.+)/
           begin
-            pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", $1])
+            s = $1
+            if s =~ /^\d+$/
+              pool = Pool.find(s)
+            else
+              pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", s])
+            end
             pool.add_post(self.id) if pool
           rescue Pool::PostAlreadyExistsError
           end
@@ -206,6 +211,10 @@ class Post < ActiveRecord::Base
         joins << "JOIN users u ON p.user_id = u.id"
         conds << "lower(u.name) = lower(?)"
         cond_params << q[:user]
+      elsif q[:pool].is_a?(Integer)
+        joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
+        conds << "pools.id = ?"
+        cond_params << q[:pool]
       end
 
       if q[:pool].is_a?(String)

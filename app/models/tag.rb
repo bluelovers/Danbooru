@@ -209,6 +209,9 @@ class Tag < ActiveRecord::Base
           q[:date] = parse_helper($2, :date)
         elsif $1 == "pool"
           q[:pool] = $2
+          if q[:pool] =~ /^(\d+)$/
+            q[:pool] = q[:pool].to_i
+          end
         elsif $1 == "parent"
           if $2 == "none"
             q[:parent_id] = false
