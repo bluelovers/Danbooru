@@ -15,7 +15,7 @@ CONFIG["password_salt"] = "choujin-steiner"
 # Set to true to allow new account signups.
 CONFIG["enable_signups"] = true
 
-# Newly created users start at this level. Set this to 3 if you want everyone
+# Newly created users start at this level. Set this to 30 if you want everyone
 # to start out as a privileged member.
 CONFIG["starting_level"] = 20
 
