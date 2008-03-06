@@ -278,7 +278,7 @@ class Tag < ActiveRecord::Base
   # end
 
   def type_name
-    Tag.type_name(tag_type)
+    self.class.type_name_from_value(tag_type)
   end
 
   def <=>(rhs)
