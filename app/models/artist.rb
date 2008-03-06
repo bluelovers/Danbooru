@@ -163,17 +163,24 @@ class Artist < ActiveRecord::Base
   def notes=(val)
     @notes = val
   end
-
-  def self.find_all_by_md5(md5)
-    p = Post.find_by_md5(md5)
-
-    if p == nil
-      return []
-    else
-      artist_type = CONFIG["tag_types"]["Artist"]
-      artists = p.tags.select {|x| x.tag_type == artist_type}.map {|x| x.name}
-      return Artist.find_all_by_name(artists)
+  
+  def self.generate_sql(name)
+    b = Nagato::Builder.new do |builder|
+      builder.where do |cond|
+        case name
+        when /^[a-fA-F0-9]{32,32}$/
+          cond.add "name IN (SELECT t.name FROM tags t JOIN posts_tags pt ON pt.tag_id = t.id JOIN posts p ON p.id = pt.post_id WHERE p.md5 = ?)", name
+          
+        when /^http/
+          cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
+          
+        else
+          cond.add "name LIKE ? ESCAPE '\\\\'", name.to_escaped_for_sql_like + "%"
+        end
+      end
     end
+    
+    return b.to_hash
   end
 
   def self.find_all_by_url(url)
