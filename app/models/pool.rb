@@ -29,6 +29,27 @@ class Pool < ActiveRecord::Base
     Cache.expire(:post_id => post_id)
     PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
   end
+
+  def api_attributes
+    return {
+      :id => id,
+      :name => name,
+      :created_at => created_at,
+      :updated_at => updated_at,
+      :user_id => user_id,
+      :is_public => is_public,
+      :post_count => post_count,
+    }
+  end
+
+  def to_xml(options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.pool(api_attributes) do
+      xml.description(description)
+      yield options[:builder]
+    end
+  end
 end
 
 class PoolPost < ActiveRecord::Base
