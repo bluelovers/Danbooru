@@ -8,7 +8,6 @@ class User < ActiveRecord::Base
   if CONFIG["enable_account_email_activation"]
     validates_presence_of :email, :on => :create
   end
-  validates_presence_of :ip_addr, :on => :create
   validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
   validates_length_of :name, :within => 2..20, :on => :create
   validates_format_of :password, :with => /\d/, :if => lambda {|rec| rec.password}, :message => "must have at least one number"
