@@ -2,14 +2,16 @@
 module Nagato
   # Represents a single subquery.
   class Subquery
-    attr_reader :conditions, :condition_params
-    
     # === Parameters
     # * :join<String>:: Can be either "and" or "or". All the conditions will be joined using this string.
     def initialize(join = "and")
       @join = join.upcase
-      @conditions = []
+      @conditions = ["TRUE"]
       @condition_params = []
+    end
+
+    def conditions
+      [@conditions.join(" " + @join + " "), *@condition_params]
     end
     
     # Creates a subquery (within the curreny subquery).
@@ -19,9 +21,9 @@ module Nagato
     def subquery(join = "and")
       subconditions = self.class.new(join)
       yield(subconditions)
-      sql, params = subconditions.to_a
-      @conditions << "(#{sql})"
-      @condition_params += params if params
+      c = subconditions.conditions
+      @conditions << "(#{c[0]})"
+      @condition_params += c[1..-1]
     end
     
     # Adds a condition to the subquery. If the condition has placeholder parameters, you can pass them in directly in :params:.
@@ -32,11 +34,6 @@ module Nagato
     def add(sql, *params)
       @conditions << sql
       @condition_params += params
-    end
-    
-    # Converts the subquery into an array. The first element contains all the SQL, and the other elements represent the placeholder parameters (if any).
-    def to_a
-      [@conditions.join(" #{@join} "), *@condition_params]
     end
   end
   
@@ -53,11 +50,11 @@ module Nagato
       @from = [table]
       @joins = []
       @join_params = []
-      @conditions = []
+      @conditions = ["TRUE"]
       @condition_params = []
-      @order = ""
-      @offset = ""
-      @limit = ""
+      @order = nil
+      @offset = nil
+      @limit = nil
       
       if block_given?
         yield(self)
@@ -118,9 +115,9 @@ module Nagato
     def where(join = "and")
       sub = Subquery.new(join)
       yield(sub)
-      sql, params = sub.to_a
-      @conditions << "(#{sql})"
-      @condition_params += params if params
+      c = sub.conditions
+      @conditions << "(#{c[0]})"
+      @condition_params += c[1..-1]
     end
     
     def order(sql)
@@ -141,6 +138,16 @@ module Nagato
     
     def conditions
       return [@conditions.join(" AND "), *@condition_params]
+    end
+
+    def to_hash
+      hash = {}
+      hash[:conditions] = conditions if @conditions.any?
+      hash[:joins] = joins if @joins.any?
+      hash[:order] = @order if @order
+      hash[:limit] = @limit if @limit
+      hash[:offset] = @offset if @offset
+      return hash
     end
     
     def to_a
@@ -170,7 +177,7 @@ module Nagato
         sql << @offset
         sql << @limit
         
-        [sql.join(" "), @join_params + @condition_params]
+        [sql.compact.join(" "), @join_params + @condition_params]
       end
     end
   end

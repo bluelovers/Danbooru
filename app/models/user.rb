@@ -338,38 +338,40 @@ class User < ActiveRecord::Base
   end
   
   def self.generate_sql(params)
-    b = Nagato::Builder.conditions do |cond|
-      if params[:name]
-        cond.add "name ILIKE ? ESCAPE '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"
-      end
+    b = Nagato::Builder.new do |builder|
+      builder.where do |cond|
+        if params[:name]
+          cond.add "name ILIKE ? ESCAPE '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"
+        end
       
-      if params[:id]      
-        cond.add "id = ?", params[:id]
+        if params[:id]      
+          cond.add "id = ?", params[:id]
+        end
+        
+        if params[:level] && params[:level] != "any"
+          cond.add "level = ?", params[:level]
+        end
       end
-      
-      if params[:level] && params[:level] != "any"
-        cond.add "level = ?", params[:level]
-      end
-      
+
       case params[:order]
       when "name"
-        cond.order "lower(name)"
+        builder.order "lower(name)"
 
       when "posts"
-        cond.order "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"
+        builder.order "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"
 
       when "favorites"
-        cond.order "(SELECT count(*) FROM favorites WHERE user_id = users.id) DESC"
+        builder.order "(SELECT count(*) FROM favorites WHERE user_id = users.id) DESC"
 
       when "notes"
-        cond.order "(SELECT count(*) FROM note_versions WHERE user_id = users.id) DESC"
+        builder.order "(SELECT count(*) FROM note_versions WHERE user_id = users.id) DESC"
 
       else
-        cond.order "created_at DESC"
+        builder.order "created_at DESC"
       end
     end
     
-    return [b.conditions, b.order]
+    return b.to_hash
   end
 end
 

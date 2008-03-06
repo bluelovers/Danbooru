@@ -5,9 +5,9 @@ class UserRecordController < ApplicationController
   def index
     if params[:user_id]
       @user = User.find(params[:user_id])
-      @pages, @user_records = paginate :user_records, :per_page => 20, :order => "created_at desc", :conditions => ["user_id = ?", params[:user_id]]
+      @user_records = UserRecord.paginate :per_page => 20, :order => "created_at desc", :conditions => ["user_id = ?", params[:user_id]], :page => params[:page]
     else
-      @pages, @user_records = paginate :user_records, :per_page => 20, :order => "created_at desc"
+      @user_records = UserRecord.paginate :per_page => 20, :order => "created_at desc", :page => params[:page]
     end
   end
   

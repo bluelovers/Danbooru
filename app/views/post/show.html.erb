@@ -12,7 +12,10 @@
       </div>
     <% elsif @post.is_deleted? %>
       <div class="status-notice">
-        This post was deleted. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>. MD5: <%= @post.md5 %>
+        This post was deleted. 
+	<% if @post.flag_detail %>
+	  Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>. MD5: <%= @post.md5 %>
+        <% end %>
       </div>
     <% end %>
 

@@ -69,10 +69,7 @@ class UserController < ApplicationController
   def index
     set_title "Users"
     
-    conditions, order = User.generate_sql(params)
-
-    @users = User.paginate :order => order, :conditions => conditions, :per_page => 20, :page => params[:page]
-
+    @users = User.paginate User.generate_sql(params).merge(:per_page => 20, :page => params[:page])
     respond_to_list("users")
   end
 
