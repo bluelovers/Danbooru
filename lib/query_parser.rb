@@ -4,7 +4,7 @@ module QueryParser
   # === Parameters
   # * :query_string<String>: the query to parse
   def parse(query_string)
-    return query_string.downcase.scan(/\S+/)
+    return query_string.to_s.downcase.scan(/\S+/)
   end
   
   # Extracts the metatokens (tokens matching \S+:\S+). Returns a two element array: the first element contains plain tokens, and the second element contains metatokens.

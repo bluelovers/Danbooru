@@ -60,11 +60,11 @@ module Nagato
         yield(self)
       end
     end
-    
+        
     def self.conditions(join = "and", &block)
       b = self.new
       b.where(join, &block)
-      return b.to_a
+      return b.get_conditions
     end
     
     def join(sql, *params)
@@ -125,18 +125,40 @@ module Nagato
     end
     
     def limit(amount)
-      @limit = amount
+      @limit = amount.to_i
     end
     
     def offset(amount)
-      @offset = amount
+      @offset = amount.to_i
     end
     
-    def joins
-      return [@joins.join(" "), *@join_params]
+    def to_hash
+      hash = {}
+      
+      if @conditions.any?
+        hash[:conditions] = [@conditions.join(" AND "), *@condition_params]
+      end
+      
+      if @joins.any?
+        hash[:join] = [@joins.join(" "), *@join_params]
+      end
+      
+      if @limit
+        hash[:limit] = @limit
+      end
+      
+      if @offset
+        hash[:offset] = @offset
+      end
+      
+      if @order
+        hash[:order] = @order
+      end
+
+      return hash
     end
     
-    def conditions
+    def to_cond
       return [@conditions.join(" AND "), *@condition_params]
     end
 
@@ -157,28 +179,24 @@ module Nagato
         conditions = @conditions
       end
 
-      if @from.nil?
-        [conditions.join(" AND "), *@condition_params]
+      if @select.empty?
+        select = ["*"]
       else
-        if @select.empty?
-          select = ["*"]
-        else
-          select = @select
-        end
-      
-        sql = ["SELECT"]
-        sql << select.join(", ")
-        sql << "FROM"
-        sql << @from.join(", ")
-        sql << @joins.join(" ")
-        sql << "WHERE"
-        sql << conditions.join(" AND ")
-        sql << @order
-        sql << @offset
-        sql << @limit
-        
-        [sql.compact.join(" "), @join_params + @condition_params]
+        select = @select
       end
+    
+      sql = ["SELECT"]
+      sql << select.join(", ")
+      sql << "FROM"
+      sql << @from.join(", ")
+      sql << @joins.join(" ")
+      sql << "WHERE"
+      sql << conditions.join(" AND ")
+      sql << @order
+      sql << @offset
+      sql << @limit
+          
+      [sql.compact.join(" "), @join_params + @condition_params]
     end
   end
 end

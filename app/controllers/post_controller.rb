@@ -142,7 +142,7 @@ class PostController < ApplicationController
 
   def index
     tags = params[:tags].to_s
-    split_tags = tags.scan(/\S+/)
+    split_tags = QueryParser.parse(tags)
     page = params[:page].to_i
     limit = params[:limit].to_i
     limit = 16 if limit == 0
@@ -157,7 +157,7 @@ class PostController < ApplicationController
 
     set_title "/" + tags.tr("_", " ")
 
-    @ambiguous = Tag.select_ambiguous(tags)
+    @ambiguous = Tag.select_ambiguous(split_tags)
     
     @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
@@ -176,15 +176,7 @@ class PostController < ApplicationController
         end
       end
       fmt.xml do
-        builder = Builder::XmlMarkup.new(:indent => 2)
-        builder.instruct!
-        
-        xml = builder.posts(:count => count, :offset => (limit * (page - 1))) do
-          @posts.each do |post|
-            post.to_xml(:builder => builder, :skip_instruct => true, :root => "post")
-          end
-        end
-        render :xml => xml
+        render :layout => false
       end
       fmt.json {render :json => @posts.to_json}
     end
@@ -208,15 +200,11 @@ class PostController < ApplicationController
   def show
     begin
       if params[:md5]
-        @post = Post.find_by_md5(params[:md5].downcase)
-        if @post.nil?
-          raise ActiveRecord::RecordNotFound
-        end
+        @post = Post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)
       else
         @post = Post.find(params[:id])
       end
       
-      @favorited_by = @post.favorited_by
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags.tr("_", " ")
@@ -274,7 +262,7 @@ class PostController < ApplicationController
   def revert_tags
     user_id = @current_user.id rescue nil
     @post = Post.find(params[:id])
-    @post.update_attributes(:tags => @post.tag_history.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
+    @post.update_attributes(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
     respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
   end

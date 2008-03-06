@@ -1,0 +1,78 @@
+have_header: checking for gd.h... -------------------- yes
+
+"gcc -E -I. -I/usr/local/lib/ruby/1.8/i686-darwin8.9.1 -I.  -g -O2 -pipe -fno-common  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include <gd.h>
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lgd... -------------------- yes
+
+"gcc -o conftest -I. -I/usr/local/lib/ruby/1.8/i686-darwin8.9.1 -I.  -g -O2 -pipe -fno-common conftest.c  -L"/usr/local/lib"      -lruby-static -lgd  -ldl -lobjc  "
+checked program was:
+/* begin */
+1: /*top*/
+2: int main() { return 0; }
+3: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for gdImageCreateFromJpeg() in gd.h... -------------------- yes
+
+"gcc -o conftest -I. -I/usr/local/lib/ruby/1.8/i686-darwin8.9.1 -I.  -g -O2 -pipe -fno-common conftest.c  -L"/usr/local/lib"     -lgd  -lruby-static -lgd  -ldl -lobjc  "
+checked program was:
+/* begin */
+1: #include <gd.h>
+2: 
+3: /*top*/
+4: int main() { return 0; }
+5: int t() { void ((*volatile p)()); p = (void ((*)()))gdImageCreateFromJpeg; return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for gdImageCreateFromGif() in gd.h... -------------------- yes
+
+"gcc -o conftest -I. -I/usr/local/lib/ruby/1.8/i686-darwin8.9.1 -I.  -g -O2 -pipe -fno-common conftest.c  -L"/usr/local/lib"     -lgd  -lruby-static -lgd  -ldl -lobjc  "
+checked program was:
+/* begin */
+1: #include <gd.h>
+2: 
+3: /*top*/
+4: int main() { return 0; }
+5: int t() { void ((*volatile p)()); p = (void ((*)()))gdImageCreateFromGif; return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for gdImageCreateFromPng() in gd.h... -------------------- yes
+
+"gcc -o conftest -I. -I/usr/local/lib/ruby/1.8/i686-darwin8.9.1 -I.  -g -O2 -pipe -fno-common conftest.c  -L"/usr/local/lib"     -lgd  -lruby-static -lgd  -ldl -lobjc  "
+checked program was:
+/* begin */
+1: #include <gd.h>
+2: 
+3: /*top*/
+4: int main() { return 0; }
+5: int t() { void ((*volatile p)()); p = (void ((*)()))gdImageCreateFromPng; return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for gdImageJpeg() in gd.h... -------------------- yes
+
+"gcc -o conftest -I. -I/usr/local/lib/ruby/1.8/i686-darwin8.9.1 -I.  -g -O2 -pipe -fno-common conftest.c  -L"/usr/local/lib"     -lgd  -lruby-static -lgd  -ldl -lobjc  "
+checked program was:
+/* begin */
+1: #include <gd.h>
+2: 
+3: /*top*/
+4: int main() { return 0; }
+5: int t() { void ((*volatile p)()); p = (void ((*)()))gdImageJpeg; return 0; }
+/* end */
+
+--------------------
+

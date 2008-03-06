@@ -124,7 +124,7 @@ class User < ActiveRecord::Base
       return uploaded_tags unless uploaded_tags == nil
     end
     
-    popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
+    popular_tags = connection.select_values("SELECT id FROM tags WHERE tag_type <> #{CONFIG['tag_types']['General']} ORDER BY post_count DESC LIMIT 8").join(", ")
     popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
 
     if type
@@ -170,7 +170,7 @@ class User < ActiveRecord::Base
       return favorite_tags unless favorite_tags == nil
     end
     
-    popular_tags = connection.select_values("select id from tags order by post_count desc limit 8").join(", ")
+    popular_tags = connection.select_values("SELECT id FROM tags WHERE tag_type <> #{CONFIG['tag_types']['General']} ORDER BY post_count DESC LIMIT 8").join(", ")
     popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
 
     if type

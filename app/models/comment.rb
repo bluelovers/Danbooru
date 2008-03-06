@@ -37,12 +37,23 @@ class Comment < ActiveRecord::Base
   def expire_cache
     Cache.expire(:post_id => self.post_id)
   end
+  
+  def api_attributes
+    return {
+      :id => id, 
+      :created_at => created_at, 
+      :post_id => post_id, 
+      :creator => author, 
+      :creator_id => user_id, 
+      :body => body
+    }
+  end
 
   def to_xml(options = {})
-    {:id => id, :created_at => created_at, :post_id => post_id, :creator => self.author, :creator_id => user_id, :body => body}.to_xml(options.merge(:root => "comment"))
+    return api_attributes.to_xml(options.merge(:root => "comment"))
   end
 
   def to_json(options = {})
-    {:id => id, :created_at => created_at, :post_id => post_id, :creator => self.author,:creator_id => user_id, :body => body}.to_json(options)
+    return api_attributes.to_json(options)
   end
 end
