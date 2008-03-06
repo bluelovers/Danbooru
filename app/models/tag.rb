@@ -58,11 +58,6 @@ class Tag < ActiveRecord::Base
 
     tag = find_by_name(name)
     
-    puts "-" * 40
-    puts "name = #{name}"
-    puts "tag_type = #{tag_type}"
-    puts "tag.class = #{tag.class}"
-    
     if tag
       if tag_type
         tag.update_attributes(:tag_type => tag_type)
