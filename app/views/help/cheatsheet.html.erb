@@ -67,6 +67,9 @@
       <dt>score:100</dt>
       <dd>Search for posts with a score of 100 (uses same syntax as id search).</dd>
       
+      <dt>mpixels:2.5..</dt>
+      <dd>Search for posts with 2.5 million pixels or greater (uses same syntax as id search).</dd>
+
       <dt>date:2007-01-01</dt>
       <dd>Search for posts uploaded on a certain date (uses same syntax as id search).</dd>
       
@@ -81,6 +84,18 @@
       
       <dt>order:score_desc</dt>
       <dd>Order search results in descending order based on post score.</dd>
+
+      <dt>order:mpixels</dt> 
+      <dd>Order search results in descending order based on resolution.</dd>
+
+      <dt>order:mpixels_asc</dt> 
+      <dd>Order search results in descending order based on resolution.</dd>
+
+      <dt>order:landscape</dt> 
+      <dd>Order landscape images first.</dd>
+
+      <dt>order:portrait</dt> 
+      <dd>Order portrait images first.</dd>
       
       <% if CONFIG["enable_parent_posts"] %>
         <dt>parent:1234</dt>

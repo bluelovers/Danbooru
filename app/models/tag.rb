@@ -151,28 +151,32 @@ class Tag < ActiveRecord::Base
     cast = lambda do |x|
       if type == :integer
         x.to_i
+      elsif type == :float
+        x.to_f
       elsif type == :date
         x.to_date
       end
     end
 
+    # "1", "0.5", "5.", ".5":
+    # (-?(\d+(\.\d*)?|\d*\.\d+))
     case range
-    when /^([-\d]+)\.\.([-\d]+)$/
-      return [:between, cast[$1], cast[$2]]
+    when /^(-?(\d+(\.\d*)?|\d*\.\d+))\.\.(-?(\d+(\.\d*)?|\d*\.\d+))$/
+      return [:between, cast[$1], cast[$4]]
 
-    when /^<([-\d]+)$/
+    when /^<(-?(\d+(\.\d*)?|\d*\.\d+))$/
       return [:lt, cast[$1]]
       
-    when /^<=([-\d]+)$/, /^\.\.([-\d]+)$/
+    when /^<=(-?(\d+(\.\d*)?|\d*\.\d+))$/, /^\.\.(-?(\d+(\.\d*)?|\d*\.\d+))$/
       return [:lte, cast[$1]]
     
-    when /^>([-\d]+)$/
+    when /^>(-?(\d+(\.\d*)?|\d*\.\d+))$/
       return [:gt, cast[$1]]
       
-    when /^>=([-\d]+)$/, /^([-\d]+)\.\.$/
+    when /^>=(-?(\d+(\.\d*)?|\d*\.\d+))$/, /^(-?(\d+(\.\d*)?|\d*\.\d+))\.\.$/
       return [:gte, cast[$1]]
 
-    when /^([-\d]+)$/
+    when /^(-?(\d+(\.\d*)?|\d*\.\d+))$/
       return [:eq, cast[$1]]
 
     else
@@ -190,7 +194,7 @@ class Tag < ActiveRecord::Base
     q = Hash.new {|h, k| h[k] = []}
 
     scan_query(query).each do |token|
-      if token =~ /^(unlocked|deleted|user|fav|md5|-rating|rating|width|height|score|source|id|date|pool|parent|order):(.+)$/
+      if token =~ /^(unlocked|deleted|user|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order):(.+)$/
         if $1 == "user"
           q[:user] = $2
         elsif $1 == "fav"
@@ -207,6 +211,8 @@ class Tag < ActiveRecord::Base
           q[:width] = parse_helper($2)
         elsif $1 == "height"
           q[:height] = parse_helper($2)
+        elsif $1 == "mpixels"
+          q[:mpixels] = parse_helper($2, :float)
         elsif $1 == "score"
           q[:score] = parse_helper($2)
         elsif $1 == "source"

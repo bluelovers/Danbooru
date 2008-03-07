@@ -174,6 +174,7 @@ class Post < ActiveRecord::Base
       cond_params = []
 
       generate_sql_range_helper(q[:post_id], "p.id", conds, cond_params)
+      generate_sql_range_helper(q[:mpixels], "p.width*p.height/1000000.0", conds, cond_params)
       generate_sql_range_helper(q[:width], "p.width", conds, cond_params)
       generate_sql_range_helper(q[:height], "p.height", conds, cond_params)
       generate_sql_range_helper(q[:score], "p.score", conds, cond_params)
@@ -312,6 +313,18 @@ class Post < ActiveRecord::Base
         when "score_desc"
           sql << " ORDER BY p.score DESC"
           
+        when "mpixels"
+          sql << " ORDER BY width*height DESC"
+
+        when "mpixels_asc"
+          sql << " ORDER BY width*height"
+
+        when "portrait"
+          sql << " ORDER BY 1.0*width/height"
+
+        when "landscape"
+          sql << " ORDER BY 1.0*width/height DESC"
+
         else
           sql << " ORDER BY p.id DESC"
         end
