@@ -7406,8 +7406,34 @@ Post = {
         window.Note.all[i].adjustScale()
       }
     }
+  },
+  highres: function() {
+    var img = $("image");
+    if (img.src == $("highres").href)
+      return;
+
+    // un-resize
+    if ((img.scale_factor != null) && (img.scale_factor != 1))
+      Post.resize_image();
+
+    img.onload = img.onerror = function()
+    {
+      img.onload = null;
+      img.onerror = null;
+      img.height = img.getAttribute("orig_height");
+      img.width = img.getAttribute("orig_width");
+      img.src = $("highres").href;
+    }
+
+    // Clear the image before loading the new one, so it doesn't show the old image
+    // at the new resolution while the new one loads.  Hide it, so we don't flicker
+    // a placeholder frame.
+    $("resized_notice").hide();
+    img.height = img.width = 0;
+    img.src = "about:blank";
   }
 }
+
 PostModeMenu = {
   init: function() {
     this.original_background_color = document.body.getStyle("background-color")
@@ -7709,6 +7735,45 @@ Dmail = {
       onComplete: function() {
         $('previous-messages').show()
         notice("Previous messages loaded")
+      }
+    })
+  }
+}
+
+User = {
+  disable_samples: function() {
+    new Ajax.Request("/user/update.json", {
+      parameters: {
+	"user[show_samples]": false
+      },
+
+      onComplete: function(resp) {
+	var resp = resp.responseJSON
+
+	if (resp.success) {
+	  $("resized_notice").hide();
+	  $("samples_disabled").show();
+	  Post.highres();
+	} else {
+	  notice("Error: " + resp.reason)
+	}
+      }
+    })
+  },
+
+  destroy: function(id) {
+    notice("Deleting record #" + id)
+
+    new Ajax.Request("/user_record/destroy.json", {
+      parameters: {
+        "id": id
+      },
+      onComplete: function(resp) {
+        if (resp.status == 200) {
+          notice("Record deleted")
+        } else {
+          notice("Access denied")
+        }
       }
     })
   }

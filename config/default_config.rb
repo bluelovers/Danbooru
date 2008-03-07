@@ -30,6 +30,18 @@ CONFIG["image_store"] = :local_flat
 # Only used when image_store == :remote_hierarchy. An array of image servers (use http://domain.com format).
 CONFIG["image_servers"] = []
 
+# Enables image samples for large images.
+CONFIG["image_samples"] = true
+
+# The maximum dimensions and JPEG quality of sample images.
+CONFIG["sample_width"] = 1400
+CONFIG["sample_height"] = 1000
+CONFIG["sample_quality"] = 90
+
+# Files over this size will always generate a sample, even if already within
+# the above dimensions.
+CONFIG["sample_always_generate_size"] = 512*1024
+
 # These three configs are only relevant if you're using the Amazon S3 image store.
 CONFIG["amazon_s3_access_key_id"] = ""
 CONFIG["amazon_s3_secret_access_key"] = ""

@@ -424,6 +424,10 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def sample_path
+        "#{RAILS_ROOT}/public/data/sample/#{md5}.jpg"
+      end
+
       def preview_url
         if status == "deleted"
           CONFIG["url_base"] + "/data/preview/deleted.png"
@@ -434,9 +438,14 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def store_sample_url
+        CONFIG["url_base"] + "/data/sample/#{md5}.jpg"
+      end
+
       def delete_file
         FileUtils.rm_f(file_path)
         FileUtils.rm_f(preview_path) if image?
+        FileUtils.rm_f(sample_path) if image?
       end
 
       def move_file
@@ -446,6 +455,11 @@ class Post < ActiveRecord::Base
         if image?
           FileUtils.mv(tempfile_preview_path, preview_path)
           FileUtils.chmod(0775, preview_path)
+        end
+
+        if File.exists?(tempfile_sample_path)
+          FileUtils.mv(tempfile_sample_path, sample_path)
+          FileUtils.chmod(0775, sample_path)
         end
 
         delete_tempfile
@@ -475,6 +489,10 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def sample_path
+        "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/#{md5}.jpg"
+      end
+
       def preview_url
         if status == "deleted"
           CONFIG["url_base"] + "/data/preview/deleted.png"
@@ -485,9 +503,14 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def store_sample_url
+        CONFIG["url_base"] + "/data/sample/#{file_hierarchy}/#{md5}.jpg"
+      end
+
       def delete_file
         FileUtils.rm_f(file_path)
         FileUtils.rm_f(preview_path) if image?
+        FileUtils.rm_f(sample_path) if image?
       end
 
       def move_file
@@ -499,6 +522,12 @@ class Post < ActiveRecord::Base
           FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
           FileUtils.mv(tempfile_preview_path, preview_path)
           FileUtils.chmod(0775, preview_path)
+        end
+
+        if File.exists?(tempfile_sample_path)
+          FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
+          FileUtils.mv(tempfile_sample_path, sample_path)
+          FileUtils.chmod(0775, sample_path)
         end
 
         delete_tempfile
@@ -536,6 +565,10 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def sample_path
+        "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/#{md5}.jpg"
+      end
+
       def preview_url
         if self.is_warehoused?
           if status == "deleted"
@@ -557,9 +590,18 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def store_sample_url
+        if self.is_warehoused?
+          select_random_image_server() + "/data/sample/#{file_hierarchy}/#{md5}.jpg"
+        else
+          CONFIG["url_base"] + "/data/sample/#{file_hierarchy}/#{md5}.jpg"
+        end
+      end
+
       def delete_file
         FileUtils.rm_f(file_path)
         FileUtils.rm_f(preview_path) if image?
+        FileUtils.rm_f(sample_path) if image?
       end
 
       def move_file
@@ -571,6 +613,12 @@ class Post < ActiveRecord::Base
           FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
           FileUtils.mv(tempfile_preview_path, preview_path)
           FileUtils.chmod(0775, preview_path)
+        end
+
+        if File.exists?(tempfile_sample_path)
+          FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
+          FileUtils.mv(tempfile_sample_path, sample_path)
+          FileUtils.chmod(0775, sample_path)
         end
 
         delete_tempfile
@@ -587,6 +635,10 @@ class Post < ActiveRecord::Base
           
           if image?
             AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
+          end
+
+          if File.exists?(tempfile_sample_path)
+            AWS::S3::S3Object.store("sample/#{md5}.jpg", open(self.tempfile_sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
           end
 
           return true
@@ -609,10 +661,15 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def store_sample_url
+        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/sample/deleted.png"
+      end
+
       def delete_file
         AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
         AWS::S3::S3Object.delete(file_name, CONFIG["amazon_s3_bucket_name"])
         AWS::S3::S3Object.delete("preview/#{md5}.jpg", CONFIG["amazon_s3_bucket_name"])
+        AWS::S3::S3Object.delete("sample/#{md5}.jpg", CONFIG["amazon_s3_bucket_name"])
       end
     end
 
@@ -625,7 +682,12 @@ class Post < ActiveRecord::Base
           FileUtils.mv(tempfile_preview_path, preview_path)
           FileUtils.chmod(0775, preview_path)
         end
-        
+
+        if File.exists?(tempfile_sample_path)
+          FileUtils.mv(tempfile_sample_path, sample_path)
+          FileUtils.chmod(0775, sample_path)
+        end
+
         self.delete_tempfile()
         
         base64_md5 = Base64.encode64(self.md5.unpack("a2" * (self.md5.size / 2)).map {|x| x.hex.chr}.join)
@@ -635,6 +697,10 @@ class Post < ActiveRecord::Base
         
         if image?
           AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :private)
+        end
+
+        if File.exists?(tempfile_sample_path)
+          AWS::S3::S3Object.store("sample/#{md5}.jpg", open(self.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
         end
 
         return true
@@ -658,6 +724,10 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def sample_path
+        "#{RAILS_ROOT}/public/data/sample/#{md5}.jpg"
+      end
+
       def preview_url
         if status == "deleted"
           CONFIG["url_base"] + "/data/preview/deleted.png"
@@ -668,12 +738,18 @@ class Post < ActiveRecord::Base
         end
       end
 
+      def store_sample_url
+        CONFIG["url_base"] + "/data/sample/#{md5}.jpg"
+      end
+
       def delete_file
         AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
         AWS::S3::S3Object.delete(file_name, CONFIG["amazon_s3_bucket_name"])
         AWS::S3::S3Object.delete("preview/#{md5}.jpg", CONFIG["amazon_s3_bucket_name"])
+        AWS::S3::S3Object.delete("sample/#{md5}.jpg", CONFIG["amazon_s3_bucket_name"])
         FileUtils.rm_f(file_path)
         FileUtils.rm_f(preview_path) if image?
+        FileUtils.rm_f(sample_path) if image?
       end
     end
   end
@@ -711,6 +787,7 @@ class Post < ActiveRecord::Base
   before_validation_on_create :validate_content_type
   before_validation_on_create :generate_hash
   before_validation_on_create :get_image_dimensions
+  before_validation_on_create :generate_sample
   before_validation_on_create :generate_preview
   before_validation_on_create :move_file
   before_destroy :delete_file
@@ -814,14 +891,23 @@ class Post < ActiveRecord::Base
   def delete_tempfile
     FileUtils.rm_f(tempfile_path)
     FileUtils.rm_f(tempfile_preview_path)
+    FileUtils.rm_f(tempfile_sample_path)
   end
 
   def tempfile_path
-    "#{RAILS_ROOT}/public/data/#{$$}.upload"
+    "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}.upload"
   end
 
   def tempfile_preview_path
-    "#{RAILS_ROOT}/public/data/#{$$}-preview.jpg"
+    "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}-preview.jpg"
+  end
+
+  def tempfile_sample_path
+    "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}-sample.jpg"
+  end
+
+  def file_size
+    File.size(file_path) rescue 0
   end
 
 # Generates a MD5 hash for the file
@@ -853,13 +939,77 @@ class Post < ActiveRecord::Base
 
     size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>150, :height=>150})
 
+    # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
+    if File.exists?(tempfile_sample_path)
+      path, ext = tempfile_sample_path, "jpg"
+    else
+      path, ext = tempfile_path, file_ext
+    end
+
     begin
-      Danbooru.resize(file_ext, tempfile_path, tempfile_preview_path, size, 95)
+      Danbooru.resize(ext, path, tempfile_preview_path, size, 95)
     rescue Exception => x
-      errors.add "preview", "couldn't be generated (error code #{x})"
+      errors.add "preview", "couldn't be generated (#{x})"
       return false
     end
 
+    return true
+  end
+
+  def regenerate_sample
+    return false unless image?
+
+    if generate_sample && File.exists?(tempfile_sample_path)
+      FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
+      FileUtils.mv(tempfile_sample_path, sample_path)
+      FileUtils.chmod(0775, sample_path)
+      return true
+    else
+      return false
+    end
+  end
+
+  def generate_sample
+    return true unless image?
+    return true unless CONFIG["image_samples"]
+    return true unless (self.width && self.height)
+    return true if (self.file_ext.downcase == "gif")
+
+    size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]})
+
+    # We can generate the sample image during upload or offline.  Use tempfile_path
+    # if it exists, otherwise use file_path.
+    path = tempfile_path
+    path = file_path unless File.exists?(path)
+    unless File.exists?(path)
+      errors.add(:file, "not found")
+      return false
+    end
+
+    # If we're not reducing the resolution for the sample image, only reencode if the
+    # source image is above the reencode threshold.  Anything smaller won't be reduced
+    # enough by the reencode to bother, so don't reencode it and save disk space.
+    if size[:width] == self.width && size[:width] == self.width &&
+      File.size?(path) < CONFIG["sample_always_generate_size"]
+      return true
+    end
+
+    # If we already have a sample image, and the parameters havn't changed,
+    # don't regenerate it.
+    if size[:width] == self.sample_width && size[:height] == self.sample_height
+      return true
+    end
+
+    size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]})
+    begin
+      Danbooru.resize(file_ext, path, tempfile_sample_path, size, 95)
+    rescue Exception => x
+      errors.add "sample", "couldn't be created: #{x}"
+      return false
+    end
+
+    self.sample_width = size[:width]
+    self.sample_height = size[:height]
     return true
   end
 
@@ -922,6 +1072,44 @@ class Post < ActiveRecord::Base
     %w(jpg jpeg gif png).include?(self.file_ext.downcase)
   end
 
+# Returns true if the post has a sample image.
+  def has_sample?
+    self.sample_width.is_a?(Integer)
+  end
+
+# Returns true if the post has a sample image, and we're going to use it.
+  def use_sample(user = nil)
+    if user && !user.show_samples
+      false
+    else
+      self.has_sample? and CONFIG["image_samples"]
+    end
+  end
+
+  def sample_url(user = nil)
+    if status != "deleted" && use_sample(user)
+      store_sample_url
+    else
+      file_url
+    end
+  end
+
+  def get_sample_width(user = nil)
+    if use_sample(user)
+      self.sample_width
+    else
+      self.width
+    end
+  end
+
+  def get_sample_height(user = nil)
+    if use_sample(user)
+      self.sample_height
+    else
+      self.height
+    end
+  end
+
 # Returns true if the post is a Flash movie.
   def flash?
     file_ext == "swf"
@@ -960,6 +1148,7 @@ class Post < ActiveRecord::Base
       :md5 => md5, 
       :file_url => file_url, 
       :preview_url => preview_url, 
+      :sample_url => sample_url,
       :next_post_id => next_post_id, 
       :prev_post_id => prev_post_id, 
       :rating => rating, 

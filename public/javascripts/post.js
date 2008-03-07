@@ -116,5 +116,30 @@ Post = {
         window.Note.all[i].adjustScale()
       }
     }
+  },
+  highres: function() {
+    var img = $("image");
+    if (img.src == $("highres").href)
+      return;
+
+    // un-resize
+    if ((img.scale_factor != null) && (img.scale_factor != 1))
+      Post.resize_image();
+
+    img.onload = img.onerror = function()
+    {
+      img.onload = null;
+      img.onerror = null;
+      img.height = img.getAttribute("orig_height");
+      img.width = img.getAttribute("orig_width");
+      img.src = $("highres").href;
+    }
+
+    // Clear the image before loading the new one, so it doesn't show the old image
+    // at the new resolution while the new one loads.  Hide it, so we don't flicker
+    // a placeholder frame.
+    $("resized_notice").hide();
+    img.height = img.width = 0;
+    img.src = "about:blank";
   }
 }

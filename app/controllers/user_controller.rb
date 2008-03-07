@@ -132,12 +132,9 @@ class UserController < ApplicationController
     end
     
     if @current_user.update_attributes(params[:user])
-      flash[:notice] = "Account settings saved"
-      redirect_to :action => "home"
+      respond_to_success("Account settings saved", :action => "home")
     else
-      error = @current_user.errors.full_messages.join(", ")
-      flash[:notice] = "Error: " + error
-      redirect_to :action => "edit"
+      respond_to_error(@current_user, :action => "edit")
     end
   end
 
