@@ -10,14 +10,15 @@ module PostHelper
     )
   end
   
-  def print_resize_percentage(post)
-    if post.sample_width > post.sample_height
-      ratio = 100 * post.sample_width / post.width.to_f
-    else
-      ratio = 100 * post.sample_height / post.height.to_f
+  def print_image_dimensions(post, user)
+    size = number_to_human_size(post.file_size)    
+    text = "%ix%i, %s" % [post.width, post.height, size]
+    
+    if post.can_be_seen_by?(user)
+      text = link_to(text, post.file_url)
     end
     
-    return number_to_percentage(ratio, :precision => 0)
+    return text
   end
 
   def print_preview(post, options = {})
