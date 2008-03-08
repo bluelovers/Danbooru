@@ -10,17 +10,6 @@ module PostHelper
     )
   end
   
-  def print_image_dimensions(post, user)
-    size = number_to_human_size(post.file_size)    
-    text = "%ix%i, %s" % [post.width, post.height, size]
-    
-    if post.can_be_seen_by?(user)
-      text = link_to(text, post.file_url, :class => "original-file", :id => "highres")
-    end
-    
-    return text
-  end
-
   def print_preview(post, options = {})
     unless CONFIG["can_see_post"].call(@current_user, post)
       return ""

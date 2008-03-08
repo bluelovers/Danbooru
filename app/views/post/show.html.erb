@@ -72,7 +72,9 @@
         <ul>
           <li>Id: <%= @post.id %></li>
           <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
-          <li>Size: <%= print_image_dimensions(@post, @current_user) %></li>
+          <% if @post.image? %>
+            <li>Size: <%= @post.width %>x<%= @post.height %></li>
+          <% end %>
           <% unless @post.source.blank? %>
             <% if @post.source[/^http/] %>
               <li>Source: <%= link_to @post.source[7, 20] + "...", @post.source, :target => "_blank" %></li>
@@ -91,6 +93,9 @@
           <li><%= link_to_function "Edit", "$('comments').hide(); $('edit').show().scrollTo(); $('post_tags').focus()" %></li>
           <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
             <li><%= link_to_function "Resize image", "Post.resize_image()" %></li>
+          <% end %>
+          <% if @post.image? && @post.has_sample? && @post.can_be_seen_by?(@current_user) %>
+            <li><%= link_to("Original image (#{number_to_human_size(@post.file_size)})", @post.file_url, :class => "original-file", :id => "highres", :onclick => "Post.highres(); return false") %></li>
           <% end %>
           <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
           <% unless @post.is_flagged? || @post.is_deleted? %>
