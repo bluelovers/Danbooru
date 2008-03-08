@@ -1078,16 +1078,16 @@ class Post < ActiveRecord::Base
   end
 
 # Returns true if the post has a sample image, and we're going to use it.
-  def use_sample(user = nil)
-    if user && !user.show_samples
+  def use_sample?(user = nil)
+    if user && !user.show_samples?
       false
     else
-      self.has_sample? and CONFIG["image_samples"]
+      CONFIG["image_samples"] && self.has_sample?
     end
   end
 
   def sample_url(user = nil)
-    if status != "deleted" && use_sample(user)
+    if status != "deleted" && use_sample?(user)
       store_sample_url
     else
       file_url
@@ -1095,7 +1095,7 @@ class Post < ActiveRecord::Base
   end
 
   def get_sample_width(user = nil)
-    if use_sample(user)
+    if use_sample?(user)
       self.sample_width
     else
       self.width
@@ -1103,7 +1103,7 @@ class Post < ActiveRecord::Base
   end
 
   def get_sample_height(user = nil)
-    if use_sample(user)
+    if use_sample?(user)
       self.sample_height
     else
       self.height

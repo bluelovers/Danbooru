@@ -58,7 +58,7 @@
             <%= check_box "user", "receive_dmails" %>
           </td>
         </tr>
-        <% if CONFIG["image_samples"] %>
+        <% if CONFIG["image_samples"] && !CONFIG["force_image_samples"] %>
         <tr>
           <th>
             <label class="block" for="user_show_samples">Show Image Samples</label>

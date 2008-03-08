@@ -75,7 +75,13 @@ class UserController < ApplicationController
 
   def authenticate
     save_cookies(@current_user)
-    respond_to_success("You are now logged in", :action => "home")
+    if params[:url].blank?
+      path = {:action => "home"}
+    else
+      path = params[:url]
+    end
+    
+    respond_to_success("You are now logged in", path)
   end
 
   def login

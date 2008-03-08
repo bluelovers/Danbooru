@@ -33,6 +33,9 @@ CONFIG["image_servers"] = []
 # Enables image samples for large images.
 CONFIG["image_samples"] = true
 
+# Always show samples for large images. Users cannot configure it.
+CONFIG["force_image_samples"] = false
+
 # The maximum dimensions and JPEG quality of sample images.
 CONFIG["sample_width"] = 1400
 CONFIG["sample_height"] = 1000

@@ -9,6 +9,17 @@ module PostHelper
       "href"  => url_options.is_a?(Hash) ? url_for(url_options.merge(:only_path => false)) : url_options
     )
   end
+  
+  def print_image_dimensions(post, user)
+   if post.use_sample?(user)
+     size = number_to_human_size(post.file_size)
+     link_to_function("Download (%ix%i, %s)" % [post.width, post.height, size], image_path(post.file_url), :id => "highres", :class=>"original-file") do |page|
+       page.call "Post.highres"
+     end
+   else
+     return ""
+   end
+ end
 
   def print_preview(post, options = {})
     unless CONFIG["can_see_post"].call(@current_user, post)

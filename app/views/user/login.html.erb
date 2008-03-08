@@ -1,5 +1,6 @@
 <div id="user-login">
   <% form_tag({:action => "authenticate"}, :class => "simple-form") do %>
+    <%= hidden_field_tag "url", params[:url] %>
     <table class="form">
       <tr>
         <th width="15%"><label class="block" for="user_name">Name</label></th>

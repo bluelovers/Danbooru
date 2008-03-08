@@ -17,6 +17,9 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
   before_save :encrypt_password
   before_create :set_role
+  if CONFIG["show_samples"]
+    before_create :set_show_samples
+  end
   after_create :increment_count
   after_destroy :decrement_count
   has_one :ban
@@ -41,51 +44,51 @@ class User < ActiveRecord::Base
   
   class << self
     attr_accessor :salt
+  end
 
-    def fast_count
-      return connection.select_value("SELECT row_count FROM table_data WHERE name = 'users'").to_i
-    end
-  
-    def authenticate(name, pass)
-      authenticate_hash(name, sha1(pass))
-    end
+  def self.fast_count
+    return connection.select_value("SELECT row_count FROM table_data WHERE name = 'users'").to_i
+  end
 
-    def authenticate_hash(name, pass)
-      find(:first, :conditions => ["lower(name) = lower(?) AND password_hash = ?", name, pass])
-    end
-  
-    if CONFIG["enable_account_email_activation"]
-      def confirmation_hash(name)
-        Digest::SHA256.hexdigest("~-#{name}-~#{User.salt}")
-      end
-    end
+  def self.authenticate(name, pass)
+    authenticate_hash(name, sha1(pass))
+  end
 
-    def find_people_who_favorited(post_id)
-      User.find(:all, :joins => User.sanitize_sql(["JOIN favorites f ON f.user_id = users.id WHERE f.post_id = ?", post_id]), :order => "lower(name) ASC", :select => "users.*")
+  def self.authenticate_hash(name, pass)
+    find(:first, :conditions => ["lower(name) = lower(?) AND password_hash = ?", name, pass])
+  end
+
+  if CONFIG["enable_account_email_activation"]
+    def self.confirmation_hash(name)
+      Digest::SHA256.hexdigest("~-#{name}-~#{User.salt}")
     end
+  end
+
+  def self.find_people_who_favorited(post_id)
+    User.find(:all, :joins => User.sanitize_sql(["JOIN favorites f ON f.user_id = users.id WHERE f.post_id = ?", post_id]), :order => "lower(name) ASC", :select => "users.*")
+  end
+
+  def self.sha1(pass)
+    Digest::SHA1.hexdigest("#{salt}--#{pass}--")
+  end
   
-    def sha1(pass)
-      Digest::SHA1.hexdigest("#{salt}--#{pass}--")
-    end
+  def self.find_name_helper(user_id)
+    user = User.find(:first, :conditions => ["id = ?", user_id], :select => "name")
     
-    def find_name_helper(user_id)
-      user = User.find(:first, :conditions => ["id = ?", user_id], :select => "name")
-      
-      if user
-        return user.name
-      else
-        return CONFIG["default_guest_name"]
-      end
+    if user
+      return user.name
+    else
+      return CONFIG["default_guest_name"]
     end
-    
-    def find_name(user_id)
-      if CONFIG["enable_caching"]
-        return Cache.get("user_name:#{user_id}") do
-          find_name_helper(user_id)
-        end
-      else
+  end
+  
+  def self.find_name(user_id)
+    if CONFIG["enable_caching"]
+      return Cache.get("user_name:#{user_id}") do
         find_name_helper(user_id)
       end
+    else
+      find_name_helper(user_id)
     end
   end
   
@@ -227,6 +230,10 @@ class User < ActiveRecord::Base
     EOS
     
     return connection.select_all(sql)
+  end
+  
+  def set_show_samples
+    self.show_samples = true
   end
   
   def set_role
