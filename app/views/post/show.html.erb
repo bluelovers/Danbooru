@@ -20,20 +20,12 @@
     <% end %>
 
     <% if !@post.is_deleted? && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user)%>
-      <div class="status-notice" style="display: none;" id="resized_notice">
+      <div class="status-notice" id="resized_notice">
         This image has been resized to <%= print_resize_percentage(@post) %> of its original size.
         <%= link_to "View original", @post.file_url %>. 
         <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>
           <%= link_to "Always view original", @post.file_url, :onclick => "User.disable_samples()" %>.
         <% end %>
-        <%= link_to_function("Hide this message", "$('resized_notice').hide(); Cookie.put('hide_resized_notice', '1')") %>.          
-        <script type="text/javascript">
-          if(Cookie.get("hide_resized_notice") != "1")
-            $('resized_notice').show();
-        </script>
-      </div>
-      <div class="status-notice" style="display: none;" id="samples_disabled">
-        Image samples have been disabled.  If you find this to be too slow, you can turn samples back on in your profile settings.
       </div>
     <% end %>
 
