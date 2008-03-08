@@ -15,7 +15,7 @@ module PostHelper
     text = "%ix%i, %s" % [post.width, post.height, size]
     
     if post.can_be_seen_by?(user)
-      text = link_to(text, post.file_url)
+      text = link_to(text, post.file_url, :class => "original-file", :id => "highres")
     end
     
     return text
