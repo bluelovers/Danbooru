@@ -10,16 +10,15 @@ module PostHelper
     )
   end
   
-  def print_image_dimensions(post, user)
-   if post.use_sample?(user)
-     size = number_to_human_size(post.file_size)
-     link_to_function("Download (%ix%i, %s)" % [post.width, post.height, size], image_path(post.file_url), :id => "highres", :class=>"original-file") do |page|
-       page.call "Post.highres"
-     end
-   else
-     return ""
-   end
- end
+  def print_resize_percentage(post)
+    if post.sample_width > post.sample_height
+      ratio = 100 * post.sample_width / post.width.to_f
+    else
+      ratio = 100 * post.sample_height / post.height.to_f
+    end
+    
+    return number_to_percentage(ratio, :precision => 0)
+  end
 
   def print_preview(post, options = {})
     unless CONFIG["can_see_post"].call(@current_user, post)
