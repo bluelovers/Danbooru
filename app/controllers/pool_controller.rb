@@ -118,14 +118,14 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if !@pool.is_public? && !@current_user.has_permission?(@pool)
+      if @pool.is_public? || @current_user.has_permission?(@pool)
+        @pool.remove_post(params[:post_id])
+        response.headers["X-Post-Id"] = params[:post_id]
+        respond_to_success("Post removed", :controller => "post", :action => "show", :id => params[:post_id])
+      else
         access_denied()
         return
-      end
-      
-      @pool.remove_post(params[:post_id])
-      response.headers["X-Post-Id"] = params[:post_id]
-      respond_to_success("Post removed", :controller => "post", :action => "show", :id => params[:post_id])
+      end      
     else
       @pool = Pool.find(params[:pool_id])
       @post = Post.find(params[:post_id])
