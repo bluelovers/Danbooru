@@ -5,18 +5,18 @@ module Danbooru
     Danbooru.resize_image(file_ext, read_path, write_path, output_size[:width], output_size[:height], output_quality)
   end
 
-  def reduce_to(size, max_size)
+  def reduce_to(size, max_size, ratio = 1)
     ret = size.dup
-    if ret[:width] > max_size[:width]
-      scale = max_size[:width].to_f / ret[:width].to_f;
-      ret[:width] = ret[:width] * scale;
-      ret[:height] = ret[:height] * scale;
+    if ret[:width] > ratio * max_size[:width]
+      scale = max_size[:width].to_f / ret[:width].to_f
+      ret[:width] = ret[:width] * scale
+      ret[:height] = ret[:height] * scale
     end
 
-    if ret[:height] > max_size[:height]
-      scale = max_size[:height].to_f / ret[:height].to_f;
-      ret[:width] = ret[:width] * scale;
-      ret[:height] = ret[:height] * scale;
+    if ret[:height] > ratio * max_size[:height]
+      scale = max_size[:height].to_f / ret[:height].to_f
+      ret[:width] = ret[:width] * scale
+      ret[:height] = ret[:height] * scale
     end
     ret[:width] = ret[:width].to_i
     ret[:height] = ret[:height].to_i

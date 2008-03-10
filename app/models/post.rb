@@ -825,7 +825,7 @@ class Post < ActiveRecord::Base
     post.reload
     post.destroy
   end
-    
+  
   def validate_content_type
     unless %w(jpg jpeg png gif swf).include?(self.file_ext.downcase)
       self.errors.add(:file, "is an invalid content type")
@@ -981,7 +981,7 @@ class Post < ActiveRecord::Base
     return true unless (self.width && self.height)
     return true if (self.file_ext.downcase == "gif")
 
-    size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]})
+    size = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, CONFIG["sample_ratio"])
 
     # We can generate the sample image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.

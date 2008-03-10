@@ -41,6 +41,9 @@ CONFIG["sample_width"] = 1400
 CONFIG["sample_height"] = 1000
 CONFIG["sample_quality"] = 90
 
+# Resample the image only if the image is larger than sample_ratio * sample_dimensions.
+CONFIG["sample_ratio"] = 1.5
+
 # Files over this size will always generate a sample, even if already within
 # the above dimensions.
 CONFIG["sample_always_generate_size"] = 512*1024
