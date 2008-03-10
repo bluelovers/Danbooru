@@ -57,7 +57,7 @@ class WikiController < ApplicationController
     if page.errors.empty?
       respond_to_success("Page created", {:action => "show", :title => page.title}, :location => url_for(:action => "show", :title => page.title))
     else
-      respond_to_error(page)
+      respond_to_error(page, :action => "index")
     end
   end
 
