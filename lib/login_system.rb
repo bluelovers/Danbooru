@@ -69,7 +69,7 @@ module LoginSystem
     end
     
     if @current_user
-      if @current_user.is_blocked? && @current_user.ban.expires_at < Time.now
+      if @current_user.is_blocked? && @current_user.ban && @current_user.ban.expires_at < Time.now
         @current_user.update_attributes(:level => CONFIG["starting_level"])
         Ban.destroy_all("user_id = #{@current_user.id}")
       end
