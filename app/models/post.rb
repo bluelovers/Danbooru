@@ -98,7 +98,10 @@ class Post < ActiveRecord::Base
           begin
             s = $1
             if s =~ /^\d+$/
-              pool = Pool.find(s)
+              begin
+                pool = Pool.find(s)
+              rescue ActiveRecord::RecordNotFound
+              end
             else
               pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", s])
             end
