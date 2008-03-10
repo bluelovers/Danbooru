@@ -104,6 +104,7 @@ CONFIG["tag_types"] = {
   "Copyright" => 3,
   "Character" => 4,
   
+  "general" => 0,
   "artist" => 1,
   "copyright" => 3,
   "character" => 4,
