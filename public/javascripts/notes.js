@@ -24,10 +24,6 @@ var Note = Class.create({
 			height: this.elements.box.clientHeight
 		}
 		
-		if (this.elements.image.scale_factor == null) {
-			this.elements.image.scale_factor = 1
-		}
-
 		// Store the original values (in case the user clicks Cancel)
 		this.old = {
 			raw_body: raw_body,
@@ -57,6 +53,8 @@ var Note = Class.create({
     this.elements.body.observe("mouseover", this.bodyShow.bindAsEventListener(this))
     this.elements.body.observe("mouseout", this.bodyHideTimer.bindAsEventListener(this))
     this.elements.body.observe("click", this.showEditBox.bindAsEventListener(this))
+
+    this.adjustScale()
 	},
 
   // Returns the raw text value of this note
@@ -278,13 +276,20 @@ var Note = Class.create({
 		this.bodyShow()
 	},
 
+	ratio: function() {
+    var ratio = this.elements.image.width / this.elements.image.getAttribute("orig_width")
+		if (this.elements.image.scale_factor != null)
+      ratio *= this.elements.image.scale_factor;
+    return ratio
+  },
+
   // Scale the notes for when the image gets resized
 	adjustScale: function() {
 	  if (Note.debug) {
 	    console.debug("Note#adjustScale (id=%d)", this.id)
 	  }
 	  
-		var ratio = this.elements.image.scale_factor
+    var ratio = this.ratio()
 		for (p in this.fullsize) {
 			this.elements.box.style[p] = this.fullsize[p] * ratio + 'px'
 		}
@@ -299,7 +304,7 @@ var Note = Class.create({
 
 		this.elements.box.style.left = left + 'px'
 		this.elements.box.style.top = top + 'px'
-		var ratio = this.elements.image.scale_factor
+		var ratio = this.ratio()
 		this.fullsize.left = left / ratio
 		this.fullsize.top = top / ratio
 
@@ -408,7 +413,7 @@ var Note = Class.create({
 
 		this.elements.box.style.width = width + "px"
 		this.elements.box.style.height = height + "px"
-		var ratio = this.elements.image.scale_factor
+		var ratio = this.ratio()
 		this.fullsize.width = width / ratio
 		this.fullsize.height = height / ratio
 
@@ -488,7 +493,7 @@ var Note = Class.create({
 		this.hideEditBox(e)
 		this.bodyHide()
 
-		var ratio = this.elements.image.scale_factor
+		var ratio = this.ratio()
 		for (p in this.fullsize) {
 			this.fullsize[p] = this.old[p]
 			this.elements.box.style[p] = this.fullsize[p] * ratio + 'px'

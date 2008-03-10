@@ -117,29 +117,39 @@ Post = {
       }
     }
   },
+  
   highres: function() {
     var img = $("image");
-    if (img.src == $("highres").href)
+    
+    if (img.src == $("highres").href) {
       return;
+    }
 
     // un-resize
-    if ((img.scale_factor != null) && (img.scale_factor != 1))
+    if ((img.scale_factor != null) && (img.scale_factor != 1)) {
       Post.resize_image();
+    }
 
-    img.onload = img.onerror = function()
-    {
-      img.onload = null;
-      img.onerror = null;
+    var f = function() {
+      img.stopObserving("load")
+      img.stopObserving("error")
       img.height = img.getAttribute("orig_height");
       img.width = img.getAttribute("orig_width");
       img.src = $("highres").href;
+
+      if (window.Note) {
+        window.Note.all.invoke("adjustScale")
+      }
     }
+    
+    img.observe("load", f)
+    img.observe("error", f)
 
     // Clear the image before loading the new one, so it doesn't show the old image
     // at the new resolution while the new one loads.  Hide it, so we don't flicker
     // a placeholder frame.
-    $("resized_notice").hide();
-    img.height = img.width = 0;
-    img.src = "about:blank";
+    $("resized_notice").hide()
+    img.height = img.width = 0
+    img.src = "about:blank"
   }
 }
