@@ -664,6 +664,11 @@ div.sidebar li {
   margin: 0;
 }
 
+a.original-file-changed#highres {
+  color: #0030fa;
+  font-weight: bold;
+}
+
 div#static-index {
   text-align: center;
 }
