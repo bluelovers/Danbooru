@@ -13,7 +13,7 @@ class Pool < ActiveRecord::Base
     self.name.gsub(/_/, " ")
   end
   
-  def add_post(post_id)
+  def add_post(post_id, seq = nil)
     if PoolPost.find(:first, :conditions => ["pool_id = ? and post_id = ?", self.id, post_id])
       raise PostAlreadyExistsError
     end
@@ -21,7 +21,7 @@ class Pool < ActiveRecord::Base
     transaction do
       Cache.expire(:post_id => post_id)
       update_attributes(:updated_at => Time.now)
-      PoolPost.create(:pool_id => self.id, :post_id => post_id)
+      PoolPost.create(:pool_id => self.id, :post_id => post_id, :sequence => seq.to_i)
     end
   end
   
