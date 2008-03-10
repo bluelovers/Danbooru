@@ -71,10 +71,6 @@ class ArtistController < ApplicationController
   def index
     if params[:name]
       @artists = Artist.paginate Artist.generate_sql(params[:name]).merge(:per_page => 50, :page => params[:page], :order => "name")
-    elsif params[:url]
-      @artists = Artist.find_all_by_url(params[:url])
-    elsif params[:md5]
-      @artists = Artist.find_all_by_md5(params[:md5])
     else
       if params[:order] == "date"
         order = "updated_at DESC"

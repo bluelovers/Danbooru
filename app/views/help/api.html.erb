@@ -248,8 +248,6 @@
       <p>The base URL is /artist/index.xml.</p>
       <ul>
         <li><strong>name</strong> The name (or a fragment of the name) of the artist.</li>
-        <li><strong>url</strong> A URL pointing to the artist's site.</li>
-        <li><strong>md5</strong> The MD5 hash of an image created by the artist.</li>
         <li><strong>order</strong> Can be <code>date</code> or <code>name</code>.</li>
         <li><strong>page</strong> The page number.</li>
       </ul>
@@ -531,6 +529,7 @@
         <li>JSON requests now end in a .json suffix</li>
         <li>Renamed some error reason messages</li>
         <li>Removed comment/index from API</li>
+        <li>Removed url and md5 parameters from artist search (can just pass the URL or MD5 hash to the name parameter)</li>
       </ul>
     </div>
     
