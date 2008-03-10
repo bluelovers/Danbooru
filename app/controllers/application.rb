@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
     if @current_user.is_member_or_lower? && request.method == :get && params[:format] != "xml" && params[:format] != "js"      
       key, expiry = cache_key()
       
-      if key
+      if key && key.size < 200
         cached = Cache.get(key)
 
         unless cached.blank?
