@@ -2,9 +2,8 @@
 
 require File.dirname(__FILE__) + '/../../config/environment'
 
-Post.find(:all, :conditions => ["status = 'pending' and created_at < ?", 3.days.ago]).each do |post|
-  if post.deletion_reason.blank?
-    post.update_attribute(:deletion_reason, "Unapproved in three days")
-  end
-  post.destroy
+user = User.find(1)
+
+Post.find(:all, :conditions => ["status = 'pending' and created_at < ? ", 3.days.ago], :select => "id").each do |post|
+  Post.destroy_with_reason(post.id, "Unapproved in three days", user.id)
 end

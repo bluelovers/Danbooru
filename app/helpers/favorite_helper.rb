@@ -5,7 +5,7 @@ module FavoriteHelper
     if users.empty?
       html << "no one"
     else
-      html << users.map {|user| link_to(h(user.pretty_name), :controller => "favorite", :action => "show", :id => user.id)}.join(", ")
+      html << users.map {|user| link_to(h(user.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{user.name} order:fav")}.join(", ")
     end
 
     return html
@@ -20,7 +20,7 @@ module FavoriteHelper
       :order => "lower(name)", 
       :select => "users.name, users.id"
     )
-    s = users.map {|x| link_to(h(x.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{x.name}")}.uniq.to_sentence
+    s = users.map {|x| link_to(h(x.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{x.name} order:fav")}.uniq.to_sentence
 
     if s.empty?
       return "no one"

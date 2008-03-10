@@ -80,10 +80,10 @@
       <dd>Order search results in descending order based on post ID.</dd>
       
       <dt>order:score</dt>
-      <dd>Order search results in ascending order based on post score.</dd>
-      
-      <dt>order:score_desc</dt>
       <dd>Order search results in descending order based on post score.</dd>
+      
+      <dt>order:score_asc</dt>
+      <dd>Order search results in ascending order based on post score.</dd>
 
       <dt>order:mpixels</dt> 
       <dd>Order search results in descending order based on resolution.</dd>
@@ -96,6 +96,9 @@
 
       <dt>order:portrait</dt> 
       <dd>Order portrait images first.</dd>
+
+      <dt>order:fav</dt>
+      <dd>Order by when the post was favorited (only valid when doing a fav search)</dd>
       
       <% if CONFIG["enable_parent_posts"] %>
         <dt>parent:1234</dt>

@@ -88,7 +88,7 @@
   Post.observe_text_area("post_tags")
   PostModeMenu.init()
   if (Cookie.get("login") != "") {
-    $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login")
+    $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"
   } else {
     $("my-favorites-container").hide()
   }

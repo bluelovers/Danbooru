@@ -311,10 +311,10 @@ class Post < ActiveRecord::Base
           sql << " ORDER BY p.id DESC"
           
         when "score"
-          sql << " ORDER BY p.score"
-          
-        when "score_desc"
           sql << " ORDER BY p.score DESC"
+          
+        when "score_asc"
+          sql << " ORDER BY p.score"
           
         when "mpixels"
           sql << " ORDER BY width*height DESC"
@@ -327,6 +327,9 @@ class Post < ActiveRecord::Base
 
         when "landscape"
           sql << " ORDER BY 1.0*width/height DESC"
+
+        when "fav"
+          sql << " ORDER BY f.id DESC"
 
         else
           sql << " ORDER BY p.id DESC"

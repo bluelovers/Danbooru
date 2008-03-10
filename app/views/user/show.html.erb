@@ -25,7 +25,7 @@
     </tr>
     <tr>
       <th>Favorites</th>
-      <td><%= link_to Favorite.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></td>
+      <td><%= link_to Favorite.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "fav:#{@user.name} order:fav" %></td>
     </tr>
     <tr>
       <th>Comments</th>
@@ -73,12 +73,12 @@
     </tr>
     <tr>
       <th>Favorite Tags</th>
-      <td><%= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+      <td><%= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
     </tr>
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General"}.each do |name, value| %>
       <tr>
         <th>Favorite <%= name.pluralize %></th>
-        <td><%= @user.favorite_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+        <td><%= @user.favorite_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
       </tr>
     <% end %>
     <tr>
@@ -95,7 +95,7 @@
 </div>
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
-  <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></h4>
+  <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "fav:#{@user.name} order:fav" %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
