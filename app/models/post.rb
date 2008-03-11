@@ -431,7 +431,7 @@ class Post < ActiveRecord::Base
       end
 
       def sample_path
-        "#{RAILS_ROOT}/public/data/sample/#{md5}.jpg"
+        "#{RAILS_ROOT}/public/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def preview_url
@@ -445,7 +445,7 @@ class Post < ActiveRecord::Base
       end
 
       def store_sample_url
-        CONFIG["url_base"] + "/data/sample/#{md5}.jpg"
+        CONFIG["url_base"] + "/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def delete_file
@@ -496,7 +496,7 @@ class Post < ActiveRecord::Base
       end
 
       def sample_path
-        "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/#{md5}.jpg"
+        "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def preview_url
@@ -510,7 +510,7 @@ class Post < ActiveRecord::Base
       end
 
       def store_sample_url
-        CONFIG["url_base"] + "/data/sample/#{file_hierarchy}/#{md5}.jpg"
+        CONFIG["url_base"] + "/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def delete_file
@@ -572,7 +572,7 @@ class Post < ActiveRecord::Base
       end
 
       def sample_path
-        "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/#{md5}.jpg"
+        "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def preview_url
@@ -598,9 +598,9 @@ class Post < ActiveRecord::Base
 
       def store_sample_url
         if self.is_warehoused?
-          select_random_image_server() + "/data/sample/#{file_hierarchy}/#{md5}.jpg"
+          select_random_image_server() + "/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
         else
-          CONFIG["url_base"] + "/data/sample/#{file_hierarchy}/#{md5}.jpg"
+          CONFIG["url_base"] + "/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
         end
       end
 
@@ -644,7 +644,7 @@ class Post < ActiveRecord::Base
           end
 
           if File.exists?(tempfile_sample_path)
-            AWS::S3::S3Object.store("sample/#{md5}.jpg", open(self.tempfile_sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
+            AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg", open(self.tempfile_sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
           end
 
           return true
@@ -706,7 +706,7 @@ class Post < ActiveRecord::Base
         end
 
         if File.exists?(tempfile_sample_path)
-          AWS::S3::S3Object.store("sample/#{md5}.jpg", open(self.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+          AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg", open(self.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
         end
 
         return true
@@ -731,7 +731,7 @@ class Post < ActiveRecord::Base
       end
 
       def sample_path
-        "#{RAILS_ROOT}/public/data/sample/#{md5}.jpg"
+        "#{RAILS_ROOT}/public/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def preview_url
@@ -745,7 +745,7 @@ class Post < ActiveRecord::Base
       end
 
       def store_sample_url
-        CONFIG["url_base"] + "/data/sample/#{md5}.jpg"
+        CONFIG["url_base"] + "/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
       def delete_file
