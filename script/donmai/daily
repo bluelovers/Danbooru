@@ -1,16 +1,11 @@
 #!/bin/bash
 
-#sudo() {
-#	$*
-#}
-
 export RAILS_ENV=production
-cd "$(dirname $0)/../"
+cd "$(dirname $0)/../../"
 script/donmai/downbooru
 mongrel_rails cluster::stop
 psql danbooru -c "delete from tags where post_count = 0 and id not in (select alias_id from tag_aliases union select predicate_id from tag_implications union select consequent_id from tag_implications)"
 psql danbooru -c "update table_data set row_count = (select count(*) from posts where parent_id is null) where name = 'posts'"
-# sudo script/donmai/process_logs
 script/donmai/backup_db
 script/donmai/backup_db_to_s3
 script/donmai/backup_svn_to_s3
