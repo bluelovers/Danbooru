@@ -6386,9 +6386,11 @@ Cookie = {
   },
 
   setup: function() {
-    if (location.pathname.match(/^\/(comment|pool|note|post)/) && this.get("tos") != "1") {
-     location.pathname = "/static/terms_of_service?url=" + location.href
-     return
+    if (location.href.match(/^\/(comment|pool|note|post)/) && this.get("tos") != "1") {
+      // Setting location.pathname in Safari doesn't work, so manually extract the domain.
+      var domain = location.href.match(/^(http:\/\/[^\/]+)/)[0]
+      location.href = domain + "/static/terms_of_service?url=" + location.href
+      return
     }
     
     if (this.get("has_mail") == "1") {
