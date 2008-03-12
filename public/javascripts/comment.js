@@ -27,7 +27,7 @@ Comment = {
       },
       onSuccess: function(resp) {
         var resp = resp.responseJSON
-        var stripped_body = resp.body.replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, "")
+        var stripped_body = resp.body.replace(/\[quote\](?:.|\n|\r)+?\[\/quote\](?:\r\n|\r|\n)*/gm, "")
         var body = '[quote]' + resp.creator + ' said:\n' + stripped_body + '\n[/quote]\n\n'
         $('reply-' + resp.post_id).show()
         $('reply-text-' + resp.post_id).value += body

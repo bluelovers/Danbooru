@@ -16,7 +16,7 @@ Forum = {
       onSuccess: function(resp) {
         var resp = resp.responseJSON
         $('reply').show().scrollTo()
-        var stripped_body = resp.body.replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, "")
+        var stripped_body = resp.body.replace(/\[quote\](?:.|\n|\r)+?\[\/quote\][\n\r]*/gm, "")
         $('forum_post_body').value += '[quote]' + resp.creator + ' said:\n' + stripped_body + '\n[/quote]\n\n'
       },
       onFailure: function(req) {
