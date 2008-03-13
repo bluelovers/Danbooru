@@ -11,18 +11,22 @@
       </tr>
     </thead>
     <tbody>
-      <% @changes.each do |change| %>
+      <% @change_list.each do |change| %>
         <tr class="<%= cycle 'even', 'odd' %>">
-          <td style="background: <%= id_to_color(change.post_id) %>;"></td>
+          <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
           <% if params[:post_id] %>
-            <td><%= link_to change.post_id, :controller => "post", :action => "show", :id => change.post_id %></td>
+            <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
           <% else %>
-            <td><%= link_to change.post_id, :action => "index", :post_id => change.post_id %></td>
+            <td><%= link_to change[:change].post_id, :action => "index", :post_id => change[:change].post_id %></td>
           <% end %>
-          <td><%= change.created_at.strftime("%b %e") %></td>
-          <td><%= h change.author %></td>
-          <td><%= h change.tags %></td>
-          <td><%= link_to "Revert", :action => "revert", :id => change.id %></td>
+          <td><%= change[:change].created_at.strftime("%b %e") %></td>
+          <td><%= link_to change[:change].author, :action => "index", :user_id => change[:change].user_id %></td>
+          <td>
+            <span class="added-tags"><%= tag_list(change[:added_tags], :prefix=>"+") %></span>
+            <span class="removed-tags"><%= tag_list(change[:removed_tags], :prefix=>"-") %></span>
+            <span class="unchanged-tags"><%= tag_list(change[:unchanged_tags], :prefix=>"") %></span>
+          </td>
+          <td><%= link_to "Revert", :action => "revert", :id => change[:change].id %></td>
         </tr>
       <% end %>
     </tbody>

@@ -321,6 +321,18 @@ a.tag-type-artist {
   color: #33CFFF;
 }
 
+.added-tags {
+  color: #00cc00;
+}
+
+.removed-tags {
+  color: #ff0000;
+}
+
+.unchanged-tags {
+  font-size: 0.8em;
+}
+
 div#artist-index > table td {
   white-space: nowrap;
 }

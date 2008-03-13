@@ -5,6 +5,9 @@ class PostTagHistoryController < ApplicationController
   def index
     joins, conds = PostTagHistory.generate_sql(params)
     @changes = PostTagHistory.paginate :order => "id DESC", :per_page => 20, :conditions => conds, :joins => joins, :select => "post_tag_histories.*", :page => params[:page]
+    @change_list = @changes.map { |c|
+      { :change => c }.merge(c.tag_changes(c.previous))
+    }
   end
   
   def revert

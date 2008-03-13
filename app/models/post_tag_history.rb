@@ -34,6 +34,21 @@ class PostTagHistory < ActiveRecord::Base
     return User.find_name(self.user_id)
   end
 
+  def tag_changes(prev)
+    new_tags = tags.scan(/\S+/)
+    old_tags = (prev.tags rescue "").scan(/\S+/)
+
+    {
+      :added_tags => new_tags - old_tags,
+      :removed_tags => old_tags - new_tags,
+      :unchanged_tags => new_tags & old_tags,
+    }
+  end
+
+  def previous
+    return PostTagHistory.find(:first, :order => "id DESC", :conditions => ["post_id = ? AND id < ?", post_id, id])
+  end
+
   def to_xml(options = {})
     {:id => id, :post_id => post_id, :tags => tags}.to_xml(options.merge(:root => "tag_history"))
   end
