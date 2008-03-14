@@ -293,6 +293,9 @@ class PostController < ApplicationController
 
   def delete
     @post = Post.find(params[:id])
+    if @post && @post.parent_id
+      @post_parent = Post.find(@post.parent_id)
+    end
   end
   
   def flag

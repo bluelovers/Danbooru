@@ -796,6 +796,7 @@ class Post < ActiveRecord::Base
   before_validation_on_create :generate_sample
   before_validation_on_create :generate_preview
   before_validation_on_create :move_file
+  before_destroy :give_favorites_to_parent
   before_destroy :delete_file
   before_destroy :update_status_on_destroy
   after_create :update_neighbor_links_on_create
@@ -851,6 +852,20 @@ class Post < ActiveRecord::Base
     self.update_attributes(:status => "active")
   end
   
+  def give_favorites_to_parent
+    transaction do
+      # Don't trust cache for this.
+      @favorited_by = nil
+      favorited_by().map { |user|
+        begin
+          user.add_favorite(parent_id)
+        rescue User::AlreadyFavoritedError
+        end
+        user.delete_favorite(id)
+      }
+    end
+  end
+
   def update_status_on_destroy
     self.update_attributes(:status => "deleted")
     

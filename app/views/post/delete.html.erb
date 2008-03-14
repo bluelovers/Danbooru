@@ -9,3 +9,25 @@
   <label>Reason</label> <%= text_field_tag "reason" %>
   <%= submit_tag "Delete" %> <%= submit_tag "Cancel" %>
 <% end %>
+
+<div class="deleting-post">
+<% if !@post.is_deleted? %>
+  <% if @post.fav_count > 0 %>
+    <br>
+    <p><%= @post.fav_count %> <%= @post.fav_count!=1? "users have":"user has" %> favorited this post.
+    <% if @post_parent %>
+      Favorites will be transferred to the following parent post.
+      If this is incorrect, reparent this post before deleting it.<p>
+    <% if CONFIG["can_see_post"].call(@current_user, @post_parent) %>
+      <ul id="post-list-posts"> <%= print_preview(@post_parent, :hide_directlink=>true) %> </ul>
+    <% else %>
+      (parent post hidden due to access restrictions)
+    <% end %>
+
+    <% else %>
+      This post has no parent.  If this post has been replaced, reparent this post before deleting, and favorites will be transferred.<p>
+    <% end %>
+  <% end %>
+<% end %>
+</div>
+
