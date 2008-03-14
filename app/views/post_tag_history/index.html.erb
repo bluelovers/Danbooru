@@ -1,18 +1,17 @@
 <div>
-  <table width="100%" class="highlightable">
+  <table width="100%" class="highlightable" id="history">
     <thead>
       <tr>
         <th width="1%"></th>
         <th width="4%">Post</th>
         <th width="5%">Date</th>
         <th width="10%">User</th>
-        <th width="75%">Tags</th>
-        <th width="5%"></th>
+        <th width="80%">Tags</th>
       </tr>
     </thead>
     <tbody>
       <% @change_list.each do |change| %>
-        <tr class="<%= cycle 'even', 'odd' %>">
+        <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
           <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
           <% if params[:post_id] %>
             <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
@@ -22,16 +21,26 @@
           <td><%= change[:change].created_at.strftime("%b %e") %></td>
           <td><%= link_to change[:change].author, :action => "index", :user_id => change[:change].user_id %></td>
           <td>
-            <span class="added-tags"><%= tag_list(change[:added_tags], :prefix=>"+") %></span>
-            <span class="removed-tags"><%= tag_list(change[:removed_tags], :prefix=>"-") %></span>
+            <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete=>change[:obsolete_added_tags], :prefix=>"+") %></span>
+            <span class="removed-tags"><%= tag_list(change[:removed_tags], :obsolete=>change[:obsolete_removed_tags], :prefix=>"-") %></span>
             <span class="unchanged-tags"><%= tag_list(change[:unchanged_tags], :prefix=>"") %></span>
           </td>
-          <td><%= link_to "Revert", :action => "revert", :id => change[:change].id %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  <div id="footer">
+    <%= link_to_function "Undo", "PostTagHistory.undo()", :id => "undo" %> |
+    <a id="revert" href="#">Revert to</a>
+  </div>
 </div>
+
+<script type="text/javascript">
+  <% @change_list.each do |change| %>
+    PostTagHistory.add_change(<%= change[:change].id %>)
+  <% end %>
+  PostTagHistory.init()
+</script>
 
 <div id="paginator">
   <%= will_paginate(@changes) %>

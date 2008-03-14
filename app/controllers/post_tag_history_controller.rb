@@ -1,6 +1,7 @@
 class PostTagHistoryController < ApplicationController
   layout 'default'
   before_filter :member_only
+  verify :method => :post, :only => [:undo]
   
   def index
     joins, conds = PostTagHistory.generate_sql(params)
@@ -23,4 +24,29 @@ class PostTagHistoryController < ApplicationController
       redirect_to :controller => "post", :action => "show", :id => @post.id
     end
   end  
+
+  def undo
+    return if not request.post?
+
+    ids = params[:id].split(/,/)
+    if ids.length > 1 && !@current_user.is_privileged_or_higher?
+      respond_to_error("Only privileged users can undo more than one change at once.", :status => 403)
+      return
+    end
+
+    options = {
+      :update_options => { :updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id }
+    }
+
+    ids.each do |id|
+      @change = PostTagHistory.find(id)
+      @change.undo(options)
+    end
+
+    options[:posts].each do |id, post|
+      post.save!
+    end
+
+    respond_to_success("Tag changes undone", :action => "index")
+  end
 end

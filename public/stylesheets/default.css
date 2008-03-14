@@ -239,6 +239,10 @@ table tr.good {
   background: rgb(230, 255, 230);
 }
 
+table tr.selected {
+  background: #AEE !important; /* override highlightable */
+}
+
 table tr.highlight {
   background: #FFD;
 }
@@ -296,6 +300,10 @@ ul.link-page > li {
 	list-style-type: none;
 }
 
+.obsolete-tag-change {
+  color: #000;
+}
+
 .tag-type-artist > a,
 a.tag-type-artist {
   color: #A00;
@@ -319,6 +327,18 @@ a.tag-type-artist {
 
 .tag-type-copyright > a:hover {
   color: #33CFFF;
+}
+
+.added-tags {
+  color: #00cc00;
+}
+
+.removed-tags {
+  color: #ff0000;
+}
+
+.unchanged-tags {
+  font-size: 0.8em;
 }
 
 .added-tags {
@@ -414,6 +434,10 @@ div#footer {
   font-size: 120%;
   color: #CCC;
   clear: both;
+}
+
+div#footer > .footer-disabled {
+  color: #777777;
 }
 
 div#forum > table th:first-child {
