@@ -4,7 +4,7 @@
   <% else %>
     <% if @post.is_flagged? %>
       <div class="status-notice">
-        This post was flagged for deletion. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>
+        This post was flagged for deletion by <%= h @post.flag_detail.author %>. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>
       </div>
     <% elsif @post.is_pending? %>
       <div class="status-notice">

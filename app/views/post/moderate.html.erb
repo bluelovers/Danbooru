@@ -92,7 +92,7 @@
                 <% end %>
                 <li>Tags: <%= h p.cached_tags %></li>
                 <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
-                <li>Reason: <%= format_text(p.flag_detail.reason, :skip_simple_format => true) %></li>
+                <li>Reason: <%= format_text(p.flag_detail.reason, :skip_simple_format => true) %> (<%= h p.flag_detail.author %>)</li>
               </ul>
             </td>
           </tr>
