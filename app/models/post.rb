@@ -853,16 +853,19 @@ class Post < ActiveRecord::Base
   end
   
   def give_favorites_to_parent
+    return if parent_id.nil?
+    return unless Post.exists?(parent_id)
+
     transaction do
       # Don't trust cache for this.
       @favorited_by = nil
-      favorited_by().map { |user|
+      favorited_by.map do |user|
         begin
           user.add_favorite(parent_id)
         rescue User::AlreadyFavoritedError
         end
         user.delete_favorite(id)
-      }
+      end
     end
   end
 
