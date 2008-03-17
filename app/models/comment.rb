@@ -8,12 +8,10 @@ class Comment < ActiveRecord::Base
   after_destroy :expire_cache
   attr_accessor :do_not_bump_post
   
-  def self.build_conditions(params)
-    return Nagato::Builder.conditions do |cond|
-      if params[:post_id]
-        cond.add "post_id = ?", params[:post_id]
-      end
-    end
+  def self.generate_sql(params)
+    return Nagato::Builder.new do |builder, cond|
+      cond.add_unless_blank "post_id = ?", params[:post_id]
+    end.to_hash
   end
 
   def update_last_commented_at

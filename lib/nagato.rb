@@ -6,15 +6,25 @@ module Nagato
     # * :join<String>:: Can be either "and" or "or". All the conditions will be joined using this string.
     def initialize(join = "and")
       @join = join.upcase
-      @conditions = ["TRUE"]
+      @conditions = []
       @condition_params = []
     end
 
+    # Returns true if the subquery is empty.
+    def empty?
+      return @conditions.empty?
+    end
+
+    # Returns an array of 1 or more elements, the first being a SQL fragment and the rest being placeholder parameters.
     def conditions
-      [@conditions.join(" " + @join + " "), *@condition_params]
+      if @conditions.empty?
+        return ["TRUE"]
+      else
+        return [@conditions.join(" " + @join + " "), *@condition_params]
+      end
     end
     
-    # Creates a subquery (within the curreny subquery).
+    # Creates a subquery (within the current subquery).
     #
     # === Parameters
     # * :join<String>:: Can be either "and" or "or". This will be passed on to the generated subquery.
@@ -35,55 +45,51 @@ module Nagato
       @conditions << sql
       @condition_params += params
     end
-  end
-  
-  class MissingBaseTable < Exception
+    
+    # A special case in which there's only one parameter. If the parameter is nil, then don't add the condition.
+    #
+    # === Parameters
+    # * :sql<String>:: A SQL fragment.
+    # * :param<Object>:: A placeholder parameter.
+    def add_unless_blank(sql, param)
+      if param != nil
+        @conditions << sql
+        @condition_params << param
+      end
+    end
   end
   
   class Builder
     attr_reader :order, :limit, :offset
     
     def initialize(table = nil)
-      @build_full_sql = (table.nil? ? false : true)
-      
       @select = []
-      @from = [table]
+      @from = []
       @joins = []
       @join_params = []
-      @conditions = ["TRUE"]
-      @condition_params = []
+      @subquery = Subquery.new("and")
       @order = nil
       @offset = nil
       @limit = nil
+
+      @from << table unless table.nil?
       
       if block_given?
-        yield(self)
+        yield(self, @subquery)
       end
     end
-        
-    def self.conditions(join = "and", &block)
-      b = self.new
-      b.where(join, &block)
-      return b.get_conditions
-    end
-    
+
     def join(sql, *params)
-      raise MissingBaseTable unless @build_full_sql
-      
       @joins << "JOIN " + sql
       @join_params += params
     end
     
     def ljoin(sql, *params)
-      raise MissingBaseTable unless @build_full_sql
-      
       @joins << "LEFT JOIN " + sql
       @join_params += params
     end
 
     def rjoin(sql, *params)
-      raise MissingBaseTable unless @build_full_sql
-      
       @joins << "RIGHT JOIN " + sql
       @join_params += params
     end
@@ -112,14 +118,6 @@ module Nagato
       end
     end
     
-    def where(join = "and")
-      sub = Subquery.new(join)
-      yield(sub)
-      c = sub.conditions
-      @conditions << "(#{c[0]})"
-      @condition_params += c[1..-1]
-    end
-    
     def order(sql)
       @order = sql
     end
@@ -133,7 +131,7 @@ module Nagato
     end
     
     def conditions
-      return [@conditions.join(" AND "), *@condition_params]
+      return @subquery.conditions
     end
 
     def joins
@@ -142,56 +140,25 @@ module Nagato
     
     def to_hash
       hash = {}
-      hash[:conditions] = conditions if @conditions.any?
+      hash[:conditions] = conditions
       hash[:joins] = joins if @joins.any?
       hash[:order] = @order if @order
       hash[:limit] = @limit if @limit
       hash[:offset] = @offset if @offset
       return hash
     end
-    
-    def to_a
-      if @conditions.empty?
-        conditions = ["TRUE"]
-      else
-        conditions = @conditions
-      end
-
-      if @select.empty?
-        select = ["*"]
-      else
-        select = @select
-      end
-    
-      sql = ["SELECT"]
-      sql << select.join(", ")
-      sql << "FROM"
-      sql << @from.join(", ")
-      sql << @joins.join(" ")
-      sql << "WHERE"
-      sql << conditions.join(" AND ")
-      sql << @order
-      sql << @offset
-      sql << @limit
-          
-      [sql.compact.join(" "), @join_params + @condition_params]
-    end
   end
 end
 
-# Nagato::Builder.new("posts") do |b|
-#   b.get("posts.id")
-#   b.get("posts.rating")
-#   b.rjoin("posts_tags ON posts_tags.post_id = posts.id")
-#   b.where("or") do |c1|
-#     c1.add "posts.rating = 's'"
-#     c1.subquery do |c2|
-#       c2.add "posts.user_id is null"
-#       c2.add "posts.user_id = 1"
-#     end
+# Nagato::Builder.new("posts") do |builder, cond|
+#   builder.get("posts.id")
+#   builder.get("posts.rating")
+#   builder.rjoin("posts_tags ON posts_tags.post_id = posts.id")
+#   cond.add_unless_blank "posts.rating = ?", params[:rating]
+#   cond.subquery do |c1|
+#     c1.add "posts.user_id is null"
+#     c1.add "posts.user_id = 1"
 #   end
-#   b.where do |c1|
-#     c1.add "posts.status <> 'deleted'"
-#   end
-#   puts b.to_a
+#
+#   puts b.to_hash
 # end

@@ -3,30 +3,15 @@ class PostTagHistory < ActiveRecord::Base
 
   class << self
     def generate_sql(options = {})
-      joins = []
-      conds = ["TRUE"]
-      params = []
+      Nagato::Builder.new do |builder, cond|
+        cond.add_unless_blank "post_tag_histories.post_id = ?", options[:post_id]
+        cond.add_unless_blank "post_tag_histories.user_id = ?", options[:user_id]
       
-      if options[:post_id]
-        conds << "post_tag_histories.post_id = ?"
-        params << options[:post_id]
-      end
-      
-      if options[:user_name]
-        joins << "JOIN users ON users.id = post_tag_histories.user_id"
-        conds << "users.name = ?"
-        params << options[:user_name]
-      end
-      
-      if options[:user_id]
-        conds << "post_tag_histories.user_id = ?"
-        params << options[:user_id]
-      end
-      
-      joins = joins.join(" ")
-      conds = [conds.join(" AND "), *params]
-      
-      return joins, conds
+        if options[:user_name]
+          builder.join "users ON users.id = post_tag_histories.user_id"
+          cond.add "users.name = ?", options[:user_name]
+        end
+      end.to_hash
     end
   end
 

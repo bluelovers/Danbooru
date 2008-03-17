@@ -165,18 +165,16 @@ class Artist < ActiveRecord::Base
   end
   
   def self.generate_sql(name)
-    b = Nagato::Builder.new do |builder|
-      builder.where do |cond|
-        case name
-        when /^[a-fA-F0-9]{32,32}$/
-          cond.add "name IN (SELECT t.name FROM tags t JOIN posts_tags pt ON pt.tag_id = t.id JOIN posts p ON p.id = pt.post_id WHERE p.md5 = ?)", name
-          
-        when /^http/
-          cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
-          
-        else
-          cond.add "name LIKE ? ESCAPE '\\\\'", name.to_escaped_for_sql_like + "%"
-        end
+    b = Nagato::Builder.new do |builder, cond|
+      case name
+      when /^[a-fA-F0-9]{32,32}$/
+        cond.add "name IN (SELECT t.name FROM tags t JOIN posts_tags pt ON pt.tag_id = t.id JOIN posts p ON p.id = pt.post_id WHERE p.md5 = ?)", name
+        
+      when /^http/
+        cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
+        
+      else
+        cond.add "name LIKE ? ESCAPE '\\\\'", name.to_escaped_for_sql_like + "%"
       end
     end
     

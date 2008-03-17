@@ -344,21 +344,17 @@ class User < ActiveRecord::Base
   end
   
   def self.generate_sql(params)
-    b = Nagato::Builder.new do |builder|
-      builder.where do |cond|
-        if params[:name]
-          cond.add "name ILIKE ? ESCAPE '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"
-        end
-      
-        if params[:id]      
-          cond.add "id = ?", params[:id]
-        end
-        
-        if params[:level] && params[:level] != "any"
-          cond.add "level = ?", params[:level]
-        end
+    return Nagato::Builder.new do |builder, cond|
+      if params[:name]
+        cond.add "name ILIKE ? ESCAPE '\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"
       end
 
+      if params[:level] && params[:level] != "any"
+        cond.add "level = ?", params[:level]
+      end
+
+      cond.add_unless_blank "id = ?", params[:id]
+        
       case params[:order]
       when "name"
         builder.order "lower(name)"
@@ -375,9 +371,7 @@ class User < ActiveRecord::Base
       else
         builder.order "created_at DESC"
       end
-    end
-    
-    return b.to_hash
+    end.to_hash
   end
 end
 
