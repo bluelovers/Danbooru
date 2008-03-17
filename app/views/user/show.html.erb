@@ -32,6 +32,10 @@
       <td><%= Comment.count(:all, :conditions => "user_id = #{@user.id}") %></td>
     </tr>
     <tr>
+      <th>Tag Edits</th>
+      <td><%= link_to PostTagHistory.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "post_tag_history", :action => "index", :user_id => @user.id %></td>
+    </tr>
+    <tr>
       <th>Note Edits</th>
       <td><%= link_to NoteVersion.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
     </tr>
