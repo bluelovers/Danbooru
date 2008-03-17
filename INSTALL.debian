@@ -13,7 +13,6 @@ gem install acts_as_versioned
 gem install superredcloth --source http://code.whytheluckystiff.net
 
 # Create danbooru account
-echo "Creating danbooru user account..."
 useradd -m danbooru
 PG_HBA_FILE="/etc/postgresql/8.3/main/pg_hba.conf"
 echo "local    all         postgres,danbooru                              trust" > $PG_HBA_FILE
@@ -24,8 +23,9 @@ echo "host     all         postgres,danbooru          127.0.0.1/32        trust"
 cd /var/www
 svn co svn://donmai.us/danbooru/trunk danbooru
 chown -R danbooru:danbooru danbooru
-mkdir -p danbooru/public/data/sample
-cd danbooru/config
+cd danbooru
+mkdir -p public/data/sample
+cd config
 cp database.yml.example database.yml
 cp local_config.rb.example local_config.rb
 sed -i -e "s/DAN_HOSTNAME/$hostname/g" local_config.rb
@@ -36,10 +36,13 @@ echo "environment: production" >> mongrel_cluster.yml
 echo "address: 127.0.0.1" >> mongrel_cluster.yml
 echo "servers: 3" >> mongrel_cluster.yml
 echo "num_processors: 10" >> mongrel_cluster.yml
-cd /var/www/danbooru
+cd ../lib/danbooru_image_resizer
+ruby extconf.rb
+make
+cd ../..
 sudo -u danbooru 'psql danbooru < db/postgres.sql '
 sudo -u danbooru 'RAILS_ENV=production rake db:migrate'
-mongrel_rails cluster::start
+mongrel_rails cluster::start -C config/mongrel_cluster.yml
 
 # Set up nginx
 DANBOORU_CONF_FILE="/etc/nginx/sites-enabled/danbooru.conf"
@@ -92,3 +95,5 @@ echo "  error_page 404 /404.html;" >> $DANBOORU_CONF_FILE
 echo "  error_page 500 502 503 504 /500.html;" >> $DANBOORU_CONF_FILE
 echo "}" >> $DANBOORU_CONF_FILE
 /etc/init.d/nginx restart
+
+echo "I'm done!"
