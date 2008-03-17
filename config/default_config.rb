@@ -38,11 +38,11 @@ CONFIG["force_image_samples"] = false
 
 # The maximum dimensions and JPEG quality of sample images.
 CONFIG["sample_width"] = 1400
-CONFIG["sample_height"] = 1000
+CONFIG["sample_height"] = 1000 # Set to nil if you never want to scale an image to fit on the screen vertically
 CONFIG["sample_quality"] = 90
 
 # Resample the image only if the image is larger than sample_ratio * sample_dimensions.
-CONFIG["sample_ratio"] = 1.5
+CONFIG["sample_ratio"] = 1.25
 
 # A prefix to prepend to sample files
 CONFIG["sample_filename_prefix"] = ""
