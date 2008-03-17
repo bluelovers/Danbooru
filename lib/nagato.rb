@@ -52,7 +52,7 @@ module Nagato
     # * :sql<String>:: A SQL fragment.
     # * :param<Object>:: A placeholder parameter.
     def add_unless_blank(sql, param)
-      if param != nil
+      unless param == nil || param == ""
         @conditions << sql
         @condition_params << param
       end
@@ -62,38 +62,62 @@ module Nagato
   class Builder
     attr_reader :order, :limit, :offset
     
-    def initialize(table = nil)
+    # Constructs a new Builder object. You must use it in block form.
+    #
+    # Example:
+    #
+    #   n = Nagato::Builder.new do |builder, cond|
+    #     builder.get("posts.id")
+    #     builder.get("posts.rating")
+    #     builder.rjoin("posts_tags ON posts_tags.post_id = posts.id")
+    #     cond.add_unless_blank "posts.rating = ?", params[:rating]
+    #     cond.subquery do |c1|
+    #       c1.add "posts.user_id is null"
+    #       c1.add "posts.user_id = 1"
+    #     end
+    #   end
+    #
+    #   Post.find(:all, n.to_hash)
+    def initialize
       @select = []
-      @from = []
       @joins = []
-      @join_params = []
       @subquery = Subquery.new("and")
       @order = nil
       @offset = nil
       @limit = nil
 
-      @from << table unless table.nil?
-      
-      if block_given?
-        yield(self, @subquery)
-      end
+      yield(self, @subquery)
     end
 
-    def join(sql, *params)
+    # Defines a new join.
+    #
+    # Example:
+    #
+    #   cond.join "posts_tags ON posts_tags.post_id = posts.id"
+    def join(sql)
       @joins << "JOIN " + sql
-      @join_params += params
     end
     
-    def ljoin(sql, *params)
+    # Defines a new left join.
+    #
+    # Example:
+    #
+    #   cond.ljoin "posts_tags ON posts_tags.post_id = posts.id"
+    def ljoin(sql)
       @joins << "LEFT JOIN " + sql
-      @join_params += params
     end
 
-    def rjoin(sql, *params)
+    # Defines a new right join.
+    #
+    # Example:
+    #
+    #   cond.rjoin "posts_tags ON posts_tags.post_id = posts.id"
+    def rjoin(sql)
       @joins << "RIGHT JOIN " + sql
-      @join_params += params
     end
 
+    # Defines the select list.
+    # 
     # === Parameters
     # * :fields<String, Array>: the fields to select
     def get(fields)
@@ -106,59 +130,51 @@ module Nagato
       end
     end
 
+    # Sets the ordering.
+    #
     # === Parameters
-    # * :tables<String, Array>: tables to select from
-    def from(tables)
-      if tables.is_a?(String)
-        @from << tables
-      elsif tables.is_a?(Array)
-        @from += tables
-      else
-        raise TypeError
-      end
-    end
-    
+    # * :sql<String>:: A SQL fragment defining the ordering
     def order(sql)
       @order = sql
     end
     
+    # Sets the limit.
+    #
+    # === Parameters
+    # * :amount<Integer>:: The amount
     def limit(amount)
       @limit = amount.to_i
     end
     
+    # Sets the offset.
+    #
+    # === Parameters
+    # * :amount<Integer>:: The amount
     def offset(amount)
       @offset = amount.to_i
     end
     
+    # Return the conditions (as an array suitable for usage with ActiveRecord)
     def conditions
       return @subquery.conditions
     end
 
+    # Returns the joins (as an array suitable for usage with ActiveRecord)
     def joins
-      return [@joins.join(" "), *@join_params]
+      return @joins.join(" ")
     end
     
+    # Converts the SQL fragment as a hash (suitable for usage with ActiveRecord)
     def to_hash
       hash = {}
       hash[:conditions] = conditions
-      hash[:joins] = joins if @joins.any?
+      hash[:joins] = joins unless @joins.empty?
       hash[:order] = @order if @order
       hash[:limit] = @limit if @limit
       hash[:offset] = @offset if @offset
+      hash[:select] = @select if @select.any?
       return hash
     end
   end
 end
 
-# Nagato::Builder.new("posts") do |builder, cond|
-#   builder.get("posts.id")
-#   builder.get("posts.rating")
-#   builder.rjoin("posts_tags ON posts_tags.post_id = posts.id")
-#   cond.add_unless_blank "posts.rating = ?", params[:rating]
-#   cond.subquery do |c1|
-#     c1.add "posts.user_id is null"
-#     c1.add "posts.user_id = 1"
-#   end
-#
-#   puts b.to_hash
-# end

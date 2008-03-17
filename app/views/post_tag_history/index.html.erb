@@ -1,34 +1,57 @@
 <div>
-  <table width="100%" class="highlightable" id="history">
-    <thead>
-      <tr>
-        <th width="1%"></th>
-        <th width="4%">Post</th>
-        <th width="5%">Date</th>
-        <th width="10%">User</th>
-        <th width="80%">Tags</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @change_list.each do |change| %>
-        <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
-          <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
-          <% if params[:post_id] %>
-            <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
-          <% else %>
-            <td><%= link_to change[:change].post_id, :action => "index", :post_id => change[:change].post_id %></td>
-          <% end %>
-          <td><%= change[:change].created_at.strftime("%b %e") %></td>
-          <td><%= link_to change[:change].author, :action => "index", :user_id => change[:change].user_id %></td>
-          <td>
-            <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete=>change[:obsolete_added_tags], :prefix=>"+") %></span>
-            <span class="removed-tags"><%= tag_list(change[:removed_tags], :obsolete=>change[:obsolete_removed_tags], :prefix=>"-") %></span>
-            <span class="unchanged-tags"><%= tag_list(change[:unchanged_tags], :prefix=>"") %></span>
-          </td>
+  <div>
+    <% form_tag({:action => "index"}, :method => :get) do %>
+      <table width="100%">
+        <tfoot>
+          <tr>
+            <td colspan="2"><%= submit_tag "Search" %></td>
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td><label for="user_name">User</label></td>
+            <td><%= text_field_tag "user_name", params[:user_name], :size => 20 %></td>
+          </tr>
+          <tr>
+            <td><label for="post_id">Post ID</label></td>
+            <td><%= text_field_tag "post_id", params[:post_id], :size => 10 %></td>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+  <div>
+    <table width="100%" class="highlightable" id="history">
+      <thead>
+        <tr>
+          <th width="1%"></th>
+          <th width="4%">Post</th>
+          <th width="5%">Date</th>
+          <th width="10%">User</th>
+          <th width="80%">Tags</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @change_list.each do |change| %>
+          <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
+            <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
+            <% if params[:post_id] %>
+              <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
+            <% else %>
+              <td><%= link_to change[:change].post_id, :action => "index", :post_id => change[:change].post_id %></td>
+            <% end %>
+            <td><%= change[:change].created_at.strftime("%b %e") %></td>
+            <td><%= link_to change[:change].author, :action => "index", :user_id => change[:change].user_id %></td>
+            <td>
+              <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete => change[:obsolete_added_tags], :prefix => "+") %></span>
+              <span class="removed-tags"><%= tag_list(change[:removed_tags], :obsolete=>change[:obsolete_removed_tags], :prefix=>"-") %></span>
+              <span class="unchanged-tags"><%= tag_list(change[:unchanged_tags], :prefix => "") %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
   <div id="footer">
     <%= link_to_function "Undo", "PostTagHistory.undo()", :id => "undo" %> |
     <a id="revert" href="#">Revert to</a>

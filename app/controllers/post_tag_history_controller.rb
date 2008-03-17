@@ -4,8 +4,8 @@ class PostTagHistoryController < ApplicationController
   verify :method => :post, :only => [:undo]
   
   def index
-    joins, conds = PostTagHistory.generate_sql(params)
-    @changes = PostTagHistory.paginate :order => "id DESC", :per_page => 20, :conditions => conds, :joins => joins, :select => "post_tag_histories.*", :page => params[:page]
+    pp PostTagHistory.generate_sql(params)
+    @changes = PostTagHistory.paginate PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 20, :select => "post_tag_histories.*", :page => params[:page])
     @change_list = @changes.map do |c|
       { :change => c }.merge(c.tag_changes(c.previous))
     end
