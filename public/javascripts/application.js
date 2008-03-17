@@ -6455,7 +6455,7 @@ Favorite = {
     if ((split_users.size() == 1) && (split_users[0] == "")) {
       return "no one"
     } else {
-      return split_users.map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '+order%3Afav">' + escape(x) + '</a>'}).join(", ")
+      return split_users.map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '+order%3Afav">' + x + '</a>'}).join(", ")
     }
   },
   
