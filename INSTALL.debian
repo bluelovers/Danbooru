@@ -4,10 +4,10 @@ echo -n "Enter the hostname for this server (ex: danbooru.donmai.us): "
 read hostname
 
 # Install packages
-apt-get -y install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev bzip2 postgresql-8.3 ruby ruby1.8-dev ri irb rdoc rubygems ragel memcached libmemcache-dev subversion nginx
+apt-get -y install gcc make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev bzip2 postgresql-8.3 libpq-dev ruby ruby1.8-dev ri irb rdoc rubygems ragel memcached libmemcache-dev subversion nginx
 
 # Install Ruby gems
-for i in postgres diff-lcs html5 mongrel memcache-client aws-s3 gchartrb ; do gem install $i ; done
+for i in postgres diff-lcs html5 mongrel mongrel_cluster memcache-client aws-s3 gchartrb ; do gem install $i ; done
 gem install rails --version=2.0.2
 gem install acts_as_versioned
 gem install superredcloth --source http://code.whytheluckystiff.net
@@ -24,18 +24,21 @@ echo "host     all         postgres,danbooru          127.0.0.1/32        trust"
 cd /var/www
 svn co svn://donmai.us/danbooru/trunk danbooru
 chown -R danbooru:danbooru danbooru
-cd config
+mkdir -p danbooru/public/data/sample
+cd danbooru/config
 cp database.yml.example database.yml
 cp local_config.rb.example local_config.rb
 sed -i -e "s/DAN_HOSTNAME/$hostname/g" local_config.rb
-echo "--- " > mongrel_cluste.ryml
+echo "--- " > mongrel_cluster.yml
 echo "cwd: /var/www/danbooru" >> mongrel_cluster.yml
 echo "port: \"8050\"" >> mongrel_cluster.yml
 echo "environment: production" >> mongrel_cluster.yml
 echo "address: 127.0.0.1" >> mongrel_cluster.yml
 echo "servers: 3" >> mongrel_cluster.yml
 echo "num_processors: 10" >> mongrel_cluster.yml
-cd ..
+cd /var/www/danbooru
+sudo -u danbooru 'psql danbooru < db/postgres.sql '
+sudo -u danbooru 'RAILS_ENV=production rake db:migrate'
 mongrel_rails cluster::start
 
 # Set up nginx

@@ -30,7 +30,7 @@ CONFIG["image_store"] = :local_flat
 # Only used when image_store == :remote_hierarchy. An array of image servers (use http://domain.com format).
 CONFIG["image_servers"] = []
 
-# Enables image samples for large images.
+# Enables image samples for large images. NOTE: if you enable this, you must manually create a public/data/sample directory.
 CONFIG["image_samples"] = true
 
 # Always show samples for large images. Users cannot configure it.
