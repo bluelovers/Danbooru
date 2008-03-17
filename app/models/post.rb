@@ -854,7 +854,6 @@ class Post < ActiveRecord::Base
   
   def give_favorites_to_parent
     return if parent_id.nil?
-    return unless Post.exists?(parent_id)
 
     transaction do
       # Don't trust cache for this.
