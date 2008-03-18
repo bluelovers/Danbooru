@@ -41,6 +41,8 @@ class Tag < ActiveRecord::Base
   end
 
   def self.find_or_create_by_name(name)
+    name = name.downcase.tr(" ", "_")
+    
     ambiguous = false
     tag_type = nil
     

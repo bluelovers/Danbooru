@@ -329,7 +329,9 @@ class Post < ActiveRecord::Base
           sql << " ORDER BY 1.0*width/height DESC"
 
         when "fav"
-          sql << " ORDER BY f.id DESC"
+          if q[:fav].is_a?(String)
+            sql << " ORDER BY f.id DESC"
+          end
 
         else
           sql << " ORDER BY p.id DESC"

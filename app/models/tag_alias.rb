@@ -3,7 +3,7 @@ class TagAlias < ActiveRecord::Base
   before_create :validate_uniqueness
 
   def normalize
-    self.name = self.name.downcase
+    self.name = self.name.downcase.gsub(/ /, "_")
   end
 
   def validate_uniqueness
