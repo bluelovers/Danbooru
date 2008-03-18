@@ -1012,7 +1012,7 @@ class Post < ActiveRecord::Base
     # If we're not reducing the resolution for the sample image, only reencode if the
     # source image is above the reencode threshold.  Anything smaller won't be reduced
     # enough by the reencode to bother, so don't reencode it and save disk space.
-    if size[:width] == self.width && size[:width] == self.width &&
+    if size[:width] == self.width && size[:height] == self.height &&
       File.size?(path) < CONFIG["sample_always_generate_size"]
       return true
     end
