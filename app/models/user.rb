@@ -111,6 +111,7 @@ class User < ActiveRecord::Base
 
     while parent != nil
       parent = User.find(parent)
+      break if ancestors.include?(parent)
       ancestors << parent
       parent = parent.invited_by
     end
