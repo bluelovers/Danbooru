@@ -1,5 +1,4 @@
 require 'login_system'
-# require 'ruby-prof'
 
 class ApplicationController < ActionController::Base
   include LoginSystem
@@ -13,7 +12,6 @@ class ApplicationController < ActionController::Base
   protected
   def respond_to_success(notice, redirect_to_params, options = {})
     extra_api_params = options[:api] || {}
-    status = options[:status] || 200
     
     respond_to do |fmt|
       fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
@@ -158,16 +156,6 @@ class ApplicationController < ActionController::Base
       end
       
       return [key, expiry]
-      
-    elsif action == "post/show" && CONFIG["enable_aggressive_caching"]
-      if params[:md5]
-        id = params[:md5]
-      else
-        id = params[:id]
-      end
-    
-      key = "p/s/#{id}"
-      return [key, 0]
     
     else
       return nil

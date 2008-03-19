@@ -176,5 +176,11 @@ module Nagato
       return hash
     end
   end
+  
+  def find(model, &block)
+    return model.find(:all, Builder.new(&block).to_hash)
+  end
+  
+  module_function :find
 end
 

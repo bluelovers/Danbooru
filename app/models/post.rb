@@ -86,7 +86,7 @@ class Post < ActiveRecord::Base
         @new_tags = (current_tags + @new_tags) - self.old_tags + (current_tags & @new_tags)
       end
       
-      metatags, @new_tags = @new_tags.partition {|x| x =~ /^(?:rating|parent|pool):/}
+      metatags, @new_tags = @new_tags.partition {|x| x =~ /^(?:rating|parent|-pool|pool):/}
       
       metatags.each do |t|
         if t =~ /^rating:([qse])/ && $1 != self.rating
@@ -108,6 +108,17 @@ class Post < ActiveRecord::Base
             pool.add_post(self.id) if pool
           rescue Pool::PostAlreadyExistsError
           end
+        elsif t =~ /^-pool:(.+)/
+          s = $1
+          if s =~ /^\d+$/
+            begin
+              pool = Pool.find(s)
+            rescue ActiveRecord::RecordNotFound
+            end
+          else
+            pool = Pool.find(:first, :conditions => ["lower(name) = lower(?)", s])
+          end
+          pool.remove_post(self.id) if pool
         end
       end
 

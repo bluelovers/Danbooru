@@ -15,6 +15,8 @@ class PoolController < ApplicationController
     else
       @pools = Pool.paginate :order => "updated_at desc", :per_page => 20, :page => params[:page]
     end
+    
+    respond_to_list("pools")
   end
   
   def show

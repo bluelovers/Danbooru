@@ -41,7 +41,7 @@ class Tag < ActiveRecord::Base
   end
 
   def self.find_or_create_by_name(name)
-    name = name.downcase.tr(" ", "_")
+    name = name.downcase.tr(" ", "_").gsub(/^[-~]+/, "")
     
     ambiguous = false
     tag_type = nil
@@ -146,7 +146,7 @@ class Tag < ActiveRecord::Base
   end
 
   def self.scan_tags(tags)
-    tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).map {|x| x.gsub(/^[-~]+/, "")}.uniq
+    tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).uniq
   end
 
   def self.parse_helper(range, type = :integer)
