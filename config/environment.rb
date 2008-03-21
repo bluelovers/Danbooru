@@ -52,5 +52,6 @@ require 'google_chart' if CONFIG["enable_reporting"]
 require 'core_extensions'
 
 if CONFIG["session_secret_key"] == "This should be at least 30 characters long"
-  raise "Session secret key was not changed! Look in config/local_config.rb"
+  ActiveRecord::Base.logger.error "ERROR: Session secret key was not changed. Look in config/local_config.rb"
+  raise "Session secret key was not changed"
 end
