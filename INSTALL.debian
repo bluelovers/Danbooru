@@ -70,7 +70,7 @@ cd ../..
 sudo -u postgres createuser -s danbooru
 sudo -u danbooru createdb danbooru
 sudo -u danbooru psql danbooru < db/postgres.sql
-sudo -u danbooru RAILS_ENV=production rake db:migrate
+sudo -u danbooru rake db:migrate RAILS_ENV=production
 mongrel_rails cluster::start
 
 # Set up nginx
@@ -125,4 +125,6 @@ echo "  error_page 500 502 503 504 /500.html;" >> $DANBOORU_CONF_FILE
 echo "}" >> $DANBOORU_CONF_FILE
 /etc/init.d/nginx restart
 
+echo
 echo "I'm done!"
+echo "You should probably set the password for the danbooru account (run passwd danbooru)."

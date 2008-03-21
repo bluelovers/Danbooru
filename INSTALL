@@ -1,30 +1,7 @@
-It is recommended that you install Danbooru on a Debian-based system (Lenny or newer) since most of the required packages are available on APT. Although Danbooru has been successfully installed on Fedora, CentOS, FreeBSD, and OS X, the following instructions will assume you're installing on Debian. Install docs for other platforms are provided, but these are user contributed and may not be up to date. If you want something similar to Danbooru that is easier to install, try Shimmie (http://trac.shishnet.org/shimmie2). Shimmie uses PHP and MySQL and should be straightforward to install on most hosts.
+It is recommended that you install Danbooru on a Debian-based system (Lenny or newer) since most of the required packages are available on APT. Although Danbooru has been successfully installed on Fedora, CentOS, FreeBSD, and OS X, the following instructions will assume you're installing on Debian. The Debian install script is straightforward and should be simple to adapt for other platforms. Install docs for other platforms are provided, but these are user contributed and may not be up to date. If you want something similar to Danbooru that is easier to install, try Shimmie (http://trac.shishnet.org/shimmie2). Shimmie uses PHP and MySQL and should be straightforward to install on most hosts.
 
-For best performance, you will need at least 256MB of RAM for PostgreSQL and Rails. The memory requirement will grow as your database gets bigger; the main Danbooru database takes up around 200MB of memory by itself.
+For best performance, you will need at least 256MB of RAM for PostgreSQL and Rails. The memory requirement will grow as your database gets bigger; the main Danbooru database takes up around 400MB of memory by itself.
 
-If you are installing on a Debian system, run the INSTALL.debian script as root. This will install all the necessary packages and Ruby gems. It will also create a Danbooru user account, set up the web server, set up a default Danbooru config files, 
-
-Now it's time to configure your copy. Change into the config directory and edit the following files: database.yml, local_config.rb. Example files are provided.
-
-You should manually build the resizer extension. This obviously requires gcc and the make tools. The resizer depends on the GD library. The source code is located in lib/danbooru_image_resizer. Run "ruby extconf.rb" then run "make". You should NOT have to install the resulting extension.
-
-Create the database. From the root Danbooru directory, run:
-
-{
-psql DATABASE_NAME < db/postgres.sql
-RAILS_ENV=production rake db:migrate
-}
-
-Build the resizer extension:
-
-{
-cd lib/danbooru_image_resizer
-ruby extconf.rb
-make
-}
-
-Caching is only necessary if you expect to get more than 200,000 visitors a month. You will find the necesssary settings in the default_config.rb file that you can copy over into your local_config.rb. Make sure the memcached daemon is running before you start up Danbooru.
-
-Configure your web server to connect to Danbooru. The best way is to set up Mongrel to run Danbooru, and have your web server proxy requests to Mongrel.
+If you are installing on a Debian system, run the INSTALL.debian script as root. This will install all the necessary packages and Ruby gems. It will also create a Danbooru user account, set up the web server, set up the database, and set up the Danbooru config files. At the end you should be able to connect to the web server and create an account.
 
 The first account you create will automatically become the administrator, so you should do this first.
