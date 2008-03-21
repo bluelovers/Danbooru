@@ -84,7 +84,7 @@ class PostController < ApplicationController
         end
       end
 
-      redirect_to :action => "moderate"
+      respond_to_success("Post approved", {:action => "moderate"})
     else
       if params[:query]
         @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))

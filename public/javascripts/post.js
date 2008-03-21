@@ -1,6 +1,28 @@
 Post = {
   posts: new Hash(),
 
+  approve: function(post_id) {
+    notice("Approving post #" + post_id)
+    var params = {}
+    params["ids[" + post_id + "]"] = "1"
+    params["commit"] = "Approve"
+    
+    new Ajax.Request("/post/moderate.json", {
+      parameters: params,
+      
+      onComplete: function(resp) {
+        var resp = resp.responseJSON
+        
+        if (resp.success) {
+          notice("Post approved")
+          $("p" + post_id).down("a/img").removeClassName("pending")
+        } else {
+          notice("Error: " + resp.reason)
+        }
+      }
+    })
+  },
+
   update: function(post_id, params) {
     notice('Updating post #' + post_id)
     params["id"] = post_id
@@ -57,6 +79,7 @@ Post = {
     
       onComplete: function(req) {
         notice("Post was flagged for deletion")
+        $("p" + id).down("a/img").addClassName("flagged")
       }
     })
   },

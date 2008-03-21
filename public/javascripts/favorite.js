@@ -64,6 +64,10 @@ Favorite = {
         if ($("post-score-" + resp.post_id)) {
           $("post-score-" + resp.post_id).update(resp.score)
         }
+        
+        if ($("p" + resp.post_id)) {
+          $("p" + resp.post_id).hide()
+        }
       }
     })
   }

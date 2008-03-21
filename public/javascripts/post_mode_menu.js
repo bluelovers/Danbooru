@@ -20,7 +20,9 @@ PostModeMenu = {
       document.body.setStyle({backgroundColor: this.original_background_color})
     } else if (s == "edit") {
       document.body.setStyle({backgroundColor: "#3A3"})
-    } else if (s == "fav") {
+    } else if (s == "add-fav") {
+      document.body.setStyle({backgroundColor: "#FFA"})
+    } else if (s == "remove-fav") {
       document.body.setStyle({backgroundColor: "#FFA"})
     } else if (s == "rating-q") {
       document.body.setStyle({backgroundColor: "#AAA"})
@@ -36,6 +38,8 @@ PostModeMenu = {
       document.body.setStyle({backgroundColor: "#AA3"})
     } else if (s == "lock-note") {
       document.body.setStyle({backgroundColor: "#3AA"})
+    } else if (s == "approve") {
+      document.body.setStyle({backgroundColor: "#26A"})
     } else if (s == "flag") {
       document.body.setStyle({backgroundColor: "#F66"})
   	} else if (s == "add-to-pool") {
@@ -45,7 +49,7 @@ PostModeMenu = {
     } else if (s == "edit-tag-script") {
   	  document.body.setStyle({backgroundColor: "white"})
 	  
-		var script = Cookie.get("tag-script")
+		  var script = Cookie.get("tag-script")
   		script = prompt("Enter a tag script", script)
 		
   		if (script) {
@@ -64,14 +68,15 @@ PostModeMenu = {
 
     if (s.value == "view") {
       return true
-    } else if (s.value == "fav") {
+    } else if (s.value == "add-fav") {
       Favorite.create(post_id)
+    } else if (s.value == "remove-fav") {
+      Favorite.destroy(post_id)
     } else if (s.value == "edit") {
       var post = Post.posts.get(post_id)
       $("id").value = post_id
       $("post_tags").value = post.tags.join(" ")
       $("quick-edit").show()
-      return false
     } else if (s.value == 'vote-down') {
       Post.vote(-1, post_id)
     } else if (s.value == 'vote-up') {
@@ -88,6 +93,8 @@ PostModeMenu = {
       Post.update(post_id, {"post[is_note_locked]": "1"})
     } else if (s.value == 'flag') {
       Post.flag(post_id)
+    } else if (s.value == "approve") {
+      Post.approve(post_id)
   	} else if (s.value == 'add-to-pool') {
   		Pool.add_post(post_id, 0)
   	} else if (s.value == "apply-tag-script") {
