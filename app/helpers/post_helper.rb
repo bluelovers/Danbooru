@@ -25,8 +25,9 @@ module PostHelper
     image_title = h(post.cached_tags)
     link_onclick = options[:onclick]
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
+    width, height = post.preview_dimensions
 
-    image = %{<img src="#{post.preview_url}" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id}>}
+    image = %{<img src="#{post.preview_url}" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">}
     plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
     link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>#{image}#{plid}</a>}
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}

@@ -1272,4 +1272,9 @@ class Post < ActiveRecord::Base
   def can_be_seen_by?(user)
     return can_view?(user)
   end
+  
+  def preview_dimensions
+    dim = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => 150, :height => 150})
+    return [dim[:width], dim[:height]]
+  end
 end
