@@ -1274,7 +1274,11 @@ class Post < ActiveRecord::Base
   end
   
   def preview_dimensions
-    dim = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => 150, :height => 150})
-    return [dim[:width], dim[:height]]
+    if self.image?
+      dim = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => 150, :height => 150})
+      return [dim[:width], dim[:height]]
+    else
+      return [150, 150]
+    end
   end
 end

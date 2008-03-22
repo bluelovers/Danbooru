@@ -74,6 +74,9 @@ module ExceptionNotifiable
         when *exceptions_to_treat_as_404
           render_404
 
+        when CGI::Session::CookieStore::TamperedWithCookie
+          render :text => "Please reset your cookies", :layout => false
+
         else          
           render_500
 
