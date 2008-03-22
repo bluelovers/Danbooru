@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 	<title><%= h CONFIG["app_name"] %>/<%= h params[:tags] %></title>
@@ -17,7 +17,11 @@
   		<link>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></link>
   		<guid>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></guid>
   		<media:thumbnail url="<%= post.preview_url %>"/>
-  		<media:content url="<%= post.file_url %>" type=""/>
+		<% if CONFIG["image_samples"] %>
+			<media:content url="<%= post.sample_url %>" type=""/>
+		<% else %>
+  			<media:content url="<%= post.file_url %>" type=""/>
+		<% end %>
   	</item>
 	<% end %>
 </channel>
