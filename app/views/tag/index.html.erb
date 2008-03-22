@@ -11,11 +11,13 @@
         </tr>
         <tr>
           <th><label for="type">Type</label></th>
-          <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}]) %></td>
+          <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}],
+                                                          [(params[:type].blank?) && "" || params[:type].to_i()]) %></td>
         </tr>
         <tr>
           <th><label for="order">Order</label></th>
-          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]]) %></td>
+          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]],
+                                                         [params[:order] || ""]) %></td>
         </tr>
       </tbody>
       <tfoot>
