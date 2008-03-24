@@ -7545,10 +7545,12 @@ PostModeMenu = {
 		
   		if (script) {
   			Cookie.put("tag-script", script)
+  			$("mode").value = "apply-tag-script"
+			} else {
+			  $("mode").value = "view"
   		}
-		
-  		Cookie.put("mode", "view", 7)
-  		$("mode").value = "view"
+
+		  this.change()
     } else {
       document.body.setStyle({backgroundColor: "#AFA"})
     }
