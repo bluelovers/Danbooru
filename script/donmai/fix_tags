@@ -18,6 +18,6 @@ res.result.each do |id|
 	db.exec("UPDATE posts SET cached_tags = #{q_tags} WHERE id = #{id}")
 end
 
-db.exec("UPDATE posts SET has_children = true WHERE id IN (SELECT id FROM posts WHERE parent_id IS NOT NULL)")
+db.exec("UPDATE posts SET has_children = true WHERE id IN (SELECT id FROM posts WHERE parent_id IS NOT NULL AND status <> 'deleted')")
 
 db.exec("COMMIT TRANSACTION")

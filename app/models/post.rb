@@ -10,13 +10,13 @@ class Post < ActiveRecord::Base
     end
 
     def update_parent
-      if @old_parent_id && !Post.exists?(["parent_id = #{@old_parent_id}"])
-        connection.execute("UPDATE posts SET has_children = false WHERE id = #{@old_parent_id}")
+      def update_has_children(id)
+        children = Post.exists?(["parent_id = #{id} AND status <> 'deleted'"])? "true":"false"
+        connection.execute("UPDATE posts SET has_children = #{children} WHERE id = #{id}")
       end
-    
-      if self.parent_id
-        connection.execute("UPDATE posts SET has_children = true WHERE id = #{self.parent_id}")
-      end
+
+      update_has_children(@old_parent_id) if @old_parent_id
+      update_has_children(self.parent_id) if self.parent_id
     end
     
     def give_favorites_to_parent
