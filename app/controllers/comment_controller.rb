@@ -55,7 +55,7 @@ class CommentController < ApplicationController
   def index
     set_title "Comments"
     
-    if params[:format] == "js" || params[:format] == "xml"
+    if params[:format] == "json" || params[:format] == "xml"
       @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => params[:page], :order => "id DESC"))
       respond_to_list("comments")
     else
