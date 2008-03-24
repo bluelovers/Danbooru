@@ -14,20 +14,29 @@ class Pool < ActiveRecord::Base
   end
   
   def add_post(post_id, seq = nil)
-    if PoolPost.find(:first, :conditions => ["pool_id = ? and post_id = ?", self.id, post_id])
-      raise PostAlreadyExistsError
-    end
-
     transaction do
+      if PoolPost.find(:first, :conditions => ["pool_id = ? and post_id = ?", self.id, post_id])
+        raise PostAlreadyExistsError
+      end
+
       Cache.expire(:post_id => post_id)
       update_attributes(:updated_at => Time.now)
       PoolPost.create(:pool_id => self.id, :post_id => post_id, :sequence => seq.to_i)
+      self.increment(:post_count)
+      self.save!
     end
   end
   
   def remove_post(post_id)
-    Cache.expire(:post_id => post_id)
-    PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
+    transaction do
+      return unless PoolPost.find(:first, :conditions => ["pool_id = ? and post_id = ?", self.id, post_id])
+
+      Cache.expire(:post_id => post_id)
+      update_attributes(:updated_at => Time.now)
+      PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
+      self.decrement(:post_count)
+      self.save!
+    end
   end
 
   def api_attributes

@@ -174,8 +174,6 @@ class PoolController < ApplicationController
               # ignore
             end
           end
-          
-          @pool.update_attribute(:post_count, Post.count_by_sql(["SELECT COUNT(*) FROM pools_posts WHERE pool_id = ?", @pool.id]))
         end
       end
       
