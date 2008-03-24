@@ -89,15 +89,8 @@ class Post < ActiveRecord::Base
     end
 
     def tags=(t)
-      @new_tags = t || ""
-    end
-    
-    # commits the tag changes to the database
-    def commit_tags
-      return if @new_tags == nil
+      @new_tags = Tag.scan_tags(t)
 
-      @new_tags = Tag.scan_tags(@new_tags)
-      
       if self.old_tags
         # If someone else committed changes to this post before we did, 
         # try to merge the tag changes together.
@@ -105,18 +98,29 @@ class Post < ActiveRecord::Base
         self.old_tags = Tag.scan_tags(self.old_tags)
         @new_tags = (current_tags + @new_tags) - self.old_tags + (current_tags & @new_tags)
       end
-      
-      metatags, @new_tags = @new_tags.partition {|x| x =~ /^(?:rating|parent|-pool|pool):/}
-      
+
+      # Process all the metatags that don't require post.id here (before we save the record)
+      metatags, @new_tags = @new_tags.partition {|x| x =~ /^(?:rating|parent):/}
       metatags.each do |t|
         if t =~ /^rating:([qse])/ && $1 != self.rating
-          connection.execute(Post.sanitize_sql(["UPDATE posts SET rating = ? WHERE id = ?", $1, self.id]))
+          self.rating = $1
         elsif CONFIG["enable_parent_posts"] && t =~ /^parent:(\d+)/
           self.parent_id = $1.to_i
-          connection.execute("UPDATE posts SET parent_id = #{self.parent_id} WHERE id = #{self.id}")
-        elsif t =~ /^pool:(.+)/
+        end
+      end
+    end
+    
+    # commits the tag changes to the database
+    def commit_tags
+      return if @new_tags == nil
+      
+      metatags, @new_tags = @new_tags.partition {|x| x=~ /^(?:-pool|pool):/}
+      metatags.each do |t|
+        if t =~ /^pool:(.+)/
           begin
             s = $1
+            
+            # NOTE: this will hide pools with names that are all numbers
             if s =~ /^\d+$/
               begin
                 pool = Pool.find(s)
