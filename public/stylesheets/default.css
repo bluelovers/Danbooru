@@ -252,7 +252,7 @@ table tr.pending-tag {
 }
 
 textarea {
-  display: block;
+  /*display: block;*/
   padding: 0 0.3em;
   font-family: monospace;
   font-size: 1.2em;
