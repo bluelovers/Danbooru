@@ -115,13 +115,8 @@ module ApplicationHelper
     html = []
     
     if post.is_a?(Post)
-      if post.prev_post_id
-        html << tag("link", :rel => "prev", :title => "Previous Post", :href => url_for(:controller => "post", :action => "show", :id => post.prev_post_id))
-      end
-      
-      if post.next_post_id
-        html << tag("link", :rel => "next", :title => "Next Post", :href => url_for(:controller => "post", :action => "show", :id => post.next_post_id))
-      end
+      html << tag("link", :rel => "prev", :title => "Previous Post", :href => url_for(:controller => "post", :action => "show", :id => post.id - 1))
+      html << tag("link", :rel => "next", :title => "Next Post", :href => url_for(:controller => "post", :action => "show", :id => post.id + 1))
       
     elsif post.is_a?(Array)
       posts = post

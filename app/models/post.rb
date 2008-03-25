@@ -44,28 +44,6 @@ class Post < ActiveRecord::Base
     end
   end
   
-  module NeighborMethods
-    def update_neighbor_links_on_create
-      prev_post = Post.find(:first, :conditions => ["id < ?", id], :order => "id DESC", :select => "id")
-
-      if prev_post != nil
-        # should only be nil for very first post created
-        connection.execute("UPDATE posts SET prev_post_id = #{prev_post.id} WHERE id = #{self.id}")
-        connection.execute("UPDATE posts SET next_post_id = #{self.id} WHERE id = #{prev_post.id}")
-      end
-    end
-
-    def update_neighbor_links_on_update
-      if next_post_id
-        connection.execute("UPDATE posts SET prev_post_id = #{id} WHERE id = #{next_post_id}")
-      end
-
-      if prev_post_id
-        connection.execute("UPDATE posts SET next_post_id = #{id} WHERE id = #{prev_post_id}")
-      end
-    end
-  end
-  
   module TagMethods
     def has_tag?(tag)
       return self.cached_tags.scan(/\S+/).any? {|x| x == tag}
@@ -917,7 +895,6 @@ class Post < ActiveRecord::Base
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
   
-  include NeighborMethods
   include TagMethods
   extend SqlMethods
   include CountMethods
@@ -1200,8 +1177,6 @@ class Post < ActiveRecord::Base
       :sample_url => sample_url,
       :sample_width => sample_width || width,
       :sample_height => sample_height || height,
-      :next_post_id => next_post_id, 
-      :prev_post_id => prev_post_id, 
       :rating => rating, 
       :has_children => has_children, 
       :parent_id => parent_id, 
