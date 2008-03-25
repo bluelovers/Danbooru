@@ -5,10 +5,15 @@ class TagAliasController < ApplicationController
   verify :method => :post, :only => [:create, :update]
 
   def create
-    TagAlias.create(params[:tag_alias].merge(:is_pending => true))
-
-    flash[:notice] = "Tag alias created"
-    redirect_to :action => "index"
+    ta = TagAlias.new(params[:tag_alias].merge(:is_pending => true))
+    
+    if ta.save
+      flash[:notice] = "Tag alias created"
+      redirect_to :action => "index"
+    else
+      flash[:notice] = "Error: " + ta.errors.full_messages.join(", ")
+      redirect_to :action => "add"
+    end
   end
 
   def index
