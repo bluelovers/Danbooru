@@ -209,7 +209,7 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       set_title @post.cached_tags.tr("_", " ")
     rescue ActiveRecord::RecordNotFound
-      render :status => 404
+      render :action => "show_empty", :status => 404
     end
   end
 

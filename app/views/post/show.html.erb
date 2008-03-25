@@ -123,12 +123,8 @@
       <div>
         <h5>Related Posts</h5>
         <ul>
-          <% if @post.prev_post_id %>
-            <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.prev_post_id %></li>
-          <% end %>
-          <% if @post.next_post_id %>
-            <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.next_post_id %></li>
-          <% end %>
+          <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.id - 1 %></li>
+          <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.id + 1 %></li>
           <% if @post.parent_id %>
             <li><%= link_to "Parent", :controller => "post", :action => "show", :id => @post.parent_id %></li>
           <% end %>
