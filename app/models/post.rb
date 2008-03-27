@@ -369,7 +369,7 @@ class Post < ActiveRecord::Base
   end
   
   def preview_dimensions
-    if self.image?
+    if self.image? && !self.is_deleted?
       dim = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => 150, :height => 150})
       return [dim[:width], dim[:height]]
     else

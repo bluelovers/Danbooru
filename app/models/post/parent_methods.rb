@@ -12,13 +12,13 @@ module PostMethods
         self[:parent_id] = pid
       end
     end
+    
+    def update_has_children(id)
+      children = Post.exists?(["parent_id = #{id} AND status <> 'deleted'"]).to_s
+      connection.execute("UPDATE posts SET has_children = #{children} WHERE id = #{id}")
+    end
 
     def update_parent
-      def update_has_children(id)
-        children = Post.exists?(["parent_id = #{id} AND status <> 'deleted'"])? "true":"false"
-        connection.execute("UPDATE posts SET has_children = #{children} WHERE id = #{id}")
-      end
-
       update_has_children(@old_parent_id) if @old_parent_id
       update_has_children(self.parent_id) if self.parent_id
     end
