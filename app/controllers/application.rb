@@ -86,6 +86,9 @@ class ApplicationController < ActionController::Base
     if action == "post/index"
       page = params[:page].to_i
       tags = params[:tags].to_s.downcase.scan(/\S+/).sort
+      limit = params[:limit].to_i
+      limit = 16 if limit == 0
+      limit = 1000 if limit > 1000
       expiry = 0
       
       if tags.empty?
@@ -109,6 +112,7 @@ class ApplicationController < ActionController::Base
           key = "p/i/p=#{page}&t=#{versioned_tags.join(',')}"
         end
       end
+      key += "&limit=#{limit}"
       
       return [key, expiry]
       
@@ -169,6 +173,7 @@ class ApplicationController < ActionController::Base
   def cache_action
     if @current_user.is_member_or_lower? && request.method == :get && params[:format] != "xml" && params[:format] != "json"
       key, expiry = cache_key()
+      key += "&level=#{@current_user.level}"
       
       if key && key.size < 200
         cached = Cache.get(key)
