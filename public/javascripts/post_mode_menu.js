@@ -42,24 +42,24 @@ PostModeMenu = {
       document.body.setStyle({backgroundColor: "#26A"})
     } else if (s == "flag") {
       document.body.setStyle({backgroundColor: "#F66"})
-  	} else if (s == "add-to-pool") {
-  		document.body.setStyle({backgroundColor: "#26A"})
-  	} else if (s == "apply-tag-script") {
-  		document.body.setStyle({backgroundColor: "#A3A"})
+    } else if (s == "add-to-pool") {
+      document.body.setStyle({backgroundColor: "#26A"})
+    } else if (s == "apply-tag-script") {
+      document.body.setStyle({backgroundColor: "#A3A"})
     } else if (s == "edit-tag-script") {
-  	  document.body.setStyle({backgroundColor: "white"})
-	  
-		  var script = Cookie.get("tag-script")
-  		script = prompt("Enter a tag script", script)
-		
-  		if (script) {
-  			Cookie.put("tag-script", script)
-  			$("mode").value = "apply-tag-script"
-			} else {
-			  $("mode").value = "view"
-  		}
+      document.body.setStyle({backgroundColor: "white"})
+    
+      var script = Cookie.get("tag-script")
+      script = prompt("Enter a tag script", script)
+    
+      if (script) {
+        Cookie.put("tag-script", script)
+        $("mode").value = "apply-tag-script"
+      } else {
+        $("mode").value = "view"
+      }
 
-		  this.change()
+      this.change()
     } else {
       document.body.setStyle({backgroundColor: "#AFA"})
     }
@@ -97,9 +97,9 @@ PostModeMenu = {
       Post.flag(post_id)
     } else if (s.value == "approve") {
       Post.approve(post_id)
-  	} else if (s.value == 'add-to-pool') {
-  		Pool.add_post(post_id, 0)
-  	} else if (s.value == "apply-tag-script") {
+    } else if (s.value == 'add-to-pool') {
+      Pool.add_post(post_id, 0)
+    } else if (s.value == "apply-tag-script") {
       var tag_script = Cookie.get("tag-script")
       var commands = TagScript.parse(tag_script)
       var post = Post.posts.get(post_id)
