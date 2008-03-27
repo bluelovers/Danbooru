@@ -6,7 +6,11 @@ class Post < ActiveRecord::Base
     
     def parent_id=(pid)
       @old_parent_id = self.parent_id
-      self[:parent_id] = pid
+      if pid == id
+        self[:parent_id] = nil
+      else
+        self[:parent_id] = pid
+      end
     end
 
     def update_parent
