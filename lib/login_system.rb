@@ -5,6 +5,10 @@ module LoginSystem
       0
     end
 
+    def level
+      0
+    end
+
     def name
       "Anonymous"
     end

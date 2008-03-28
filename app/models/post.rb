@@ -26,8 +26,6 @@ class Post < ActiveRecord::Base
   before_validation_on_create :move_file
   before_destroy :delete_file
   before_destroy :update_status_on_destroy
-  after_create :update_neighbor_links_on_create
-  after_update :update_neighbor_links_on_update
   after_save :commit_tags
   after_create :increment_count
   after_destroy :decrement_count
