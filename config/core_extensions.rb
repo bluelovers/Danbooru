@@ -1,6 +1,14 @@
 class ActiveRecord::Base
   class << self
     public :sanitize_sql
+    
+    def execute_sql(sql, *params)
+      connection.execute(sanitize_sql([sql, *params]))
+    end
+  end
+  
+  def execute_sql(sql, *params)
+    self.class.execute_sql(sql, *params)
   end
 end
 

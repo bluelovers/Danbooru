@@ -1,4 +1,4 @@
-Dir["#{RAILS_ROOT}/app/models/post/**/*.rb"].each {|x| require x}
+Dir["#{RAILS_ROOT}/app/models/post/**/*.rb"].each {|x| require_dependency x}
 
 class Post < ActiveRecord::Base
   has_many :comments, :order => "id"
@@ -31,7 +31,6 @@ class Post < ActiveRecord::Base
   after_destroy :decrement_count
   attr_accessor :updater_ip_addr
   attr_accessor :updater_user_id
-  attr_accessor :old_tags
   
   if CONFIG["enable_caching"]
     include PostMethods::CacheMethods

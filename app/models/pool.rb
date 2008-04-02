@@ -5,6 +5,14 @@ class Pool < ActiveRecord::Base
   validates_uniqueness_of :name
   before_save :normalize_name
   
+  def self.find_by_name(name)
+    if name =~ /^\d+$/
+      find_by_id(name)
+    else
+      find(:first, :conditions => ["lower(name) = lower(?)", name])
+    end
+  end
+  
   def normalize_name
     self.name = self.name.gsub(/\s/, "_")
   end
