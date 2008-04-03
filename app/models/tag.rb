@@ -163,26 +163,23 @@ class Tag < ActiveRecord::Base
     # "1", "0.5", "5.", ".5":
     # (-?(\d+(\.\d*)?|\d*\.\d+))
     case range
-    when /^(-?(\d+(\.\d*)?|\d*\.\d+))\.\.(-?(\d+(\.\d*)?|\d*\.\d+))$/
-      return [:between, cast[$1], cast[$4]]
-
-    when /^<(-?(\d+(\.\d*)?|\d*\.\d+))$/
+    when /^(.+?)\.\.(.+)/
+      return [:between, cast[$1], cast[$2]]
+ 
+    when /^<(.+)/
       return [:lt, cast[$1]]
       
-    when /^<=(-?(\d+(\.\d*)?|\d*\.\d+))$/, /^\.\.(-?(\d+(\.\d*)?|\d*\.\d+))$/
+    when /^<=(.+)/, /^\.\.(.+)/
       return [:lte, cast[$1]]
     
-    when /^>(-?(\d+(\.\d*)?|\d*\.\d+))$/
+    when /^>(.+)/
       return [:gt, cast[$1]]
       
-    when /^>=(-?(\d+(\.\d*)?|\d*\.\d+))$/, /^(-?(\d+(\.\d*)?|\d*\.\d+))\.\.$/
+    when /^>=(.+)/, /^(.+)\.\.$/
       return [:gte, cast[$1]]
 
-    when /^(-?(\d+(\.\d*)?|\d*\.\d+))$/
-      return [:eq, cast[$1]]
-
     else
-      []
+      return [:eq, cast[range]]
 
     end
   end

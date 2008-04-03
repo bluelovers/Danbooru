@@ -1,28 +1,39 @@
 module PostMethods
   module TagMethods
-    attr_accessor :new_tags, :old_tags
+    attr_accessor :tags, :new_tags, :old_tags
+
+    def self.included(m)
+      m.after_save :commit_tags
+    end
     
+    # === Parameters
+    # * :tag<String>:: the tag to search for
     def has_tag?(tag)
       return cached_tags =~ /(^|\s)#{tag}($|\s)/
     end
-  
+
     # Returns the tags in a URL suitable string
     def tag_title
       return cached_tags.gsub(/\W+/, "-")[0, 50]
     end
 
+    # Sets the tags for the post. Does not actually save anything to the database when called.
+    #
+    # === Parameters
+    # * :tags<String>:: a whitespace delimited list of tags
     def tags=(tags)
       self.new_tags = Tag.scan_tags(tags)
 
       if old_tags
-        # If someone else committed changes to this post before we did, try to merge the tag changes together.
+        # If someone else committed changes to this post before we did,
+        # then try to merge the tag changes together.
         current_tags = cached_tags.scan(/\S+/)
         self.old_tags = Tag.scan_tags(old_tags)
         self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
       end
     end
-  
-    # commits the tag changes to the database
+    
+    # Commit any tag changes to the database.
     def commit_tags
       return if new_tags.nil?
       

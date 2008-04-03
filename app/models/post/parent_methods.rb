@@ -2,6 +2,12 @@ module PostMethods
   module ParentMethods
     attr_accessor :old_parent_id
     
+    def self.included(m)
+      m.after_save :update_parent
+      m.validate :validate_parent
+      m.before_destroy :give_favorites_to_parent
+    end
+    
     def validate_parent
       errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
     end

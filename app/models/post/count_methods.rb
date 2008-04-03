@@ -17,6 +17,8 @@ module PostMethods
   
     def self.included(m)
       m.extend(ClassMethods)
+      m.after_create :increment_count
+      m.after_destroy :decrement_count      
     end
 
     def increment_count
