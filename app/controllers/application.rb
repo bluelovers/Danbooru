@@ -225,7 +225,9 @@ class ApplicationController < ActionController::Base
       end
       
       cookies["my_tags"] = @current_user.my_tags      
-      cookies["blacklisted_tags"] = @current_user.blacklisted_tags
+      cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array
+    else
+      cookies["blacklisted_tags"] = CONFIG["default_blacklists"]
     end
   end
 end

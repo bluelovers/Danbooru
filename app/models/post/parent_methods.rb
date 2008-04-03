@@ -1,11 +1,14 @@
 module PostMethods
   module ParentMethods
+    attr_accessor :old_parent_id
+    
     def validate_parent
       errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
     end
   
     def parent_id=(pid)
-      @old_parent_id = self.parent_id
+      self.old_parent_id = self.parent_id
+      
       if pid == id
         self[:parent_id] = nil
       else
@@ -15,12 +18,12 @@ module PostMethods
     
     def update_has_children(id)
       children = Post.exists?(["parent_id = #{id} AND status <> 'deleted'"]).to_s
-      connection.execute("UPDATE posts SET has_children = #{children} WHERE id = #{id}")
+      execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", children, id)
     end
 
     def update_parent
-      update_has_children(@old_parent_id) if @old_parent_id
-      update_has_children(self.parent_id) if self.parent_id
+      update_has_children(old_parent_id) if old_parent_id
+      update_has_children(parent_id) if parent_id
     end
   
     def give_favorites_to_parent

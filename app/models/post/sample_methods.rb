@@ -20,10 +20,10 @@ module PostMethods
     def generate_sample
       return true unless image?
       return true unless CONFIG["image_samples"]
-      return true unless (self.width && self.height)
-      return true if (self.file_ext.downcase == "gif")
+      return true unless (width && height)
+      return true if (file_ext.downcase == "gif")
 
-      size = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, CONFIG["sample_ratio"])
+      size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, CONFIG["sample_ratio"])
 
       # We can generate the sample image during upload or offline.  Use tempfile_path
       # if it exists, otherwise use file_path.
@@ -37,18 +37,18 @@ module PostMethods
       # If we're not reducing the resolution for the sample image, only reencode if the
       # source image is above the reencode threshold.  Anything smaller won't be reduced
       # enough by the reencode to bother, so don't reencode it and save disk space.
-      if size[:width] == self.width && size[:height] == self.height &&
+      if size[:width] == width && size[:height] == height &&
         File.size?(path) < CONFIG["sample_always_generate_size"]
         return true
       end
 
       # If we already have a sample image, and the parameters havn't changed,
       # don't regenerate it.
-      if size[:width] == self.sample_width && size[:height] == self.sample_height
+      if size[:width] == sample_width && size[:height] == sample_height
         return true
       end
 
-      size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]})
+      size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]})
       begin
         Danbooru.resize(file_ext, path, tempfile_sample_path, size, 95)
       rescue Exception => x
@@ -63,7 +63,7 @@ module PostMethods
   
     # Returns true if the post has a sample image.
     def has_sample?
-      self.sample_width.is_a?(Integer)
+      sample_width.is_a?(Integer)
     end
 
     # Returns true if the post has a sample image, and we're going to use it.
@@ -71,7 +71,7 @@ module PostMethods
       if user && !user.show_samples?
         false
       else
-        CONFIG["image_samples"] && self.has_sample?
+        CONFIG["image_samples"] && has_sample?
       end
     end
 
@@ -85,17 +85,17 @@ module PostMethods
 
     def get_sample_width(user = nil)
       if use_sample?(user)
-        self.sample_width
+        sample_width
       else
-        self.width
+        width
       end
     end
 
     def get_sample_height(user = nil)
       if use_sample?(user)
-        self.sample_height
+        sample_height
       else
-        self.height
+        height
       end
     end
   end

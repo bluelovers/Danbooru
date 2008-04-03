@@ -17,7 +17,7 @@ module PostMethods
       if old_tags
         # If someone else committed changes to this post before we did, try to merge the tag changes together.
         current_tags = cached_tags.scan(/\S+/)
-        self.old_tags = Tag.scan_tags(self.old_tags)
+        self.old_tags = Tag.scan_tags(old_tags)
         self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
       end
     end
@@ -25,43 +25,43 @@ module PostMethods
     # commits the tag changes to the database
     def commit_tags
       return if new_tags.nil?
-    
-      metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
-      metatags.each do |metatag|
-        case metatag
-        when /^pool:(.+)/
-          begin
+      
+      transaction do
+        metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
+        metatags.each do |metatag|
+          case metatag
+          when /^pool:(.+)/
+            begin
+              name = $1
+              pool = Pool.find_by_name(name)
+              pool.add_post(id) if pool
+            rescue Pool::PostAlreadyExistsError
+            end
+
+
+          when /^-pool:(.+)/
             name = $1
             pool = Pool.find_by_name(name)
-            pool.add_post(id) if pool
-          rescue Pool::PostAlreadyExistsError
-          end
-
-
-        when /^-pool:(.+)/
-          name = $1
-          pool = Pool.find_by_name(name)
-          pool.remove_post(self.id) if pool
+            pool.remove_post(id) if pool
 
           
-        when /^rating:([qse])/
-          execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
+          when /^rating:([qse])/
+            execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
 
 
-        when /^parent:(\d+)/
-          parent_id = $1
+          when /^parent:(\d+)/
+            parent_id = $1
           
-          if CONFIG["enable_parent_posts"] && Post.exists?(parent_id)
-            execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, id)
+            if CONFIG["enable_parent_posts"] && Post.exists?(parent_id)
+              execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, id)
+            end
           end
         end
-      end
 
-      self.new_tags << "tagme" if new_tags.empty?
-      self.new_tags = TagAlias.to_aliased(new_tags)
-      self.new_tags = TagImplication.with_implied(new_tags).uniq
+        self.new_tags << "tagme" if new_tags.empty?
+        self.new_tags = TagAlias.to_aliased(new_tags)
+        self.new_tags = TagImplication.with_implied(new_tags).uniq
 
-      transaction do
         # TODO: be more selective in deleting from the join table
         execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
         self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}

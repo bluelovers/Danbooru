@@ -29,8 +29,7 @@ class Post < ActiveRecord::Base
   after_save :commit_tags
   after_create :increment_count
   after_destroy :decrement_count
-  attr_accessor :updater_ip_addr
-  attr_accessor :updater_user_id
+  attr_accessor :updater_ip_addr, :updater_user_id, :old_rating
   
   if CONFIG["enable_caching"]
     include PostMethods::CacheMethods
@@ -54,34 +53,34 @@ class Post < ActiveRecord::Base
   
   def validate_content_type
     unless %w(jpg jpeg png gif swf).include?(self.file_ext.downcase)
-      self.errors.add(:file, "is an invalid content type")
+      errors.add(:file, "is an invalid content type")
       return false
     end
   end
   
   def flag!(reason, creator_id)
-    self.update_attributes(:status => "flagged")
+    update_attributes(:status => "flagged")
     
-    if self.flag_detail == nil
-      FlaggedPostDetail.create(:post_id => self.id, :reason => reason, :user_id => creator_id, :is_resolved => false)
+    if flag_detail
+      flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
     else
-      self.flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
+      FlaggedPostDetail.create(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
     end
   end
   
   def approve!
-    if self.flag_detail
-      self.flag_detail.update_attributes(:is_resolved => true)
+    if flag_detail
+      flag_detail.update_attributes(:is_resolved => true)
     end
     
-    self.update_attributes(:status => "active")
+    update_attributes(:status => "active")
   end
 
   def update_status_on_destroy
-    self.update_attributes(:status => "deleted")
+    update_attributes(:status => "deleted")
     
-    if self.flag_detail
-      self.flag_detail.update_attributes(:is_resolved => true)
+    if flag_detail
+      flag_detail.update_attributes(:is_resolved => true)
     end
     
     return false
@@ -97,17 +96,17 @@ class Post < ActiveRecord::Base
   end
 
   def rating=(r)
-    if r == nil && !self.new_record?
+    if r == nil && !new_record?
       return
     end
 
-    if self.is_rating_locked?
+    if is_rating_locked?
       return
     end
 
     r = r.to_s.downcase[0, 1]
 
-    @old_rating = self.rating
+    self.old_rating = rating
 
     if %w(q e s).include?(r)
       write_attribute(:rating, r)
@@ -157,15 +156,14 @@ class Post < ActiveRecord::Base
   end
 
   def generate_preview
-    return true unless image?
-    return true unless (self.width && self.height)
+    return true unless image? && width && height
     
     unless File.exists?(tempfile_path)
       errors.add(:file, "not found")
       return false
     end
 
-    size = Danbooru.reduce_to({:width=>self.width, :height=>self.height}, {:width=>150, :height=>150})
+    size = Danbooru.reduce_to({:width=>width, :height=>height}, {:width=>150, :height=>150})
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exists?(tempfile_sample_path)
@@ -201,7 +199,7 @@ class Post < ActiveRecord::Base
           out.write(res.body)
         end
 
-        if self.source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
+        if source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
           self.source = "Image board"
         end
 
@@ -240,7 +238,7 @@ class Post < ActiveRecord::Base
 
 # Returns true if the post is an image format that GD can handle.
   def image?
-    %w(jpg jpeg gif png).include?(self.file_ext.downcase)
+    %w(jpg jpeg gif png).include?(file_ext.downcase)
   end
 
 # Returns true if the post is a Flash movie.
@@ -250,7 +248,7 @@ class Post < ActiveRecord::Base
 
 # Returns either the author's name or the default guest name.
   def author
-    return User.find_name(self.user_id)
+    return User.find_name(user_id)
   end
 
   def self.find_by_tags(tags, options = {})
@@ -338,23 +336,23 @@ class Post < ActiveRecord::Base
   end
   
   def active_notes
-    self.notes.select {|x| x.is_active?}
+    notes.select {|x| x.is_active?}
   end
   
   def is_flagged?
-    self.status == "flagged"
+    status == "flagged"
   end
   
   def is_pending?
-    self.status == "pending"
+    status == "pending"
   end
   
   def is_deleted?
-    self.status == "deleted"
+    status == "deleted"
   end
   
   def is_active?
-    self.status == "active"
+    status == "active"
   end
   
   def can_view?(user)
@@ -366,8 +364,8 @@ class Post < ActiveRecord::Base
   end
   
   def preview_dimensions
-    if self.image? && !self.is_deleted?
-      dim = Danbooru.reduce_to({:width => self.width, :height => self.height}, {:width => 150, :height => 150})
+    if image? && !is_deleted?
+      dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
       return [dim[:width], dim[:height]]
     else
       return [150, 150]

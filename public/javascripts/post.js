@@ -98,17 +98,35 @@ Post = {
     this.posts.set(post_id, {"tags": tags.match(/\S+/g)})
   },
 
-  hide_blacklisted: function() {
-    var blacklist = Cookie.get("blacklisted_tags").replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s").match(/\S+/g)
-  
-    if (blacklist == null) {
-      return
+  blacklist_set: null,
+
+  is_blacklisted: function(post_id) {
+    if (Post.blacklist_set == null) {
+      var blacklists = Cookie.raw_get("blacklisted_tags").split(/\&/)
+      Post.blacklist_set = []
+
+      blacklists.each(function(val) {
+        s = Cookie.unescape(val)
+        s = s.replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s")
+        Post.blacklist_set.push(s.match(/\S+/g) || [])
+      })
     }
-  
+
+    var post = this.posts.get(post_id)
+    var ret = false
+    Post.blacklist_set.each(function(b) {
+      if (b.size() && post.tags.intersect(b).size() == b.size())
+        ret = true
+    })
+    return ret
+  },
+
+  hide_blacklisted: function() {
     this.posts.each(function(pair) {
-      if (pair.value.tags.intersect(blacklist).size() > 0) {
-        if ($("p" + pair.key)) {
-          $("p" + pair.key).hide()
+      if (Post.is_blacklisted(pair.key)) {
+        var post = $("p" + pair.key)
+        if (post) {
+          post.hide()
         }
       }
     })

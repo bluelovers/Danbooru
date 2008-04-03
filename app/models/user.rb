@@ -20,10 +20,35 @@ class User < ActiveRecord::Base
   if CONFIG["show_samples"]
     before_create :set_show_samples
   end
+  after_create :set_default_blacklisted_tags
   after_create :increment_count
   after_destroy :decrement_count
+  after_save :commit_blacklists
   has_one :ban
+  has_many :user_blacklisted_tags, :dependent => :delete_all
   
+  def blacklisted_tags=(blacklists)
+    @blacklisted_tags = blacklists
+  end
+
+  def blacklisted_tags
+    self.blacklisted_tags_array.join("\n") + "\n"
+  end
+
+  def blacklisted_tags_array
+    self.user_blacklisted_tags.map {|x| x.tags}
+  end
+
+  def commit_blacklists
+    if @blacklisted_tags
+      self.user_blacklisted_tags.clear
+
+      @blacklisted_tags.scan(/[^\r\n]+/).each do |tags|
+        self.user_blacklisted_tags.create(:tags => tags)
+      end
+    end
+  end
+
   # Defines various convenience methods for finding out the user's level
   CONFIG["user_levels"].each do |name, value|
     normalized_name = name.downcase.gsub(/ /, "_")
@@ -249,6 +274,12 @@ class User < ActiveRecord::Base
     self.last_logged_in_at = Time.now
   end
 
+  def set_default_blacklisted_tags
+    CONFIG["default_blacklists"].each do |b|
+      UserBlacklistedTag.create(:user_id => self.id, :tags => b)
+    end
+  end
+
   def encrypt_password
     self.password_hash = User.sha1(password) if password
   end
@@ -337,11 +368,19 @@ class User < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-    {:name => self.name, :blacklisted_tags => self.blacklisted_tags, :id => self.id}.to_xml(options.merge(:root => "user"))
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.post(:name => self.name, :id => self.id) do
+      blacklisted_tags_array.each do |t|
+        xml.blacklisted_tag(:tag => t)
+      end
+
+      yield options[:builder] if block_given?
+    end
   end
 
   def to_json(options = {})
-    {:name => self.name, :blacklisted_tags => self.blacklisted_tags, :id => self.id}.to_json(options)
+    {:name => self.name, :blacklisted_tags => self.blacklisted_tags_array, :id => self.id}.to_json(options)
   end
   
   def self.generate_sql(params)

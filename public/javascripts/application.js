@@ -7411,18 +7411,28 @@ Post = {
   },
 
   hide_blacklisted: function() {
-    var blacklist = Cookie.get("blacklisted_tags").replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s").match(/\S+/g)
-  
-    if (blacklist == null) {
-      return
-    }
+    var blacklists = Cookie.raw_get("blacklisted_tags").split(/\&/)
+    var blacklist_set = []
+
+    blacklists.each(function(val) {
+      s = Cookie.unescape(val)
+      s = s.replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s")
+      blacklist_set.push(s.match(/\S+/g))
+    })
   
     this.posts.each(function(pair) {
-      if (pair.value.tags.intersect(blacklist).size() > 0) {
-        if ($("p" + pair.key)) {
-          $("p" + pair.key).hide()
+      blacklist_set.each(function(b) {
+        if (b == null) {
+          return
         }
-      }
+
+        if (pair.value.tags.intersect(b).size() == b.size()) {
+          var post = $("p" + pair.key)
+          if (post) {
+            post.hide()
+          }
+        }
+      })
     })
   },
 

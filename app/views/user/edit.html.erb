@@ -12,10 +12,10 @@
         <tr>
           <th width="15%">
             <label class="block" for="user_blacklisted_tags">Tag Blacklist</label>
-            <p>Any post containing a blacklisted tag will be hidden. Separate tags with spaces.</p>
+            <p>Any post containing all blacklisted tags on a line will be hidden. Separate tags with spaces.</p>
           </th>
           <td width="85%">
-            <%= text_field "user", "blacklisted_tags", :size => 40 %>
+            <%= text_area "user", "blacklisted_tags", :size => "80x6" %>
           </td>
         </tr>
         <tr>
