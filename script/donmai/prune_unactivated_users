@@ -2,6 +2,6 @@
 
 require File.dirname(__FILE__) + '/../../config/environment'
 
-User.find(:all, :conditions => ["level = -1 and created_at < ?", 7.days.ago]).each do |user|
+User.find(:all, :conditions => ["level = 0 and created_at < ?", 7.days.ago]).each do |user|
   user.destroy
 end
