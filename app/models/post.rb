@@ -161,7 +161,7 @@ class Post < ActiveRecord::Base
   end
   
   STATUSES.each do |x|
-    define_method("is_#{status}?") do
+    define_method("is_#{x}?") do
       return status == x
     end
   end
