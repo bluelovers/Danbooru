@@ -401,6 +401,7 @@ div.blocked {
 
 div#comment-list > div.post {
   float: left;
+  clear: left;
   margin-bottom: 3em;;
 }
 
