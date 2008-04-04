@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  @salt = CONFIG["password_salt"]
+  @salt = CONFIG["user_password_salt"]
   
   class << self
     attr_accessor :salt
