@@ -39,6 +39,15 @@
       </form>
     </div>
 
+    <div id="blacklisted-sidebar" style="display: none;">
+      <h5>
+        <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
+        <span id="blacklist-count" class="post-count"></span>
+      </h5>
+      <ul id="blacklisted-list" style="display: none;">
+      </ul>
+    </div>
+
     <%= render :partial => 'tags' %>
   </div>
   <div class="content">

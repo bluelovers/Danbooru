@@ -30,3 +30,12 @@ var ClipRange = Class.create({
     return x
   }
 })
+
+Object.extend(Element, {
+  appendChildBase: Element.appendChild,
+  appendChild: function(e) {
+    this.appendChildBase(e)
+    return e
+  }
+});
+

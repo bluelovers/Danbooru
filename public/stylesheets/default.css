@@ -18,6 +18,10 @@ a:link {
   text-decoration: none;
 }
 
+.blacklisted-tags-disabled {
+  color: #aaa !important;
+}
+
 a:visited {
   color: #006FFA;
   text-decoration: none;

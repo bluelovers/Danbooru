@@ -108,27 +108,90 @@ Post = {
       blacklists.each(function(val) {
         s = Cookie.unescape(val)
         s = s.replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s")
-        Post.blacklist_set.push(s.match(/\S+/g) || [])
+        Post.blacklist_set.push({tags: s.match(/\S+/g) || [], disabled: false, hits: 0 })
       })
     }
 
     var post = this.posts.get(post_id)
-    var ret = false
+    var ret = []
     Post.blacklist_set.each(function(b) {
-      if (b.size() && post.tags.intersect(b).size() == b.size())
-        ret = true
+      if (b.tags.size() && post.tags.intersect(b.tags).size() == b.tags.size()) {
+        ++b.hits
+        if (!b.disabled) {
+          ret.splice(ret.size(), 0, b)
+        }
+      }
     })
+    if (ret.size() == 0)
+      return null
     return ret
   },
 
   hide_blacklisted: function() {
+    if(Post.blacklist_set) {
+      Post.blacklist_set.each(function(b) {
+        b.hits = 0
+      })
+    }
+
+    var count = 0
     this.posts.each(function(pair) {
-      if (Post.is_blacklisted(pair.key)) {
-        var post = $("p" + pair.key)
-        if (post) {
-          post.hide()
-        }
+      var post = $("p" + pair.key)
+      if (!post) {
+        return
       }
+
+      pair.value.blacklisted = Post.is_blacklisted(pair.key)
+
+      if (pair.value.blacklisted) {
+        post.hide()
+        ++count
+      } else {
+        post.show()
+      }
+    })
+
+    Post.countText.textContent = count
+    return count
+  },
+
+  init_blacklisted: function() {
+    Post.countText = $("blacklist-count").appendChild(document.createTextNode(""));
+
+    var sidebar = $("blacklisted-sidebar")
+    if (!Post.hide_blacklisted()) {
+      sidebar.hide()
+      return
+    }
+    sidebar.show()
+
+    /* Keep focus from going to the item on click. */
+    sidebar.observe("mousedown", function(event) { event.stop() })
+
+    var list = $("blacklisted-list")
+    Post.blacklist_set.each(function(b) {
+      if (!b.hits)
+        return
+
+      var li = list.appendChild(document.createElement("li"))
+      li.className = "blacklisted-tags"
+      var a = li.appendChild(document.createElement("a"))
+      a.href = "#"
+      var expand = a.appendChild(document.createTextNode("»"));
+
+      a.observe("click", function(event) {
+        b.disabled = !b.disabled
+        a.className = b.disabled? "blacklisted-tags-disabled":"blacklisted-tags"
+        Post.hide_blacklisted()
+        event.stop()
+      });
+
+      a.appendChild(document.createTextNode(" "));
+      var tags = a.appendChild(document.createTextNode(b.tags.join(" ")));
+      li.appendChild(document.createTextNode(" "));
+      var span = li.appendChild(document.createElement("span"))
+      span.className = "post-count"
+      span.appendChild(document.createTextNode(b.hits));
     })
   },
 
