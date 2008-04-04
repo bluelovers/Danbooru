@@ -3,8 +3,13 @@ require "#{RAILS_ROOT}/config/local_config"
 
 CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
 
-%w(session_secret_key user_password_salt).each do |key|
-  CONFIG[key] = ServerKey[key] if ServerKey[key]
+begin
+  %w(session_secret_key user_password_salt).each do |key|
+    CONFIG[key] = ServerKey[key] if ServerKey[key]
+  end
+rescue Exception
+  # If the server_keys table isn't defined yet, just silently swallow this error
+  # and let the migrations run
 end
 
 ActionController::Base.session = {:session_key => CONFIG["app_name"], :secret => CONFIG["session_secret_key"]}

@@ -4,6 +4,7 @@ class Pool < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :name
   before_save :normalize_name
+  has_many :pool_posts, :class_name => "PoolPost"
   
   def self.find_by_name(name)
     if name =~ /^\d+$/

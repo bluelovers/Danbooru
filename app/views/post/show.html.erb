@@ -51,10 +51,8 @@
       <% end %>
     <% end %>
 
-    <% if @pools.any? %>
-      <div class="status-notice">
-        This post belongs to the following pools: <%= @pools.map {|x| link_to(h(x.pretty_name), :controller => "pool", :action => "show", :id => x.id)}.join(", ") %>
-      </div>
+    <% @pools.each do |pool| %>
+      <%= render :partial => "pool", :locals => {:pool => pool, :pool_post => PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, @post.id])} %>
     <% end %>
 
     <div class="sidebar">

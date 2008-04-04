@@ -1,0 +1,11 @@
+<div class="status-notice">
+  <div>
+    This post belongs to the <%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool.
+    <% if pool_post.prev_post_id %>
+      <%= link_to "Previous", :action => "show", :id => pool_post.prev_post_id %>.
+    <% end %>
+    <% if pool_post.next_post_id %>
+      <%= link_to "Next", :action => "show", :id => pool_post.next_post_id %>.
+    <% end %>
+  </div>
+</div>
