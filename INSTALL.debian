@@ -36,7 +36,7 @@ apt-get -y install sudo gcc g++ make libreadline5-dev zlib1g-dev flex bison libg
 for i in postgres diff-lcs html5 mongrel mongrel_cluster memcache-client aws-s3 gchartrb ; do gem install $i ; done
 gem install rails --version=2.0.2
 gem install acts_as_versioned
-gem install superredcloth --source http://code.whytheluckystiff.net
+gem install -y superredcloth --source http://code.whytheluckystiff.net
 
 # Create user account
 useradd -m danbooru

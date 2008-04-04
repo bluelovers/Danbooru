@@ -45,6 +45,11 @@ module PostMethods
             begin
               name = $1
               pool = Pool.find_by_name(name)
+              
+              if pool.nil?
+                pool = Pool.create(:name => $1, :description => "This pool was automatically generated", :is_public => false, :user_id => updater_user_id)
+              end
+
               pool.add_post(id) if pool
             rescue Pool::PostAlreadyExistsError
             end
