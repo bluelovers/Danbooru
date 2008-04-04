@@ -277,10 +277,11 @@ var Note = Class.create({
   },
 
   ratio: function() {
-    var ratio = this.elements.image.width / this.elements.image.getAttribute("orig_width")
-    if (this.elements.image.scale_factor != null)
-      ratio *= this.elements.image.scale_factor;
-    return ratio
+    return this.elements.image.width / this.elements.image.getAttributes("orig_width")
+    // var ratio = this.elements.image.width / this.elements.image.getAttribute("orig_width")
+    // if (this.elements.image.scale_factor != null)
+      // ratio *= this.elements.image.scale_factor;
+    // return ratio
   },
 
   // Scale the notes for when the image gets resized
