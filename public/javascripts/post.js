@@ -94,7 +94,7 @@ Post = {
   },
 
   register: function(post_id, tags, rating) {
-    tags = tags + " rating:" + rating[0]
+    tags = tags + " rating:" + rating.substr(0, 1)
     this.posts.set(post_id, {"tags": tags.match(/\S+/g)})
   },
 
