@@ -3,12 +3,6 @@ class PoolController < ApplicationController
   before_filter :member_only, :only => [:create, :destroy, :update]
   helper :post
   
-  def test
-    respond_to do |fmt|
-      fmt.json {render :text => "hello"}
-    end
-  end
-  
   def index
     if params[:query]
       @pools = Pool.paginate :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query].to_escaped_for_sql_like + "%"], :per_page => 20, :page => params[:page]
@@ -92,7 +86,7 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if !@pool.is_public? && @current_user.has_permission?(@pool)
+      unless @pool.is_public? || @current_user.has_permission?(@pool)
         access_denied()
         return
       end
@@ -181,9 +175,9 @@ class PoolController < ApplicationController
     else
       respond_to do |fmt|
         fmt.html
-        fmt.json do
+        fmt.js do
           @posts = Post.find_by_tags(params[:query], :order => "id desc", :limit => 500)
-          @posts = @posts.select {|x| x.can_view?(@current_user)}
+          @posts = @posts.select {|x| x.can_be_seen_by?(@current_user)}
         end
       end
     end
