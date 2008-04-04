@@ -14,9 +14,8 @@ class TagAlias < ActiveRecord::Base
   
 private
   def self.to_aliased_helper(tag_name)
-    p tag_name
     # TODO: add memcached support
-    tag = find(:first, :joins => "JOIN tags ON tags.id = tag_aliases.alias_id", :conditions => ["tags.name = ? AND tag_aliases.is_pending = FALSE", tag_name])
+    tag = find(:first, :select => "tags.name AS name", :joins => "JOIN tags ON tags.id = tag_aliases.alias_id", :conditions => ["tag_aliases.name = ? AND tag_aliases.is_pending = FALSE", tag_name])
     tag ? tag.name : tag_name    
   end
   

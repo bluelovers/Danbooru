@@ -1,6 +1,8 @@
 Dir["#{RAILS_ROOT}/app/models/post/**/*.rb"].each {|x| require_dependency x}
 
 class Post < ActiveRecord::Base
+  STATUSES = %w(active pending flagged deleted)
+  
   has_many :comments, :order => "id"
   has_many :notes, :order => "id desc"
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
@@ -158,20 +160,10 @@ class Post < ActiveRecord::Base
     notes.select {|x| x.is_active?}
   end
   
-  def is_flagged?
-    status == "flagged"
-  end
-  
-  def is_pending?
-    status == "pending"
-  end
-  
-  def is_deleted?
-    status == "deleted"
-  end
-  
-  def is_active?
-    status == "active"
+  STATUSES.each do |x|
+    define_method("is_#{status}?") do
+      return status == x
+    end
   end
   
   def can_view?(user)
