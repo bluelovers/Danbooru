@@ -277,7 +277,7 @@ var Note = Class.create({
   },
 
   ratio: function() {
-    return this.elements.image.width / this.elements.image.getAttributes("orig_width")
+    return this.elements.image.width / this.elements.image.getAttribute("orig_width")
     // var ratio = this.elements.image.width / this.elements.image.getAttribute("orig_width")
     // if (this.elements.image.scale_factor != null)
       // ratio *= this.elements.image.scale_factor;
