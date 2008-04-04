@@ -93,8 +93,8 @@ Post = {
     })
   },
 
-  register: function(post_id, tags, rating) {
-    tags = tags + " rating:" + rating.substr(0, 1)
+  register: function(post_id, tags, rating, status) {
+    tags = tags + " rating:" + rating.substr(0, 1) + " status:" + status
     this.posts.set(post_id, {"tags": tags.match(/\S+/g)})
   },
 

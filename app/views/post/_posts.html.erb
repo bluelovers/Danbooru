@@ -7,7 +7,7 @@
     <% end %>
     <script type="text/javascript">
       <% posts.each do |post| %>
-        Post.register(<%= post.id %>, '<%= escape_javascript(post.cached_tags) %>', '<%= post.rating %>')
+        Post.register(<%= post.id %>, '<%= escape_javascript(post.cached_tags) %>', '<%= post.rating %>', '<%= post.status %>')
       <% end %>
     </script>
   <% end %>
