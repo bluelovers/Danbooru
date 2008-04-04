@@ -23,6 +23,11 @@ module PostMethods
     # * :tags<String>:: a whitespace delimited list of tags
     def tags=(tags)
       self.new_tags = Tag.scan_tags(tags)
+    end
+    
+    # Commit any tag changes to the database.
+    def commit_tags
+      return if new_tags.nil?
 
       if old_tags
         # If someone else committed changes to this post before we did,
@@ -31,11 +36,6 @@ module PostMethods
         self.old_tags = Tag.scan_tags(old_tags)
         self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
       end
-    end
-    
-    # Commit any tag changes to the database.
-    def commit_tags
-      return if new_tags.nil?
       
       transaction do
         metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
