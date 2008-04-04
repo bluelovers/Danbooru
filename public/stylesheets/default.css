@@ -361,6 +361,16 @@ a.tag-type-artist {
   font-size: 0.8em;
 }
 
+.history-search-row {
+  clear: left;
+  margin:0;
+  bottom: 0;
+}
+.history-search-label {
+  width: 10%;
+  float: left;
+}
+
 div#artist-index > table td {
   white-space: nowrap;
 }

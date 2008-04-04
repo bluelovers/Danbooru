@@ -1,26 +1,27 @@
 <div>
   <div>
-    <% form_tag({:action => "index"}, :method => :get) do %>
-      <table width="100%">
-        <tfoot>
-          <tr>
-            <td colspan="2"><%= submit_tag "Search" %></td>
-          </tr>
-        </tfoot>
-        <tbody>
-          <tr>
-            <td><label for="user_name">User</label></td>
-            <td><%= text_field_tag "user_name", params[:user_name], :size => 20 %></td>
-          </tr>
-          <tr>
-            <td><label for="post_id">Post ID</label></td>
-            <td><%= text_field_tag "post_id", params[:post_id], :size => 10 %></td>
-          </tr>
-        </tbody>
-      </table>
-    <% end %>
+    <div class="history-search-row">
+      <div class="history-search-label">
+        <label for="user_name">User</label>
+      </div>
+      <div>
+        <% form_tag({:action => "index"}, :method => :get) do %>
+        <%= text_field_tag "user_name", params[:user_name], :id => "user_name", :size => 20 %> <%= submit_tag "Search" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="history-search-row">
+      <div class="history-search-label">
+        <label for="post_id">Post ID</label>
+      </div>
+      <div>
+        <% form_tag({:action => "index"}, :method => :get) do %>
+        <%= text_field_tag "post_id", params[:post_id], :id => "post_id", :size => 10 %> <%= submit_tag "Search" %>
+        <% end %>
+      </div>
+    </div>
   </div>
-  <div>
+  <div style="clear: left;">
     <table width="100%" class="highlightable" id="history">
       <thead>
         <tr>
@@ -35,11 +36,7 @@
         <% @change_list.each do |change| %>
           <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
             <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
-            <% if params[:post_id] %>
-              <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
-            <% else %>
-              <td><%= link_to change[:change].post_id, :action => "index", :post_id => change[:change].post_id %></td>
-            <% end %>
+            <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
             <td><%= change[:change].created_at.strftime("%b %e") %></td>
             <td><%= link_to change[:change].author, :action => "index", :user_id => change[:change].user_id %></td>
             <td>
@@ -60,7 +57,7 @@
 
 <script type="text/javascript">
   <% @change_list.each do |change| %>
-    PostTagHistory.add_change(<%= change[:change].id %>)
+    PostTagHistory.add_change(<%= change[:change].id %>, <%= change[:change].post_id %>, '<%= escape_javascript(change[:change].author) %>')
   <% end %>
   PostTagHistory.init()
 </script>

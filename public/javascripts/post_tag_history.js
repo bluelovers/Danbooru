@@ -20,9 +20,11 @@ PostTagHistory = {
     PostTagHistory.update()
   },
 
-  add_change: function(id) {
+  add_change: function(id, post_id, user_id) {
     PostTagHistory.checked.push({
       id: id,
+      post_id: post_id,
+      user_id: user_id,
       on: false
     })
     $("r" + id).observe("mousedown", function(e) { PostTagHistory.mousedown(id, e), true })
@@ -55,6 +57,8 @@ PostTagHistory = {
       i = PostTagHistory.get_first_selected_row()
       $("revert").href = "post_tag_history/revert?id=" + PostTagHistory.checked[i].id
       $("revert").className = ""
+      $("post_id").value = PostTagHistory.checked[i].post_id
+      $("user_name").value = PostTagHistory.checked[i].user_id
     } else {
       $("revert").href = "#"
       $("revert").className = "footer-disabled"
