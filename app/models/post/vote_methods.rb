@@ -5,7 +5,7 @@ module PostMethods
         return false
       else
         self.score += score
-        execute_sql("UPDATE posts SET score = ?, last_voter_ip = ? WHERE id = ?", score, ip_addr, id)
+        execute_sql("UPDATE posts SET score = ?, last_voter_ip = ? WHERE id = ?", self.score, ip_addr, id)
         return true
       end
     end
