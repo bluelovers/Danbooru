@@ -25,8 +25,9 @@ class WikiController < ApplicationController
   def index
     set_title "Wiki"
     
+    @params = params
     if params[:order] == "date"
-      order = "updated_at"
+      order = "updated_at DESC"
     else
       order = "lower(title)"
     end

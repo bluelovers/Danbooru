@@ -1,11 +1,29 @@
-<% if Object.const_defined?(:Ferret) %>
-  <div style="margin-bottom: 1em;">
-    <% form_tag({:action => "index"}, :method => :get) do %>
-      <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag "Search" %>
-    <% end %>
-  </div>
-<% end %>
+<div style="margin-bottom: 1em;">
+  <% form_tag({:action => "index"}, :method => :get) do %>
+    <table class="form">
+      <tfoot>
+        <tr>
+          <td><%= submit_tag "Search" %></td>
+          <td></td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <th width="15%">
+            <label for="query">Text</label>
+          </th>
+          <td width="85%">
+            <%= text_field_tag "query", params[:query], :size => 40 %>
+          </td>
+        </tr>
+        <tr>
+          <th><label for="order">Order</label></th>
+          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Date", "date"]], [params[:order] || ""]) %></td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+</div>
 
 <table width="100%">
   <tr>
