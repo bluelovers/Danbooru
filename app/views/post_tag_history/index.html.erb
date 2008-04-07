@@ -38,7 +38,7 @@
             <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
             <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
             <td><%= change[:change].created_at.strftime("%b %e") %></td>
-            <td><%= link_to change[:change].author, :action => "index", :user_id => change[:change].user_id %></td>
+            <td><%= link_to change[:change].author, :controller => "user", :action => "show", :id => change[:change].user_id %></td>
             <td>
               <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete => change[:obsolete_added_tags], :prefix => "+") %></span>
               <span class="removed-tags"><%= tag_list(change[:removed_tags], :obsolete=>change[:obsolete_removed_tags], :prefix=>"-") %></span>
