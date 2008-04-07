@@ -532,6 +532,7 @@ var Note = Class.create({
     
     this.hideEditBox(e)
     this.bodyHide()
+    this_note = this
 
     if (this.is_new) {
       this.removeCleanup()
@@ -540,8 +541,9 @@ var Note = Class.create({
     } else {
       notice("Removing note...")
 
-      new Ajax.Request('/note/update/' + this.id, {
+      new Ajax.Request('/note/update.json', {
         parameters: {
+          "id": this.id,
           "note[is_active]": "0"
         },
         onComplete: function(resp) {
@@ -549,6 +551,7 @@ var Note = Class.create({
           
           if (resp.success) {
             notice("Note removed")
+            this_note.removeCleanup()
           } else {
             notice("Error: " + resp.reason)
           }
