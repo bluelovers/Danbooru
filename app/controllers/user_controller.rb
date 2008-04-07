@@ -75,6 +75,7 @@ class UserController < ApplicationController
 
   def authenticate
     save_cookies(@current_user)
+    
     if params[:url].blank?
       path = {:action => "home"}
     else
