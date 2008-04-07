@@ -1,0 +1,20 @@
+<div id="stats">
+  <h5>Statistics</h5>
+  <ul>
+    <li>Id: <%= @post.id %></li>
+    <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
+    <% if @post.image? %>
+      <li>Size: <%= @post.width %>x<%= @post.height %></li>
+    <% end %>
+    <% unless @post.source.blank? %>
+      <% if @post.source[/^http/] %>
+        <li>Source: <%= link_to @post.source[7, 20] + "...", @post.source, :target => "_blank" %></li>
+      <% else %>
+        <li>Source: <%= @post.source %></li>
+      <% end %>
+    <% end %>
+    <li>Rating: <%= @post.pretty_rating %></li>
+    <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
+    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post.favorited_by) %></span></li>
+  </ul>
+</div>
