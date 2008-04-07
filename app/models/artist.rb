@@ -150,8 +150,16 @@ class Artist < ActiveRecord::Base
     return self.name
   end
   
+  def notes_page
+    return WikiPage.find_page(self.name)
+  end
+
+  def notes_locked?
+    notes_page.is_locked rescue false
+  end
+
   def notes
-    wp = WikiPage.find_page(self.name)
+    wp = notes_page
     
     if wp
       return wp.body
