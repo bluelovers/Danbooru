@@ -35,6 +35,9 @@ Post = {
 
         if (resp.success) {
           notice('Post updated')
+
+          // Update the stored post.
+          Post.register(resp.post)
         } else {
           notice('Error: ' + resp.reason)
         }
@@ -93,9 +96,9 @@ Post = {
     })
   },
 
-  register: function(post_id, tags, rating, status) {
-    tags = tags + " rating:" + rating.substr(0, 1) + " status:" + status
-    this.posts.set(post_id, {"tags": tags.match(/\S+/g)})
+  register: function(post) {
+    post.tags = post.tags.match(/\S+/g)
+    this.posts.set(post.id, post)
   },
 
   blacklist_set: null,
@@ -115,6 +118,9 @@ Post = {
     var post = this.posts.get(post_id)
     var ret = []
     Post.blacklist_set.each(function(b) {
+      match_tags = post.tags.clone()
+      match_tags.push("rating:" + post.rating.substr(0, 1))
+      match_tags.push("status:" + post.status)
       if (b.tags.size() && post.tags.intersect(b.tags).size() == b.tags.size()) {
         ++b.hits
         if (!b.disabled) {

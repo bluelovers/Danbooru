@@ -16,6 +16,10 @@ PostModeMenu = {
     var s = $F("mode")
     Cookie.put("mode", s, 7)
 
+    if (s.value != "edit") {
+      $("quick-edit").hide()
+    }
+
     if (s == "view") {
       document.body.setStyle({backgroundColor: this.original_background_color})
     } else if (s == "edit") {
@@ -77,7 +81,8 @@ PostModeMenu = {
     } else if (s.value == "edit") {
       var post = Post.posts.get(post_id)
       $("id").value = post_id
-      $("post_tags").value = post.tags.join(" ")
+      $("post[old_tags]").value = post.tags.join(" ")
+      $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
       $("quick-edit").show()
     } else if (s.value == 'vote-down') {
       Post.vote(-1, post_id)
@@ -101,14 +106,7 @@ PostModeMenu = {
       Pool.add_post(post_id, 0)
     } else if (s.value == "apply-tag-script") {
       var tag_script = Cookie.get("tag-script")
-      var commands = TagScript.parse(tag_script)
-      var post = Post.posts.get(post_id)
-
-      commands.each(function(x) {
-        post.tags = TagScript.process(post.tags, x)
-      })
-
-      Post.update(post_id, {"post[tags]": post.tags.join(" ")})
+      TagScript.run(post_id, tag_script)
     }
 
     return false
@@ -157,5 +155,17 @@ TagScript = {
       tags.push(command)
       return tags
     }
+  },
+
+  run: function(post_id, tag_script) {
+    var commands = TagScript.parse(tag_script)
+    var post = Post.posts.get(post_id)
+    var old_tags = post.tags.join(" ")
+
+    commands.each(function(x) {
+      post.tags = TagScript.process(post.tags, x)
+    })
+
+    Post.update(post_id, {"post[old_tags]": old_tags, "post[tags]": post.tags.join(" ")})
   }
 }

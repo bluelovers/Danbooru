@@ -105,7 +105,10 @@ class PostController < ApplicationController
     end
 
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
-      respond_to_success("Post updated", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
+      # Reload the post to send the new status back; not all changes will be reflected in
+      # @post due to after_save changes.
+      updated_post = Post.find(params[:id])
+      respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:post => updated_post})
     else
       respond_to_error(@post, :action => "show", :id => params[:id])
     end
