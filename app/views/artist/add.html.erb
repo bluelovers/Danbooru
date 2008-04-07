@@ -18,6 +18,10 @@
         <td><%= text_field "artist", "aliases", :size => 80, :value => params[:jp_name] %></td>
       </tr>
       <tr>
+        <th><label for="artist_members">Members</label></th>
+        <td><%= text_field "artist", "members", :size => 80, :value => @artist.members.join(", ") %></td>
+      </tr>
+      <tr>
         <th><label for="artist_urls">URLs</label></th>
         <td><%= text_area "artist", "urls", :size => "80x6" %></td>
       </tr>
