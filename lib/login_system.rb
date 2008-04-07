@@ -48,8 +48,10 @@ module LoginSystem
   
   protected
   def access_denied
+    previous_url = params[:url] || request.request_uri
+    
     respond_to do |fmt|
-      fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "user", :action => "login", :url => request.request_uri)}
+      fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "user", :action => "login", :url => previous_url)}
       fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
       fmt.json {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
     end
