@@ -5,10 +5,26 @@ class ActiveRecord::Base
     def execute_sql(sql, *params)
       connection.execute(sanitize_sql([sql, *params]))
     end
+    
+    def select_sql(sql, *params)
+      connection.select_value(sanitize_sql([sql, *params]))
+    end
+    
+    def select_all_sql(sql, *params)
+      connection.select_values(sanitize_sql([sql, *params]))
+    end
   end
   
   def execute_sql(sql, *params)
     self.class.execute_sql(sql, *params)
+  end
+  
+  def select_sql(sql, *params)
+    self.class.select_sql(sql, *params)
+  end
+  
+  def select_all_sql(sql, *params)
+    self.class.select_all_sql(sql, *params)
   end
 end
 

@@ -20,10 +20,10 @@ module PostMethods
         base64_md5 = Base64.encode64(self.md5.unpack("a2" * (self.md5.size / 2)).map {|x| x.hex.chr}.join)
     
         AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
-        AWS::S3::S3Object.store(file_name, open(self.file_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :private, "Content-MD5" => base64_md5)
+        AWS::S3::S3Object.store(file_name, open(self.file_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Content-MD5" => base64_md5)
     
         if image?
-          AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :private)
+          AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
         end
 
         if File.exists?(tempfile_sample_path)
@@ -57,12 +57,20 @@ module PostMethods
 
       def preview_url
         if status == "deleted"
-          CONFIG["url_base"] + "/data/preview/deleted.png"
-        elsif image?
-          CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
+          "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/deleted.png"
+        elsif self.image?
+          "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
         else
-          CONFIG["url_base"] + "/data/preview/download.png"
+          "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
         end
+        
+        # if status == "deleted"
+        #   CONFIG["url_base"] + "/data/preview/deleted.png"
+        # elsif image?
+        #   CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
+        # else
+        #   CONFIG["url_base"] + "/data/preview/download.png"
+        # end
       end
 
       def store_sample_url

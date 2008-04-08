@@ -8,6 +8,14 @@ module PostMethods
       m.before_destroy :give_favorites_to_parent
     end
     
+    def self.set_parent(post_id, parent_id)
+      old_parent_id = select_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
+      execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, post_id)
+      old_parent_has_children = Post.exists?(["parent_id = ?", old_parent_id])
+      execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", old_parent_has_children, old_parent_id)
+      execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", true, parent_id)
+    end
+    
     def validate_parent
       errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
     end

@@ -69,7 +69,7 @@ module PostMethods
             parent_id = $1
           
             if CONFIG["enable_parent_posts"] && Post.exists?(parent_id)
-              execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, id)
+              Post.set_parent(id, parent_id)
             end
           end
         end
