@@ -459,6 +459,10 @@ div#footer > .footer-disabled {
   color: #777777;
 }
 
+div#footer > #label {
+  color: #777777;
+}
+
 div#forum > table th:first-child {
   text-align: left;
 }

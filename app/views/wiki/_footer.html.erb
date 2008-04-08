@@ -1,5 +1,10 @@
+<% unless omit_div %>
 <div id="footer">
+<% end %>
   <%= link_to "Search", :action => "index" %> |
   <%= link_to "Add Page", :action => "add" %> |
+  <%= link_to "Recent Changes", :action => "index", :order => "date" %> |
   <%= link_to "Help", :controller => "help", :action => "wiki" %>
+<% unless omit_div %>
 </div>
+<% end %>

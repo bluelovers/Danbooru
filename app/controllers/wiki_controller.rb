@@ -3,6 +3,7 @@ class WikiController < ApplicationController
   before_filter :member_only, :only => [:update, :create, :edit, :revert]
   before_filter :mod_only, :only => [:lock, :unlock, :destroy, :rename]
   verify :method => :post, :only => [:lock, :unlock, :destroy, :update, :create, :revert]
+  helper :post
 
   def destroy
     page = WikiPage.find_page(params[:title])
@@ -33,12 +34,21 @@ class WikiController < ApplicationController
     end
     
     limit = params[:limit] || 25
+    query = params[:query] || ""
+    query = query.scan(/\S+/)
 
-    if params[:query]
-      query = params[:query].scan(/\S+/).join(" & ")
-      @wiki_pages = WikiPage.paginate :order => order, :per_page => limit, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
+    if !query.empty? || params[:order]
+      search_params = {
+        :order => order,
+        :per_page => limit, 
+        :page => params[:page]
+      }
+      if !query.empty?
+        search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
+      end
+      @wiki_pages = WikiPage.paginate(search_params)
     else
-      @wiki_pages = WikiPage.paginate :order => order, :per_page => limit, :page => params[:page]
+      @page = WikiPage.find_page("Help:Home")
     end
 
     respond_to_list("wiki_pages")
@@ -82,7 +92,11 @@ class WikiController < ApplicationController
       return
     end
 
+    @title = params[:title]
     @page = WikiPage.find_page(params[:title], params[:version])
+    @posts = Post.find_by_tags(params[:title], :limit => 7, :order => "id desc").select {|x| x.can_view?(@current_user)}
+    @artist = Artist.find_by_name(params[:title])
+    @tag = Tag.find_by_name(params[:title])
     set_title params[:title].tr("_", " ")
   end
 

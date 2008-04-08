@@ -286,6 +286,12 @@ class Tag < ActiveRecord::Base
     self.class.type_name_from_value(tag_type)
   end
 
+  def pretty_type_name
+    name = String.new(type_name)
+    name[0,1] = name[0,1].upcase
+    return name
+  end
+
   def <=>(rhs)
     name <=> rhs.name
   end
