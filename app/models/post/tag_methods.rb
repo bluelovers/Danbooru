@@ -23,6 +23,9 @@ module PostMethods
     # * :tags<String>:: a whitespace delimited list of tags
     def tags=(tags)
       self.new_tags = Tag.scan_tags(tags)
+
+      current_tags = cached_tags.scan(/\S+/)
+      self.touch_change_seq! if new_tags != current_tags
     end
     
     # Commit any tag changes to the database.

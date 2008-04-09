@@ -50,6 +50,7 @@ module PostMethods
       generate_sql_range_helper(q[:height], "p.height", conds, cond_params)
       generate_sql_range_helper(q[:score], "p.score", conds, cond_params)
       generate_sql_range_helper(q[:date], "p.created_at::date", conds, cond_params)
+      generate_sql_range_helper(q[:change], "p.change_seq", conds, cond_params)
 
       if q[:md5].is_a?(String)
         conds << "p.md5 IN (?)"
@@ -195,6 +196,12 @@ module PostMethods
 
         when "landscape"
           sql << " ORDER BY 1.0*width/height DESC"
+
+        when "change", "change_asc"
+          sql << " ORDER BY change_seq"
+
+        when "change_desc"
+          sql << " ORDER BY change_seq DESC"
 
         when "fav"
           if q[:fav].is_a?(String)

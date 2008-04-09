@@ -193,7 +193,7 @@ class Tag < ActiveRecord::Base
     q = Hash.new {|h, k| h[k] = []}
 
     scan_query(query).each do |token|
-      if token =~ /^(unlocked|deleted|user|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order):(.+)$/
+      if token =~ /^(unlocked|deleted|user|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change):(.+)$/
         if $1 == "user"
           q[:user] = $2
         elsif $1 == "fav"
@@ -237,6 +237,8 @@ class Tag < ActiveRecord::Base
           end
         elsif $1 == "deleted" && $2 == "true"
           q[:deleted_only] = true
+        elsif $1 == "change"
+          q[:change] = parse_helper($2)
         end
       elsif token[0] == ?-
         q[:exclude] << token[1..-1]

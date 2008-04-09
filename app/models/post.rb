@@ -8,6 +8,9 @@ class Post < ActiveRecord::Base
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
+  before_save :init_change_seq
+  before_save :update_change_seq
+  attr_accessor :increment_change_seq
   
   extend PostMethods::SqlMethods
   include PostMethods::CommentMethods
@@ -39,6 +42,24 @@ class Post < ActiveRecord::Base
     end
   end
   
+  def touch_change_seq!
+    self.increment_change_seq = true
+    return true
+  end
+
+  def init_change_seq
+    if change_seq.nil?
+      self.change_seq = connection.select_value("SELECT nextval('post_change_seq')") 
+      self.increment_change_seq = false
+    end
+    return true
+  end
+
+  def update_change_seq
+    return if self.increment_change_seq.nil?
+    self.change_seq = connection.select_value("SELECT nextval('post_change_seq')") 
+  end
+
   def flag!(reason, creator_id)
     update_attributes(:status => "flagged")
     
@@ -76,6 +97,12 @@ class Post < ActiveRecord::Base
     return @favorited_by
   end
 
+  def status=(s)
+    return if s == status
+    write_attribute(:status, s)
+    touch_change_seq!
+  end
+
   def rating=(r)
     if r == nil && !new_record?
       return
@@ -87,13 +114,16 @@ class Post < ActiveRecord::Base
 
     r = r.to_s.downcase[0, 1]
 
-    self.old_rating = rating
-
     if %w(q e s).include?(r)
-      write_attribute(:rating, r)
+      new_rating = r
     else
-      write_attribute(:rating, 'q')
+      new_rating = 'q'
     end
+
+    return if rating == new_rating
+    self.old_rating = rating
+    write_attribute(:rating, new_rating)
+    touch_change_seq!
   end
 
 
@@ -125,6 +155,7 @@ class Post < ActiveRecord::Base
       :tags => cached_tags, 
       :created_at => created_at, 
       :creator_id => user_id, 
+      :change => change_seq,
       :source => source, 
       :score => score, 
       :md5 => md5, 
