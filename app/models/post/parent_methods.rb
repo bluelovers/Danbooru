@@ -8,8 +8,11 @@ module PostMethods
       m.before_destroy :give_favorites_to_parent
     end
     
-    def self.set_parent(post_id, parent_id)
-      old_parent_id = select_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
+    def self.set_parent(post_id, parent_id, old_parent_id = nil)
+      if old_parent_id.nil?
+        old_parent_id = select_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
+      end
+      
       execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, post_id)
       old_parent_has_children = Post.exists?(["parent_id = ? AND status <> 'deleted'", old_parent_id])
       execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", old_parent_has_children, old_parent_id)
@@ -30,14 +33,8 @@ module PostMethods
       end
     end
     
-    def update_has_children(id)
-      children = Post.exists?(["parent_id = #{id} AND status <> 'deleted'"]).to_s
-      execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", children, id)
-    end
-
     def update_parent
-      update_has_children(old_parent_id) if old_parent_id
-      update_has_children(parent_id) if parent_id
+      self.class.set_parent(id, parent_id, old_parent_id)
     end
   
     def give_favorites_to_parent

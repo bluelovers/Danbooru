@@ -10,6 +10,8 @@ require 'action_controller/test_process'
 require 'action_web_service/test_invoke'
 require 'breakpoint'
 
+# Password for all users is password1
+
 def create_fixtures(*table_names)
 	Fixtures.create_fixtures(File.dirname(__FILE__) + "/fixtures", table_names)
 end
@@ -35,12 +37,12 @@ def upload_jpeg(path)
 end
 
 Test::Unit::TestCase.fixture_path = File.dirname(__FILE__) + "/fixtures/"
-Test::Unit::TestCase.use_transactional_fixtures = false
+Test::Unit::TestCase.use_transactional_fixtures = true
 Test::Unit::TestCase.use_instantiated_fixtures = false
 
 class Test::Unit::TestCase
 	# change this to a url to test auto-downloading
-	DOWNLOAD_IMAGE = "http://www.google.com/intl/en/images/logo.gif"
+	DOWNLOAD_IMAGE = "http://www.google.com/intl/en_ALL/images/logo.gif"
 	HTML_ATTACK = %{<img onclick="window.jref='http://goatse.cx'" /></html><a href="#">test</a><embed>bad</embed><script>bad</script>}
 	SQL_ATTACK = %{'; DROP TABLE danbooru_dev;'}
 end

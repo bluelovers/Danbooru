@@ -46,8 +46,8 @@ module PostMethods
               name = $1
               pool = Pool.find_by_name(name)
               
-              if pool.nil?
-                pool = Pool.create(:name => $1, :description => "This pool was automatically generated", :is_public => false, :user_id => updater_user_id)
+              if pool.nil? and name !~ /^\d+$/
+                pool = Pool.create(:name => name, :description => "This pool was automatically generated", :is_public => false, :user_id => updater_user_id)
               end
 
               pool.add_post(id) if pool
