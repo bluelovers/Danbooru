@@ -4,7 +4,7 @@ module ApplicationHelper
   end
   
   def format_text(text, options = {})
-    text = h(text)
+    text = hs(text)
 
     unless options[:skip_simple_format]
       text = simple_format(text)

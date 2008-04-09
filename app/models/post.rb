@@ -16,7 +16,6 @@ class Post < ActiveRecord::Base
   include PostMethods::CommentMethods
   extend PostMethods::ImageStoreMethods
   include PostMethods::VoteMethods
-  include PostMethods::SampleMethods
   include PostMethods::TagMethods
   include PostMethods::CountMethods
   include PostMethods::CacheMethods if CONFIG["enable_caching"]
