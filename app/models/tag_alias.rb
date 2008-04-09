@@ -30,8 +30,13 @@ public
     n = Tag.find_or_create_by_name(name)
     a = Tag.find(alias_id)
 
-    if self.class.find(:first, :conditions => ["name = ? OR name = ? OR alias_id = ? OR alias_id = ?", n.name, a.name, n.id, a.id])
-      errors.add_to_base("Alias already exists")
+    if self.class.exists?(["name = ?", n.name])
+      errors.add_to_base("#{n.name} is already aliased to something")
+      return false
+    end
+    
+    if self.class.exists?(["name = ?", a.name])
+      errors.add_to_base("#{a.name} is already aliased to something")
       return false
     end
   end
