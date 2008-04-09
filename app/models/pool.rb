@@ -28,6 +28,7 @@ class Pool < ActiveRecord::Base
         raise PostAlreadyExistsError
       end
 
+      seq ||= next_id
       Cache.expire(:post_id => post_id)
       update_attributes(:updated_at => Time.now)
       PoolPost.create(:pool_id => self.id, :post_id => post_id, :sequence => seq.to_i)
@@ -45,6 +46,15 @@ class Pool < ActiveRecord::Base
       PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
       self.decrement(:post_count)
       self.save!
+    end
+  end
+
+  def next_id()
+    i = connection.select_value("SELECT MAX(sequence) FROM pools_posts where pool_id=#{self.id}")
+    if i.nil?
+      return 0
+    else
+      return i.to_i + 1
     end
   end
 

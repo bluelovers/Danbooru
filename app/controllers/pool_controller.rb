@@ -91,8 +91,10 @@ class PoolController < ApplicationController
         return
       end
       
+      sequence = params[:pool][:sequence]
+      sequence = nil if sequence.empty?
       begin
-        @pool.add_post(params[:post_id], (params[:pool][:sequence] rescue 0))
+        @pool.add_post(params[:post_id], sequence)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Pool::PostAlreadyExistsError
         respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => params[:post_id]}, :status => 423)
@@ -170,8 +172,10 @@ class PoolController < ApplicationController
     
     if request.post?
       if params[:posts].is_a?(Hash)
+        ordered_posts = params[:posts].sort { |a,b| a[1]<=>b[1] }.map { |a| a[0] }
+
         PoolPost.transaction do
-          params[:posts].keys.each do |post_id|
+          ordered_posts.each do |post_id|
             begin
               @pool.add_post(post_id)
             rescue Pool::PostAlreadyExistsError

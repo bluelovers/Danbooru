@@ -1,7 +1,8 @@
 fields = ""
 thumbnails = ""
-@posts.each do |p|
-	fields << hidden_field_tag("posts[#{p.id}]", "1")
+@posts.each_index do |i|
+	p = @posts[i]
+	fields << hidden_field_tag("posts[#{p.id}]", i)
 	thumbnails << print_preview(p, :onclick => "return removePost(#{p.id})")
 end
 
