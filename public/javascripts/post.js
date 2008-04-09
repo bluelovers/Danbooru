@@ -121,7 +121,7 @@ Post = {
       match_tags = post.tags.clone()
       match_tags.push("rating:" + post.rating.substr(0, 1))
       match_tags.push("status:" + post.status)
-      if (b.tags.size() && post.tags.intersect(b.tags).size() == b.tags.size()) {
+      if (b.tags.size() && match_tags.intersect(b.tags).size() == b.tags.size()) {
         ++b.hits
         if (!b.disabled) {
           ret.splice(ret.size(), 0, b)
