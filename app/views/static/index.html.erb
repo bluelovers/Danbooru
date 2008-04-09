@@ -4,7 +4,7 @@
     <%= link_to "Posts", {:controller => "post", :action => "index"}, :title => 'A paginated list of every post' %>
     <%= link_to "Comments", {:controller => "comment", :action => "index"}, :title => 'A paginated list of every comment' %>
     <%= link_to "Tags", {:controller => "tag", :action => "index"}, :title => 'A paginated list of every tag' %>
-    <%= link_to "Wiki", {:controller => "wiki", :action => "show", :title => "Help:Home"}, :title => 'Wiki' %>
+    <%= link_to "Wiki", {:controller => "wiki"}, :title => 'Wiki' %>
     <%= link_to "More &raquo;", {:controller => "static", :action => "more"}, :title => "A site map" %>
   </div>
   <div style="margin-bottom: 1em;">

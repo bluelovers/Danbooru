@@ -4,4 +4,4 @@
   <%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %>
 <% end %>
 
-<%= render :partial => "footer" %>
+<%= render :partial => "footer", :locals => {:omit_div => false} %>
