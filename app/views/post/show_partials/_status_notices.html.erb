@@ -3,7 +3,7 @@
     This post was flagged for deletion by <%= h @post.flag_detail.author %>. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>
   </div>
 <% elsif @post.is_pending? %>
-  <div class="status-notice">
+  <div class="status-notice" id="pending-notice">
     This post is pending moderator approval.
   </div>
 <% elsif @post.is_deleted? %>

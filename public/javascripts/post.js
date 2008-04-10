@@ -15,7 +15,12 @@ Post = {
         
         if (resp.success) {
           notice("Post approved")
-          $("p" + post_id).down("a/img").removeClassName("pending")
+          if ($("p" + post_id)) {
+            $("p" + post_id).down("img").removeClassName("pending")
+          }
+          if ($("pending-notice")) {
+            $("pending-notice").hide()
+          }
         } else {
           notice("Error: " + resp.reason)
         }
@@ -82,7 +87,7 @@ Post = {
     
       onComplete: function(req) {
         notice("Post was flagged for deletion")
-        $("p" + id).down("a/img").addClassName("flagged")
+        $("p" + id).down("img").addClassName("flagged")
       }
     })
   },
