@@ -8,6 +8,7 @@ class ArtistUrl < ActiveRecord::Base
       url = url.gsub(/\/$/, "")
       url = url.gsub(/^http:\/\/blog\d+\.fc2/, "http://blog.fc2")
       url = url.gsub(/^http:\/\/blog-imgs-\d+\.fc2/, "http://blog.fc2")
+      url = url.gsub(/^http:\/\/img\d+\.pixiv\.net/, "http://img.pixiv.net")
       return url
     end
   end
