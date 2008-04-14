@@ -68,7 +68,7 @@ module PostMethods
             execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
 
 
-          when /^parent:(\d+)/
+          when /^parent:(\d*)/
             self.parent_id = $1
           
             if CONFIG["enable_parent_posts"] && Post.exists?(parent_id)
