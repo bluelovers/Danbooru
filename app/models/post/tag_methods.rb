@@ -69,7 +69,7 @@ module PostMethods
 
 
           when /^parent:(\d+)/
-            parent_id = $1
+            self.parent_id = $1
           
             if CONFIG["enable_parent_posts"] && Post.exists?(parent_id)
               Post.set_parent(id, parent_id)
