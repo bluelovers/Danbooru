@@ -85,7 +85,7 @@
 </div>
 
 <script type="text/javascript">
-  $("quick-edit").down("form").observe("submit", function(e) {
+  var submit_quick_edit = function(e) {
     new Ajax.Request("/post/update.json", {
       parameters: $("quick-edit").down("form").serialize(),
       onSuccess: function(resp) {
@@ -99,9 +99,11 @@
         notice("Error: " + resp.reason)
       }
     })
-    e.stop()
-  })
-  Post.observe_text_area("post_tags")
+    e.stop()    
+  }
+  
+  $("quick-edit").down("form").observe("submit", submit_quick_edit)
+  $("post_tags").observe("keydown", submit_quick_edit)
   PostModeMenu.init()
   if (Cookie.get("login") != "") {
     $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"
