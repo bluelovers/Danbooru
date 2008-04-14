@@ -3,7 +3,7 @@ module PostMethods
     module ClassMethods
       def set_parent(post_id, parent_id, old_parent_id = nil)
         if old_parent_id.nil?
-          old_parent_id = select_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
+          old_parent_id = select_value_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
         end
 
         execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, post_id)

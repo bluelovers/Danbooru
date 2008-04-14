@@ -1,30 +1,16 @@
 class ActiveRecord::Base
   class << self
     public :sanitize_sql
-    
-    def execute_sql(sql, *params)
-      connection.execute(sanitize_sql([sql, *params]))
-    end
-    
-    def select_sql(sql, *params)
-      connection.select_value(sanitize_sql([sql, *params]))
-    end
-    
-    def select_all_sql(sql, *params)
-      connection.select_values(sanitize_sql([sql, *params]))
-    end
   end
   
-  def execute_sql(sql, *params)
-    self.class.execute_sql(sql, *params)
-  end
-  
-  def select_sql(sql, *params)
-    self.class.select_sql(sql, *params)
-  end
-  
-  def select_all_sql(sql, *params)
-    self.class.select_all_sql(sql, *params)
+  %w(execute select_value select_values select_all).each do |method_name|
+    define_method("#{method_name}_sql") do |sql, *params|
+      connection.__send__(method_name, self.class.sanitize_sql([sql, *params]))
+    end
+
+    self.class.__send__(:define_method, "#{method_name}_sql") do |sql, *params|
+      connection.__send__(method_name, sanitize_sql([sql, *params]))
+    end
   end
 end
 
@@ -32,17 +18,9 @@ class NilClass
   def id
     raise NoMethodError
   end
-
-  # def to_json(options = {})
-  #   "null"
-  # end
 end
 
 class String
-  # def to_json(options = {})
-  #   return "\"" + to_escaped_js + "\""
-  # end
-
   def to_escaped_for_sql_like
     # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
     return self.gsub(/\\/, '\0\0').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
@@ -51,42 +29,6 @@ class String
   def to_escaped_js
     return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\r|\n/, '\\n')
   end
-end
-
-class Symbol
-  # def to_json(options = {})
-  #   return "'" + to_s.to_escaped_js + "'"
-  # end
-end
-
-class Integer
-  # def to_json(options = {})
-  #   return self
-  # end
-end
-
-class TimeExtensions
-  # def to_json(options = {})
-  #   return "'" + to_s + "'"
-  # end
-end
-
-class Array
-  # def to_json(options = {})
-  #   "[" + map {|x| x.to_json(options)}.join(",") + "]"
-  # end
-end
-
-class FalseClass
-  # def to_json(options = {})
-  #   "false"
-  # end
-end
-
-class TrueClass
-  # def to_json(options = {})
-  #   "true"
-  # end
 end
 
 class Hash
@@ -108,15 +50,5 @@ class Hash
       options[:builder].tag!(root, self)
     end
   end
-  
-  # def to_json(options = {})
-  #   arr = []
-  # 
-  #   each do |k, v|
-  #     arr << "#{k.to_json(options)}:#{v.to_json(options)}"
-  #   end
-  # 
-  #   return "{" + arr.join(",") + "}"
-  # end
 end
 
