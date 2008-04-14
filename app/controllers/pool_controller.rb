@@ -56,7 +56,7 @@ class PoolController < ApplicationController
       
       if @pool.errors.empty?
         flash[:notice] = "Pool created"
-        redirect_to(:action => "index")
+        redirect_to(:action => "show", :id => @pool.id)
       else
         messages = @pool.errors.full_messages.join(", ")
         flash[:notice] = "Error: #{messages}"
