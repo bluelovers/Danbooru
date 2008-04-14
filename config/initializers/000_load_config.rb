@@ -30,3 +30,6 @@ require 'superredcloth'
 require 'html_4_tags'
 require 'google_chart' if CONFIG["enable_reporting"]
 require 'core_extensions'
+require 'json'
+require 'json/add/core'
+require 'json/add/rails'

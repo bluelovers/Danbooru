@@ -69,7 +69,7 @@ public
     api_attributes.to_xml(options.merge(:root => "tag_alias"))
   end
 
-  def to_json(options = {})
-    api_attributes.to_json(options)
+  def to_json(*args)
+    return api_attributes.to_json(*args)
   end
 end

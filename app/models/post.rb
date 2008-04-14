@@ -174,8 +174,8 @@ class Post < ActiveRecord::Base
     }
   end
 
-  def to_json(options = {})
-    return api_attributes.to_json(options)
+  def to_json(*args)
+    return api_attributes.to_json(*args)
   end
 
   def to_xml(options = {})

@@ -51,7 +51,7 @@ class Comment < ActiveRecord::Base
     return api_attributes.to_xml(options.merge(:root => "comment"))
   end
 
-  def to_json(options = {})
-    return api_attributes.to_json(options)
+  def to_json(*args)
+    return api_attributes.to_json(*args)
   end
 end

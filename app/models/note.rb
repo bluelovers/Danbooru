@@ -65,7 +65,7 @@ class Note < ActiveRecord::Base
     api_parameters.to_xml(options.merge(:root => "note"))
   end
 
-  def to_json(options = {})
-    api_parameters.to_json(options)
+  def to_json(*args)
+    return api_attributes.to_json(*args)
   end
 end

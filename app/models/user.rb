@@ -379,8 +379,8 @@ class User < ActiveRecord::Base
     end
   end
 
-  def to_json(options = {})
-    {:name => self.name, :blacklisted_tags => self.blacklisted_tags_array, :id => self.id}.to_json(options)
+  def to_json(*args)
+    {:name => self.name, :blacklisted_tags => self.blacklisted_tags_array, :id => self.id}.to_json(*args)
   end
   
   def self.generate_sql(params)

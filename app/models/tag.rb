@@ -67,7 +67,7 @@ class Tag < ActiveRecord::Base
     {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_xml(options.merge(:root => "tag"))
   end
 
-  def to_json(options = {})
-    {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_json(options)
+  def to_json(*args)
+    {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_json(*args)
   end
 end

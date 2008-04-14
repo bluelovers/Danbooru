@@ -141,7 +141,7 @@ class WikiPage < ActiveRecord::Base
     {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_xml(options.merge(:root => "wiki_page"))
   end
 
-  def to_json(options = {})
-    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_json(options)
+  def to_json(*args)
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_json(*args)
   end
 end
