@@ -37,5 +37,23 @@ Comment = {
         notice("Error quoting comment")
       }
     })
+  },
+  destroy: function(id) {
+    if (!confirm("Are you sure you want to delete this comment?") ) {
+      return;
+    }
+
+    new Ajax.Request("/comment/destroy.json", {
+      parameters: {
+        "id": id
+      },
+      onSuccess: function(resp) {
+        document.location.reload()
+      },
+      onFailure: function(resp) {
+        var resp = resp.responseJSON
+        notice("Error deleting comment: " + resp.reason)
+      }
+    })
   }
 }
