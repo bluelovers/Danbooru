@@ -39,3 +39,12 @@ Object.extend(Element, {
   }
 });
 
+Object.extend(Element.Methods, {
+  showBase: Element.show,
+  show: function(element, visible) {
+    if (visible || visible == null)
+      return $(element).showBase();
+    else
+      return $(element).hide();
+  }
+});

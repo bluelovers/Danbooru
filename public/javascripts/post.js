@@ -108,7 +108,7 @@ Post = {
 
   blacklist_set: null,
 
-  is_blacklisted: function(post_id) {
+  is_blacklisted: function(post) {
     if (Post.blacklist_set == null) {
       var blacklists = Cookie.raw_get("blacklisted_tags").split(/\&/)
       Post.blacklist_set = []
@@ -120,7 +120,6 @@ Post = {
       })
     }
 
-    var post = this.posts.get(post_id)
     var ret = []
     Post.blacklist_set.each(function(b) {
       match_tags = post.tags.clone()
@@ -147,34 +146,51 @@ Post = {
 
     var count = 0
     this.posts.each(function(pair) {
-      var post = $("p" + pair.key)
-      if (!post) {
+      var thumb = $("p" + pair.key)
+      if (!thumb) {
         return
       }
 
-      pair.value.blacklisted = Post.is_blacklisted(pair.key)
+      var post = Post.posts.get(pair.key)
+      pair.value.blacklisted = Post.is_blacklisted(post)
 
-      if (pair.value.blacklisted) {
-        post.hide()
+      if (pair.value.blacklisted)
         ++count
+
+      if (Post.blacklist_options.replace) {
+        if (pair.value.blacklisted) {
+          thumb.src = "/preview/blacklisted.png"
+        } else {
+          thumb.src = post.preview_url
+        }
       } else {
-        post.show()
+        thumb.show(!pair.value.blacklisted)
       }
     })
 
-    Post.countText.textContent = count
+    if (Post.countText)
+      Post.countText.textContent = count
     return count
   },
 
-  init_blacklisted: function() {
-    Post.countText = $("blacklist-count").appendChild(document.createTextNode(""));
+  init_blacklisted: function(options) {
+    Post.blacklist_options = {
+      // If true, blacklisted posts are replaced with a static thumb.
+      replace:         false
+    }
+    Object.extend(this.blacklist_options, options || { });
 
+    var blacklist_count = $("blacklist-count")
+    if (blacklist_count)
+      Post.countText = blacklist_count.appendChild(document.createTextNode(""));
+
+    var blacklisted_any_posts = Post.hide_blacklisted()
     var sidebar = $("blacklisted-sidebar")
-    if (!Post.hide_blacklisted()) {
-      sidebar.hide()
+    if (sidebar)
+      sidebar.show(blacklisted_any_posts)
+    if (!blacklisted_any_posts || !sidebar) {
       return
     }
-    sidebar.show()
 
     /* Keep focus from going to the item on click. */
     sidebar.observe("mousedown", function(event) { event.stop() })

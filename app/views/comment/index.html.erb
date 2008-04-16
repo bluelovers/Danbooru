@@ -4,9 +4,9 @@
   <% end %>
 
   <% @posts.each do |post| %>
-    <div class="post" id="p<%= post.id %>">
+    <div class="post">
       <div class="col1">
-        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview"), :controller => "post", :action => "show", :id => post.id) %>
+        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview", :id => "p%i" % post.id), :controller => "post", :action => "show", :id => post.id) %>
       </div>
       <div class="col2" id="comments-for-p<%= post.id %>">
         <div class="header">
@@ -39,9 +39,9 @@
   
   <script type="text/javascript">
     <% @posts.each do |post| %>
-      Post.register(<%= post.id %>, '<%= escape_javascript(post.cached_tags) %>', '<%= post.rating %>')
+      Post.register(<%= post.to_json %>)
     <% end %>
-    Post.hide_blacklisted()
+    Post.init_blacklisted({replace: true})
   </script>
 
   <%= render :partial => "footer" %>
