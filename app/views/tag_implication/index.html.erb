@@ -1,8 +1,10 @@
-<% form_tag({:action => "index"}, :method => :get) do %>
-  <%= text_field_tag "query", params[:query] %> 
-  <%= submit_tag "Search Implications" %>  
-  <%= submit_tag "Search Aliases" %>
-<% end %>
+<div style="margin-bottom: 1em;">
+  <% form_tag({:action => "index"}, :method => :get) do %>
+    <%= text_field_tag "query", params[:query] %> 
+    <%= submit_tag "Search Implications" %>  
+    <%= submit_tag "Search Aliases" %>
+  <% end %>  
+</div>
 
 <% form_tag(:action => "update") do %>
   <table class="highlightable" width="100%">
@@ -22,6 +24,7 @@
             <%= submit_tag "Approve" %> 
             <%= submit_tag "Delete" %>
           <% end %>
+          <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_implication_predicate').focus()" %>
         </td>
       </tr>      
     </tfoot>
@@ -37,6 +40,31 @@
     </tbody>
   </table>
 <% end %>
+
+<div id="add-box" style="display: none;">
+  <% form_tag(:action => "create") do %>
+    <h4>Add Implication</h4>
+    <p>You can suggest a new implication, but they must be approved by an administrator before they are activated.</p>  
+    <p>The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.</p>
+    <table>
+      <tr>
+        <th><label for="tag_implication_predicate">Predicate</label></th>
+        <td><%= text_field "tag_implication", "predicate", :size => 40 %></td>
+      </tr>
+      <tr>
+        <th><label for="tag_implication_consequent">Consequent</label></th>
+        <td><%= text_field "tag_implication", "consequent", :size => 40 %></td>
+      </tr>
+      <tr>
+        <th><label for="tag_implication_reason">Reason</label></th>
+        <td><%= text_area "tag_implication", "reason", :size => "40x2" %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "Submit" %></td>
+      </tr>
+    </table>
+  <% end %>
+</div>
 
 <div id="paginator">
   <%= will_paginate(@implications) %>

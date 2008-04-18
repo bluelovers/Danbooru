@@ -1,4 +1,4 @@
-<div>
+<div style="margin-bottom: 1em;">
   <% form_tag({:action => "index"}, :method => :get) do %>
     <%= text_field_tag "query", params[:query] %> 
     <%= submit_tag "Search Aliases" %>
@@ -20,13 +20,14 @@
       <tfoot>
         <tr>
           <td colspan="3">
-            <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
             <% if @current_user.is_admin_or_higher? %>
+              <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
               <%= submit_tag "Approve" %> 
               <%= submit_tag "Delete" %>
             <% end %>
+            <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_alias_name').focus()" %>
           </td>
-        </tr>        
+        </tr>
       </tfoot>
       <tbody>
         <% @aliases.each do |a| %>
@@ -42,14 +43,32 @@
   <% end %>
 </div>
 
+<div id="add-box" style="display: none;">
+  <% form_tag(:action => "create") do %>
+    <h4>Add Alias</h4>
+    <p>You can suggest a new alias, but it must be approved by an administrator before it is activated.</p>  
+    <table>
+      <tr>
+        <th><label for="tag_alias_name">Name</label></th>
+        <td><%= text_field "tag_alias", "name", :size => 40 %></td>
+      </tr>
+      <tr>
+        <th><label for="tag_alias_alias">Alias to</label></th>
+        <td><%= text_field "tag_alias", "alias", :size => 40 %></td>
+      </tr>
+      <tr>
+        <th><label for="tag_alias_reason">Reason</label></th>
+        <td><%= text_area "tag_alias", "reason", :size => "40x2" %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "Submit" %></td>
+      </tr>
+    </table>
+  <% end %>
+</div>
+
 <div id="paginator">
   <%= will_paginate(@aliases) %>
 </div>
-
-<% content_for("footer") do %>
-  <p>
-    <%= link_to "Add Alias", :action => "add" %>
-  </p>
-<% end %>
 
 <%= render :partial => "/tag/footer" %>
