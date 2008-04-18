@@ -44,7 +44,7 @@
 <div id="add-box" style="display: none;">
   <% form_tag(:action => "create") do %>
     <h4>Add Implication</h4>
-    <p>You can suggest a new implication, but they must be approved by an administrator before they are activated.</p>  
+    <p>You can suggest a new implication, but it must be approved by an administrator before it is activated.</p>  
     <p>The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.</p>
     <table>
       <tr>
@@ -69,9 +69,5 @@
 <div id="paginator">
   <%= will_paginate(@implications) %>
 </div>
-
-<% content_for("footer") do %>
-  <p><%= link_to "Add Implication", :action => "add" %>
-<% end %>
 
 <%= render :partial => "/tag/footer" %>
