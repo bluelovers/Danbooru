@@ -48,3 +48,4 @@ Object.extend(Element.Methods, {
       return $(element).hide();
   }
 });
+Element.addMethods()
