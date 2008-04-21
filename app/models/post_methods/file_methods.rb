@@ -150,7 +150,9 @@ module PostMethods
       if ext.blank?
         return "txt"
       else
-        return ext[1..-1].downcase
+        ext = ext[1..-1].downcase
+        ext = "jpg" if ext == "jpeg"
+        return ext
       end
     end
 

@@ -35,8 +35,13 @@ class Post < ActiveRecord::Base
   end
   
   def validate_content_type
-    unless %w(jpg jpeg png gif swf).include?(self.file_ext.downcase)
-      errors.add(:file, "is an invalid content type")
+    if self.file_ext.empty?
+      errors.add_to_base("No file received")
+      return false
+    end
+
+    unless %w(jpg png gif swf).include?(self.file_ext.downcase)
+      errors.add(:file, "is an invalid content type: " + self.file_ext.downcase)
       return false
     end
   end
