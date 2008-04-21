@@ -1,5 +1,6 @@
 class ArtistUrl < ActiveRecord::Base
   before_save :normalize
+  validates_presence_of :url
   
   def self.normalize(url)
     if url.nil?

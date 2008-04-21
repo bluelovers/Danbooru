@@ -1,20 +1,13 @@
 ENV["RAILS_ENV"] = "test"
-ENV["RAILS_TEST_DOWNLOAD"] ||= "true"
 
 require File.dirname(__FILE__) + "/../config/environment"
-require 'application'
-
-require 'test/unit'
-require 'active_record/fixtures'
-require 'action_controller/test_process'
-require 'action_web_service/test_invoke'
-require 'breakpoint'
+require 'test_help'
 
 # Password for all users is password1
 
-def create_fixtures(*table_names)
-	Fixtures.create_fixtures(File.dirname(__FILE__) + "/fixtures", table_names)
-end
+# def create_fixtures(*table_names)
+#   Fixtures.create_fixtures(File.dirname(__FILE__) + "/fixtures", table_names)
+# end
 
 def create_cookie(key, value, domain = "")
 	CGI::Cookie.new("name" => key, "value" => value, "expires" => 1.year.from_now, "path" => "/", "domain" => domain)
@@ -36,11 +29,10 @@ def upload_jpeg(path)
 	upload_file(path, "image/jpeg", File.basename(path))
 end
 
-Test::Unit::TestCase.fixture_path = File.dirname(__FILE__) + "/fixtures/"
-Test::Unit::TestCase.use_transactional_fixtures = true
-Test::Unit::TestCase.use_instantiated_fixtures = false
-
 class Test::Unit::TestCase
+  self.use_transactional_fixtures = true
+  self.use_instantiated_fixtures = false
+  
 	# change this to a url to test auto-downloading
 	DOWNLOAD_IMAGE = "http://www.google.com/intl/en_ALL/images/logo.gif"
 	HTML_ATTACK = %{<img onclick="window.jref='http://goatse.cx'" /></html><a href="#">test</a><embed>bad</embed><script>bad</script>}
