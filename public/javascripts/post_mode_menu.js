@@ -84,6 +84,7 @@ PostModeMenu = {
       $("post[old_tags]").value = post.tags.join(" ")
       $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
       $("quick-edit").show()
+      $("post_tags").focus()
     } else if (s.value == 'vote-down') {
       Post.vote(-1, post_id)
     } else if (s.value == 'vote-up') {

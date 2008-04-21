@@ -86,6 +86,7 @@
 
 <script type="text/javascript">
   var submit_quick_edit = function(e) {
+    $("quick-edit").hide()
     new Ajax.Request("/post/update.json", {
       parameters: $("quick-edit").down("form").serialize(),
       onSuccess: function(resp) {
@@ -94,7 +95,7 @@
         $("quick-edit").hide()
         Post.register(resp.post)
       },
-      onError: function(resp) {
+      onFailure: function(resp) {
         var resp = resp.responseJSON
         notice("Error: " + resp.reason)
       }
@@ -103,7 +104,12 @@
   }
   
   $("quick-edit").down("form").observe("submit", submit_quick_edit)
-  $("post_tags").observe("keydown", submit_quick_edit)
+  $("post_tags").observe("keydown", function(e) {
+    if(e.keyCode != Event.KEY_RETURN)
+      return;
+    submit_quick_edit(e);
+    e.stop();
+  })
   PostModeMenu.init()
   if (Cookie.get("login") != "") {
     $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"
