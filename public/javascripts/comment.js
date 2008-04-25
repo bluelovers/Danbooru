@@ -30,7 +30,9 @@ Comment = {
         var stripped_body = resp.body.replace(/\[quote\](?:.|\n|\r)+?\[\/quote\](?:\r\n|\r|\n)*/gm, "")
         var body = '[quote]' + resp.creator + ' said:\n' + stripped_body + '\n[/quote]\n\n'
         $('reply-' + resp.post_id).show()
-        $('respond-link-' + resp.post_id).hide()
+				if ($('respond-link-' + resp.pots_id)) {
+        	$('respond-link-' + resp.post_id).hide()
+				}
         $('reply-text-' + resp.post_id).value += body
       },
       onFailure: function(req) {
