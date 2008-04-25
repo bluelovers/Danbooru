@@ -81,6 +81,10 @@
       <%= link_to "Moderate", :controller => "post", :action => "moderate" %> |
       <%= link_to "Help", :controller => "help", :action => "posts" %>
     </div>
+
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
+      <%= CONFIG["ad_code_index_bottom"] %>
+    <% end %>
   </div>
 </div>
 

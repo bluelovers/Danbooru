@@ -19,6 +19,9 @@
       <%= render :partial => "post/show_partials/image_footer" %>
       <%= render :partial => "post/show_partials/edit" %>
       <%= render :partial => "post/show_partials/comments" %>
+      <% if CONFIG["can_see_ads"].call(@current_user) %>
+        <%= CONFIG["ad_code_show_bottom"] %>
+      <% end %>
     </div>
 
     <% content_for("post_cookie_javascripts") do %>
