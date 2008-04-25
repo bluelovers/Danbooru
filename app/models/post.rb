@@ -8,8 +8,8 @@ class Post < ActiveRecord::Base
   has_many :tag_history, :class_name => "PostTagHistory", :table_name => "post_tag_histories", :order => "id desc"
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
-  before_save :init_change_seq
-  before_save :update_change_seq
+  before_create :touch_change_seq!
+  after_save :update_change_seq
   attr_accessor :increment_change_seq
   
   extend PostMethods::SqlMethods
@@ -51,17 +51,10 @@ class Post < ActiveRecord::Base
     return true
   end
 
-  def init_change_seq
-    if change_seq.nil?
-      self.change_seq = connection.select_value("SELECT nextval('post_change_seq')") 
-      self.increment_change_seq = false
-    end
-    return true
-  end
-
   def update_change_seq
     return if self.increment_change_seq.nil?
-    self.change_seq = connection.select_value("SELECT nextval('post_change_seq')") 
+    connection.execute("UPDATE posts SET change_seq = nextval('post_change_seq') WHERE id = #{self.id}")
+    self.change_seq = connection.select_value("SELECT change_seq FROM posts WHERE id = #{self.id}")
   end
 
   def flag!(reason, creator_id)
