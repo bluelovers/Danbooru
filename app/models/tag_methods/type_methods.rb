@@ -26,7 +26,7 @@ module TagMethods
       # === Parameters
       # * :tag_name<String>:: The tag name to search for
       def type_name(tag_name)
-        tag_name.gsub!(/\s/, "_")
+        tag_name = tag_name.gsub(/\s/, "_")
         
         if CONFIG["enable_caching"]
           return Cache.get("tag_type:#{tag_name}", 1.day) do
