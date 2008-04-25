@@ -22,18 +22,21 @@ class Pool < ActiveRecord::Base
     self.name.gsub(/_/, " ")
   end
   
-  def add_post(post_id, seq = nil)
+  def add_post(post_id, options = {})
     transaction do
       if PoolPost.find(:first, :conditions => ["pool_id = ? and post_id = ?", self.id, post_id])
         raise PostAlreadyExistsError
       end
-
-      seq ||= next_id
+      seq = options.fetch(:sequence, next_id)
       Cache.expire(:post_id => post_id)
       update_attributes(:updated_at => Time.now)
       PoolPost.create(:pool_id => self.id, :post_id => post_id, :sequence => seq.to_i)
       self.increment(:post_count)
       self.save!
+
+      if !options.fetch(:skip_update_pool_links, false)
+        self.update_pool_links
+      end
     end
   end
   
@@ -46,6 +49,21 @@ class Pool < ActiveRecord::Base
       PoolPost.destroy_all(["pool_id = ? and post_id = ?", self.id, post_id])
       self.decrement(:post_count)
       self.save!
+
+      self.update_pool_links
+    end
+  end
+
+  def update_pool_links
+    transaction do
+      pp = self.pool_posts
+      pp.each_index do |i|
+        pp[i].next_post_id = nil
+        pp[i].prev_post_id = nil
+        pp[i].next_post_id = pp[i + 1].post_id unless i == pp.size - 1
+        pp[i].prev_post_id = pp[i - 1].post_id unless i == 0
+        pp[i].save
+      end
     end
   end
 

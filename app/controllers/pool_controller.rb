@@ -94,7 +94,7 @@ class PoolController < ApplicationController
       sequence = params[:pool][:sequence]
       sequence = nil if sequence.empty?
       begin
-        @pool.add_post(params[:post_id], sequence)
+        @pool.add_post(params[:post_id], :sequence => sequence)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Pool::PostAlreadyExistsError
         respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => params[:post_id]}, :status => 423)
@@ -141,14 +141,7 @@ class PoolController < ApplicationController
           end
           
           @pool.reload
-          pp = @pool.pool_posts
-          pp.each_index do |i|
-            pp[i].next_post_id = nil
-            pp[i].prev_post_id = nil
-            pp[i].next_post_id = pp[i + 1].post_id unless i == pp.size - 1
-            pp[i].prev_post_id = pp[i - 1].post_id unless i == 0
-            pp[i].save
-          end
+          @pool.update_pool_links
         end
         
         flash[:notice] = "Ordering updated"
@@ -177,11 +170,12 @@ class PoolController < ApplicationController
         PoolPost.transaction do
           ordered_posts.each do |post_id|
             begin
-              @pool.add_post(post_id)
+              @pool.add_post(post_id, :skip_update_pool_links => true)
             rescue Pool::PostAlreadyExistsError
               # ignore
             end
           end
+          @pool.update_pool_links
         end
       end
       
