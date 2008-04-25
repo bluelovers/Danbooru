@@ -69,36 +69,36 @@
   </table>
 </div>
 
-<!--
 <div style="float: left; width: 60em;">
   <table width="100%">
+<!--
     <tr>
       <th>Similar Users</th>
       <td><%#= @user.similar_users.map {|x| link_to(h(User.find(x["user_id"]).pretty_name), :action => "show", :id => x["user_id"])}.join(", ") %></td>
     </tr>
+-->
     <tr>
       <th>Favorite Tags</th>
-      <td><%#= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
+      <td><%= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
     </tr>
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General"}.each do |name, value| %>
       <tr>
         <th>Favorite <%= name.pluralize %></th>
-        <td><%#= @user.favorite_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
+        <td><%= @user.favorite_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
       </tr>
     <% end %>
     <tr>
       <th>Uploaded Tags</th>
-      <td><%#= @user.uploaded_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+      <td><%= @user.uploaded_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
     </tr>
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General"}.each do |name, value| %>
       <tr>
         <th>Uploaded <%= name.pluralize %></th>
-        <td><%#= @user.uploaded_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+        <td><%= @user.uploaded_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
       </tr>
     <% end %>
   </table>
 </div>
--->
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "fav:#{@user.name} order:fav" %></h4>
