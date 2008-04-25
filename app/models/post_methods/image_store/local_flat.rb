@@ -45,16 +45,16 @@ module PostMethods
 
       def move_file
         FileUtils.mv(tempfile_path, file_path)
-        FileUtils.chmod(0775, file_path)
+        FileUtils.chmod(0664, file_path)
 
         if image?
           FileUtils.mv(tempfile_preview_path, preview_path)
-          FileUtils.chmod(0775, preview_path)
+          FileUtils.chmod(0664, preview_path)
         end
 
         if File.exists?(tempfile_sample_path)
           FileUtils.mv(tempfile_sample_path, sample_path)
-          FileUtils.chmod(0775, sample_path)
+          FileUtils.chmod(0664, sample_path)
         end
 
         delete_tempfile

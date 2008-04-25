@@ -50,18 +50,18 @@ module PostMethods
       def move_file
         FileUtils.mkdir_p(File.dirname(file_path), :mode => 0775)
         FileUtils.mv(tempfile_path, file_path)
-        FileUtils.chmod(0775, file_path)
+        FileUtils.chmod(0664, file_path)
 
         if image?
           FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
           FileUtils.mv(tempfile_preview_path, preview_path)
-          FileUtils.chmod(0775, preview_path)
+          FileUtils.chmod(0664, preview_path)
         end
 
         if File.exists?(tempfile_sample_path)
           FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
           FileUtils.mv(tempfile_sample_path, sample_path)
-          FileUtils.chmod(0775, sample_path)
+          FileUtils.chmod(0664, sample_path)
         end
 
         delete_tempfile
