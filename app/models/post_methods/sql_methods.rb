@@ -200,10 +200,10 @@ module PostMethods
           sql << " ORDER BY width*height"
 
         when "portrait"
-          sql << " ORDER BY 1.0*width/height"
+          sql << " ORDER BY 1.0*width/GREATEST(1, height)"
 
         when "landscape"
-          sql << " ORDER BY 1.0*width/height DESC"
+          sql << " ORDER BY 1.0*width/GREATEST(1, height) DESC"
 
         when "change", "change_asc"
           sql << " ORDER BY change_seq"
