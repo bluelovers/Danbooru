@@ -17,18 +17,20 @@ end
 
 # Use the ruby-prof extension if available.  Fall back to stdlib profiler.
 begin
-  require 'prof'
-  $stderr.puts 'Using the ruby-prof extension.'
-  Prof.clock_mode = Prof::GETTIMEOFDAY
-  Prof.start
-  profile_me
-  results = Prof.stop
-  require 'rubyprof_ext'
-  Prof.print_profile(results, $stderr)
+  require 'ruby-prof'
 rescue LoadError
   $stderr.puts 'Using the standard Ruby profiler.'
   Profiler__.start_profile
   profile_me
   Profiler__.stop_profile
   Profiler__.print_profile($stderr)
+  return 0
 end
+
+$stderr.puts 'Using the ruby-prof extension.'
+RubyProf::measure_mode = RubyProf::WALL_TIME
+RubyProf.start
+profile_me
+results = RubyProf.stop
+printer = RubyProf::FlatPrinter.new(results)
+printer.print(STDERR)
