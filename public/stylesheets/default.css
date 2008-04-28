@@ -815,3 +815,20 @@ div#wiki-diff del {
 div#wiki-diff ins {
   background-color: #8f8;
 }
+
+.score:focus {
+	outline: none;
+}
+.score > span {
+	display: none;
+}
+.score > .score-visible {
+	display: inline;
+}
+.score > .score-on:after { content: "★"; }
+.score > .score-off:after { content: "☆"; }
+
+.score--1 > * { color: #F00; }
+.score-0  { color: #AAA; }
+.score-1  > span { color: #0F0; }
+

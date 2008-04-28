@@ -50,15 +50,55 @@ Post = {
     })
   },
 
-  vote: function(score, id) {
-    notice('Voting for post #' + id + '...');
+  init_score: function(post_id, score) {
+    var post = Post.posts.get(post_id)
+    if(!post)
+      return
 
-    new Ajax.Request("/post/vote.json", {
-      parameters: {
-        "id": id,
-        "score": score
-      },
+    post.current_score = score
+    if ("" + post.current_score == "")
+      post.current_score = null
+    Post.update_vote(post_id)
+  },
+
+  set_vote_stars: function(id_prefix, score) {
+    for (var this_score=-5; this_score <= 5; ++this_score) {
+      var text = $(id_prefix + "-" + this_score)
+      if (!text)
+        continue
+      var on = text.down(".score-on")
+      var off = text.down(".score-off")
+      if (score != null && score >= this_score)
+      {
+        on.addClassName("score-visible")
+        off.removeClassName("score-visible")
+      }
+      else
+      {
+        on.removeClassName("score-visible")
+        off.addClassName("score-visible")
+      }
+    }
+  },
+
+  update_vote: function(post_id) {
+    var post = Post.posts.get(post_id)
+    Post.set_vote_stars("score-" + post_id, post.current_score)
+  },
+
+  vote: function(score, id, options) {
+    notice('Voting for post #' + id + '...');
+    var post = Post.posts.get(id)
+    old_score = post.current_score
+    post.current_score = score
+    Post.update_vote(id)
+
+    options["id"] = id
+    options["score"] = score
     
+    new Ajax.Request("/post/vote.json", {
+      parameters: options,
+
       onComplete: function(resp) {
         var resp = resp.responseJSON
 
@@ -67,6 +107,8 @@ Post = {
           $("post-score-" + resp.post_id).update(resp.score)
         } else {
           notice("Error: " + resp.reason)
+          post.current_score = old_score
+          Post.update_vote(id)
         }
       }
     })

@@ -19,8 +19,7 @@
             <option value="edit">Edit posts</option>
             <option value="add-fav">Add to favorites</option>
             <option value="remove-fav">Remove from favorites</option>
-            <option value="vote-up">Vote up</option>
-            <option value="vote-down">Vote down</option>
+            <option value="vote">Vote</option>
             <option value="rating-s">Rate safe</option>
             <option value="rating-q">Rate questionable</option>
             <option value="rating-e">Rate explicit</option>
@@ -35,6 +34,14 @@
             <option value="edit-tag-script">Edit tag script</option>
             <option value="apply-tag-script">Apply tag script</option>
           </select>          
+        </div>
+        <div id="vote-score" style="margin: 1em 0;">
+          <% (-1..1).each do |i| %>
+            <a class="score score-<%= i %>" href="#" id="score-<%= i %>" onclick="PostModeMenu.set_vote(<%= i %>); return false;">
+              <span class="score-on score-voted"></span>
+              <span class="score-off"></span>
+            </a>
+          <% end %>
         </div>
       </form>
     </div>

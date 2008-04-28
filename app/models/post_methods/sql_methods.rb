@@ -80,6 +80,14 @@ module PostMethods
         cond_params << q[:fav]
       end
 
+      if q.has_key?(:vote)
+        joins << "JOIN post_votes v ON p.id = v.post_id"
+        conds << "v.user_id = ?"
+        cond_params << q[:vote][1]
+
+        generate_sql_range_helper(q[:vote][0], "v.score", conds, cond_params)
+      end
+
       if q[:user].is_a?(String)
         joins << "JOIN users u ON p.user_id = u.id"
         conds << "lower(u.name) = lower(?)"
@@ -202,6 +210,11 @@ module PostMethods
 
         when "change_desc"
           sql << " ORDER BY change_seq DESC"
+
+        when "vote"
+          if q.has_key?(:vote)
+            sql << " ORDER BY v.updated_at DESC"
+          end
 
         when "fav"
           if q[:fav].is_a?(String)

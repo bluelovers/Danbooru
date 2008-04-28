@@ -210,6 +210,15 @@ class PostController < ApplicationController
       
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
+      if !@current_user.is_anonymous? && @post
+        # Cookies are the wrong place to put this, but we need to not interfere with cache.
+        # HTTP headers would be ideal, but for some reason JavaScript can't access them.
+        vote = PostVotes.find_by_ids(@current_user.id, @post.id)
+        if vote
+          cookies[:post_vote] = { :value => vote.score.to_s, :path => request.request_uri, :expires => 10.minutes.from_now }
+        end
+      end
+
       set_title @post.cached_tags.tr("_", " ")
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
@@ -282,12 +291,18 @@ class PostController < ApplicationController
     p = Post.find(params[:id])
     score = params[:score].to_i
     
-    if !@current_user.is_mod_or_higher? && score != 1 && score != -1
+    if !@current_user.is_mod_or_higher? && score < -1 || score > 1
       respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
       return
     end
 
-    if p.vote!(score, request.remote_ip)
+    options = {}
+    if @current_user.is_mod_or_higher? && params.fetch(:anonymous, false)
+      options[:anonymous] = true
+    end
+
+    if p.vote!(score, @current_user, request.remote_ip, options)
+      p.save!
       respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
     else
       respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)

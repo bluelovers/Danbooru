@@ -28,6 +28,16 @@
       <td><%= link_to Favorite.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "fav:#{@user.name} order:fav" %></td>
     </tr>
     <tr>
+      <th>Votes</th>
+      <td>
+        <% (-1..1).each do |i| %>
+          <a class="score score-<%= i %>" href="<%= url_for :controller => "post", :action => "index", :tags => "vote:#{i}:#{@user.name} order:vote" %>">
+            <%= PostVotes.count(:all, :conditions => "user_id = #{@user.id} AND score = #{i}") %>
+            <span class="score-on score-voted"></span>
+          </a>
+        <% end %>
+    </tr>
+    <tr>
       <th>Comments</th>
       <td><%= Comment.count(:all, :conditions => "user_id = #{@user.id}") %></td>
     </tr>

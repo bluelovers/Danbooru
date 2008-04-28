@@ -8,8 +8,22 @@ PostModeMenu = {
     } else {
       $("mode").value = Cookie.get("mode")
     }
+
+    this.vote_score = Cookie.get("vote")
+    if (this.vote_score == "") {
+      this.vote_score = 1
+      Cookie.put("vote", this.vote_score)
+    } else {
+      this.vote_score == +this.vote_score
+    }
   
     this.change()  
+  },
+
+  set_vote: function(score) {
+    this.vote_score = score
+    Cookie.put("vote", this.vote_score)
+    Post.set_vote_stars('score', this.vote_score);
   },
 
   change: function() {
@@ -18,6 +32,7 @@ PostModeMenu = {
 
     if (s.value != "edit") {
       $("quick-edit").hide()
+      $("vote-score").hide()
     }
 
     if (s == "view") {
@@ -34,10 +49,10 @@ PostModeMenu = {
       document.body.setStyle({backgroundColor: "#6F6"})
     } else if (s == "rating-e") {
       document.body.setStyle({backgroundColor: "#F66"})
-    } else if (s == "vote-down") {
+    } else if (s == "vote") {
+      Post.set_vote_stars('score', this.vote_score);
+      $("vote-score").show()
       document.body.setStyle({backgroundColor: "#FAA"})
-    } else if (s == "vote-up") {
-      document.body.setStyle({backgroundColor: "#AFA"})
     } else if (s == "lock-rating") {
       document.body.setStyle({backgroundColor: "#AA3"})
     } else if (s == "lock-note") {
@@ -85,10 +100,8 @@ PostModeMenu = {
       $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
       $("quick-edit").show()
       $("post_tags").focus()
-    } else if (s.value == 'vote-down') {
-      Post.vote(-1, post_id)
-    } else if (s.value == 'vote-up') {
-      Post.vote(1, post_id)
+    } else if (s.value == 'vote') {
+      Post.vote(this.vote_score, post_id, {})
     } else if (s.value == 'rating-q') {
       Post.update(post_id, {"post[rating]": "questionable"})
     } else if (s.value == 'rating-s') {
