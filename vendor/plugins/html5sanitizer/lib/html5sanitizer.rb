@@ -4,7 +4,11 @@ module HTML5Sanitizer
 	include HTML5
 	
 	def html5sanitize(html_fragment)
-		return HTMLParser.parse_fragment(html_fragment, {:tokenizer => HTMLSanitizer, :encoding => 'utf-8'}).to_s
+	  old_kcode=$KCODE
+	  $KCODE="NONE"
+		s = HTMLParser.parse_fragment(html_fragment, {:tokenizer => HTMLSanitizer, :encoding => 'utf-8'}).to_s
+		$KCODE=old_kcode
+		return s
 	end
 	
 	alias hs html5sanitize
