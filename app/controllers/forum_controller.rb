@@ -2,7 +2,7 @@ class ForumController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:create, :destroy, :update, :stick, :unstick, :lock, :unlock]
   before_filter :mod_only, :only => [:stick, :unstick, :lock, :unlock]
-  before_filter :member_only, :only => [:create, :destroy, :update, :edit, :add]
+  before_filter :member_only, :only => [:create, :destroy, :update, :edit, :add, :mark_all_read]
 
   def stick
     ForumPost.stick(params[:id], true)
