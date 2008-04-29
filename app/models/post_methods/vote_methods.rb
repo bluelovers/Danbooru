@@ -2,6 +2,7 @@ module PostMethods
   module VoteMethods
     def recalculate_score!()
       votes = connection.select_value("SELECT sum(GREATEST(#{CONFIG["vote_sum_min"]}, LEAST(#{CONFIG["vote_sum_max"]}, score))) FROM post_votes WHERE post_id = #{self.id}").to_i
+      votes += self.fav_count
       votes += self.anonymous_votes
       self.score = votes
     end
