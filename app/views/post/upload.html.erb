@@ -20,6 +20,7 @@
         <%= image_tag(params["url"], :title => "Preview", :id => "image") %>
         <p id="scale"></p>
         <script type="text/javascript">
+        document.observe("dom:loaded", function() {
           if ($("image").height > 400) {
             var width = $("image").width
             var height = $("image").height
@@ -27,7 +28,8 @@
             $("image").width = width * ratio
             $("image").height = height * ratio
             $("scale").innerHTML = "Scaled " + parseInt(100 * ratio) + "%"
-          }
+          }          
+        })
         </script>
       <% end %>
 
