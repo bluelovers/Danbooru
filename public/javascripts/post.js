@@ -56,8 +56,6 @@ Post = {
       return
 
     post.current_score = score
-    if ("" + post.current_score == "")
-      post.current_score = null
     Post.update_vote(post_id)
   },
 

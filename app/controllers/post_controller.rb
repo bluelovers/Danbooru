@@ -211,11 +211,9 @@ class PostController < ApplicationController
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       if !@current_user.is_anonymous? && @post
-        # Cookies are the wrong place to put this, but we need to not interfere with cache.
-        # HTTP headers would be ideal, but for some reason JavaScript can't access them.
         vote = PostVotes.find_by_ids(@current_user.id, @post.id)
         if vote
-          cookies[:post_vote] = { :value => vote.score.to_s, :path => request.request_uri, :expires => 10.minutes.from_now }
+          @vote = vote.score
         end
       end
 

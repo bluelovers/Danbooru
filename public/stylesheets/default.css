@@ -825,10 +825,8 @@ div#wiki-diff ins {
 .score > .score-visible {
 	display: inline;
 }
-.score > .score-on:after { content: "★"; }
-.score > .score-off:after { content: "☆"; }
 
 .score--1 > * { color: #F00; }
-.score-0  { color: #AAA; }
-.score-1  > span { color: #0F0; }
+.score-0  > * { color: #AAA; }
+.score-1 > * { color: #0F0; }
 
