@@ -117,6 +117,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def self.find_by_name_nocase(name)
+    return User.find(:first, :conditions => ["lower(name) = lower(?)", name])
+  end
+
   # For compatibility with AnonymousUser class
   def is_anonymous?
     false
