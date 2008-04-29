@@ -9,11 +9,11 @@ class TagImplicationController < ApplicationController
 
     if ti.save
       flash[:notice] = "Tag implication created"
-      redirect_to :action => "index"
     else
       flash[:notice] = "Error: " + ti.errors.full_messages.join(", ")
-      redirect_to :action => "add"
     end
+
+    redirect_to :action => "index"
   end
 
   def update

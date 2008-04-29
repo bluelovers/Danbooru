@@ -9,11 +9,11 @@ class TagAliasController < ApplicationController
     
     if ta.save
       flash[:notice] = "Tag alias created"
-      redirect_to :action => "index"
     else
       flash[:notice] = "Error: " + ta.errors.full_messages.join(", ")
-      redirect_to :action => "add"
     end
+
+    redirect_to :action => "index"
   end
 
   def index
