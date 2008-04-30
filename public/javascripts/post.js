@@ -143,69 +143,45 @@ Post = {
 
   register: function(post) {
     post.tags = post.tags.match(/\S+/g)
+    post.match_tags = post.tags.clone()
+    post.match_tags.push("rating:" + post.rating.charAt(0))
+    post.match_tags.push("status:" + post.status)
     this.posts.set(post.id, post)
   },
 
-  blacklist_set: null,
+  blacklists: [],
 
-  is_blacklisted: function(post) {
-    if (Post.blacklist_set == null) {
-      var blacklists = Cookie.raw_get("blacklisted_tags").split(/\&/)
-      Post.blacklist_set = []
-
-      blacklists.each(function(val) {
-        s = Cookie.unescape(val)
-        s = s.replace(/rating:questionable/, "rating:q").replace(/rating:explicit/, "rating:e").replace(/rating:safe/, "rating:s")
-        Post.blacklist_set.push({tags: s.match(/\S+/g) || [], disabled: false, hits: 0 })
-      })
-    }
-
-    var ret = []
-    Post.blacklist_set.each(function(b) {
-      match_tags = post.tags.clone()
-      match_tags.push("rating:" + post.rating.substr(0, 1))
-      match_tags.push("status:" + post.status)
-      if (b.tags.size() && match_tags.intersect(b.tags).size() == b.tags.size()) {
-        ++b.hits
-        if (!b.disabled) {
-          ret.splice(ret.size(), 0, b)
-        }
-      }
+  is_blacklisted: function(post_id) {	// you can't have side effects like ++b.hits in a method called "is_blacklisted", ffs
+    var post = this.posts.get(post_id)
+    var has_tag = post.match_tags.member.bind(post.match_tags)
+    return Post.blacklists.any(function(b) {
+      return (b.require.all(has_tag) && !b.exclude.any(has_tag))
     })
-    if (ret.size() == 0)
-      return null
-    return ret
   },
 
-  hide_blacklisted: function() {
-    if(Post.blacklist_set) {
-      Post.blacklist_set.each(function(b) {
-        b.hits = 0
-      })
-    }
+  apply_blacklists: function() {	
+    Post.blacklists.each(function(b) { b.hits = 0 })
 
     var count = 0
-    this.posts.each(function(pair) {
+    Post.posts.each(function(pair) {
       var thumb = $("p" + pair.key)
-      if (!thumb) {
-        return
-      }
-
-      var post = Post.posts.get(pair.key)
-      pair.value.blacklisted = Post.is_blacklisted(post)
-
-      if (pair.value.blacklisted)
-        ++count
-
-      if (Post.blacklist_options.replace) {
-        if (pair.value.blacklisted) {
-          thumb.src = "/preview/blacklisted.png"
-        } else {
-          thumb.src = post.preview_url
+      if (!thumb) return
+      var post = pair.value
+      var has_tag = post.match_tags.member.bind(post.match_tags)
+      post.blacklisted = []
+      Post.blacklists.each(function(b) {
+        if (b.require.all(has_tag) && !b.exclude.any(has_tag)) {
+          b.hits++
+          if (!b.disabled) post.blacklisted.push(b)
         }
-      } else {
-        thumb.show(!pair.value.blacklisted)
-      }
+      })
+      bld = post.blacklisted.length > 0
+
+      count += bld
+      if (Post.blacklist_options.replace)
+        thumb.src = bld ? "/preview/blacklisted.png" : post.preview_url
+      else
+        thumb.show(!bld)
     })
 
     if (Post.countText)
@@ -214,29 +190,36 @@ Post = {
   },
 
   init_blacklisted: function(options) {
-    Post.blacklist_options = {
-      // If true, blacklisted posts are replaced with a static thumb.
-      replace:         false
-    }
-    Object.extend(this.blacklist_options, options || { });
-
+    Post.blacklist_options = Object.extend({replace:false}, options);  
+    var bl_entries = Cookie.raw_get("blacklisted_tags").split(/\&/)
+    bl_entries.each(function(val) {
+        var s = Cookie.unescape(val).replace(/(rating:[qes])\w+/, "$1")
+        var tags = s.match(/\S+/g)
+        if (!tags) return
+        var b = { tags: tags, require: [], exclude: [], disabled: false, hits: 0 }
+        tags.each(function(tag) {
+          if (tag.charAt(0) == '-') b.exclude.push(tag.slice(1))
+          else b.require.push(tag)
+        })
+        Post.blacklists.push(b)
+    })
+  
     var blacklist_count = $("blacklist-count")
     if (blacklist_count)
       Post.countText = blacklist_count.appendChild(document.createTextNode(""));
 
-    var blacklisted_any_posts = Post.hide_blacklisted()
     var sidebar = $("blacklisted-sidebar")
-    if (sidebar)
-      sidebar.show(blacklisted_any_posts)
-    if (!blacklisted_any_posts || !sidebar) {
+    if (!Post.apply_blacklists()) {
+      if (sidebar) sidebar.hide()
       return
     }
+    sidebar.show()
 
     /* Keep focus from going to the item on click. */
     sidebar.observe("mousedown", function(event) { event.stop() })
 
     var list = $("blacklisted-list")
-    Post.blacklist_set.each(function(b) {
+    Post.blacklists.each(function(b) {
       if (!b.hits)
         return
 
@@ -249,7 +232,7 @@ Post = {
       a.observe("click", function(event) {
         b.disabled = !b.disabled
         a.className = b.disabled? "blacklisted-tags-disabled":"blacklisted-tags"
-        Post.hide_blacklisted()
+        Post.apply_blacklists()
         event.stop()
       });
 
