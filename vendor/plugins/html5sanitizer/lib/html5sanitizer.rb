@@ -4,8 +4,8 @@ module HTML5Sanitizer
 	include HTML5
 	
 	def html5sanitize(html_fragment)
-	  old_kcode=$KCODE
-	  $KCODE="NONE"
+		old_kcode=$KCODE
+		$KCODE="NONE"
 		s = HTMLParser.parse_fragment(html_fragment, {:tokenizer => HTMLSanitizer, :encoding => 'utf-8'}).to_s
 		$KCODE=old_kcode
 		return s
