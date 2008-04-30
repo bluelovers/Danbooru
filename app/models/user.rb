@@ -297,7 +297,6 @@ class User < ActiveRecord::Base
         connection.execute("UPDATE posts SET fav_count = fav_count + 1 WHERE id = #{post_id}")
         post = Post.find(post_id)
         post.recalculate_score!
-        post.save!
         Cache.expire(:post_id => post_id)
       end
     end

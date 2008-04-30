@@ -50,49 +50,50 @@ Post = {
     })
   },
 
-  init_score: function(post_id, score) {
+	vote_mouse_over: function(desc, post_id, vote) {
+		// TODO: cache the stars so we don't have to do a dom query every time
+		var stars = $("stars-" + post_id).select("a")
+		stars.each(function(star) {
+			var matches = star.id.match(/^star-(-?\d+)-(\d+)$/)
+			var star_vote = parseInt(matches[1])
+			var post_id = parseInt(matches[2])
+			if (vote >= star_vote) {
+				star.update("★")
+			} else {
+				star.update("☆")
+			}
+		})
+		$("vote-desc-" + post_id).update(desc)
+	},
+	
+	vote_mouse_out: function(desc, post_id, vote) {
+		// TODO: cache the stars so we don't have to do a dom query every time
+		var stars = $("stars-" + post_id).select("a")
+		stars.each(function(star) {
+			star.update(star.original_content)
+		})
+		
+		$("vote-desc-" + post_id).update()
+	},
+
+  init_vote: function(post_id) {
+		var stars = $("stars-" + post_id).select("a")
+		stars.each(function(star) {
+			star.original_content = star.innerHTML
+		})
+  },
+
+  vote: function(post_id, score) {
+		var vote_desc = $("vote-desc-" + post_id)
+		
+		vote_desc.update("Voting...")
+
     var post = Post.posts.get(post_id)
-    if(!post)
-      return
 
-    post.current_score = score
-    Post.update_vote(post_id)
-  },
-
-  set_vote_stars: function(id_prefix, score) {
-    for (var this_score=-5; this_score <= 5; ++this_score) {
-      var text = $(id_prefix + "-" + this_score)
-      if (!text)
-        continue
-      var on = text.down(".score-on")
-      var off = text.down(".score-off")
-      if (score != null && score >= this_score)
-      {
-        on.addClassName("score-visible")
-        off.removeClassName("score-visible")
-      }
-      else
-      {
-        on.removeClassName("score-visible")
-        off.addClassName("score-visible")
-      }
-    }
-  },
-
-  update_vote: function(post_id) {
-    var post = Post.posts.get(post_id)
-    Post.set_vote_stars("score-" + post_id, post.current_score)
-  },
-
-  vote: function(score, id, options) {
-    notice('Voting for post #' + id + '...');
-    var post = Post.posts.get(id)
-    old_score = post.current_score
-    post.current_score = score
-    Post.update_vote(id)
-
-    options["id"] = id
-    options["score"] = score
+		options = {
+			"id": post_id,
+			"score": score
+		}
     
     new Ajax.Request("/post/vote.json", {
       parameters: options,
@@ -101,12 +102,24 @@ Post = {
         var resp = resp.responseJSON
 
         if (resp.success) {
-          notice("Vote saved for post #" + id);
           $("post-score-" + resp.post_id).update(resp.score)
+					var stars = $$(".star-" + resp.post_id)
+					stars.each(function(star) {
+						var matches = star.id.match(/^star-(-?\d+)-(\d+)$/)
+						var star_vote = parseInt(matches[1])
+						var post_id = parseInt(matches[2])
+						if (resp.vote >= star_vote) {
+							star.update("★")
+							star.original_content = "★"
+						} else {
+							star.update("☆")
+							star.original_content = "☆"
+						}
+					})
+          vote_desc.update("Vote saved")
         } else {
-          notice("Error: " + resp.reason)
-          post.current_score = old_score
-          Post.update_vote(id)
+          vote_desc.update(resp.reason)
+          post.current_vote = old_vote
         }
       }
     })

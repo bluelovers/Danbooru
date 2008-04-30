@@ -5,6 +5,7 @@ module PostMethods
       votes += self.fav_count
       votes += self.anonymous_votes
       self.score = votes
+      save!
     end
 
     def vote!(score, user, ip_addr, options={})
@@ -33,7 +34,7 @@ module PostMethods
 
       self.last_voter_ip = ip_addr
       self.last_vote = score
-      self.recalculate_score!
+      recalculate_score!
 
       return true
     end

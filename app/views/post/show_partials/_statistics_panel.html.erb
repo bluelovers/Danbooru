@@ -17,20 +17,11 @@
 
     <li>
       Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
-
-      <% if @current_user.is_anonymous? %>
-        (vote <%= link_to_function "up", "Post.vote(1, #{@post.id}, {})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id}, {})" %>)
-      <% else %>
-        <% (-1..1).each do |i| %>
-          <a class="score score-<%= i %>" href="#" id="score-<%= @post.id %>-<%= i %>" onclick="Post.vote(<%= i %>, <%=@post.id%>, {}); return false;">
-            <span class="score-on score-voted">★</span><span class="score-off">☆</span>
-          </a>
-        <% end %>
-      <% end %>
+      <%= vote_widget(@post, @current_user) %>
     </li>
 
     <script type="text/javascript">
-      Post.init_score(<%= @post.id %>, <%= @vote or "null" %>)
+      Post.init_vote(<%= @post.id %>)
     </script>
     
     <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post.favorited_by) %></span></li>

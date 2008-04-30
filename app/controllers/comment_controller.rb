@@ -4,6 +4,7 @@ class CommentController < ApplicationController
   verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
   before_filter :member_only, :only => [:create, :destroy, :update]
   before_filter :mod_only, :only => [:moderate]
+  helper :post
 
   def update
     comment = Comment.find(params[:id])
@@ -61,14 +62,6 @@ class CommentController < ApplicationController
     else
       @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL AND status <> 'deleted'", :per_page => 10, :page => params[:page]
       @posts = @posts.select {|x| x.can_be_seen_by?(@current_user)}
-
-      @votes = {}
-      if !@current_user.is_anonymous?
-        @posts.each { |post|
-          vote = PostVotes.find_by_ids(@current_user.id, post.id)
-          @votes[post.id] = vote.score if vote
-        }
-      end
     end
   end
 

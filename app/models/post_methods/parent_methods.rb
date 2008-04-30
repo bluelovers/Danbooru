@@ -5,8 +5,17 @@ module PostMethods
         has_children = Post.exists?(["parent_id = ? AND status <> 'deleted'", post_id])
         execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", has_children, post_id)
       end
-      
+
       def set_parent(post_id, parent_id, old_parent_id = nil)
+        # TODO: Unnecessary calls are being made here. Example output:
+        # SQL (0.000512)   SELECT parent_id FROM posts WHERE id = 223116
+        # SQL (0.001174)   UPDATE posts SET parent_id = NULL WHERE id = 223116
+        # Post Load (0.001072)   SELECT posts.id FROM posts WHERE (parent_id = NULL AND status <> 'deleted') LIMIT 1
+        # SQL (0.000476)   UPDATE posts SET has_children = 'f' WHERE id = NULL
+        # CACHE (0.000000)   SELECT posts.id FROM posts WHERE (parent_id = NULL AND status <> 'deleted') LIMIT 1
+        # SQL (0.000457)   UPDATE posts SET has_children = 'f' WHERE id = NULL
+        # SQL (0.000170)   COMMIT
+        
         if old_parent_id.nil?
           old_parent_id = select_value_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
         end

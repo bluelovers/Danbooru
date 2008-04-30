@@ -210,13 +210,6 @@ class PostController < ApplicationController
       
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id}", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
-      if !@current_user.is_anonymous? && @post
-        vote = PostVotes.find_by_ids(@current_user.id, @post.id)
-        if vote
-          @vote = vote.score
-        end
-      end
-
       set_title @post.cached_tags.tr("_", " ")
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
@@ -300,8 +293,7 @@ class PostController < ApplicationController
     end
 
     if p.vote!(score, @current_user, request.remote_ip, options)
-      p.save!
-      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
+      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:vote => score, :score => p.score, :post_id => p.id})
     else
       respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
     end

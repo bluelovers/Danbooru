@@ -1,5 +1,7 @@
 PostModeMenu = {
   init: function() {
+    try {	/* This part doesn't work on IE7; for now, let's allow execution to continue so at least some initialization is run */
+
     this.original_background_color = document.body.getStyle("background-color")
     
     if (Cookie.get("mode") == "") {
@@ -9,6 +11,8 @@ PostModeMenu = {
       $("mode").value = Cookie.get("mode")
     }
 
+    } catch (e) {}
+    
     this.vote_score = Cookie.get("vote")
     if (this.vote_score == "") {
       this.vote_score = 1
@@ -23,7 +27,7 @@ PostModeMenu = {
   set_vote: function(score) {
     this.vote_score = score
     Cookie.put("vote", this.vote_score)
-    Post.set_vote_stars('score', this.vote_score);
+    Post.update_vote_widget('vote-menu', this.vote_score);
   },
 
   change: function() {
@@ -32,7 +36,6 @@ PostModeMenu = {
 
     if (s.value != "edit") {
       $("quick-edit").hide()
-      $("vote-score").hide()
     }
 
     if (s == "view") {
@@ -50,7 +53,7 @@ PostModeMenu = {
     } else if (s == "rating-e") {
       document.body.setStyle({backgroundColor: "#F66"})
     } else if (s == "vote") {
-      Post.set_vote_stars('score', this.vote_score);
+      Post.update_vote_widget('vote-menu', this.vote_score);
       $("vote-score").show()
       document.body.setStyle({backgroundColor: "#FAA"})
     } else if (s == "lock-rating") {
