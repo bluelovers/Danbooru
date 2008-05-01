@@ -53,13 +53,9 @@ module TagMethods
         q = Hash.new {|h, k| h[k] = []}
 
         scan_query(query).each do |token|
-          if token =~ /^(unlocked|deleted|user|vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change):(.+)$/
+          if token =~ /^(unlocked|deleted|user|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change):(.+)$/
             if $1 == "user"
               q[:user] = $2
-            elsif $1 == "vote"
-              vote, user = $2.split(":")
-              user_id = User.find_by_name_nocase(user).id rescue nil
-              q[:vote] = [parse_helper(vote), user_id]
             elsif $1 == "fav"
               q[:fav] = $2
             elsif $1 == "md5"

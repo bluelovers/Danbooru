@@ -50,76 +50,23 @@ Post = {
     })
   },
 
-	vote_mouse_over: function(desc, post_id, vote) {
-		// TODO: cache the stars so we don't have to do a dom query every time
-		var stars = $("stars-" + post_id).select("a")
-		stars.each(function(star) {
-			var matches = star.id.match(/^star-(-?\d+)-(\d+)$/)
-			var star_vote = parseInt(matches[1])
-			var post_id = parseInt(matches[2])
-			if (vote >= star_vote) {
-				star.update("★")
-			} else {
-				star.update("☆")
-			}
-		})
-		$("vote-desc-" + post_id).update(desc)
-	},
-	
-	vote_mouse_out: function(desc, post_id, vote) {
-		// TODO: cache the stars so we don't have to do a dom query every time
-		var stars = $("stars-" + post_id).select("a")
-		stars.each(function(star) {
-			star.update(star.original_content)
-		})
-		
-		$("vote-desc-" + post_id).update()
-	},
+  vote: function(score, id) {
+    notice('Voting for post #' + id + '...');
 
-  init_vote: function(post_id) {
-		var stars = $("stars-" + post_id).select("a")
-		stars.each(function(star) {
-			star.original_content = star.innerHTML
-		})
-  },
-
-  vote: function(post_id, score) {
-		var vote_desc = $("vote-desc-" + post_id)
-		
-		vote_desc.update("Voting...")
-
-    var post = Post.posts.get(post_id)
-
-		options = {
-			"id": post_id,
-			"score": score
-		}
-    
     new Ajax.Request("/post/vote.json", {
-      parameters: options,
-
+      parameters: {
+        "id": id,
+        "score": score
+      },
+    
       onComplete: function(resp) {
         var resp = resp.responseJSON
 
         if (resp.success) {
+          notice("Vote saved for post #" + id);
           $("post-score-" + resp.post_id).update(resp.score)
-					var stars = $$(".star-" + resp.post_id)
-					stars.each(function(star) {
-						var matches = star.id.match(/^star-(-?\d+)-(\d+)$/)
-						var star_vote = parseInt(matches[1])
-						var post_id = parseInt(matches[2])
-						if (resp.vote >= star_vote) {
-							star.update("★")
-							star.original_content = "★"
-						} else {
-							star.update("☆")
-							star.original_content = "☆"
-						}
-					})
-          vote_desc.update("Vote saved")
         } else {
-          vote_desc.update(resp.reason)
-          post.current_vote = old_vote
+          notice("Error: " + resp.reason)
         }
       }
     })

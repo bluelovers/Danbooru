@@ -4,7 +4,6 @@ class CommentController < ApplicationController
   verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
   before_filter :member_only, :only => [:create, :destroy, :update]
   before_filter :mod_only, :only => [:moderate]
-  helper :post
 
   def update
     comment = Comment.find(params[:id])

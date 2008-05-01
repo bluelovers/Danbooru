@@ -117,10 +117,6 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.find_by_name_nocase(name)
-    return User.find(:first, :conditions => ["lower(name) = lower(?)", name])
-  end
-
   # For compatibility with AnonymousUser class
   def is_anonymous?
     false
@@ -294,9 +290,7 @@ class User < ActiveRecord::Base
     else
       transaction do
         connection.execute("INSERT INTO favorites (post_id, user_id) VALUES (#{post_id}, #{id})")
-        connection.execute("UPDATE posts SET fav_count = fav_count + 1 WHERE id = #{post_id}")
-        post = Post.find(post_id)
-        post.recalculate_score!
+        connection.execute("UPDATE posts SET fav_count = fav_count + 1, score = score + 1 WHERE id = #{post_id}")
         Cache.expire(:post_id => post_id)
       end
     end
@@ -306,10 +300,7 @@ class User < ActiveRecord::Base
     if connection.select_value("SELECT 1 FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
       transaction do
         connection.execute("DELETE FROM favorites WHERE post_id = #{post_id} AND user_id = #{id}")
-        connection.execute("UPDATE posts SET fav_count = fav_count - 1 WHERE id = #{post_id}")
-        post = Post.find(post_id)
-        post.recalculate_score!
-        post.save!
+        connection.execute("UPDATE posts SET fav_count = fav_count - 1, score = score - 1 WHERE id = #{post_id}")
         Cache.expire(:post_id => post_id)
       end
     end

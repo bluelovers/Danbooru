@@ -76,19 +76,6 @@ CONFIG["member_post_limit"] = 16
 # Members cannot post more than X comments in an hour.
 CONFIG["member_comment_limit"] = 2
 
-# This sets the minimum and maximum value a single user's vote can affect the post's total score.
-CONFIG["vote_sum_max"] = 1
-CONFIG["vote_sum_min"] = -1
-
-# Descriptions for the various vote levels.
-CONFIG["vote_descriptions"] = {
-  3 => "Top 10",
-  2 => "Favorite",
-  1 => "Good",
-  0 => "Neutral",
-  -1 => "Bad"
-}
-
 # This allows posts to have parent-child relationships. However, this requires manually updating the post counts stored in table_data by periodically running the script/maintenance script.
 CONFIG["enable_parent_posts"] = false
 
@@ -172,3 +159,6 @@ CONFIG["custom_html_headers"] = nil
 
 # Set this to true to hand off time consuming tasks (downloading files, resizing images, any sort of heavy calculation) to a separate process. In general, if a user sees a page where a task was handed off, an HTTP status code of 503 will be returned. You need beanstalkd installed in order for this to work. This is only necessary if you are getting heavy traffic or you are doing several heavy calculations.
 CONFIG["enable_asynchronous_tasks"] = false
+
+# The beanstalkd server to communicate with.
+CONFIG["beanstalkd_server"] = "localhost:4010"

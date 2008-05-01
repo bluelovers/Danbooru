@@ -282,18 +282,13 @@ class PostController < ApplicationController
     p = Post.find(params[:id])
     score = params[:score].to_i
     
-    if !@current_user.is_mod_or_higher? && score < -1 || score > 1
+    if !@current_user.is_mod_or_higher? && score != 1 && score != -1
       respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
       return
     end
 
-    options = {}
-    if @current_user.is_mod_or_higher? && params.fetch(:anonymous, false)
-      options[:anonymous] = true
-    end
-
-    if p.vote!(score, @current_user, request.remote_ip, options)
-      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:vote => score, :score => p.score, :post_id => p.id})
+    if p.vote!(score, request.remote_ip)
+      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
     else
       respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
     end

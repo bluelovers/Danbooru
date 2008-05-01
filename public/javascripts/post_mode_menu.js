@@ -1,7 +1,5 @@
 PostModeMenu = {
   init: function() {
-    try {	/* This part doesn't work on IE7; for now, let's allow execution to continue so at least some initialization is run */
-
     this.original_background_color = document.body.getStyle("background-color")
     
     if (Cookie.get("mode") == "") {
@@ -10,24 +8,8 @@ PostModeMenu = {
     } else {
       $("mode").value = Cookie.get("mode")
     }
-
-    } catch (e) {}
-    
-    this.vote_score = Cookie.get("vote")
-    if (this.vote_score == "") {
-      this.vote_score = 1
-      Cookie.put("vote", this.vote_score)
-    } else {
-      this.vote_score == +this.vote_score
-    }
   
     this.change()  
-  },
-
-  set_vote: function(score) {
-    this.vote_score = score
-    Cookie.put("vote", this.vote_score)
-    Post.update_vote_widget('vote-menu', this.vote_score);
   },
 
   change: function() {
@@ -52,10 +34,10 @@ PostModeMenu = {
       document.body.setStyle({backgroundColor: "#6F6"})
     } else if (s == "rating-e") {
       document.body.setStyle({backgroundColor: "#F66"})
-    } else if (s == "vote") {
-      Post.update_vote_widget('vote-menu', this.vote_score);
-      $("vote-score").show()
+    } else if (s == "vote-down") {
       document.body.setStyle({backgroundColor: "#FAA"})
+    } else if (s == "vote-up") {
+      document.body.setStyle({backgroundColor: "#AFA"})
     } else if (s == "lock-rating") {
       document.body.setStyle({backgroundColor: "#AA3"})
     } else if (s == "lock-note") {
@@ -103,8 +85,10 @@ PostModeMenu = {
       $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
       $("quick-edit").show()
       $("post_tags").focus()
-    } else if (s.value == 'vote') {
-      Post.vote(this.vote_score, post_id, {})
+    } else if (s.value == 'vote-down') {
+      Post.vote(-1, post_id)
+    } else if (s.value == 'vote-up') {
+      Post.vote(1, post_id)
     } else if (s.value == 'rating-q') {
       Post.update(post_id, {"post[rating]": "questionable"})
     } else if (s.value == 'rating-s') {

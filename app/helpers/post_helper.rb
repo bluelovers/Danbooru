@@ -1,7 +1,4 @@
 module PostHelper
-  EMPTY_STAR = "☆"
-  FILLED_STAR = "★"
-  
   def auto_discovery_link_tag_with_id(type = :rss, url_options = {}, tag_options = {})
     tag(
       "link",
@@ -43,33 +40,5 @@ module PostHelper
       %{<a href="/post/index?tags=%2A#{u(t)}%2A">#{h(t)}</a>}
     end
     html + tags.join(", ")
-  end
-  
-  def vote_widget(post, user, options = {})
-    html = []
-    
-    html << %{<span class="stars" id="stars-#{post.id}">}
-    
-    if user.is_anonymous?
-      current_user_vote = -100
-    else
-      current_user_vote = PostVotes.find_by_ids(user.id, post.id).score rescue -100
-    end
-    
-    (CONFIG["vote_sum_min"]..CONFIG["vote_sum_max"]).each do |vote|
-      if current_user_vote >= vote
-        star = FILLED_STAR
-      else
-        star = EMPTY_STAR
-      end
-      
-      desc = CONFIG["vote_descriptions"][vote]
-      html << link_to_function(star, "Post.vote(#{post.id}, #{vote})", :class => "star-#{post.id}", :id => "star-#{vote}-#{post.id}", :onmouseover => "Post.vote_mouse_over('#{desc}', #{post.id}, #{vote})", :onmouseout => "Post.vote_mouse_out('#{desc}', #{post.id}, #{vote})")
-    end
-    
-    html << " "
-    html << %{<span class="vote-desc" id="vote-desc-#{post.id}"></span>}
-    html << %{</span>}
-    return html
   end
 end

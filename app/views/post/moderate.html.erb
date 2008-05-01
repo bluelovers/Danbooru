@@ -52,7 +52,7 @@
                   <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
                 <% end %>
                 <li>Tags: <%= h p.cached_tags %></li>
-                <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span> (vote <%= link_to_function "down", "Post.vote(-5, #{p.id}, {anonymous: true})" %>)</li>
+                <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span> (vote <%= link_to_function "down", "Post.vote(-5, #{p.id})" %>)</li>
               </ul>
             </td>
           </tr>
@@ -91,7 +91,7 @@
                   <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
                 <% end %>
                 <li>Tags: <%= h p.cached_tags %></li>
-                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id}, {})" %>)</li>
+                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
                 <li>Reason: <%= format_text(p.flag_detail.reason, :skip_simple_format => true) %> (<%= h p.flag_detail.author %>)</li>
               </ul>
             </td>
@@ -104,8 +104,5 @@
   <script type="text/javascript">
     var cells = $$(".checkbox-cell")
     $$(".checkbox-cell").invoke("observe", "click", function(e) {this.up().firstDescendant().down("input").click()})
-    <% (@pending_posts + @flagged_posts).uniq.each do |post| %>
-      Post.register(<%= post.to_json %>)
-    <% end %>
   </script>
 </div>

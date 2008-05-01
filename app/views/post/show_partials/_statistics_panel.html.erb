@@ -14,16 +14,7 @@
       <% end %>
     <% end %>
     <li>Rating: <%= @post.pretty_rating %></li>
-
-    <li>
-      Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
-      <%= vote_widget(@post, @current_user) %>
-    </li>
-
-    <script type="text/javascript">
-      Post.init_vote(<%= @post.id %>)
-    </script>
-    
+    <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
     <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post.favorited_by) %></span></li>
   </ul>
 </div>
