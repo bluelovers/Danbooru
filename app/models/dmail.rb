@@ -7,6 +7,12 @@ class Dmail < ActiveRecord::Base
   belongs_to :to, :class_name => "User", :foreign_key => "to_id"
   belongs_to :from, :class_name => "User", :foreign_key => "from_id"
   
+  after_save :update_recipient
+  
+  def update_recipient
+    to.update_attribute(:has_mail, true)
+  end
+  
   def to_name
     if self.to_id
       self.to.name

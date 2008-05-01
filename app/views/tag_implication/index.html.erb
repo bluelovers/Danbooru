@@ -18,13 +18,19 @@
     </thead>
     <tfoot>
       <tr>
-        <td colspan="3">
+        <td colspan="4">
           <% if @current_user.is_admin_or_higher? %>
             <%= button_to_function "Select pending", "document.getElementsByClassName('pending').each(function(x) {x.checked = true})" %> 
             <%= submit_tag "Approve" %> 
-            <%= submit_tag "Delete" %>
+            <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
           <% end %>
           <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_implication_predicate').focus()" %>
+          
+          <div id="reason-box" style="display: none; margin-top: 1em;">
+            <strong>Reason:</strong>
+            <%= text_field_tag "reason", "", :size => 40 %>
+            <%= submit_tag "Delete" %>
+          </div>
         </td>
       </tr>      
     </tfoot>

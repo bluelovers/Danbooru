@@ -39,7 +39,7 @@ class TagAliasController < ApplicationController
 
     case params[:commit]
     when "Delete"
-      ids.each {|x| TagAlias.destroy(x)}
+      ids.each {|x| TagAlias.find(x).destroy_and_notify(@current_user, params[:reason])}
       
       flash[:notice] = "Tag aliases deleted"
       redirect_to :action => "index"

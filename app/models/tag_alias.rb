@@ -20,6 +20,19 @@ private
   end
   
 public
+  # Destroys the alias and sends a message to the alias's creator.
+  def destroy_and_notify(current_user, reason)
+    if creator_id
+      msg = <<-EOS
+        A tag alias you submitted (#{name} &rarr; #{alias_name}) was deleted for the following reason: #{reason}.
+      EOS
+      
+      Dmail.create(:from_id => current_user.id, :to_id => creator_id, :title => "One of your tag aliases was deleted", :body => msg)
+    end
+    
+    destroy
+  end
+
   # Strips out any illegal characters and makes sure the name is lowercase.
   def normalize
     self.name = name.downcase.gsub(/ /, "_").gsub(/^[-~]+/, "")
@@ -44,6 +57,10 @@ public
   def alias=(name)
     tag = Tag.find_or_create_by_name(name)
     self.alias_id = tag.id
+  end
+  
+  def alias_name
+    Tag.find(alias_id).name
   end
 
   def approve(user_id, ip_addr)

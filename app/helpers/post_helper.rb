@@ -48,7 +48,7 @@ module PostHelper
   def vote_widget(post, user, options = {})
     html = []
     
-    html << %{<span id="stars-#{post.id}">}
+    html << %{<span class="stars" id="stars-#{post.id}">}
     
     if user.is_anonymous?
       current_user_vote = -100

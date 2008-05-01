@@ -21,7 +21,7 @@ class TagImplicationController < ApplicationController
 
     case params[:commit]
     when "Delete"
-      ids.each {|x| TagImplication.destroy(x)}
+      ids.each {|x| TagImplication.find(x).destroy_and_notify(@current_user, params[:reason])}
       
       flash[:notice] = "Tag implications deleted"
       redirect_to :action => "index"
