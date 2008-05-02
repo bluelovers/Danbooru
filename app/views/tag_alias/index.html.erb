@@ -53,6 +53,11 @@
   <% form_tag(:action => "create") do %>
     <h4>Add Alias</h4>
     <p>You can suggest a new alias, but it must be approved by an administrator before it is activated.</p>  
+
+    <% unless @current_user.is_anonymous? %>
+      <%= hidden_field_tag "tag_alias[creator_id]", @current_user.id %>
+    <% end %>
+    
     <table>
       <tr>
         <th><label for="tag_alias_name">Name</label></th>
