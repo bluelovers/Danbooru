@@ -86,43 +86,15 @@ module LoginSystem
     end
   end
   
-  def member_only
-    if @current_user.is_member_or_higher?
-      return true
-    else
-      access_denied()
-    end
-  end
-  
-  def privileged_only
-    if @current_user.is_privileged_or_higher?
-      return true
-    else
-      access_denied()
-    end
-  end
-
-  def mod_only
-    if @current_user.is_mod_or_higher?
-      return true
-    else
-      access_denied()
-    end
-  end
-
-  def blocked_only
-    if @current_user.is_blocked_or_higher?
-      return true
-    else
-      access_denied()
-    end
-  end 
-
-  def admin_only
-    if @current_user.is_admin_or_higher?
-      return true
-    else
-      access_denied()
+  CONFIG["user_levels"].each do |name, value|
+    normalized_name = name.downcase.gsub(/ /, "_")
+    
+    define_method("#{normalized_name}_only") do
+      if @current_user.__send__("is_#{normalized_name}_or_higher?")
+        return true
+      else
+        access_denied()
+      end
     end
   end
 end

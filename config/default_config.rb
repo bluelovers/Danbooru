@@ -96,6 +96,7 @@ CONFIG["user_levels"] = {
   "Blocked" => 10,
   "Member" => 20,
   "Privileged" => 30,
+  "Janitor" => 35,
   "Mod" => 40,
   "Admin" => 50
 }
