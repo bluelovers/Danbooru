@@ -70,7 +70,7 @@ module PostMethods
       end
 
       if q[:source].is_a?(String)
-        conds << "p.source LIKE ? ESCAPE '\\\\'"
+        conds << "p.source LIKE ? ESCAPE E'\\\\'"
         cond_params << ArtistUrl.normalize(q[:source]).to_escaped_for_sql_like
       end
 
@@ -92,7 +92,7 @@ module PostMethods
 
       if q[:pool].is_a?(String)
         joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
-        conds << "pools.name ILIKE ? ESCAPE '\\\\'"
+        conds << "pools.name ILIKE ? ESCAPE E'\\\\'"
         cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
       end
 
