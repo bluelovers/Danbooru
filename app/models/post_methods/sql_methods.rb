@@ -71,7 +71,7 @@ module PostMethods
 
       if q[:source].is_a?(String)
         conds << "p.source LIKE ? ESCAPE '\\\\'"
-        cond_params << ArtistUrl.normalize(q[:source])
+        cond_params << ArtistUrl.normalize(q[:source]).to_escaped_for_sql_like
       end
 
       if q[:fav].is_a?(String)
