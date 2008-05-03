@@ -9,6 +9,11 @@ class AdminController < ApplicationController
   def edit_user
     if request.post?
       @user = User.find_by_name(params[:user][:name])
+      if @user.nil?
+        flash[:notice] = "User not found"
+        redirect_to :action => "edit_user"
+        return
+      end
       @user.level = params[:user][:level]
 
       if @user.save
