@@ -182,7 +182,7 @@ class Artist < ActiveRecord::Base
         cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
         
       else
-        cond.add "name LIKE ? ESCAPE '\\\\'", name.to_escaped_for_sql_like + "%"
+        cond.add "name LIKE ? ESCAPE E'\\\\'", name.to_escaped_for_sql_like + "%"
       end
     end
     
@@ -195,10 +195,13 @@ class Artist < ActiveRecord::Base
 
     while artists.empty? && url.size > 10
       u = url.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
-      artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artist_urls.normalized_url LIKE ? ESCAPE '\\\\'", u], :order => "artists.name")
+      artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artist_urls.normalized_url LIKE ? ESCAPE E'\\\\'", u], :order => "artists.name")
+
+      # Remove duplicates based on name
+      artists = artists.inject({}) {|all, artist| all[artist.name] = artist ; all}.values
       url = File.dirname(url)
     end
 
-    return artists[0, 10]
+    return artists[0, 20]
   end
 end
