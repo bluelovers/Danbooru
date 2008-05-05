@@ -39,7 +39,7 @@ class TagController < ApplicationController
     cond_params = []
 
     unless params[:name].blank?
-      conds << "name like ? escape '\\\\'"
+      conds << "name LIKE ? ESCAPE E'\\\\'"
       cond_params << params[:name].to_escaped_for_sql_like
     end
 
@@ -134,7 +134,7 @@ class TagController < ApplicationController
         all
       end
       @patterns.each do |x|
-        @tags[x] = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", x.to_escaped_for_sql_like]).map {|y| [y.name, y.post_count]}
+        @tags[x] = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", x.to_escaped_for_sql_like]).map {|y| [y.name, y.post_count]}
       end
     end
 

@@ -105,7 +105,7 @@ module TagMethods
           elsif token[0] == ?~
             q[:include] << token[1..-1]
           elsif token.include?("*")
-            q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 20).map {|i| i.name}
+            q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 20).map {|i| i.name}
           elsif token == "@unlockedrating"
             q[:unlocked_rating] = true
           else
