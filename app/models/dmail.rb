@@ -14,19 +14,11 @@ class Dmail < ActiveRecord::Base
   end
   
   def to_name
-    if self.to_id
-      self.to.name
-    else
-      ""
-    end
+    User.find_name(to_id)
   end
   
   def from_name
-    if self.from_id
-      self.from.name
-    else
-      ""
-    end
+    User.find_name(from_id)
   end
   
   def to_name=(name)
@@ -42,18 +34,10 @@ class Dmail < ActiveRecord::Base
   end
   
   def title
-    if self.parent_id
+    if parent_id
       return "Re: " + self[:title]
     else
       return self[:title]
-    end
-  end
-  
-  def message_count
-    if self.parent_id
-      Dmail.count(:conditions => ["parent_id = ? and id < ?", self.parent_id, self.id]).to_i
-    else
-      0
     end
   end
 end

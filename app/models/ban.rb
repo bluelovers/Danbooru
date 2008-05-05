@@ -1,9 +1,11 @@
 class Ban < ActiveRecord::Base
   after_create :save_to_record
-  before_create :update_level
+  after_create :update_level
   
   def update_level
-    User.update(user_id, :level => CONFIG["user_levels"]["Blocked"])
+    user = User.find(user_id)
+    user.level = CONFIG["user_levels"]["Blocked"]
+    user.save
   end
   
   def save_to_record

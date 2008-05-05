@@ -9,7 +9,7 @@
   </div>
 
   <% content_for(:footer) do %>
-    <%= link_to_function "Show Previous", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})", :title => "#{pluralize(@dmail.message_count, 'message')} hidden" %> |
+    <%= link_to_function "Show Previous", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})" %> |
     <% if @dmail.to_id == @current_user.id %>
       <%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %> |
     <% end %>
@@ -17,4 +17,3 @@
 
   <%= render :partial => "footer" %>
 </div>
-
