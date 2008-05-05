@@ -193,8 +193,7 @@ class UserController < ApplicationController
         return
       end
       
-      @user.update_attribute(:level, CONFIG["user_levels"]["Blocked"])
-      Ban.create(params[:ban].merge(:banned_by => @current_user.id))
+      Ban.create(params[:ban].merge(:banned_by => @current_user.id, :user_id => params[:id]))
       redirect_to :action => "show_blocked_users"
     else
       @ban = Ban.new(:user_id => @user.id, :duration => "1")
