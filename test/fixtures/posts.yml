@@ -1,0 +1,22 @@
+google_logo:
+  user: admin
+  score: 0
+  source: http://www.google.com/intl/en_ALL/images/logo.gif
+  md5: e80d1c59a673f560785784fb1ac10959
+  last_commented_at: <%= 1.day.ago %>
+  rating: q
+  width: 276
+  height: 110
+  last_voter_ip: 127.0.0.1
+  ip_addr: 127.0.0.1
+  cached_tags: x
+  is_note_locked: false
+  fav_count: 0
+  file_ext: jpg
+  last_noted_at: <%= 1.day.ago %>
+  is_rating_locked: false
+  parent_id: nil
+  has_children: false
+  status: active
+  sample_width: 276
+  sample_height: 110
