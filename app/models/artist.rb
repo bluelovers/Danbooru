@@ -210,11 +210,11 @@ class Artist < ActiveRecord::Base
   attr_accessor :updater_ip_addr
 
   def normalize
-    self.name = self.name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
+    self.name = name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
   end
   
   def to_s
-    return self.name
+    return name
   end
   
   def self.generate_sql(name)

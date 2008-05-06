@@ -1,13 +1,123 @@
 class ForumPost < ActiveRecord::Base
-  has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id, :order => "id"
-  belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
   belongs_to :creator, :class_name => "User", :foreign_key => :creator_id
   after_create :initialize_last_updated_by
-  after_create :update_parent_on_create
-  before_destroy :update_parent_on_destroy
-  before_validation :validate_lock
   before_validation :validate_title
-  validates_length_of :body, :minimum => 1, :message => "You need to enter a message"
+  validates_length_of :body, :minimum => 1, :message => "You need to enter a body"
+  
+  module LockMethods
+    module ClassMethods
+      def lock!(id)
+        # Run raw SQL to skip the lock check
+        execute_sql("UPDATE forum_posts SET is_locked = TRUE WHERE id = ?", id)
+      end
+      
+      def unlock!(id)
+        # Run raw SQL to skip the lock check
+        execute_sql("UPDATE forum_posts SET is_locked = FALSE WHERE id = ?", id)
+      end
+    end
+    
+    def self.included(m)
+      m.extend(ClassMethods)
+      m.before_validation :validate_lock
+    end
+    
+    def validate_lock
+      if root.is_locked?
+        errors.add_to_base("Thread is locked")
+        return false
+      end
+
+      return true
+    end
+  end
+  
+  module StickyMethods
+    module ClassMethods
+      def stick!(id)
+        # Run raw SQL to skip the lock check
+        execute_sql("UPDATE forum_posts SET is_sticky = TRUE WHERE id = ?", id)
+      end
+
+      def unstick!(id)
+        # Run raw SQL to skip the lock check
+        execute_sql("UPDATE forum_posts SET is_sticky = FALSE WHERE id = ?", id)
+      end
+    end
+    
+    def self.included(m)
+      m.extend(ClassMethods)
+    end
+  end
+  
+  module ParentMethods
+    def self.included(m)
+      m.after_create :update_parent_on_create
+      m.before_destroy :update_parent_on_destroy
+      m.has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id, :order => "id"
+      m.belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
+    end
+    
+    def update_parent_on_destroy
+      unless is_parent?
+        p = parent
+        p.update_attributes(:response_count => p.response_count - 1)
+      end
+    end
+
+    def update_parent_on_create
+      unless is_parent?
+        p = parent
+        p.update_attributes(:updated_at => updated_at, :response_count => p.response_count + 1, :last_updated_by => creator_id)
+      end
+    end
+    
+    def is_parent?
+      return parent_id.nil?
+    end
+
+    def root
+      if is_parent?
+        return self
+      else
+        return ForumPost.find(parent_id)
+      end
+    end
+
+    def root_id
+      if is_parent?
+        return id
+      else
+        return parent_id
+      end
+    end
+  end
+  
+  module ApiMethods
+    def api_attributes
+      return {
+        :body => body.gsub(/\r\n|\r|\n/, "\\n"), 
+        :creator => author, 
+        :creator_id => creator_id, 
+        :id => id, 
+        :parent_id => parent_id, 
+        :title => title
+      }
+    end
+    
+    def to_json(*params)
+      api_attributes.to_json(*params)
+    end
+
+    def to_xml(options = {})
+      api_attributes.to_xml(options.merge(:root => "forum_post"))
+    end
+  end
+  
+  include LockMethods
+  include StickyMethods
+  include ParentMethods
+  include ApiMethods
   
   def self.updated?(user)
     newest_topic = ForumPost.find(:first, :order => "updated_at desc", :limit => 1, :select => "updated_at", :conditions => ["parent_id is null"])
@@ -15,36 +125,15 @@ class ForumPost < ActiveRecord::Base
     return newest_topic.updated_at > user.last_forum_topic_read_at
   end
   
-  def self.lock(id, status)
-    status = status ? true : false
-    id = id.to_i
-    connection.execute("UPDATE forum_posts SET is_locked = #{status} WHERE id = #{id}")
-  end
-  
-  def self.stick(id, status)
-    status = status ? true : false
-    id = id.to_i
-    connection.execute("UPDATE forum_posts SET is_sticky = #{status} WHERE id = #{id}")
-  end
-  
-  def validate_lock
-    if self.root.is_locked?
-      self.errors.add_to_base("Thread is locked")
-      return false
-    end
-    
-    return true
-  end
-  
   def validate_title
-    if self.parent?
-      if self.title.blank?
-        self.errors.add :title, "missing"
+    if is_parent?
+      if title.blank?
+        errors.add :title, "missing"
         return false
       end
       
-      if self.title !~ /\S/
-        self.errors.add :title, "missing"
+      if title !~ /\S/
+        errors.add :title, "missing"
         return false
       end
     end
@@ -53,62 +142,16 @@ class ForumPost < ActiveRecord::Base
   end
     
   def initialize_last_updated_by
-    if self.parent?
-      update_attribute(:last_updated_by, self.creator_id)
-    end
-  end
-  
-  def update_parent_on_destroy
-    unless self.parent?
-      p = self.parent
-      p.update_attributes(:response_count => p.response_count - 1)
-    end
-  end
-  
-  def update_parent_on_create
-    unless self.parent?
-      p = self.parent
-      p.update_attributes(:updated_at => self.updated_at, :response_count => p.response_count + 1, :last_updated_by => self.creator_id)
+    if is_parent?
+      update_attribute(:last_updated_by, creator_id)
     end
   end
   
   def last_updater
-    if self.last_updated_by
-      User.find_name(self.last_updated_by)
-    else
-      CONFIG["default_guest_name"]
-    end
-  end
-  
-  def parent?
-    return self.parent_id == nil
-  end
-  
-  def root
-    if self.parent?
-      return self
-    else
-      return ForumPost.find(self.parent_id)
-    end
-  end
-  
-  def root_id
-    if self.parent?
-      return self.id
-    else
-      return self.parent_id
-    end
+    User.find_name(last_updated_by)
   end
   
   def author
-    return User.find_name(self.creator_id)
-  end
-  
-  def to_json
-    {:body => self.body, :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_json
-  end
-
-  def to_xml(options = {})
-    {:body => self.body.gsub(/\r\n|\r|\n/, '\\n'), :creator => self.author, :creator_id => self.creator_id, :id => self.id, :parent_id => self.parent_id, :title => self.title}.to_xml(options.merge(:root => "forum_post"))
+    User.find_name(creator_id)
   end
 end

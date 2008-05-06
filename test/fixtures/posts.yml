@@ -1,6 +1,6 @@
 google_logo:
   id: 1
-  user: admin
+  user_id: 1
   score: 0
   source: http://www.google.com/intl/en_ALL/images/logo.gif
   md5: e80d1c59a673f560785784fb1ac10959
@@ -16,7 +16,7 @@ google_logo:
   file_ext: jpg
   last_noted_at: ~
   is_rating_locked: false
-  parent_id: nil
+  parent_id: ~
   has_children: false
   status: active
   sample_width: 276

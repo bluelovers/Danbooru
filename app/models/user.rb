@@ -98,6 +98,10 @@ class User < ActiveRecord::Base
   end
   
   def self.find_name_helper(user_id)
+    if user_id.nil?
+      return CONFIG["default_guest_name"]
+    end
+    
     user = User.find(:first, :conditions => ["id = ?", user_id], :select => "name")
     
     if user

@@ -5,13 +5,13 @@ class ForumController < ApplicationController
   before_filter :member_only, :only => [:create, :destroy, :update, :edit, :add, :mark_all_read]
 
   def stick
-    ForumPost.stick(params[:id], true)
+    ForumPost.stick!(params[:id])
     flash[:notice] = "Topic stickied"
     redirect_to :action => "show", :id => params[:id]
   end
 
   def unstick
-    ForumPost.stick(params[:id], false)
+    ForumPost.unstick!(params[:id])
     flash[:notice] = "Topic unstickied"
     redirect_to :action => "show", :id => params[:id]
   end
@@ -43,7 +43,7 @@ class ForumController < ApplicationController
       @forum_post.destroy
       flash[:notice] = "Post destroyed"
 
-      if @forum_post.parent?
+      if @forum_post.is_parent?
         redirect_to :action => "index"
       else
         redirect_to :action => "show", :id => @forum_post.root_id
@@ -115,13 +115,13 @@ class ForumController < ApplicationController
   end
 
   def lock
-    ForumPost.lock(params[:id], true)
+    ForumPost.lock!(params[:id])
     flash[:notice] = "Topic locked"
     redirect_to :action => "show", :id => params[:id]    
   end
 
   def unlock
-    ForumPost.lock(params[:id], false)
+    ForumPost.unlock!(params[:id])
     flash[:notice] = "Topic unlocked"
     redirect_to :action => "show", :id => params[:id]    
   end
