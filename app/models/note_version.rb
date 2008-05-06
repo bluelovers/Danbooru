@@ -8,6 +8,6 @@ class NoteVersion < ActiveRecord::Base
   end
 
   def author
-    return User.find_name(self.user_id)
+    User.find_name(user_id)
   end
 end

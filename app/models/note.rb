@@ -2,12 +2,15 @@ class Note < ActiveRecord::Base
   include ActiveRecord::Acts::Versioned
 
   belongs_to :post
-  validate :post_must_not_be_note_locked
   before_save :blank_body
   acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
   
   module LockMethods
+    def self.included(m)
+      m.validate :post_must_not_be_note_locked
+    end
+    
     def post_must_not_be_note_locked
       if is_locked?
         errors.add_to_base "Post is note locked"

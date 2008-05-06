@@ -9,8 +9,12 @@ class NoteTest < ActiveSupport::TestCase
   
   def test_api
     note = create_note(:body => "hello")
-    note.to_json
-    note.to_xml
+    assert_nothing_raised do
+      note.to_json
+    end
+    assert_nothing_raised do
+      note.to_xml
+    end
   end
   
   def test_versioning

@@ -31,7 +31,11 @@ class CommentTest < ActiveSupport::TestCase
   
   def test_api
     comment = Comment.create(:post_id => 1, :user_id => 1, :body => "hello world", :ip_addr => "127.0.0.1")
-    comment.to_xml
-    comment.to_json
+    assert_nothing_raised do
+      comment.to_xml
+    end
+    assert_nothing_raised do
+      comment.to_json
+    end
   end
 end

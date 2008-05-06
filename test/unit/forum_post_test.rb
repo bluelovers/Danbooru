@@ -31,8 +31,12 @@ class ForumPostTest < ActiveSupport::TestCase
   
   def test_api
     topic = ForumPost.create(:creator_id => 1, :body => "hello", :title => "hi 2 u", :last_updated_by => 1)
-    topic.to_json
-    topic.to_xml
+    assert_nothing_raised do
+      topic.to_json
+    end
+    assert_nothing_raised do
+      topic.to_xml
+    end
   end
   
   def test_locking

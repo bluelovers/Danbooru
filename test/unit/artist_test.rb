@@ -90,8 +90,12 @@ class ArtistTest < ActiveSupport::TestCase
   
   def test_api
     boss = create_artist(:name => "boss")
-    boss.to_xml
-    boss.to_json
+    assert_nothing_raised do
+      boss.to_xml
+    end
+    assert_nothing_raised do
+      boss.to_json
+    end
   end
   
   def test_notes

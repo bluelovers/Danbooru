@@ -25,7 +25,7 @@ class PoolController < ApplicationController
         builder.instruct!
 
         xml = @pool.to_xml(:builder => builder, :skip_instruct => true) do
-          builder.posts() do
+          builder.posts do
             @posts.each do |post|
               post.to_xml(:builder => builder, :skip_instruct => true)
             end
