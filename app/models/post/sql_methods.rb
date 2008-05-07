@@ -1,5 +1,5 @@
-module PostMethods
-  module SqlMethods
+module PostSqlMethods
+  module ClassMethods
     def generate_sql_range_helper(arr, field, c, p)
       case arr[0]
       when :eq
@@ -9,7 +9,7 @@ module PostMethods
       when :gt
         c << "#{field} > ?"
         p << arr[1]
-    
+  
       when :gte
         c << "#{field} >= ?"
         p << arr[1]
@@ -56,7 +56,7 @@ module PostMethods
         conds << "p.md5 IN (?)"
         cond_params << q[:md5].split(/,/)
       end
-    
+  
       if q[:deleted_only] == true
         conds << "p.status = 'deleted'"
       end
@@ -102,7 +102,7 @@ module PostMethods
         cond_params << (q[:include] + q[:related])
       elsif q[:related].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:related].size > CONFIG["tag_query_limit"]
-      
+    
         q[:related].each_with_index do |rtag, i|
           joins << "JOIN posts_tags rpt#{i} ON rpt#{i}.post_id = p.id AND rpt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
           join_params << rtag
@@ -151,7 +151,7 @@ module PostMethods
       if options[:pending]
         conds << "p.status = 'pending'"
       end
-    
+  
       if options[:flagged]
         conds << "p.status = 'flagged'"
       end
@@ -175,16 +175,16 @@ module PostMethods
         case q[:order]
         when "id"
           sql << " ORDER BY p.id"
-        
+      
         when "id_desc"
           sql << " ORDER BY p.id DESC"
-        
+      
         when "score"
           sql << " ORDER BY p.score DESC"
-        
+      
         when "score_asc"
           sql << " ORDER BY p.score"
-        
+      
         when "mpixels"
           sql << " ORDER BY width*height DESC"
 
@@ -226,5 +226,9 @@ module PostMethods
       params = join_params + cond_params
       return Post.sanitize_sql([sql, *params])
     end
+  end
+  
+  def self.included(m)
+    m.extend(ClassMethods)
   end
 end

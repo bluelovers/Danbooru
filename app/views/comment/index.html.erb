@@ -15,8 +15,8 @@
             <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
             <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
             <span class="info"><strong>Score</strong> <span id="post-score-<%= post.id %>"><%= post.score %></span> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
-            <% if post.comment_count > 6 %>
-              <span class="info"><strong>Hidden</strong> <%= link_to post.comment_count - 6, :controller => "post", :action => "show", :id => post.id %></span>
+            <% if post.comments.size > 6 %>
+              <span class="info"><strong>Hidden</strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
             <% end %>
           </div>
           <div class="tags">

@@ -4,7 +4,7 @@ class Pool < ActiveRecord::Base
   class PostAlreadyExistsError < Exception
   end
   
-  module PostMethods    
+  module PostMethods
     def self.included(m)
       m.has_many :pool_posts, :class_name => "PoolPost", :order => "sequence"
     end
