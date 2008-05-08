@@ -9,6 +9,10 @@ module PostParentMethods
       if old_parent_id.nil?
         old_parent_id = select_value_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
       end
+      
+      if parent_id.to_i == post_id.to_i
+        parent_id = nil
+      end
 
       execute_sql("UPDATE posts SET parent_id = ? WHERE id = ?", parent_id, post_id)
 
@@ -32,12 +36,7 @@ module PostParentMethods
 
   def parent_id=(pid)
     self.old_parent_id = parent_id
-    
-    if pid.to_s.empty? or pid.to_i == id.to_i
-      self[:parent_id] = nil
-    else
-      self[:parent_id] = pid
-    end
+    self[:parent_id] = pid
   end
   
   def update_parent
