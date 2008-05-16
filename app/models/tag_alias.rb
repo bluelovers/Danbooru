@@ -12,21 +12,16 @@ class TagAlias < ActiveRecord::Base
     end
   end
   
-private
   def self.to_aliased_helper(tag_name)
     # TODO: add memcached support
     tag = find(:first, :select => "tags.name AS name", :joins => "JOIN tags ON tags.id = tag_aliases.alias_id", :conditions => ["tag_aliases.name = ? AND tag_aliases.is_pending = FALSE", tag_name])
     tag ? tag.name : tag_name    
   end
   
-public
   # Destroys the alias and sends a message to the alias's creator.
   def destroy_and_notify(current_user, reason)
     if creator_id
-      msg = <<-EOS
-        A tag alias you submitted (#{name} &rarr; #{alias_name}) was deleted for the following reason: #{reason}.
-      EOS
-      
+      msg = "A tag alias you submitted (#{name} &rarr; #{alias_name}) was deleted for the following reason: #{reason}."
       Dmail.create(:from_id => current_user.id, :to_id => creator_id, :title => "One of your tag aliases was deleted", :body => msg)
     end
     
@@ -40,16 +35,18 @@ public
 
   # Makes sure the alias does not conflict with any other aliases.
   def validate_uniqueness
-    n = Tag.find_or_create_by_name(name)
-    a = Tag.find(alias_id)
-
-    if self.class.exists?(["name = ?", n.name])
-      errors.add_to_base("#{n.name} is already aliased to something")
+    if self.class.exists?(["name = ?", name])
+      errors.add_to_base("#{name} is already aliased to something")
       return false
     end
     
-    if self.class.exists?(["name = ?", a.name])
-      errors.add_to_base("#{a.name} is already aliased to something")
+    if self.class.exists?(["alias_id = (select id from tags where name = ?)", name])
+      errors.add_to_base("#{name} is already aliased to something")
+      return false
+    end
+    
+    if self.class.exists?(["name = ?", alias_name])
+      errors.add_to_base("#{alias_name} is already aliased to something")
       return false
     end
   end
