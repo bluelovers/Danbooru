@@ -12,6 +12,10 @@ class PostTest < ActiveSupport::TestCase
     CONFIG["sample_ratio"] = 1.25
   end
   
+  def search_posts(tags)
+    Post.find_by_sql(Post.generate_sql(tags)).sort {|a, b| a.id <=> b.id}
+  end
+  
   def create_post(params = {})
     Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg")}.merge(params))
   end
@@ -47,6 +51,9 @@ class PostTest < ActiveSupport::TestCase
     first_change_seq = post.change_seq
     update_post(post, :tags => "tag3 tag4")
     assert_equal(first_change_seq + 1, post.change_seq)
+    
+    # TODO: add tests to make sure change_seq is updated when status or tags are
+    # changed.
   end
   
   def test_comments
@@ -96,7 +103,7 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(2, Post.fast_count("tag2"))
     
-    # These tests currently fail. This means that a deleted post won't decrement the tag's post count
+    # These tests currently fail. This is because a deleted post won't decrement the tag's post count
     # until the post is deleted from the database (which then activates the database triggers which correct
     # the post counts).
     post3.destroy
@@ -181,4 +188,251 @@ class PostTest < ActiveSupport::TestCase
     assert(!p1.has_children?, "Parent should no longer have children")
     assert(p2.has_children?, "Parent should have children")
   end
+  
+  def test_rating
+    post = create_post
+    post.rating = "explicit"
+    post.save
+    post.reload
+    assert_equal("e", post.rating)
+    assert_equal("Explicit", post.pretty_rating)
+    
+    # Test invalid rating
+    post.rating = "gohigohifdg"
+    post.save
+    post.reload
+    assert_equal("q", post.rating)
+  end
+
+  def test_destroy
+    post = create_post
+    post.destroy
+    assert_not_nil(Post.find_by_id(post.id))
+    post.reload
+    assert_equal("deleted", post.status)
+  end
+  
+  def test_tag_merging_a
+    post = create_post(:tags => "tag1 tag2")
+    p1 = Post.find(post.id)
+    update_post(p1, :tags => "tag1 tag2 tag-a", :old_tags => "tag1 tag2")
+    p2 = Post.find(post.id)
+    update_post(p2, :tags => "tag1 tag2 tag-b", :old_tags => "tag1 tag2")
+    post.reload
+    assert_equal("tag-a tag-b tag1 tag2", post.cached_tags)
+  end
+
+  def test_tag_merging_b
+    post = create_post(:tags => "tag1 tag2")
+    p1 = Post.find(post.id)
+    update_post(p1, :tags => "tag1", :old_tags => "tag1 tag2")
+    p2 = Post.find(post.id)
+    update_post(p2, :tags => "tag1 tag2 tag-a", :old_tags => "tag1 tag2")
+    post.reload
+    assert_equal("tag-a tag1", post.cached_tags)
+  end
+
+  def test_tag_merging_c
+    post = create_post(:tags => "tag1 tag2 tag3")
+    p1 = Post.find(post.id)
+    update_post(p1, :tags => "tag1 tag2", :old_tags => "tag1 tag2 tag3")
+    p2 = Post.find(post.id)
+    update_post(p2, :tags => "tag1 tag3", :old_tags => "tag1 tag2 tag3")
+    post.reload
+    assert_equal("tag1", post.cached_tags)
+  end
+  
+  def test_tag_aliases
+    tag_z = Tag.create(:name => "tag-z", :cached_related_expires_on => 1.year.from_now)
+    TagAlias.create(:name => "tag-x", :alias_id => tag_z.id, :is_pending => false, :reason => "none", :creator_id => 1)
+    post = create_post(:tags => "tag-x")
+    post.reload
+    assert_equal("tag-z", post.cached_tags)
+  end
+  
+  def test_tag_implications
+    tag_a = Tag.create(:name => "tag-a", :cached_related_expires_on => 1.year.from_now)
+    tag_b = Tag.create(:name => "tag-b", :cached_related_expires_on => 1.year.from_now)
+    TagImplication.create(:predicate_id => tag_a.id, :consequent_id => tag_b.id, :is_pending => false)
+    post = create_post(:tags => "tag-a")
+    post.reload
+    assert_equal("tag-a tag-b", post.cached_tags)
+  end
+  
+  def test_tag_history
+    post = create_post(:tags => "tag-a")
+    assert_equal(1, post.tag_history.size)
+    assert_equal("tag-a", post.tag_history[0].tags)
+    
+    update_post(post, :tags => "tag-b")
+    assert_equal(2, post.tag_history.size)
+    assert_equal("tag-b", post.tag_history[0].tags)
+    
+    update_post(post, :tags => "tag-c")
+    assert_equal(3, post.tag_history.size)
+    assert_equal("tag-c", post.tag_history[0].tags)
+  end
+  
+  def test_metatags
+    post = create_post
+    
+    # Test creating a pool and adding a post to it
+    update_post(post, :tags => "tag1 tag2 pool:new_pool")
+    post.reload
+    assert_equal("tag1 tag2", post.cached_tags)
+    pool = Pool.find_by_name("new_pool")
+    assert_not_nil(pool)
+    assert_not_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id]))
+    
+    # Test adding to an existing pool and case insensitivity
+    post2 = create_post(:tags => "tag3 pool:NEW_POOL", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    assert_not_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post2.id]))
+
+    # Test removing a post from a pool
+    update_post(post, :tags => "tag1 tag2 -pool:new_pool")
+    post.reload
+    assert_equal("tag1 tag2", post.cached_tags)
+    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id]))
+    
+    # Test setting the rating
+    update_post(post, :tags => "tag1 tag2 rating:e")
+    post.reload
+    assert_equal("e", post.rating)
+    
+    # Test setting the parent
+    update_post(post, :tags => "tag1 tag2 parent:1")
+    post.reload
+    assert_equal(1, post.parent_id)
+    assert(Post.find(1).has_children?, "Post should have children")
+    
+    # Test resetting the parent
+    update_post(post, :tags => "tag1 tag2 parent:#{post.id}")
+    post.reload
+    assert_nil(post.parent_id)
+    assert(!Post.find(1).has_children?, "Post should not have children")
+  end
+  
+  def test_tagging
+    post = create_post
+    
+    # Test the Post#has_tag? method
+    assert(post.has_tag?("tag1"), "Post#has_tag? should have succeeded")
+    assert(!post.has_tag?("tag"), "Post#has_tag? should have succeeded")
+    assert(!post.has_tag?("bababa"), "Post#has_tag? should have succeeded")
+    
+    # Test simple tagging
+    update_post(post, :tags => "tag3 tag4")
+    post.reload
+    assert_equal("tag3 tag4", post.cached_tags)
+    assert_equal(0, Post.count_by_sql(Post.generate_sql("tag1")))
+    assert_equal(0, Post.count_by_sql(Post.generate_sql("tag2")))
+    assert_equal(1, Post.count_by_sql(Post.generate_sql("tag1")))
+    assert_equal(1, Post.count_by_sql(Post.generate_sql("tag2")))
+  end
+  
+  def test_voting
+    # Temporarily disable caching so that the votes aren't stored in the cache
+    old_caching_status = CONFIG["enable_caching"]
+    CONFIG["enable_caching"] = false
+    post = create_post
+    assert(post.vote!(1, "127.0.0.1"), "Vote should have succeeded")
+    post.reload
+    assert_equal(1, post.score)
+    assert(!post.vote(-1, "127.0.0.1"), "Vote should have failed")
+    post.reload
+    assert_equal(1, post.score)
+    CONFIG["enable_caching"] = old_caching_status
+  end
+  
+  def test_destroy_with_reason
+    post = create_post
+    Post.destroy_with_reason(post.id, "bad bad bad", User.find(1))
+    post.reload
+    assert(post.is_deleted?, "Post should be deleted")
+    assert_not_nil(post.flag_detail)
+    assert_equal("bad bad bad", post.flag_detail.reason)
+  end
+  
+  def test_flagging_and_approval
+    post = create_post
+    post.flag!("bad bad bad", 1)
+    post.reload
+    assert(post.is_flagged?, "Post should be flagged")
+    assert_not_nil(post.flag_detail)
+    assert_equal("bad bad bad", post.flag_detail.reason)
+    
+    post.approve!
+    post.reload
+    assert(post.is_active?, "Post should be active")
+    assert(post.flag_detail.is_resolved?, "Flag detail should be resolved")
+  end
+  
+  # The following search methods assume Tag.parse_query works.
+  
+  def test_search_simple
+    p1 = create_post(:tags => "tag1")
+    p2 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg")
+    p3 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg")
+    matches = search_posts("tag1")
+    assert_equal(1, matches.size)
+    assert_equal(p1.id, matches[0].id)
+  end
+  
+  def test_search_intersection_with_two_tags
+    p1 = create_post(:tags => "tag1 tag2")
+    p2 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg")
+    p3 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg")
+    matches = search_posts("tag1 tag2")
+    assert_equal(1, matches.size)
+    assert_equal(p1.id, matches[0].id)
+  end
+  
+  def test_search_intersection_with_three_tags
+    p1 = create_post(:tags => "tag1 tag2 tag3")
+    p2 = create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg")
+    p3 = create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg")
+    p4 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg")
+    p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg")
+    p6 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg")
+    matches = search_posts("tag1 tag2 tag3")
+    assert_equal(1, matches.size)
+    assert_equal(p1.id, matches[0].id)
+  end
+  
+  def test_search_negated_tags
+    p1 = create_post(:tags => "tag1 tag2 tag3")
+    p2 = create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg")
+    p3 = create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg")
+    p4 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg")
+    p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg")
+    p6 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg")
+
+    matches = search_posts("-tag3")
+    assert_equal(3, matches.size)
+    assert_equal(p2.id, matches[0].id)
+    assert_equal(p4.id, matches[1].id)
+    assert_equal(p5.id, matches[2].id)
+    
+    matches = search_posts("tag1 -tag3")
+    assert_equal(2, matches.size)
+    assert_equal(p2.id, matches[0].id)
+    assert_equal(p4.id, matches[1].id)
+  end
+  
+  def test_search_by_source
+    p1 = create_post(:tags => "tag1", :source => "http://hoge.com/test.jpg")
+    
+    matches = search_posts("source:http://hoge.com/test.jpg")
+    assert_equal(1, matches.size)
+    assert_equal(p1.id, matches[0].id)
+    
+    matches = search_posts("source:http://hoge.com/something_else.jpg")
+    assert_equal(0, matches.size)
+
+    matches = search_posts("source:http://hoge.com/*")
+    assert_equal(1, matches.size)
+    assert_equal(p1.id, matches[0].id)
+  end
+  
+  # TODO: additional search tests
 end

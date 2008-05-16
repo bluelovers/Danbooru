@@ -11,9 +11,7 @@ class TagImplication < ActiveRecord::Base
   # Destroys the alias and sends a message to the alias's creator.
   def destroy_and_notify(current_user, reason)
     if creator_id
-      msg = <<-EOS
-        A tag implication you submitted (#{predicate.name} &rarr; #{consequent.name}) was deleted for the following reason: #{reason}.
-      EOS
+      msg = "A tag implication you submitted (#{predicate.name} &rarr; #{consequent.name}) was deleted for the following reason: #{reason}."
       
       Dmail.create(:from_id => current_user.id, :to_id => creator_id, :title => "One of your tag implications was deleted", :body => msg)
     end

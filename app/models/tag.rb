@@ -1,17 +1,15 @@
-Dir["#{RAILS_ROOT}/app/models/tag_methods/**/*.rb"].each {|x| require_dependency x}
+Dir["#{RAILS_ROOT}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
 
 class Tag < ActiveRecord::Base
-  include TagMethods::TypeMethods
-  include TagMethods::CacheMethods if CONFIG["enable_caching"]
-  include TagMethods::RelatedTagMethods
-  include TagMethods::ParseMethods
+  include TagTypeMethods
+  include TagCacheMethods if CONFIG["enable_caching"]
+  include TagRelatedTagMethods
+  include TagParseMethods
+  include TagApiMethods
   
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50
-
-    cond = ["p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id"]
-
-    counts = connection.select_all(sanitize_sql(["SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE " + cond.join(" and ") + " GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT #{options[:limit]}", start, stop]))
+    counts = select_all_sql("SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT ?", start, stop, options[:limit])
   end
 
   def self.find_or_create_by_name(name)
@@ -25,11 +23,9 @@ class Tag < ActiveRecord::Base
       name = $1
     end
     
-    if name =~ /^(.+?):(.+)$/ 
-      if CONFIG["tag_types"][$1]
-        tag_type = CONFIG["tag_types"][$1]
-        name = $2
-      end
+    if name =~ /^(.+?):(.+)$/  && CONFIG["tag_types"][$1]
+      tag_type = CONFIG["tag_types"][$1]
+      name = $2
     end
 
     tag = find_by_name(name)
@@ -51,23 +47,6 @@ class Tag < ActiveRecord::Base
 
   def self.select_ambiguous(tags)
     return [] if tags.blank?
-
-    return connection.select_values(Tag.sanitize_sql(["SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags]))
-  end
-
-  def to_s
-    name
-  end
-
-  def <=>(rhs)
-    name <=> rhs.name
-  end
-
-  def to_xml(options = {})
-    {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_xml(options.merge(:root => "tag"))
-  end
-
-  def to_json(*args)
-    {:id => id, :name => name, :count => post_count, :type => tag_type, :ambiguous => is_ambiguous}.to_json(*args)
+    return select_values_sql("SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags)
   end
 end

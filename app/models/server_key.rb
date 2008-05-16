@@ -1,11 +1,9 @@
-class ServerKey < ActiveRecord::Base
+class ServerKey
   def self.[](key)
-    foo = find_by_name(key)
-    
-    if foo
-      return foo.value
-    else
-      raise nil
+    begin
+      ActiveRecord::Base.connection.select_value("SELECT value FROM server_keys WHERE key = '#{key}'")
+    rescue Exception
+      nil
     end
   end
 end

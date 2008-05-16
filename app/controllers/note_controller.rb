@@ -48,7 +48,7 @@ class NoteController < ApplicationController
   def revert
     note = Note.find(params[:id])
 
-    if note.locked?
+    if note.is_locked?
       respond_to_error("Post is locked", {:action => "history", :id => note.id}, :status => 422)
       return
     end
@@ -71,7 +71,7 @@ class NoteController < ApplicationController
       note = Note.find(params[:id])
     end
 
-    if note.locked?
+    if note.is_locked?
       respond_to_error("Post is locked", {:controller => "post", :action => "show", :id => note.post_id}, :status => 422)
       return
     end

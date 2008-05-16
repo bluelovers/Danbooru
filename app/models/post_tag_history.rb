@@ -1,18 +1,16 @@
 class PostTagHistory < ActiveRecord::Base
   belongs_to :user
 
-  class << self
-    def generate_sql(options = {})
-      Nagato::Builder.new do |builder, cond|
-        cond.add_unless_blank "post_tag_histories.post_id = ?", options[:post_id]
-        cond.add_unless_blank "post_tag_histories.user_id = ?", options[:user_id]
-      
-        if options[:user_name]
-          builder.join "users ON users.id = post_tag_histories.user_id"
-          cond.add "users.name = ?", options[:user_name]
-        end
-      end.to_hash
-    end
+  def self.generate_sql(options = {})
+    Nagato::Builder.new do |builder, cond|
+      cond.add_unless_blank "post_tag_histories.post_id = ?", options[:post_id]
+      cond.add_unless_blank "post_tag_histories.user_id = ?", options[:user_id]
+    
+      if options[:user_name]
+        builder.join "users ON users.id = post_tag_histories.user_id"
+        cond.add "users.name = ?", options[:user_name]
+      end
+    end.to_hash
   end
 
   # The contents of options[:posts] must be saved by the caller.  This allows
@@ -20,16 +18,16 @@ class PostTagHistory < ActiveRecord::Base
   # post will be condensed into one change.
   def undo(options={})
     options[:posts] ||= {}
-    options[:posts][self.post_id] ||= options[:post] = Post.find(self.post_id)
-    post = options[:posts][self.post_id]
-    post.tags = Post.find(self.post_id)
+    options[:posts][post_id] ||= options[:post] = Post.find(post_id)
+    post = options[:posts][post_id]
+    post.tags = Post.find(post_id)
 
     current_tags = post.cached_tags.scan(/\S+/)
 
-    prev = self.previous
+    prev = previous
     return if not prev
 
-    changes = self.tag_changes(prev)
+    changes = tag_changes(prev)
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
 
@@ -38,13 +36,13 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   def author
-    return User.find_name(self.user_id)
+    User.find_name(user_id)
   end
 
   def tag_changes(prev)
     new_tags = tags.scan(/\S+/)
     old_tags = (prev.tags rescue "").scan(/\S+/)
-    latest = Post.find(self.post_id).cached_tags
+    latest = Post.find(post_id).cached_tags
     latest_tags = latest.scan(/\S+/)
 
     {
@@ -57,7 +55,7 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   def previous
-    return PostTagHistory.find(:first, :order => "id DESC", :conditions => ["post_id = ? AND id < ?", post_id, id])
+    PostTagHistory.find(:first, :order => "id DESC", :conditions => ["post_id = ? AND id < ?", post_id, id])
   end
 
   def to_xml(options = {})
