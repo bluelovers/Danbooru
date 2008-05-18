@@ -273,7 +273,7 @@ class PostController < ApplicationController
   def favorites
     set_title "Users who favorited this post"
     @post = Post.find(params["id"])
-    @users = User.find_people_who_favorited(params["id"])
+    @users = @post.favorited_by
 
     respond_to_list("users")
   end

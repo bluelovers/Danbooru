@@ -41,8 +41,8 @@
       <tr class="<%= cycle 'even', 'odd' %>">
         <td>
           <%= link_to h(user.pretty_name), :action => "show", :id => user.id %>
-          <% user.invited_by_ancestors.each do |anc| %>
-            &larr; <%= link_to h(anc.pretty_name), :action => "show", :id => anc.id %>
+          <% if user.invited_by %>
+            &larr; <%= link_to h(user.invited_by_name), :action => "show", :id => invited_by.id %>
           <% end %>
         </td>
         <td><%= link_to Post.count(:conditions => "user_id = #{user.id} and status = 'active'"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>

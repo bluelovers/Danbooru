@@ -71,12 +71,6 @@
 
 <div style="float: left; width: 60em;">
   <table width="100%">
-<!--
-    <tr>
-      <th>Similar Users</th>
-      <td><%#= @user.similar_users.map {|x| link_to(h(User.find(x["user_id"]).pretty_name), :action => "show", :id => x["user_id"])}.join(", ") %></td>
-    </tr>
--->
     <tr>
       <th>Favorite Tags</th>
       <td><%= @user.favorite_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "fav:#{@user.name} #{tag['tag']} order:fav"}.join(", ")%></td>
@@ -102,12 +96,12 @@
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "fav:#{@user.name} order:fav" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_posts(0, 5).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_favorite_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <div style="float: left; clear: both; margin-bottom: 1em;">
   <h4><%= link_to "Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.uploaded_posts(0, 5).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_uploaded_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <div id="footer">
