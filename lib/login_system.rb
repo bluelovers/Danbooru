@@ -58,10 +58,14 @@ module LoginSystem
   end
 
   def set_current_user
+    if RAILS_ENV == "test" && session[:user_id]
+      @current_user = User.find(session[:user_id])
+    end
+    
     if @current_user == nil && session[:user_id]
       @current_user = User.find(session[:user_id])
     end
-
+    
     if @current_user == nil && cookies[:login] && cookies[:pass_hash]
       @current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
     end
