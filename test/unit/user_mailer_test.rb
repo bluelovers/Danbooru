@@ -36,11 +36,4 @@ class UserMailerTest < ActiveSupport::TestCase
     assert_not_equal(0, ActionMailer::Base.deliveries.size)
     assert_equal("To: admin@danbooru.com\r\nSubject: Dev - Message received from mod\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>mod said:</p>\n\n<div>\n  test body\n</div>\n", ActionMailer::Base.deliveries[0].encoded)
   end
-  
-  # def test_all
-  #   # Just make sure no exceptions are raised
-  #   assert_nothing_raised { UserMailer.deliver_confirmation_email(user, "confirmation hash") }
-  #   assert_nothing_raised { UserMailer.deliver_new_password(user, "zugzug2") }
-  #   assert_nothing_raised { UserMailer.deliver_dmail("a@test.com", "a@test.com", "test", "test") }
-  # end
 end
