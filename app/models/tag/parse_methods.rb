@@ -74,7 +74,7 @@ module TagParseMethods
           elsif $1 == "score"
             q[:score] = parse_helper($2)
           elsif $1 == "source"
-            q[:source] = $2.gsub('\\', '\\\\').gsub('%', '\\%').gsub('_', '\\_').gsub(/\*/, '%') + "%"
+            q[:source] = $2.to_escaped_for_sql_like + "%"
           elsif $1 == "date"
             q[:date] = parse_helper($2, :date)
           elsif $1 == "pool"
