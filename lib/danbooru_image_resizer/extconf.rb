@@ -3,9 +3,7 @@
 require 'mkmf'
 
 CONFIG['CC'] = "g++"
-if /darwin/ =~ RUBY_PLATFORM
-  CONFIG['LDSHARED'] = CONFIG['LDSHARED'].sub(/^cc /,'g++ ')	# otherwise we would not link with the C++ runtime
-end
+CONFIG['LDSHARED'] = CONFIG['LDSHARED'].sub(/^cc /,'g++ ')	# otherwise we would not link with the C++ runtime
 
 dir_config("gd")
 dir_config("jpeg")
