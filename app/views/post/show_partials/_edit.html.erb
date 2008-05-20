@@ -48,7 +48,7 @@
           <th><label class="block" for="post_source">Source</label></th>
           <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
         </tr>
-        <% if @post.can_view?(@current_user) %>
+        <% if @post.can_be_seen_by?(@current_user) %>
           <tr>
             <th>
               <label class="block" for="post_tags">Tags</label>

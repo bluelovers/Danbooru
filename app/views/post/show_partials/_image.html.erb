@@ -1,6 +1,6 @@
 <% unless @post.is_deleted? %>
   <div>
-    <% if !@post.can_view?(@current_user) %>
+    <% if !@post.can_be_seen_by?(@current_user) %>
       <p>You need a privileged account to see this image.</p>
     <% elsif @post.image? %>
       <div id="note-container">
