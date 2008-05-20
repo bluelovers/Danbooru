@@ -1,5 +1,4 @@
 <% form_tag(:action => "create") do %>
-  <%= hidden_field_tag "dmail[from_id]", from_id, :id => "dmail_from_id" %>
   <%= hidden_field_tag "dmail[parent_id]", @dmail.parent_id || @dmail.id, :id => "dmail_parent_id" %>
 
   <table width="100%">

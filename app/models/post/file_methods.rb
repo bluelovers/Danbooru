@@ -10,7 +10,6 @@ module PostFileMethods
     m.before_validation_on_create :generate_sample
     m.before_validation_on_create :generate_preview
     m.before_validation_on_create :move_file
-    m.before_destroy :delete_file
   end
   
   def validate_content_type

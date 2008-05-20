@@ -10,16 +10,16 @@
       <% if params[:alias_id] %>
         <tr>
           <th><label for="artist_alias">Alias for</label></th>
-          <td><%= text_field "artist", "alias", :size => 80 %></td>
+          <td><%= text_field "artist", "alias_name", :size => 80 %></td>
         </tr>
       <% end %>
       <tr>
         <th><label for="artist_aliases">Aliases</label</th>
-        <td><%= text_field "artist", "aliases", :size => 80, :value => params[:jp_name] %></td>
+        <td><%= text_field "artist", "alias_names", :size => 80, :value => params[:jp_name] %></td>
       </tr>
       <tr>
         <th><label for="artist_members">Members</label></th>
-        <td><%= text_field "artist", "members", :size => 80, :value => @artist.members.join(", ") %></td>
+        <td><%= text_field "artist", "member_names", :size => 80 %></td>
       </tr>
       <tr>
         <th><label for="artist_urls">URLs</label></th>

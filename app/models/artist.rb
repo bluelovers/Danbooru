@@ -98,6 +98,10 @@ class Artist < ActiveRecord::Base
     def alias_names=(names)
       @alias_names = names.split(/\s*,\s*/)
     end
+    
+    def alias_names
+      aliases.map(&:name).join(" ")
+    end
 
     def aliases
       if new_record?
@@ -160,6 +164,10 @@ class Artist < ActiveRecord::Base
       else
         Artist.find(:all, :conditions => "group_id = #{id}", :order => "name")
       end
+    end
+    
+    def member_names
+      members.map(&:name).join(" ")
     end
     
     def member_names=(names)

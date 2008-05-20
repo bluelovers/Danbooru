@@ -5,6 +5,10 @@ class CommentController < ApplicationController
   before_filter :member_only, :only => [:create, :destroy, :update]
   before_filter :janitor_only, :only => [:moderate]
 
+  def edit
+    @comment = Comment.find(params[:id])
+  end
+  
   def update
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
@@ -27,6 +31,7 @@ class CommentController < ApplicationController
 
   def create
     if @current_user.is_member_or_lower? && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
+      # TODO: move this to the model
       respond_to_error("Hourly limit exceeded", {:action => "index"}, :status => 421)
       return
     end
@@ -91,9 +96,5 @@ class CommentController < ApplicationController
     @comment = Comment.find(params[:id])
     @comment.update_attributes(:is_spam => true)
     respond_to_success("Comment marked as spam", :action => "index")
-  end
-  
-  def edit
-    @comment = Comment.find(params[:id])
   end
 end

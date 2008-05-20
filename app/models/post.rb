@@ -62,6 +62,7 @@ class Post < ActiveRecord::Base
   end
   
   def delete_from_database
+    delete_file
     execute_sql("DELETE FROM posts WHERE id = ?", id)
   end
   

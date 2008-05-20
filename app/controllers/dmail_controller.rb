@@ -7,20 +7,19 @@ class DmailController < ApplicationController
     render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
   end
   
+  def show_previous_messages
+    @dmails = Dmail.find(:all, :conditions => ["parent_id = ? and id < ?", params[:parent_id], params[:id]], :order => "id asc")
+    render :layout => false
+  end
+  
   def compose
     @dmail = Dmail.new
   end
   
   def create
-    @dmail = Dmail.create(params[:dmail])
+    @dmail = Dmail.create(params[:dmail].merge(:from_id => @current_user.id))
     
     if @dmail.errors.empty?
-      @recipient = @dmail.to
-      
-      if @recipient.receive_dmails? && @recipient.email.include?("@")
-        UserMailer.deliver_dmail(@recipient, @current_user, @dmail.title, @dmail.body)
-      end
-      
       flash[:notice] = "Message sent to #{params[:dmail][:to_name]}"
       redirect_to :action => "inbox"
     else
@@ -38,7 +37,7 @@ class DmailController < ApplicationController
 
     if @dmail.to_id != @current_user.id && @dmail.from_id != @current_user.id
       flash[:notice] = "Access denied"
-      redirect_to :action => "inbox"
+      redirect_to :controller => "user", :action => "login"
       return
     end
 
@@ -49,10 +48,5 @@ class DmailController < ApplicationController
         @current_user.update_attribute(:has_mail, false)
       end
     end
-  end
-  
-  def show_previous_messages
-    @dmails = Dmail.find(:all, :conditions => ["parent_id = ? and id < ?", params[:parent_id], params[:id]], :order => "id asc")
-    render :layout => false
   end
 end

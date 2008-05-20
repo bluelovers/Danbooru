@@ -8,6 +8,13 @@ class Dmail < ActiveRecord::Base
   belongs_to :from, :class_name => "User", :foreign_key => "from_id"
   
   after_save :update_recipient
+  after_create :send_dmail
+  
+  def send_dmail
+    if to.receive_dmails? && to.email.include?("@")
+      UserMailer.deliver_dmail(to, from, title, body)
+    end    
+  end
   
   def update_recipient
     to.update_attribute(:has_mail, true)

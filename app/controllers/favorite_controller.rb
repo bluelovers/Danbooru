@@ -1,8 +1,7 @@
 class FavoriteController < ApplicationController
   layout "default"
-  before_filter :blocked_only, :only => [:create, :destroy]
+  before_filter :member_only, :only => [:create, :destroy]
   verify :method => :post, :only => [:create, :destroy]
-  verify :params => :id, :only => [:create]
   helper :post
 
   def create
