@@ -160,7 +160,10 @@ class PostController < ApplicationController
 
     set_title "/" + tags.tr("_", " ")
 
-    @ambiguous = Tag.select_ambiguous(split_tags)
+    if count < 32 && split_tags.size == 1
+      # TODO: Am I double escaping here?
+      @tag_suggestions = Tag.find(:all, :conditions => ["name LIKE ?", "%" + split_tags[0].to_escaped_for_sql_like + "%"], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
+    end
     
     @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))

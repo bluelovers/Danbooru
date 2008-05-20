@@ -33,12 +33,4 @@ module PostHelper
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}
     return span
   end
-
-  def link_to_amb_tags(tags)
-    html = "The following tags are potentially ambiguous: "
-    tags = tags.map do |t|
-      %{<a href="/post/index?tags=%2A#{u(t)}%2A">#{h(t)}</a>}
-    end
-    html + tags.join(", ")
-  end
 end
