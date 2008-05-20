@@ -40,7 +40,7 @@ privileged:
   last_logged_in_at: <%= Time.now %>
   last_forum_topic_read_at: <%= 1.day.ago %>
   has_mail: false
-  receive_dmails: true
+  receive_dmails: false
   show_samples: true
 
 member:

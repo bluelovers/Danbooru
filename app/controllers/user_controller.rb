@@ -156,28 +156,36 @@ class UserController < ApplicationController
     if request.post?
       @user = User.find_by_name(params[:user][:name])
       
-      if @user
-        if @user.email.blank?
-          flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"
-          redirect_to :action => "login"
-        else
-          begin
-            User.transaction do
-              # If the email is invalid, abort the password reset
-              new_password = @user.reset_password
-              UserMailer.deliver_new_password(@user, new_password)
-              flash[:notice] = "Password reset. Check your email in a few minutes"
-            end
-          rescue Net::SMTPSyntaxError, Net::SMTPFatalError
-            flash[:notice] = "Your email address was invalid"
-          end
-          
-          redirect_to :action => "login"
-        end
-      else
+      if @user.nil?
         flash[:notice] = "That account does not exist"
         redirect_to :action => "reset_password"
+        return
       end
+      
+      if @user.email.blank?
+        flash[:notice] = "You never supplied an email address, therefore you cannot have your password automatically reset"
+        redirect_to :action => "login"
+        return
+      end
+      
+      if @user.email != params[:user][:email]
+        flash[:notice] = "That is not the email address you supplied"
+        redirect_to :action => "login"
+        return
+      end
+      
+      begin
+        User.transaction do
+          # If the email is invalid, abort the password reset
+          new_password = @user.reset_password
+          UserMailer.deliver_new_password(@user, new_password)
+          flash[:notice] = "Password reset. Check your email in a few minutes."
+        end
+      rescue Net::SMTPSyntaxError, Net::SMTPFatalError
+        flash[:notice] = "Your email address was invalid"
+      end
+      
+      redirect_to :action => "login"
     else
       @user = User.new
     end

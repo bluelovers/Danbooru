@@ -22,7 +22,7 @@ class CommentTest < ActiveSupport::TestCase
     CONFIG["comment_threshold"] = 1
     
     comment_a = Comment.create(:post_id => 1, :user_id => 1, :body => "mark 1", :ip_addr => "127.0.0.1")
-    sleep 2
+    sleep 1
     comment_b = Comment.create(:post_id => 1, :user_id => 1, :body => "mark 2", :ip_addr => "127.0.0.1")
     assert_equal(comment_a.created_at, Post.find(1).last_commented_at)
     

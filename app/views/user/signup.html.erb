@@ -4,7 +4,6 @@
 <% if !CONFIG["enable_signups"] %>
   <p>Signups are currently disabled.</p>
 <% else %>
-  <p>A basic account allows you to search for up to two tags at a time, see post listings beyond the first page, keep favorites, post comments, edit the wiki, edit notes, create pools, and post to the forum. You can upload posts but they'll be put in a moderation queue.</p>
   <p>By creating an account, you are agreeing to the <a href="/static/terms_of_service">terms of service</a>.</p>
   
   <% form_tag(:controller => "user", :action => "create") do %>

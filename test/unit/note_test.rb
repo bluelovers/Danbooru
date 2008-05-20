@@ -57,7 +57,7 @@ class NoteTest < ActiveSupport::TestCase
     note_a = create_note(:body => "hello")
     assert_equal(note_a.updated_at, Post.find(1).last_noted_at)
     
-    sleep 2
+    sleep 1
     note_b = create_note(:body => "hello 2")
     assert_equal(note_b.updated_at, Post.find(1).last_noted_at)
   end
