@@ -32,9 +32,4 @@ end
 class Test::Unit::TestCase
   self.use_transactional_fixtures = true
   self.use_instantiated_fixtures = false
-  
-	# change this to a url to test auto-downloading
-	DOWNLOAD_IMAGE = "http://www.google.com/intl/en_ALL/images/logo.gif"
-	HTML_ATTACK = %{<img onclick="window.jref='http://goatse.cx'" /></html><a href="#">test</a><embed>bad</embed><script>bad</script>}
-	SQL_ATTACK = %{'; DROP TABLE danbooru_dev;'}
 end

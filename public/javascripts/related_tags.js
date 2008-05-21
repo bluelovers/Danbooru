@@ -4,7 +4,7 @@ RelatedTags = {
   recent_search: {},
 
   init: function(user_tags, artist_url) {
-    this.user_tags = user_tags.match(/\S+/g)
+    this.user_tags = user_tags.match(/\S+/g).sort()
     this.recent_tags = Cookie.get("recent_tags").match(/\S+/g)
     if (this.recent_tags) {
       this.recent_tags = this.recent_tags.sort().uniq(true)

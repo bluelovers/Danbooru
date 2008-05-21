@@ -32,10 +32,6 @@ class ForumController < ApplicationController
     end
   end
 
-  def add
-    @forum_post = ForumPost.new
-  end
-
   def destroy
     @forum_post = ForumPost.find(params[:id])
 
@@ -54,6 +50,14 @@ class ForumController < ApplicationController
     end
   end
 
+  def edit
+    @forum_post = ForumPost.find(params[:id])
+
+    if !@current_user.has_permission?(@forum_post, :creator_id)
+      access_denied()
+    end
+  end
+
   def update
     @forum_post = ForumPost.find(params[:id])
 
@@ -68,14 +72,6 @@ class ForumController < ApplicationController
       redirect_to :action => "show", :id => @forum_post.root_id
     else
       render_error(@forum_post)
-    end
-  end
-
-  def edit
-    @forum_post = ForumPost.find(params[:id])
-
-    if !@current_user.has_permission?(@forum_post, :creator_id)
-      access_denied()
     end
   end
 

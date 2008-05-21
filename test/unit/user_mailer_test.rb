@@ -26,7 +26,7 @@ class UserMailerTest < ActiveSupport::TestCase
     user = create_user("bob")
     assert_nothing_raised {UserMailer.deliver_new_password(user, "zugzug2")}
     assert_not_equal(0, ActionMailer::Base.deliveries.size)
-    assert_equal("To: bob@danbooru.com\r\nSubject: #{CONFIG['app_name']} - Password Reset\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello, bob. Your password has been reset to <code>zugzug2</code></p>.\n\n<p>You can login to <a href=\"http://#{CONFIG['server_host']}/user/login\">#{CONFIG['app_name']}</a> and change your password to something else.</p>\n", ActionMailer::Base.deliveries[0].encoded)
+    assert_equal("To: bob@danbooru.com\r\nSubject: #{CONFIG['app_name']} - Password Reset\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello, bob. Your password has been reset to <code>zugzug2</code>.</p>\n\n<p>You can login to <a href=\"http://#{CONFIG['server_host']}/user/login\">#{CONFIG['app_name']}</a> and change your password to something else.</p>\n", ActionMailer::Base.deliveries[0].encoded)
   end
   
   def test_dmail
