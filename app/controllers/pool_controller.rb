@@ -18,8 +18,7 @@ class PoolController < ApplicationController
     @posts = Post.paginate :per_page => 24, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*", :page => params[:page]
 
     respond_to do |fmt|
-      fmt.html do
-      end
+      fmt.html
       fmt.xml do
         builder = Builder::XmlMarkup.new(:indent => 2)
         builder.instruct!
@@ -92,7 +91,7 @@ class PoolController < ApplicationController
       end
       
       sequence = params[:pool][:sequence]
-      sequence = nil if sequence.empty?
+      sequence = nil if sequence.blank?
       begin
         @pool.add_post(params[:post_id], :sequence => sequence)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
@@ -102,10 +101,10 @@ class PoolController < ApplicationController
         respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
       end
     else
-      if !@current_user.is_anonymous?
-        @pools = Pool.find(:all, :order => "name", :conditions => ["is_public = TRUE OR user_id = ?", @current_user.id])
-      else
+      if @current_user.is_anonymous?
         @pools = Pool.find(:all, :order => "name", :conditions => "is_public = TRUE")
+      else
+        @pools = Pool.find(:all, :order => "name", :conditions => ["is_public = TRUE OR user_id = ?", @current_user.id])
       end
       
       @post = Post.find(params[:post_id])
@@ -116,14 +115,14 @@ class PoolController < ApplicationController
     if request.post?
       @pool = Pool.find(params[:pool_id])
       
-      if @pool.is_public? || @current_user.has_permission?(@pool)
-        @pool.remove_post(params[:post_id])
-        response.headers["X-Post-Id"] = params[:post_id]
-        respond_to_success("Post removed", :controller => "post", :action => "show", :id => params[:post_id])
-      else
+      unless @pool.is_public? || @current_user.has_permission?(@pool)
         access_denied()
         return
-      end      
+      end
+      
+      @pool.remove_post(params[:post_id])
+      response.headers["X-Post-Id"] = params[:post_id]
+      respond_to_success("Post removed", :controller => "post", :action => "show", :id => params[:post_id])
     else
       @pool = Pool.find(params[:pool_id])
       @post = Post.find(params[:post_id])
@@ -133,22 +132,22 @@ class PoolController < ApplicationController
   def order
     @pool = Pool.find(params[:id])
 
+    unless @pool.is_public? || @current_user.has_permission?(@pool)
+      access_denied()
+      return
+    end
+
     if request.post?
-      if @pool.is_public? || @current_user.has_permission?(@pool)
-        PoolPost.transaction do
-          params[:pool_post_sequence].each do |i, seq|
-            PoolPost.update(i, :sequence => seq)
-          end
-          
-          @pool.reload
-          @pool.update_pool_links
+      PoolPost.transaction do
+        params[:pool_post_sequence].each do |i, seq|
+          PoolPost.update(i, :sequence => seq)
         end
         
-        flash[:notice] = "Ordering updated"
-      else
-        flash[:notice] = "Access denied"
+        @pool.reload
+        @pool.update_pool_links
       end
-
+      
+      flash[:notice] = "Ordering updated"
       redirect_to :action => "show", :id => params[:id]
     else
       @pool_posts = PoolPost.find(:all, :conditions => ["pool_id = ?", params[:id]], :order => "sequence, post_id")

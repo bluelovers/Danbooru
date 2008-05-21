@@ -171,4 +171,13 @@ class PoolTest < ActiveSupport::TestCase
       pool.add_post(1)
     end
   end
+  
+  def test_destroy
+    pool = create_pool
+    pool.add_post(1)
+    pool.add_post(2)
+    pool.destroy
+    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, 1]))
+    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, 2]))
+  end
 end
