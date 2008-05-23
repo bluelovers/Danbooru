@@ -4,8 +4,7 @@ class PostTagHistoryController < ApplicationController
   verify :method => :post, :only => [:undo]
   
   def index
-    pp PostTagHistory.generate_sql(params)
-    @changes = PostTagHistory.paginate PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 20, :select => "post_tag_histories.*", :page => params[:page])
+    @changes = PostTagHistory.paginate(PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 20, :select => "post_tag_histories.*", :page => params[:page]))
     @change_list = @changes.map do |c|
       { :change => c }.merge(c.tag_changes(c.previous))
     end
@@ -26,8 +25,6 @@ class PostTagHistoryController < ApplicationController
   end  
 
   def undo
-    return if not request.post?
-
     ids = params[:id].split(/,/)
     if ids.length > 1 && !@current_user.is_privileged_or_higher?
       respond_to_error("Only privileged users can undo more than one change at once.", :status => 403)

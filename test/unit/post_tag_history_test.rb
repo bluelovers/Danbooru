@@ -35,6 +35,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
   end
   
   def test_undo
+    raise NotImplementedError
   end
   
   def test_changes_after_adding_tags

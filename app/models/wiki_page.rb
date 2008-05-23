@@ -1,6 +1,6 @@
 class WikiPage < ActiveRecord::Base
   acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
-  before_save :make_title_canonical
+  before_save :normalize_title
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false
   validates_presence_of :body
@@ -35,12 +35,12 @@ class WikiPage < ActiveRecord::Base
     end
   end
   
-  def make_title_canonical
+  def normalize_title
     self.title = title.tr(" ", "_").downcase
   end
 
   def last_version?
-    self.version == self.next_version.to_i - 1
+    self.version == next_version.to_i - 1
   end
 
   def first_version?
@@ -48,11 +48,11 @@ class WikiPage < ActiveRecord::Base
   end
 
   def author
-    return User.find_name(self.user_id)
+    return User.find_name(user_id)
   end
 
   def pretty_title
-    self.title.tr("_", " ")
+    title.tr("_", " ")
   end
   
 # Produce a formatted page that shows the difference between two versions of a page.
@@ -108,7 +108,6 @@ class WikiPage < ActiveRecord::Base
     output.join.gsub(/\r?\n/, TAG_BREAK)
   end
 
-# Finds a page. This method automatically sanitizes the title, and can also supply previous versions.
   def self.find_page(title, version = nil)
     return nil if title.blank?
 
@@ -119,22 +118,32 @@ class WikiPage < ActiveRecord::Base
   end
   
   def self.find_by_title(title)
-    return find(:first, :conditions => ["lower(title) = lower(?)", title.tr(" ", "_")])
+    find(:first, :conditions => ["lower(title) = lower(?)", title.tr(" ", "_")])
   end
   
   def lock!
-    connection.execute("UPDATE wiki_pages SET is_locked = TRUE WHERE id = #{id}")
-    connection.execute("UPDATE wiki_page_versions SET is_locked = TRUE WHERE wiki_page_id = #{id}")
+    self.is_locked = true
+    
+    transaction do
+      execute_sql("UPDATE wiki_pages SET is_locked = TRUE WHERE id = ?", id)
+      execute_sql("UPDATE wiki_page_versions SET is_locked = TRUE WHERE wiki_page_id = ?", id)
+    end
   end
 
   def unlock!
-    connection.execute("UPDATE wiki_pages SET is_locked = FALSE WHERE id = #{id}")
-    connection.execute("UPDATE wiki_page_versions SET is_locked = FALSE WHERE wiki_page_id = #{id}")
+    self.is_locked = false
+    
+    transaction do
+      execute_sql("UPDATE wiki_pages SET is_locked = FALSE WHERE id = ?", id)
+      execute_sql("UPDATE wiki_page_versions SET is_locked = FALSE WHERE wiki_page_id = ?", id)
+    end
   end
 
   def rename!(new_title)
-    connection.execute(WikiPage.sanitize_sql(["UPDATE wiki_pages SET title = ? WHERE id = ?", new_title, self.id]))
-    connection.execute(WikiPage.sanitize_sql(["UPDATE wiki_page_versions SET title = ? WHERE wiki_page_id = ?", new_title, self.id]))
+    transaction do
+      execute_sql("UPDATE wiki_pages SET title = ? WHERE id = ?", new_title, self.id)
+      execute_sql("UPDATE wiki_page_versions SET title = ? WHERE wiki_page_id = ?", new_title, self.id)
+    end
   end
 
   def to_xml(options = {})

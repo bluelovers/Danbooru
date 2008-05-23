@@ -2,7 +2,7 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-  before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update]
+  before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :janitor_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
@@ -29,6 +29,10 @@ class PostController < ApplicationController
 	  return result
   end
   
+  def upload
+    @post = Post.new
+  end
+
   def create
     if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to_error("Daily limit exceeded", {:action => "index"}, :status => 421)
@@ -65,10 +69,6 @@ class PostController < ApplicationController
     end
   end
 
-  def upload
-    @post = Post.new
-  end
-
   def moderate
     if request.post?
       Post.transaction do
@@ -98,11 +98,7 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-    if !@current_user.is_anonymous?
-      user_id = @current_user.id
-    else
-      user_id = nil
-    end
+    user_id = @current_user.id
 
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
@@ -114,6 +110,14 @@ class PostController < ApplicationController
     end
   end
 
+  def delete
+    @post = Post.find(params[:id])
+    
+    if @post && @post.parent_id
+      @post_parent = Post.find(@post.parent_id)
+    end
+  end
+  
   def destroy
     if params[:commit] == "Cancel"
       redirect_to :action => "show", :id => params[:id]
@@ -267,19 +271,11 @@ class PostController < ApplicationController
   end
 
   def revert_tags
-    user_id = @current_user.id rescue nil
+    user_id = @current_user.id
     @post = Post.find(params[:id])
     @post.update_attributes(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
     respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
-  end
-
-  def favorites
-    set_title "Users who favorited this post"
-    @post = Post.find(params["id"])
-    @users = @post.favorited_by
-
-    respond_to_list("users")
   end
 
   def vote
@@ -298,13 +294,6 @@ class PostController < ApplicationController
     end
   end
 
-  def delete
-    @post = Post.find(params[:id])
-    if @post && @post.parent_id
-      @post_parent = Post.find(@post.parent_id)
-    end
-  end
-  
   def flag
     Post.find(params[:id]).flag!(params[:reason], @current_user.id)
     respond_to_success("Post flagged", :action => "show", :id => params{:id})
