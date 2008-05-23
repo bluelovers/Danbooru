@@ -31,7 +31,7 @@ class UserRecordController < ApplicationController
       if @current_user.is_mod_or_higher? || @current_user.id == @user_record.reported_by
         UserRecord.destroy(params[:id])
       
-        respond_to_success("Record updated", :action => "index", :user_id => params[:user_id])
+        respond_to_success("Record updated", :action => "index", :user_id => params[:id])
       else
         access_denied()
       end
