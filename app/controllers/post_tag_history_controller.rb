@@ -26,8 +26,9 @@ class PostTagHistoryController < ApplicationController
 
   def undo
     ids = params[:id].split(/,/)
+    
     if ids.length > 1 && !@current_user.is_privileged_or_higher?
-      respond_to_error("Only privileged users can undo more than one change at once.", :status => 403)
+      respond_to_error("Only privileged users can undo more than one change at once", :status => 403)
       return
     end
 

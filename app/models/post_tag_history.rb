@@ -14,13 +14,13 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   # The contents of options[:posts] must be saved by the caller.  This allows
-  # undoing many tag changes across many posts; all changes to a particular
+  # undoing many tag changes across many posts; all †changes to a particular
   # post will be condensed into one change.
   def undo(options={})
+    # TODO: refactor. modifying parameters is a bad habit.
     options[:posts] ||= {}
     options[:posts][post_id] ||= options[:post] = Post.find(post_id)
     post = options[:posts][post_id]
-    post.tags = Post.find(post_id)
 
     current_tags = post.cached_tags.scan(/\S+/)
 
@@ -30,7 +30,6 @@ class PostTagHistory < ActiveRecord::Base
     changes = tag_changes(prev)
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
-
     options[:update_options] ||= {}
     post.attributes = {:tags => new_tags.join(" ")}.merge(options[:update_options])
   end

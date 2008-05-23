@@ -35,7 +35,14 @@ class PostTagHistoryTest < ActiveSupport::TestCase
   end
   
   def test_undo
-    raise NotImplementedError
+    p1 = create_post(:tags => "a")
+    update_post(p1, :tags => "a b")
+
+    options = {:update_options => {:updater_ip_addr => "127.0.0.1", :updater_user_id => 3}}
+    p1.tag_history[0].undo(options)
+    options[:posts].each_value {|x| x.save}
+    p1.reload
+    assert_equal("a", p1.cached_tags)
   end
   
   def test_changes_after_adding_tags

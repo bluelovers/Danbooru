@@ -25,12 +25,17 @@ class PostTagHistoryControllerTest < ActionController::TestCase
     update_post(p1, :tags => "moge")
     update_post(p1, :tags => "hoge")
     
-    post :revert, {:id => p1.tag_history[-1].id, :commit => "Yes"}, {:user_id => 1}
+    post :revert, {:id => p1.tag_history[-1].id, :commit => "Yes"}, {:user_id => 3}
     p1.reload
     assert_equal("tag1", p1.cached_tags)
   end
   
   def test_undo
-    raise NotImplementedError
+    p1 = create_post("a")
+    update_post(p1, :tags => "a b")
+
+    post :undo, {:id => p1.tag_history[0].id}, {:user_id => 3}
+    p1.reload
+    assert_equal("a", p1.cached_tags)
   end
 end
