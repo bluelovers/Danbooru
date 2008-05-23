@@ -11,6 +11,7 @@ class TagController < ApplicationController
   end
 
   def index
+    # TODO: convert to nagato
     set_title "Tags"
 
     if params[:limit] == "0"
@@ -106,6 +107,10 @@ class TagController < ApplicationController
     render :layout => false
   end
 
+  def edit
+    @tag = Tag.find_by_name(params[:name]) or Tag.new
+  end
+
   def update
     tag = Tag.find_by_name(params[:tag][:name])
     tag.update_attributes(params[:tag]) if tag
@@ -113,15 +118,11 @@ class TagController < ApplicationController
     respond_to_success("Tag updated", :action => "index")
   end
 
-  def edit
-    @tag = Tag.find_by_name(params[:name]) or Tag.new
-  end
-
   def related
     if params[:type]
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
-      @tags = @tags.inject({}) do |all, x| 
+      @tags = @tags.inject({}) do |all, x|
         all[x] = Tag.calculate_related_by_type(x, CONFIG["tag_types"][params[:type]]).map {|y| [y["name"], y["post_count"]]}
         all
       end
@@ -130,7 +131,7 @@ class TagController < ApplicationController
       @patterns, @tags = @tags.partition {|x| x.include?("*")}
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|
-        all[x] = Tag.find_related(x).map {|y| puts y; [y[0], y[1]]}
+        all[x] = Tag.find_related(x).map {|y| [y[0], y[1]]}
         all
       end
       @patterns.each do |x|

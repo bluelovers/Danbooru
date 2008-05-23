@@ -145,11 +145,14 @@ class User < ActiveRecord::Base
           find_name_helper(user_id)
         end
       end
+      
+      def find_by_name(name)
+        find(:first, :conditions => ["lower(name) = lower(?)", name])
+      end
     end
     
     def self.included(m)
       m.extend(ClassMethods)
-      m.attr_protected :name
       m.validates_length_of :name, :within => 2..20, :on => :create
       m.validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
       m.validates_uniqueness_of :name, :case_sensitive => false, :on => :create
@@ -366,6 +369,38 @@ class User < ActiveRecord::Base
     end
   end
   
+  module UserInviteMethods
+    class NoInvites < Exception ; end
+    class HasNegativeRecord < Exception ; end
+    
+    def invite!(name)
+      if invite_count <= 0
+        raise NoInvites
+      end
+      
+      invitee = User.find_by_name(name)
+      
+      if invitee.nil?
+        raise ActiveRecord::RecordNotFound
+      end
+      
+      if UserRecord.exists?(["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", invitee.id, CONFIG["user_levels"]["Mod"]]) && !is_admin?
+        raise HasNegativeRecord
+      end
+      
+      transaction do
+        invitee.level = CONFIG["user_levels"]["Privileged"]
+        invitee.invited_by = id
+        invitee.save
+        decrement! :invite_count
+      end
+    end
+    
+    def self.included(m)
+      m.attr_protected :invite_count
+    end
+  end
+  
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
@@ -381,6 +416,7 @@ class User < ActiveRecord::Base
   include UserPostMethods
   include UserFavoriteMethods
   include UserLevelMethods
+  include UserInviteMethods
 
   @salt = CONFIG["user_password_salt"]
   

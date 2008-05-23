@@ -1,12 +1,13 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-# There's a bug where setup isn't called in functional tests
-ActionMailer::Base.delivery_method = :test
-ActionMailer::Base.perform_deliveries = true
-ActionMailer::Base.deliveries = []
-
 class AdminControllerTest < ActionController::TestCase
   fixtures :users
+  
+  def setup_action_mailer
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.perform_deliveries = true
+    ActionMailer::Base.deliveries = []
+  end
   
   def test_index
     get :index, {}, {:user_id => 1}
@@ -22,6 +23,8 @@ class AdminControllerTest < ActionController::TestCase
   end
   
   def test_reset_password
+    setup_action_mailer
+    
     get :reset_password, {:user => {:name => "admin"}}, {:user_id => 1}
     assert_response :success
     
@@ -35,6 +38,10 @@ class AdminControllerTest < ActionController::TestCase
   
   if CONFIG["enable_caching"]
     def test_cache_stats
+      if CONFIG["enable_caching"]
+        CACHE.flush_all
+      end
+      
       get :cache_stats, {}, {:user_id => 1}
       assert_response :success
       

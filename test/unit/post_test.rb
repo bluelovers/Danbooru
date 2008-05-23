@@ -4,6 +4,10 @@ class PostTest < ActiveSupport::TestCase
   fixtures :users, :posts, :table_data
   
   def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+    
     # TODO: revert these after testing in teardown
     CONFIG["enable_parents"] = true
     CONFIG["image_samples"] = true

@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class TagTest < ActiveSupport::TestCase
   def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+    
     @test_number = 1
   end
 

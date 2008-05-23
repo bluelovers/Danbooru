@@ -4,6 +4,10 @@ class DmailTest < ActiveSupport::TestCase
   fixtures :users
   
   def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+    
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []

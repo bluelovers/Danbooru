@@ -4,7 +4,7 @@ admin:
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 50
   email: admin@danbooru.com
-  invite_count: 100
+  invite_count: 0
   always_resize_images: false
   invited_by: ~
   last_logged_in_at: <%= Time.now %>
@@ -19,7 +19,7 @@ mod:
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 40
   email: mod@danbooru.com
-  invite_count: 100
+  invite_count: 0
   always_resize_images: false
   invited_by: ~
   last_logged_in_at: <%= Time.now %>

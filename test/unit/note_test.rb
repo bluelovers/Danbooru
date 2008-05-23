@@ -3,6 +3,12 @@ require File.dirname(__FILE__) + '/../test_helper'
 class NoteTest < ActiveSupport::TestCase
   fixtures :users, :posts
 
+  def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+  end
+  
   def create_note(params)
     Note.create({:post_id => 1, :user_id => 1, :x => 0, :y => 0, :width => 100, :height => 100, :is_active => true, :ip_addr => "127.0.0.1"}.merge(params))
   end

@@ -1,7 +1,13 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  fixtures :users
+  
   def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+    
     @post_number = 1
   end
   

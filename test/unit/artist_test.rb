@@ -3,6 +3,12 @@ require File.dirname(__FILE__) + '/../test_helper'
 class ArtistTest < ActiveSupport::TestCase
   fixtures :users
   
+  def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+  end
+  
   def create_artist(params)
     Artist.create({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
   end

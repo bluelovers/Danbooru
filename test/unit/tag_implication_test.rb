@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class TagImplicationTest < ActiveSupport::TestCase
   def setup
+    if CONFIG["enable_caching"]
+      CACHE.flush_all
+    end
+    
     @test_number = 1
     @impl = TagImplication.create(:predicate => "taga", :consequent => "tagb", :creator_id => 1, :is_pending => false)
   end
