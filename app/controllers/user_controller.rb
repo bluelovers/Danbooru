@@ -4,7 +4,8 @@ class UserController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite, :unban]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
-  before_filter :mod_only, :only => [:invites, :block, :unblock, :show_blocked_users]
+  before_filter :janitor_only, :only => [:invites]
+  before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
   helper :post
   filter_parameter_logging :password
   auto_complete_for :user, :name
@@ -29,30 +30,15 @@ class UserController < ApplicationController
   def invites
     if request.post?
       if params[:member]
-        if @current_user.invite_count < 1
-          flash[:notice] = "You are out of invites"
-        else
-          user = User.find(:first, :conditions => ["lower(name) = lower(?)", params[:member][:name]])
-
-          if user == nil
-            flash[:notice] = "User #{params[:member][:name]} was not found"
-            redirect_to :action => "invites"
-            return
-          end
+        begin
+          @current_user.invite!(params[:member][:name])
+          flash[:notice] = "User was invited"
           
-          if UserRecord.count(:conditions => ["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", user.id, CONFIG["user_levels"]["Mod"]]) > 0 && !@current_user.is_mod_or_higher?
-            flash[:notice] = "This user has negative feedback on his record and can only be invited by a moderator"
-            redirect_to :action => "invites"
-            return
-          end
-
-          user.level = CONFIG["user_levels"]["Privileged"]
-          user.invited_by = @current_user.id
-          User.transaction do
-            user.save!
-            @current_user.decrement! :invite_count
-          end
-          flash[:notice] = "You have invited #{CGI.escapeHTML(user.pretty_name)}"
+        rescue User::NoInvites
+          flash[:notice] = "You have no invites for use"
+          
+        rescue User::HasNegativeRecord
+          flash[:notice] = "This use has a negative record and must be invited by an admin"
         end
       end
       
@@ -69,7 +55,7 @@ class UserController < ApplicationController
   def index
     set_title "Users"
     
-    @users = User.paginate User.generate_sql(params).merge(:per_page => 20, :page => params[:page])
+    @users = User.paginate(User.generate_sql(params).merge(:per_page => 20, :page => params[:page]))
     respond_to_list("users")
   end
 
@@ -90,16 +76,14 @@ class UserController < ApplicationController
   end
 
   def create
-    user = User.new(params[:user])
-    user.name = params[:user][:name]
-    user.save
+    user = User.create(params[:user])
 
     if user.errors.empty?
       save_cookies(user)
 
       if CONFIG["enable_account_email_activation"]
         begin
-          UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
+          UserMailer::deliver_confirmation_email(user)
           notice = "New account created. Confirmation email sent to #{user.email}"
         rescue Net::SMTPSyntaxError, Net::SMTPFatalError
           notice = "Could not send confirmation email; account creation canceled"
@@ -211,7 +195,9 @@ class UserController < ApplicationController
   def unblock
     params[:user].keys.each do |user_id|
       Ban.destroy_all(["user_id = ?", user_id])
-      User.update(user_id, :level => CONFIG["user_levels"]["Member"])
+      user = User.find(user_id)
+      user.level = CONFIG["user_levels"]["Member"]
+      user.save
     end
     
     redirect_to :action => "show_blocked_users"
@@ -238,19 +224,13 @@ class UserController < ApplicationController
           return
         end
         
-        UserMailer::deliver_confirmation_email(user, User.confirmation_hash(user.name))
+        UserMailer::deliver_confirmation_email(user)
         flash[:notice] = "Confirmation email sent"
         redirect_to :action => "home"
       end
     end
 
     def activate_user
-      if params["id"] !~ /\A[0-9a-f]{64}\Z/
-        flash[:notice] = "Invalid confirmation code"
-        redirect_to :action => "home"
-        return
-      end
-
       flash[:notice] = "Invalid confirmation code"
       
       users = User.find(:all, :conditions => ["level = ?", CONFIG["user_levels"]["Unactivated"]])
