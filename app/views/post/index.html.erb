@@ -9,6 +9,7 @@
     <%= render :partial => "search" %>
     <% if CONFIG["can_see_ads"].call(@current_user) %>
       <%= CONFIG["ad_code_index_side"] %>
+      <%= CONFIG["ad_code_index_bottom"] %>
     <% end %>
     <div style="margin-bottom: 1em;">
       <h5>Mode</h5>
@@ -81,10 +82,6 @@
       <%= link_to "Moderate", :controller => "post", :action => "moderate" %> |
       <%= link_to "Help", :controller => "help", :action => "posts" %>
     </div>
-
-    <% if CONFIG["can_see_ads"].call(@current_user) %>
-      <%= CONFIG["ad_code_index_bottom"] %>
-    <% end %>
   </div>
 </div>
 

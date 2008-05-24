@@ -2,7 +2,7 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-  before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
+  before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random, :index]
   before_filter :janitor_only, :only => [:moderate]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
@@ -16,17 +16,17 @@ class PostController < ApplicationController
     redirect_to_proc = false
     
     if options[:redirect_to] && options[:redirect_to][:id].is_a?(Proc)
-  	  redirect_to_proc = options[:redirect_to][:id]
-  	  options[:redirect_to][:id] = options[:redirect_to][:id].call(self)
+      redirect_to_proc = options[:redirect_to][:id]
+      options[:redirect_to][:id] = options[:redirect_to][:id].call(self)
     end
     
-  	result = super(options)
+    result = super(options)
   	
-  	if redirect_to_proc
-  	  options[:redirect_to][:id] = redirect_to_proc
-	  end
+    if redirect_to_proc
+      options[:redirect_to][:id] = redirect_to_proc
+    end
 	  
-	  return result
+    return result
   end
   
   def upload
@@ -141,7 +141,7 @@ class PostController < ApplicationController
   
   def deleted_index
     if params[:user_id]
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ?", params[:user_id]], :page => params[:page])
+      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ? ", params[:user_id]], :page => params[:page])
     else
       @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted'"], :page => params[:page])
     end

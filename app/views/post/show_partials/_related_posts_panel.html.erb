@@ -8,7 +8,7 @@
     <% end %>
     <li><%= link_to "Random", :controller => "post", :action => "random" %></li>
     <% unless @post.is_deleted? || !@post.image? %>
-      <li><%= link_to "Similar", "http://iqdb.yi.org/db-search.php?url=#{@post.preview_url}" %></li>
+      <li><%= link_to "Similar", "http://danbooru.iqdb.hanyuu.net/db-search.php?url=#{@post.preview_url}" %></li>
     <% end %>
   </ul>
 </div>

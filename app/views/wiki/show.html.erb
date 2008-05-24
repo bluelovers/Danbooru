@@ -41,7 +41,7 @@
         <% if @artist.alias_id %>
           <tr>
             <th>Alias for</th>
-            <td><%= link_to h(@artist.alias), :action => "show", :title => @artist.alias %></td>
+            <td><%= link_to h(@artist.alias_name), :action => "show", :title => @artist.alias_name %></td>
           </tr>
         <% end %>
         <% if @artist.aliases.any? %>
@@ -50,10 +50,10 @@
             <td><%= @artist.aliases.map {|x| link_to(h(x.name), :action => "show", :title => x.name)}.join(", ") %></td>
           </tr>
         <% end %>
-        <% if @artist.group %>
+        <% if @artist.group_id %>
           <tr>
             <th>Member of</th>
-            <td><%= link_to h(@artist.group), :action => "show", :title => @artist.group %></td>
+            <td><%= link_to h(@artist.group_name), :action => "show", :title => @artist.group_name %></td>
           </tr>
         <% end %>
         <% if @artist.members.any? %>
