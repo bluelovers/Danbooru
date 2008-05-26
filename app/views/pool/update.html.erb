@@ -19,6 +19,13 @@
         <td><%= check_box "pool", "is_public" %></td>
       </tr>
       <tr>
+        <th>
+          <label for="pool_is_public">Active</label>
+          <p>Inactive pools will no longer be selectable when adding a post.</p>
+        </th>
+        <td><%= check_box "pool", "is_active" %></td>
+      </tr>
+      <tr>
         <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
       </tr>
     </tbody>

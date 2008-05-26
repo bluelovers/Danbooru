@@ -84,14 +84,19 @@ class PoolController < ApplicationController
   def add_post
     if request.post?
       @pool = Pool.find(params[:pool_id])
+      session[:last_pool_id] = @pool.id
       
       unless @pool.is_public? || @current_user.has_permission?(@pool)
         access_denied()
         return
       end
       
-      sequence = params[:pool][:sequence]
-      sequence = nil if sequence.blank?
+      if params[:pool] && !params[:pool][:sequence].blank?
+        sequence = params[:pool][:sequence]
+      else
+        sequence = nil
+      end
+      
       begin
         @pool.add_post(params[:post_id], :sequence => sequence)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
@@ -102,9 +107,9 @@ class PoolController < ApplicationController
       end
     else
       if @current_user.is_anonymous?
-        @pools = Pool.find(:all, :order => "name", :conditions => "is_public = TRUE")
+        @pools = Pool.find(:all, :order => "name", :conditions => "is_active = TRUE AND is_public = TRUE")
       else
-        @pools = Pool.find(:all, :order => "name", :conditions => ["is_public = TRUE OR user_id = ?", @current_user.id])
+        @pools = Pool.find(:all, :order => "name", :conditions => ["is_active = TRUE AND (is_public = TRUE OR user_id = ?)", @current_user.id])
       end
       
       @post = Post.find(params[:post_id])
@@ -188,5 +193,15 @@ class PoolController < ApplicationController
         end
       end
     end
+  end
+  
+  def select
+    if @current_user.is_anonymous?
+      @pools = Pool.find(:all, :order => "name", :conditions => "is_active = TRUE AND is_public = TRUE")
+    else
+      @pools = Pool.find(:all, :order => "name", :conditions => ["is_active = TRUE AND (is_public = TRUE OR user_id = ?)", @current_user.id])
+    end
+    
+    render :layout => false
   end
 end

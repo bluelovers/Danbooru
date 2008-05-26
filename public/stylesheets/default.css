@@ -715,7 +715,7 @@ div.sidebar {
   width: 20%;
   margin-right: 1em;
   float: left;
-  overflow: hidden;
+  overflow: visible;
 }
 
 div.sidebar li {

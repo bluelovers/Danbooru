@@ -1,20 +1,10 @@
 class ArtistController < ApplicationController
   layout "default"
 
-  before_filter :member_only, :only => [:update, :create, :destroy]
-  verify :method => :post, :only => [:destroy, :update, :create]
+  before_filter :member_only, :only => [:create, :update, :destroy]
   helper :post, :wiki
 
-  def delete
-    @artist = Artist.find(params[:id])
-  end
-
   def destroy
-    if params[:commit] == "No"
-      redirect_to :action => "show", :id => params[:id]
-      return
-    end
-    
     @artist = Artist.find(params[:id])
     @artist.destroy
 
@@ -22,49 +12,49 @@ class ArtistController < ApplicationController
   end
 
   def update
-    if params[:commit] == "Cancel"
-      redirect_to :action => "show", :id => params[:id]
-      return
-    end
+    if request.post?
+      if params[:commit] == "Cancel"
+        redirect_to :action => "show", :id => params[:id]
+        return
+      end
 
-    artist = Artist.find(params[:id])
-    artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
+      artist = Artist.find(params[:id])
+      artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
 
-    if artist.errors.empty?
-      respond_to_success("Artist updated", :action => "show", :id => artist.id)
+      if artist.errors.empty?
+        respond_to_success("Artist updated", :action => "show", :id => artist.id)
+      else
+        respond_to_error(artist, :action => "edit", :id => artist.id)
+      end
     else
-      respond_to_error(artist, :action => "edit", :id => artist.id)
+      @artist = Artist.find(params["id"])
     end
   end
 
   def create
-    artist = Artist.create(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => (@current_user ? @current_user.id : nil)))
+    if request.post?
+      artist = Artist.create(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
 
-    if artist.errors.empty?
-      respond_to_success("Artist created", :action => "show", :id => artist.id)
-    else
-      respond_to_error(artist, :action => "add", :alias_id => params[:alias_id])
-    end
-  end
-
-  def edit
-    @artist = Artist.find(params["id"])
-  end
-
-  def add
-    @artist = Artist.new
-
-    if params[:name]
-      @artist.name = params[:name]
-
-      post = Post.find(:first, :conditions => ["id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?)) AND source LIKE 'http%'", params[:name]])
-      unless post == nil || post.source.blank?
-        @artist.urls = post.source
+      if artist.errors.empty?
+        respond_to_success("Artist created", :action => "show", :id => artist.id)
+      else
+        respond_to_error(artist, :action => "add", :alias_id => params[:alias_id])
       end
-    end
+    else
+      @artist = Artist.new
 
-    if params[:alias_id]
-      @artist.alias_id = params[:alias_id]
+      if params[:name]
+        @artist.name = params[:name]
+
+        post = Post.find(:first, :conditions => ["id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?)) AND source LIKE 'http%'", params[:name]])
+        unless post == nil || post.source.blank?
+          @artist.urls = post.source
+        end
+      end
+
+      if params[:alias_id]
+        @artist.alias_id = params[:alias_id]
+      end
     end
   end
 

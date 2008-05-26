@@ -19,7 +19,7 @@
           <% content_tag(:tr, :class => cycle('even', 'odd'), :id => "artist-#{artist.id}") do %>
             <td>
               <%= link_to_unless artist.alias_id, "P", {:controller => "post", :action => "index", :tags => artist.name}, :title => "Find posts for artist" %>
-              <%= link_to "E", {:action => "edit", :id => artist.id}, :title => "Edit artist" %> 
+              <%= link_to "E", {:action => "update", :id => artist.id}, :title => "Edit artist" %> 
               <% if @current_user %>
                 <%= link_to_remote "D", {:url => {:action => "destroy", :id => artist.id}, :confirm => "Are you sure you want to delete #{artist.name}?"}, :title => "Delete artist" %>
               <% end %>
@@ -30,7 +30,7 @@
                 &rarr; <%= link_to h(artist.alias_name), {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
               <% end %>
               <% if artist.group_id %>
-                [<%= link_to h(artist.group), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
+                [<%= link_to h(artist.group_name), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
               <% end %>             
             </td>
             <% if artist.updater_id %>
@@ -49,7 +49,7 @@
   </div>
 
   <div id="footer">
-    <%= link_to "Add", :action => "add" %> |
+    <%= link_to "Create", :action => "create" %> |
     <%= link_to "Order by Date", :order => "date" %> |
     <%= link_to "Order by Name", :order => "name" %> | 
     <%= link_to "Help", :controller => "help", :action => "artists" %>

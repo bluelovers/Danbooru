@@ -2,7 +2,7 @@ class CommentController < ApplicationController
   layout "default"
 
   verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
-  before_filter :member_only, :only => [:create, :destroy, :update, :index]
+  before_filter :member_only, :only => [:create, :destroy, :update, :index, :show]
   before_filter :janitor_only, :only => [:moderate]
 
   def edit
@@ -30,9 +30,9 @@ class CommentController < ApplicationController
   end
 
   def create
-    if @current_user.is_member_or_lower? && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
+    if @current_user.is_member_or_lower? && params[:comment][:do_not_bump_post].blank? && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
       # TODO: move this to the model
-      respond_to_error("Hourly limit exceeded", {:action => "index"}, :status => 421)
+      respond_to_error("Hourly limit exceeded (check \"do not bump post\" to post more comments)", {:action => "index"}, :status => 421)
       return
     end
 

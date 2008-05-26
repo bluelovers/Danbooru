@@ -2,7 +2,7 @@ module LoginSystem
   # This is a proxy class to make various nil checks unnecessary
   class AnonymousUser
     def id
-      0
+      nil
     end
 
     def level

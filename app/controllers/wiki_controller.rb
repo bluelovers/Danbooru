@@ -65,10 +65,23 @@ class WikiController < ApplicationController
 
   def create
     page = WikiPage.create(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
+
     if page.errors.empty?
       respond_to_success("Page created", {:action => "show", :title => page.title}, :location => url_for(:action => "show", :title => page.title))
     else
       respond_to_error(page, :action => "index")
+    end
+  end
+
+  def edit
+    if params[:title] == nil
+      render :text => "no title specified"
+    else
+      @wiki_page = WikiPage.find_page(params[:title], params[:version])
+
+      if @wiki_page == nil
+        redirect_to :action => "add", :title => params[:title]
+      end
     end
   end
 
@@ -98,18 +111,6 @@ class WikiController < ApplicationController
     @artist = Artist.find_by_name(params[:title])
     @tag = Tag.find_by_name(params[:title])
     set_title params[:title].tr("_", " ")
-  end
-
-  def edit
-    if params[:title] == nil
-      render :text => "no title specified"
-    else
-      @wiki_page = WikiPage.find_page(params[:title], params[:version])
-
-      if @wiki_page == nil
-        redirect_to :action => "add", :title => params[:title]
-      end
-    end
   end
 
   def revert

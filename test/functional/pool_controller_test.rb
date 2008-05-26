@@ -67,6 +67,13 @@ class PoolControllerTest < ActionController::TestCase
     assert_nil(Pool.find_by_name("hoge"))
   end
   
+  def test_add_post_to_inactive_pool
+    pool = create_pool("hoge", :is_public => true, :user_id => 3, :is_active => false)
+    
+    get :add_post, {:post_id => 1}
+    assert_equal(false, assigns(:pools).any? {|x| x.name == "hoge"})
+  end
+  
   def test_add_post_to_public_pool
     pool = create_pool("hoge", :is_public => true, :user_id => 3)
     
@@ -243,5 +250,20 @@ class PoolControllerTest < ActionController::TestCase
     assert_equal(2, pp1.next_post_id)
     assert_equal(1, pp2.prev_post_id)
     assert_nil(pp2.next_post_id)
+  end
+  
+  def test_select
+    pool = create_pool("hoge", :is_public => true, :user_id => 4)
+    
+    get :select, {:post_id => 1}
+    assert_response :success
+    
+    get :select, {:post_id => 1}, {:user_id => 4}
+    assert_response :success
+    
+    pool.update_attributes(:is_active => false)
+    
+    get :select, {:post_id => 1}
+    assert_equal(false, assigns(:pools).any? {|x| x.name == "hoge"})
   end
 end

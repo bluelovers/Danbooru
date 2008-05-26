@@ -71,7 +71,7 @@ class CommentControllerTest < ActionController::TestCase
   
   def test_show
     comment = create_comment(1, "hoge")
-    get :show, {:id => comment.id}
+    get :show, {:id => comment.id}, {:user_id => 4}
     assert_response :success
   end
   
@@ -80,7 +80,7 @@ class CommentControllerTest < ActionController::TestCase
     create_comment(1, "moogle")
     create_comment(3, "box")
     create_comment(2, "tree")
-    get :index
+    get :index, {}, {:user_id => 4}
     assert_response :success
   end
   
