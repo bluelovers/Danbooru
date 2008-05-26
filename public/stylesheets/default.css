@@ -127,15 +127,15 @@ input {
 }
 
 input[type=password]:focus {
-	background: #FFC;
+  background: #FFC;
 }
 
 input[type=text]:focus {
-	background: #FFC;
+  background: #FFC;
 }
 
 label {
-	font-weight: bold;
+  font-weight: bold;
   white-space: nowrap;
 }
 
@@ -202,16 +202,17 @@ table.form {
 }
 
 table.form p {
-	font-size: 0.8em;
+  font-size: 0.8em;
   font-weight: normal;
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 table.form th {
-	color: black;
-	white-space: normal;
-  padding-right: 2em;
+  color: black;
+  white-space: normal;
+  padding-right: 1em;
+  text-align: right;
 }
 
 table.highlightable > tbody > tr:hover {
@@ -366,6 +367,7 @@ a.tag-type-artist {
   margin:0;
   bottom: 0;
 }
+
 .history-search-label {
   width: 10%;
   float: left;

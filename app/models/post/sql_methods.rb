@@ -59,6 +59,8 @@ module PostSqlMethods
   
       if q[:deleted_only] == true
         conds << "p.status = 'deleted'"
+      else
+        conds << "p.status <> 'deleted'"
       end
 
       if q[:parent_id].is_a?(Integer)
