@@ -7,12 +7,17 @@
     <%= link_to "Wiki", {:controller => "wiki"}, :title => 'Wiki' %>
     <%= link_to "More &raquo;", {:controller => "static", :action => "more"}, :title => "A site map" %>
   </div>
-  <div style="margin-bottom: 1em;">
+  <div style="margin-bottom: 2em;">
     <% form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
       <div>
         <%= text_field_tag "tags", "", :size => 30 %><br>
         <%= submit_tag "Search", :name => 'searchDefault' %>        
       </div>
+    <% end %>
+  </div>
+  <div style="margin-bottom: 1em;">
+    <% Post.fast_count.to_s.each_char do |x| %>
+      <img src="/images/<%= x %>.gif"/>
     <% end %>
   </div>
   <div style="font-size: 80%; margin-bottom: 2em;">
