@@ -26,9 +26,7 @@ module PostImageStoreMethods
     end
 
     def preview_url
-      if status == "deleted"
-        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/deleted.png"
-      elsif self.image?
+      if self.image?
         "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
       else
         "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"

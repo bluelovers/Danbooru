@@ -23,9 +23,7 @@ module PostImageStoreMethods
     end
 
     def preview_url
-      if status == "deleted"
-        CONFIG["url_base"] + "/data/preview/deleted.png"
-      elsif image?
+      if image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else
         CONFIG["url_base"] + "/data/preview/download.png"
