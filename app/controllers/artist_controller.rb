@@ -84,7 +84,7 @@ class ArtistController < ApplicationController
     end
 
     if @artist.nil?
-      redirect_to :action => "add", :name => params[:name]
+      redirect_to :action => "create", :name => params[:name]
     else
       redirect_to :controller => "wiki", :action => "show", :title => @artist.name
     end
