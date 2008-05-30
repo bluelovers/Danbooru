@@ -1,4 +1,4 @@
-<% unless @post.is_deleted? %>
+<% if !@post.is_deleted? || @current_user.is_janitor_or_higher? %>
   <div>
     <% if !@post.can_be_seen_by?(@current_user) %>
       <p>You need a privileged account to see this image.</p>

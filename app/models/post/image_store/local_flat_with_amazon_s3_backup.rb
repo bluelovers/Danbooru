@@ -60,14 +60,6 @@ module PostImageStoreMethods
       else
         "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
       end
-      
-      # if status == "deleted"
-      #   CONFIG["url_base"] + "/data/preview/deleted.png"
-      # elsif image?
-      #   CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
-      # else
-      #   CONFIG["url_base"] + "/data/preview/download.png"
-      # end
     end
 
     def store_sample_url

@@ -167,7 +167,7 @@ class PostController < ApplicationController
     if count < 16 && split_tags.size == 1 && !split_tags[0].include?("_")
       # TODO: Am I double escaping here?
       search_for = split_tags[0].to_escaped_for_sql_like
-      @tag_suggestions = Tag.find(:all, :conditions => ["name LIKE ? OR name LIKE ?", "%" + search_for, search_for + "%"], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
+      @tag_suggestions = Tag.find(:all, :conditions => ["(name LIKE ? OR name LIKE ?) AND name <> ?", "%" + search_for, search_for + "%", split_tags[0]], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
     end
     
     @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
