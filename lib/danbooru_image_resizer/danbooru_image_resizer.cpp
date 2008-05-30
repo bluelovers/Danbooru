@@ -35,29 +35,29 @@ static VALUE danbooru_resize_image(VALUE module, VALUE file_ext_val, VALUE read_
 	Resizer *resizer = NULL;
 	Reader *Reader = NULL;
 
-	if (!strcmp(file_ext, "jpg") || !strcmp(file_ext, "jpeg"))
+	if (!strncmp(file_ext, "jpg", 3) || !strncmp(file_ext, "jpeg", 4))
 		Reader = new JPEG;
-	else if (!strcmp(file_ext, "gif"))
+	else if (!strncmp(file_ext, "gif", 3))
 		Reader = new GIF;
-	else if (!strcmp(file_ext, "png"))
+	else if (!strncmp(file_ext, "png", 3))
 		Reader = new PNG;
 	else
 	{
-		strcpy(error, "unknown filetype");
+		strncpy(error, "unknown filetype", 1024);
 		goto cleanup;
 	}
 
 	Compressor = new JPEGCompressor(write_file);
 	if(Compressor == NULL)
 	{
-		strcpy(error, "out of memory");
+		strncpy(error, "out of memory", 1024);
 		goto cleanup;
 	}
 
 	resizer = new Resizer(Compressor);
 	if(resizer == NULL || Reader == NULL)
 	{
-		strcpy(error, "out of memory");
+		strncpy(error, "out of memory", 1024);
 		goto cleanup;
 	}
 
