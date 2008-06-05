@@ -5,7 +5,7 @@ module FavoriteHelper
     if users.empty?
       html << "no one"
     else
-      html << users.map {|user| link_to(ERB::Util.h(user.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{ERB::Util.u(user.name)} order:fav")}.join(", ")
+      html << users.map {|user| link_to(ERB::Util.h(user.pretty_name), :controller => "user", :action => "show", :id => user.id)}.join(", ")
     end
 
     return html
