@@ -5,6 +5,8 @@ module PostCacheMethods
   end
   
   def expire_cache
+    # Have to call this twice in order to expire tags that may have been removed
+    Cache.expire(:tags => cached_tags)
     reload
     Cache.expire(:tags => cached_tags)
   end

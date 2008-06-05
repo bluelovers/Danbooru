@@ -96,7 +96,7 @@ class ForumPost < ActiveRecord::Base
   module ApiMethods
     def api_attributes
       return {
-        :body => body.gsub(/\r\n|\r|\n/, "\\n"), 
+        :body => body, 
         :creator => author, 
         :creator_id => creator_id, 
         :id => id, 

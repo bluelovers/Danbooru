@@ -57,11 +57,9 @@ class PostController < ApplicationController
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
 
-      if p.source.blank? && !@post.source.blank?
-        p.update_attributes(:source => @post.source, :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => p.cached_tags + " " + params[:post][:tags])
-      else
-        p.update_attributes(:tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip)
-      end
+      update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip }
+      update[:source] = @post.source if p.source.blank? && !@post.source.blank?
+      p.update_attributes(update)
 
       respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :api => {:location => url_for(:controller => "post", :action => "show", :id => p.id)}, :status => 423)
     else
@@ -84,7 +82,11 @@ class PostController < ApplicationController
         end
       end
 
-      respond_to_success("Post approved", {:action => "moderate"})
+      if params[:commit] == "Approve"
+        respond_to_success("Post approved", {:action => "moderate"})
+      elsif params[:commit] == "Delete"
+        respond_to_success("Post deleted", {:action => "moderate"})
+      end
     else
       if params[:query]
         @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
@@ -103,8 +105,8 @@ class PostController < ApplicationController
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
-      updated_post = Post.find(params[:id])
-      respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:post => updated_post})
+      @post.reload
+      respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:post => @post})
     else
       respond_to_error(@post, :action => "show", :id => params[:id])
     end
@@ -295,7 +297,13 @@ class PostController < ApplicationController
   end
 
   def flag
-    Post.find(params[:id]).flag!(params[:reason], @current_user.id)
+    post = Post.find(params[:id])
+    if post.status == "deleted" then
+      respond_to_error("Can't flag deleted post", :action => "show", :id => params{:id})
+      return
+    end
+
+    post.flag!(params[:reason], @current_user.id)
     respond_to_success("Post flagged", :action => "show", :id => params{:id})
   end
   

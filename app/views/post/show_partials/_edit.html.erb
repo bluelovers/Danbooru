@@ -48,7 +48,6 @@
           <th><label class="block" for="post_source">Source</label></th>
           <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
         </tr>
-        <% if @post.can_be_seen_by?(@current_user) %>
           <tr>
             <th>
               <label class="block" for="post_tags">Tags</label>
@@ -57,7 +56,8 @@
               <% end %>
             </th>
             <td>
-              <%= text_area "post", "tags", :size => "50x2", :value => @post.cached_tags, :tabindex => 10 %>
+              <%= text_area "post", "tags", :disabled => !@post.can_be_seen_by?(@current_user), :size => "50x2", :value => @post.cached_tags, :tabindex => 10 %>
+            <% if @post.can_be_seen_by?(@current_user) %>
               <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
               <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
               <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
@@ -65,9 +65,9 @@
               <% if CONFIG["enable_artists"] %>
               | <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
               <% end %>
+            <% end %>
             </td>
           </tr>
-        <% end %>
       </tbody>
     </table>
     <div>
