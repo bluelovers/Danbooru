@@ -44,7 +44,7 @@ class PostTest < ActiveSupport::TestCase
       tag1_version = Cache.get("tag:tag1").to_i
       tag2_version = Cache.get("tag:tag2").to_i
       create_post
-      assert_equal(cache_version + 1, Cache.get("$cache_version").to_i)
+      assert_equal(cache_version + 2, Cache.get("$cache_version").to_i)
       assert_equal(tag1_version + 1, Cache.get("tag:tag1").to_i)
       assert_equal(tag2_version + 1, Cache.get("tag:tag2").to_i)
     end
