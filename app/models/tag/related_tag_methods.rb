@@ -24,6 +24,9 @@ module TagRelatedTagMethods
       cond = ["pt0.post_id = pt1.post_id"]
       sql = ""
 
+      # Ignore deleted posts in pt0, so the count excludes them.
+      cond << "(SELECT TRUE FROM POSTS p0 WHERE p0.id = pt0.post_id AND p0.status <> 'deleted')"
+
       (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
       (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
       (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}

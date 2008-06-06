@@ -12,6 +12,10 @@ module PostCountMethods
         end
       end
     end
+
+    def recalculate_row_count
+      execute_sql("UPDATE table_data SET row_count = (SELECT COUNT(*) FROM posts WHERE parent_id IS NULL AND status <> 'deleted') WHERE name = 'posts'")
+    end
   end
 
   def self.included(m)

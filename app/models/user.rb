@@ -282,11 +282,11 @@ class User < ActiveRecord::Base
   
   module UserPostMethods
     def recent_uploaded_posts
-      Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} ORDER BY p.id DESC LIMIT 6")
+      Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} AND p.status <> 'deleted' ORDER BY p.id DESC LIMIT 6")
     end
 
     def recent_favorite_posts
-      Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} ORDER BY f.id DESC LIMIT 6")
+      Post.find_by_sql("SELECT p.* FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id} AND p.status <> 'deleted' ORDER BY f.id DESC LIMIT 6")
     end
 
     def favorite_post_count(options = {})

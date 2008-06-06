@@ -9,7 +9,6 @@ class PostTest < ActiveSupport::TestCase
     end
     
     # TODO: revert these after testing in teardown
-    CONFIG["enable_parents"] = true
     CONFIG["image_samples"] = true
     CONFIG["sample_width"] = 100
     CONFIG["sample_height"] = 100
@@ -44,9 +43,9 @@ class PostTest < ActiveSupport::TestCase
       tag1_version = Cache.get("tag:tag1").to_i
       tag2_version = Cache.get("tag:tag2").to_i
       create_post
-      assert_equal(cache_version + 2, Cache.get("$cache_version").to_i)
-      assert_equal(tag1_version + 1, Cache.get("tag:tag1").to_i)
-      assert_equal(tag2_version + 1, Cache.get("tag:tag2").to_i)
+      assert_greater(Cache.get("$cache_version").to_i, cache_version)
+      assert_greater(Cache.get("tag:tag1").to_i, tag1_version)
+      assert_greater(Cache.get("tag:tag2").to_i, tag2_version)
     end
   end
   
@@ -216,6 +215,16 @@ class PostTest < ActiveSupport::TestCase
     assert_equal("deleted", post.status)
   end
   
+  def test_update_cached_tags
+    p = create_post(:tags => "moge chichi")
+    assert_equal("chichi moge", p.cached_tags)
+    t = Tag.find_by_name("chichi")
+    t.update_attributes(:name => "oppai")
+    Post.recalculate_cached_tags(p.id)
+    p.reload
+    assert_equal("moge oppai", p.cached_tags)
+  end
+ 
   def test_tag_merging_a
     post = create_post(:tags => "tag1 tag2")
     p1 = Post.find(post.id)

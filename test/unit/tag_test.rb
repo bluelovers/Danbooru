@@ -70,16 +70,6 @@ class TagTest < ActiveSupport::TestCase
     assert_equal(["moge"], Tag.select_ambiguous(["moge", "chichi", "oppai"]))
   end
   
-  def test_update_cached_tags
-    p = create_post("moge chichi")
-    assert_equal("chichi moge", p.cached_tags)
-    t = Tag.find_by_name("chichi")
-    t.update_attributes(:name => "oppai")
-    Tag.update_cached_tags(["oppai"])
-    p.reload
-    assert_equal("moge oppai", p.cached_tags)
-  end
-  
   if CONFIG["enable_caching"]
     def test_cache
       Tag.find_or_create_by_name("artist:a1")

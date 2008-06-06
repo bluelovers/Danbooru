@@ -9,6 +9,9 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
+  
+  protected :build_cache_key
+  protected :get_cache_key
 
   protected
   def respond_to_success(notice, redirect_to_params, options = {})

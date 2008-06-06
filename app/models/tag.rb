@@ -49,4 +49,17 @@ class Tag < ActiveRecord::Base
     return [] if tags.blank?
     return select_values_sql("SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags)
   end
+
+  def self.purge_tags
+    sql =
+      "DELETE FROM tags " +
+      "WHERE post_count = 0 AND " +
+      "id NOT IN (SELECT alias_id FROM tag_aliases UNION SELECT predicate_id FROM tag_implications UNION SELECT consequent_id FROM tag_implications)"
+    execute_sql sql
+  end
+
+  def self.recalculate_post_count
+    sql = "UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags pt, posts p WHERE pt.tag_id = tags.id AND pt.post_id = p.id AND p.status <> 'deleted')"
+    execute_sql sql
+  end
 end

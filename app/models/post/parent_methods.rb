@@ -5,6 +5,13 @@ module PostParentMethods
       execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", has_children, post_id)
     end
     
+    def recalculate_has_children
+      transaction do
+        execute_sql("UPDATE posts SET has_children = false WHERE has_children = true")
+        execute_sql("UPDATE posts SET has_children = true WHERE id IN (SELECT parent_id FROM posts WHERE parent_id IS NOT NULL AND status <> 'deleted')")
+      end
+    end
+
     def set_parent(post_id, parent_id, old_parent_id = nil)
       if old_parent_id.nil?
         old_parent_id = select_value_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)

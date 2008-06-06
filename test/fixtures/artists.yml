@@ -1,6 +1,5 @@
 monet:
   id: 1
-  created_at: <%= Time.now %>
   alias_id: ~
   group_id: ~
   name: money

@@ -105,4 +105,10 @@ class ApplicationTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  def test_cache_key_expiration
+    limit1 = get_cache_key("post", "index", {:tags => "", :limit => "100"})[0]
+    limit2 = get_cache_key("post", "index", {:tags => "", :limit => ""})[0]
+    assert_not_equal(limit1, limit2)
+  end
 end

@@ -1,3 +1,3 @@
-require "lib/asset_cache.rb"
+require "asset_cache"
 
 AssetCache.clear_js_cache

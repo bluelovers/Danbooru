@@ -188,10 +188,12 @@ module PostSqlMethods
           sql << " ORDER BY p.score"
       
         when "mpixels"
-          sql << " ORDER BY width*height DESC"
+          # Use "w*h/1000000", even though "w*h" would give the same result, so this can use
+          # the posts_mpixels index.
+          sql << " ORDER BY width*height/1000000.0 DESC"
 
         when "mpixels_asc"
-          sql << " ORDER BY width*height"
+          sql << " ORDER BY width*height/1000000.0"
 
         when "portrait"
           sql << " ORDER BY 1.0*width/GREATEST(1, height)"

@@ -5,6 +5,30 @@ module PostTagMethods
     def find_by_tags(tags, options = {})
       return find_by_sql(Post.generate_sql(tags, options))
     end
+
+    def recalculate_cached_tags(id=nil)
+      conds = []
+      cond_params = []
+
+      sql =
+        "UPDATE posts p SET cached_tags = " +
+        "(" +
+        "  SELECT array_to_string(coalesce(array(" +
+        "    SELECT t.name" +
+        "      FROM tags t, posts_tags pt" +
+        "      WHERE t.id = pt.tag_id AND pt.post_id = p.id" +
+        "      ORDER BY t.name" +
+        "  ), '{}'::text[]), ' ')" +
+        ")"
+
+      if id
+        conds << "WHERE p.id = ?"
+        cond_params << id
+      end
+
+      sql = [sql, conds].join(" ")
+      execute_sql sql, *cond_params
+    end
   end
   
   def self.included(m)
@@ -92,9 +116,11 @@ module PostTagMethods
       execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
       self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}
       execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + new_tags.map {|x| ("(#{id}, #{x.id})")}.join(", "))
-      tag_string = new_tags.map(&:name).sort.join(" ")
-      PostTagHistory.create(:post_id => id, :tags => tag_string, :user_id => updater_user_id, :ip_addr => updater_ip_addr)
-      execute_sql("UPDATE posts SET cached_tags = ? WHERE id = ?", tag_string, id)
+
+      Post.recalculate_cached_tags(self.id)
+      self.cached_tags = select_value_sql("SELECT cached_tags FROM posts WHERE id = #{id}")
+
+      PostTagHistory.create(:post_id => id, :tags => self.cached_tags, :user_id => updater_user_id, :ip_addr => updater_ip_addr)
       self.new_tags = nil
     end
   end

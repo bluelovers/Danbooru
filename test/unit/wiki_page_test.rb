@@ -21,7 +21,18 @@ class WikiPageTest < ActiveSupport::TestCase
   end
   
   def test_diff
-    raise NotImplementedError
+    # Still don't really understand the logic here
+    w1 = create_wiki(:body => "hoge")
+    update_wiki(w1, :body => "moge")
+    assert_equal("<del>moge</del><ins>hoge</ins>", w1.diff(1))
+    
+    w2 = create_wiki(:body => "hoge")
+    update_wiki(w2, :body => "moge hoge")
+    assert_equal("<del>moge </del>hoge", w2.diff(1))
+    
+    # w3 = create_wiki(:body => "<h1>hoge</h1> <p>moge</p>")
+    # update_wiki(w3, :body => "<h2>hoge</h2> <p>moge</p>")
+    # assert_equal("<del>&lt;h2&gt;</del>hoge<del>&lt;/h2&gt; &lt;p&gt;moge&lt;/p&gt;</del>", w3.diff(1))
   end
   
   def test_find_page
