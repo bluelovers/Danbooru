@@ -81,20 +81,13 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def cache_key
-    get_cache_key(controller_name, action_name, params)
-  end
-  
   def set_cache_headers
     response.headers["Cache-Control"] = "max-age=300"
   end
   
   def cache_action
     if request.method == :get && params[:format] != "xml" && params[:format] != "json"
-      key, expiry = cache_key()
-      user_level_fragment = @current_user.level
-      user_level_fragment = CONFIG["user_levels"]["Member"] if user_level_fragment < CONFIG["user_levels"]["Member"]
-      key += "&level=#{user_level_fragment}"
+      key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
       
       if key && key.size < 200
         cached = Cache.get(key)
