@@ -1,5 +1,5 @@
 module PostTagMethods
-  attr_accessor :tags, :new_tags, :old_tags
+  attr_accessor :tags, :new_tags, :old_tags, :old_cached_tags
 
   module ClassMethods
     def find_by_tags(tags, options = {})
@@ -118,6 +118,9 @@ module PostTagMethods
       execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + new_tags.map {|x| ("(#{id}, #{x.id})")}.join(", "))
 
       Post.recalculate_cached_tags(self.id)
+
+      # Store the old cached_tags, so we can expire them.
+      self.old_cached_tags = self.cached_tags
       self.cached_tags = select_value_sql("SELECT cached_tags FROM posts WHERE id = #{id}")
 
       PostTagHistory.create(:post_id => id, :tags => self.cached_tags, :user_id => updater_user_id, :ip_addr => updater_ip_addr)
