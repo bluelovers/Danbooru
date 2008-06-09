@@ -74,7 +74,7 @@ class PostController < ApplicationController
           params[:ids].keys.each do |post_id|
             if params[:commit] == "Approve"
               post = Post.find(post_id)
-              post.approve!
+              post.approve!(@current_user.id)
             elsif params[:commit] == "Delete"
               Post.destroy_with_reason(post_id, params[:reason] || params[:reason2], @current_user)
             end

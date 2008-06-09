@@ -6,6 +6,7 @@ class Post < ActiveRecord::Base
   has_many :notes, :order => "id desc"
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
+  belongs_to :approver, :class_name => "Person"
   attr_accessor :updater_ip_addr, :updater_user_id
   
   include PostSqlMethods
@@ -39,12 +40,12 @@ class Post < ActiveRecord::Base
     end
   end
   
-  def approve!
+  def approve!(approver_id)
     if flag_detail
       flag_detail.update_attributes(:is_resolved => true)
     end
     
-    update_attributes(:status => "active")
+    update_attributes(:status => "active", :approver_id => approver_id)
   end
   
   # TODO: refactor or eliminate

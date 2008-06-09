@@ -374,10 +374,11 @@ class PostTest < ActiveSupport::TestCase
     assert_not_nil(post.flag_detail)
     assert_equal("bad bad bad", post.flag_detail.reason)
     
-    post.approve!
+    post.approve!(1)
     post.reload
     assert(post.is_active?, "Post should be active")
     assert(post.flag_detail.is_resolved?, "Flag detail should be resolved")
+    assert_equal(1, post.approver_id)
   end
   
   # The following search methods assume Tag.parse_query works.
