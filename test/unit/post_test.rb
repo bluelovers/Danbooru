@@ -274,16 +274,18 @@ class PostTest < ActiveSupport::TestCase
   
   def test_tag_history
     post = create_post(:tags => "tag-a")
-    assert_equal(1, post.tag_history.size)
     assert_equal("tag-a", post.tag_history[0].tags)
+    assert_equal(1, post.tag_history.size)
     
     update_post(post, :tags => "tag-b")
-    assert_equal(2, post.tag_history.size)
+    post.reload
     assert_equal("tag-b", post.tag_history[0].tags)
+    assert_equal(2, post.tag_history.size)
     
     update_post(post, :tags => "tag-c")
-    assert_equal(3, post.tag_history.size)
+    post.reload
     assert_equal("tag-c", post.tag_history[0].tags)
+    assert_equal(3, post.tag_history.size)
   end
   
   def test_metatags
