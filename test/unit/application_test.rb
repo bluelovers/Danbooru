@@ -1,23 +1,11 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ApplicationTest < ActiveSupport::TestCase
-  fixtures :users
+  fixtures :users, :posts
   include CacheHelper
 
-  def create_post(tags, post_number = 1, params = {})
-    Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg")}.merge(params))
-  end
-  
   def update_post(post, params = {})
     post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
-  end
-  
-  def create_default_posts
-    p1 = create_post("tag1", 1)
-    p2 = create_post("tag2", 2)
-    p3 = create_post("tag3", 3)
-    p4 = create_post("tag4", 4)
-    [p1, p2, p3, p4]
   end
   
   def get_cache_keys(searches)
@@ -40,7 +28,6 @@ class ApplicationTest < ActiveSupport::TestCase
     # Aggressive caching allows stale cache pages to be used; test with it disabled.
     CONFIG["enable_aggressive_caching"] = false
 
-    create_default_posts
     pool_id = Pool.create({:name => "dummy", :user_id => 1}).id
 
     tests = [
@@ -51,7 +38,7 @@ class ApplicationTest < ActiveSupport::TestCase
           { :tags => "abcd efgh" },         # tag addition
           { :tags => "efgh" },              # tag removal
         ],
-        :affected_searches => ["abcd", "ab*", "id:1", "pool:#{pool_id}"]
+        :affected_searches => ["abcd", "ab*", "-abcd", "id:1", "pool:#{pool_id}"]
       },
       {
         # s -> e -> s
@@ -106,7 +93,9 @@ class ApplicationTest < ActiveSupport::TestCase
     end
   end
   
-  def test_cache_key_expiration
+  def test_cache_key_limit
+    assert_equal(true, CONFIG["enable_caching"], "Can't test caching with caching disabled")
+
     limit1 = get_cache_key("post", "index", {:tags => "", :limit => "100"})[0]
     limit2 = get_cache_key("post", "index", {:tags => "", :limit => ""})[0]
     assert_not_equal(limit1, limit2)
