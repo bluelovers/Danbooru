@@ -24,7 +24,7 @@ class ArtistController < ApplicationController
       if artist.errors.empty?
         respond_to_success("Artist updated", :action => "show", :id => artist.id)
       else
-        respond_to_error(artist, :action => "edit", :id => artist.id)
+        respond_to_error(artist, :action => "update", :id => artist.id)
       end
     else
       @artist = Artist.find(params["id"])
