@@ -18,6 +18,7 @@ fi
 if [[ `date '+%d'` -eq '01' ]] ; then
   script/donmai/dump_tags
 fi
+script/donmai/send_moderator_report
 mongrel_rails cluster::start
 sleep 5
 script/donmai/upbooru
