@@ -1,6 +1,5 @@
 class TagImplicationController < ApplicationController
   layout "default"
-  before_filter :admin_only, :only => [:update]
   before_filter :member_only, :only => [:create]
   verify :method => :post, :only => [:create, :update]
 
@@ -21,16 +20,24 @@ class TagImplicationController < ApplicationController
 
     case params[:commit]
     when "Delete"
-      ids.each {|x| TagImplication.find(x).destroy_and_notify(@current_user, params[:reason])}
+      if @current_user.is_admin? || ids.all? {|x| ti = TagImplication.find(x) ; ti.is_pending? && ti.creator_id == @current_user.id}      
+        ids.each {|x| TagImplication.find(x).destroy_and_notify(@current_user, params[:reason])}
       
-      flash[:notice] = "Tag implications deleted"
-      redirect_to :action => "index"
+        flash[:notice] = "Tag implications deleted"
+        redirect_to :action => "index"
+      else
+        access_denied
+      end
 
     when "Approve"
-      ids.each {|x| TagImplication.find(x).approve(@current_user.id, request.remote_ip)}
+      if @current_user.is_admin?
+        ids.each {|x| TagImplication.find(x).approve(@current_user.id, request.remote_ip)}
 
-      flash[:notice] = "Tag implications approved"
-      redirect_to :action => "index"
+        flash[:notice] = "Tag implications approved"
+        redirect_to :action => "index"
+      else
+        access_denied
+      end
     end
   end
 
