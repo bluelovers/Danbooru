@@ -4,6 +4,7 @@
 module PostFileMethods
   def self.included(m)
     m.before_validation_on_create :download_source
+    m.before_validation_on_create :determine_content_type
     m.before_validation_on_create :validate_content_type
     m.before_validation_on_create :generate_hash
     m.before_validation_on_create :set_image_dimensions
@@ -13,11 +14,6 @@ module PostFileMethods
   end
   
   def validate_content_type
-    if file_ext.empty?
-      errors.add_to_base("No file received")
-      return false
-    end
-
     unless %w(jpg png gif swf).include?(file_ext.downcase)
       errors.add(:file, "is an invalid content type: " + file_ext.downcase)
       return false
@@ -93,31 +89,34 @@ module PostFileMethods
 
   # Automatically download from the source if it's a URL.
   def download_source
-    if source =~ /^http:\/\// && file_ext.blank?
-      begin
-        url = URI.parse(source)
-        res = Net::HTTP.start(url.host, url.port) do |http|
-          http.read_timeout = 10
-          http.get(url.request_uri)
+    return if source !~ /^http:\/\// || !file_ext.blank?
+    
+    begin
+      Danbooru.http_get_streaming(source) do |response|
+        File.open(tempfile_path, "wb") do |out|
+          response.read_body do |block|
+            out.write(block)
+          end
         end
-
-        raise "HTTP error code: #{res.code} #{res.message}" unless res.code == "200"
-
-        self.file_ext = content_type_to_file_ext(res.content_type) || find_ext(source)
-        File.open(tempfile_path, 'wb') do |out|
-          out.write(res.body)
-        end
-
-        if source.to_s =~ /moeboard|\/src\/\d{12,}|urnc\.yi\.org/
-          self.source = "Image board"
-        end
-
-        return true
-      rescue Exception => x
-        delete_tempfile
-        errors.add "source", "couldn't be opened: #{x}"
-        return false
       end
+      
+      if source.to_s =~ /\/src\/\d{12,}|urnc\.yi\.org/
+        self.source = "Image board"
+      end
+      
+      return true
+    rescue SocketError, URI::Error, SystemCallError => x
+      delete_tempfile
+      errors.add "source", "couldn't be opened: #{x}"
+      return false
+    end
+  end
+  
+  def determine_content_type
+    imgsize = ImageSize.new(File.open(tempfile_path, "rb"))
+
+    unless imgsize.get_width.nil?
+      self.file_ext = imgsize.get_type.gsub(/JPEG/, "JPG").downcase
     end
   end
 
