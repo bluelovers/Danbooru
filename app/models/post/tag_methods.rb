@@ -47,6 +47,10 @@ module PostTagMethods
   def tag_title
     return cached_tags.gsub(/\W+/, "-")[0, 50]
   end
+  
+  def tags
+    cached_tags
+  end
 
   # Sets the tags for the post. Does not actually save anything to the database when called.
   #

@@ -33,6 +33,10 @@
         </script>
       <% end %>
 
+      <% unless @post.new_record? %>
+        <p>This post was already uploaded (<%= link_to "post ##{@post.id}", {:action => "show", :id => @post.id}, :target => "_blank" %>).</p>
+      <% end %>
+      
       <table class="form">
         <tfoot>
           <tr>

@@ -30,7 +30,13 @@ class PostController < ApplicationController
   end
   
   def upload
-    @post = Post.new
+    if params[:url]
+      @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
+    end
+    
+    if @post.nil?
+      @post = Post.new
+    end
   end
 
   def create
