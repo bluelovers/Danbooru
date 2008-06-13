@@ -3,12 +3,12 @@
 <table width="100%">
   <thead>
     <tr>
-      <th width="10%">Name</th>
-      <th width="10%">Level</th>
-      <th width="10%" title="Number of posts approved in past seven days">Appr 7</th>
-      <th width="10%" title="Number of posts approved in past fourteen days">Appr 14</th>
-      <th width="10%" title="Number of comments posted in past seven days">Comm</th>
-      <th width="50%" title="Number of forum posts posted in past seven days">Forum</th>
+      <th width="15%" style="text-align: left;">Name</th>
+      <th width="10%" style="text-align: left;">Level</th>
+      <th width="10%" style="text-align: left;" title="Number of posts approved in past seven days">Appr 7</th>
+      <th width="10%" style="text-align: left;" title="Number of posts approved in past fourteen days">Appr 14</th>
+      <th width="10%" style="text-align: left;" title="Number of comments posted in past seven days">Comm</th>
+      <th width="45%" style="text-align: left;" title="Number of forum posts posted in past seven days">Forum</th>
     </tr>
   </thead>
   <tbody>
@@ -16,10 +16,10 @@
       <tr>
         <td><%= h user.name %></td>
         <td><%= h user.pretty_level %></td>
-        <td><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 7.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 7.days.ago]) %></td>
-        <td><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 14.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 14.days.ago]) %></td>
-        <td><%= Comment.count(:conditions => ["created_at >= ? AND user_id = ?", 7.days.ago, user.id]) %></td>
-        <td><%= ForumPost.count(:conditions => ["created_at >= ? AND creator_id = ?", 7.days.ago, user.id]) %></td>
+        <td style="text-align: right;"><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 7.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 7.days.ago]) %></td>
+        <td style="text-align: right;"><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 14.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 14.days.ago]) %></td>
+        <td style="text-align: right;"><%= Comment.count(:conditions => ["created_at >= ? AND user_id = ?", 7.days.ago, user.id]) %></td>
+        <td style="text-align: right;"><%= ForumPost.count(:conditions => ["created_at >= ? AND creator_id = ?", 7.days.ago, user.id]) %></td>
       </tr>
     <% end %>
   </tbody>
