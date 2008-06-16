@@ -9,11 +9,21 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
+  before_filter :check_load_average if CONFIG["load_average_threshold"]
   
   protected :build_cache_key
   protected :get_cache_key
 
   protected
+  def check_load_average
+    current_load = Sys::CPU.load_avg[1]
+    
+    if current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
+      render :file => "#{RAILS_ROOT}/public/503.html"
+      return false
+    end
+  end
+  
   def respond_to_success(notice, redirect_to_params, options = {})
     extra_api_params = options[:api] || {}
     

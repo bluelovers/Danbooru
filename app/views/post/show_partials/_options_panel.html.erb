@@ -9,6 +9,9 @@
       <li><%= link_to("#{@post.has_sample? ? "Original image":"Image"} (#{number_to_human_size(@post.file_size)})", @post.file_url, :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged", :id => "highres", :onclick => "Post.highres(); return false") %></li>
     <% end %>
     <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
+    <% if @post.is_deleted? && @current_user.is_janitor_or_higher?%>
+      <li><%= link_to "Undelete", :action => "undelete", :id => @post.id %></li>
+    <% end %>
     <% unless @post.is_flagged? || @post.is_deleted? %>
       <li><%= link_to_function "Flag for deletion", "Post.flag(#{@post.id})" %></li>
     <% end %>

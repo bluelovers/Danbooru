@@ -187,4 +187,13 @@ class PostControllerTest < ActionController::TestCase
     get :random, {}, {:user_id => 3}
     assert_response :redirect
   end
+  
+  def test_undelete
+    p1 = create_post("tag1", 1, :status => "deleted")
+    
+    post :undelete, {:id => p1.id}, {:user_id => 2}
+    
+    p1.reload
+    assert_equal("active", p1.status)
+  end
 end

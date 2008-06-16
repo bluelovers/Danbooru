@@ -161,5 +161,6 @@ CONFIG["custom_html_headers"] = nil
 # Set this to true to hand off time consuming tasks (downloading files, resizing images, any sort of heavy calculation) to a separate process. In general, if a user sees a page where a task was handed off, an HTTP status code of 503 will be returned. You need beanstalkd installed in order for this to work. This is only necessary if you are getting heavy traffic or you are doing several heavy calculations.
 CONFIG["enable_asynchronous_tasks"] = false
 
-# The beanstalkd server to communicate with.
-CONFIG["beanstalkd_server"] = "localhost:4010"
+# If you want to redirect traffic when the server load average spikes (for the 5min interval), initialize this setting. Set to false if you want to disable this feature.
+# CONFIG["load_average_threshold"] = 2
+CONFIG["load_average_threshold"] = false

@@ -3,7 +3,7 @@ class PostController < ApplicationController
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random, :index]
-  before_filter :janitor_only, :only => [:moderate]
+  before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
   if CONFIG["enable_caching"]
@@ -307,12 +307,12 @@ class PostController < ApplicationController
   def flag
     post = Post.find(params[:id])
     if post.status == "deleted" then
-      respond_to_error("Can't flag deleted post", :action => "show", :id => params{:id})
+      respond_to_error("Can't flag deleted post", :action => "show", :id => params[:id])
       return
     end
 
     post.flag!(params[:reason], @current_user.id)
-    respond_to_success("Post flagged", :action => "show", :id => params{:id})
+    respond_to_success("Post flagged", :action => "show", :id => params[:id])
   end
   
   def random
@@ -329,5 +329,11 @@ class PostController < ApplicationController
     
     flash[:notice] = "Couldn't find a post in 10 tries. Try again."
     redirect_to :action => "index"
+  end
+  
+  def undelete
+    post = Post.find(params[:id])
+    post.update_attributes(:status => "active")
+    respond_to_success("Post was undeleted", :action => "show", :id => params[:id])
   end
 end
