@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   def check_load_average
     current_load = Sys::CPU.load_avg[1]
     
-    if current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
+    if request.get? && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
       render :file => "#{RAILS_ROOT}/public/503.html"
       return false
     end
