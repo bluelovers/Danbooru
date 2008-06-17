@@ -32,6 +32,17 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     assert_equal("tag1", p1.tag_history[2].tags)    
   end
   
+  def test_rating
+    p1 = create_post
+    update_post(p1, :rating => "e", :tags => "tag1")
+    update_post(p1, :rating => "q", :tags => "tag2")
+    p1.reload
+    assert_equal(3, p1.tag_history.size)
+    assert_equal("q", p1.tag_history[0].rating)
+    assert_equal("e", p1.tag_history[1].rating)
+    assert_equal("s", p1.tag_history[2].rating)
+  end
+  
   def test_api
     p1 = create_post
     assert_nothing_raised {p1.tag_history[0].to_json}

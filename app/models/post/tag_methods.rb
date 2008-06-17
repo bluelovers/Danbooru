@@ -6,20 +6,20 @@ module PostTagMethods
       return find_by_sql(Post.generate_sql(tags, options))
     end
 
-    def recalculate_cached_tags(id=nil)
+    def recalculate_cached_tags(id = nil)
       conds = []
       cond_params = []
 
-      sql =
-        "UPDATE posts p SET cached_tags = " +
-        "(" +
-        "  SELECT array_to_string(coalesce(array(" +
-        "    SELECT t.name" +
-        "      FROM tags t, posts_tags pt" +
-        "      WHERE t.id = pt.tag_id AND pt.post_id = p.id" +
-        "      ORDER BY t.name" +
-        "  ), '{}'::text[]), ' ')" +
-        ")"
+      sql = %{
+        UPDATE posts p SET cached_tags = (
+          SELECT array_to_string(coalesce(array(
+            SELECT t.name
+            FROM tags t, posts_tags pt
+            WHERE t.id = pt.tag_id AND pt.post_id = p.id
+            ORDER BY t.name
+          ), '{}'::text[]), ' ')
+        )
+      }
 
       if id
         conds << "WHERE p.id = ?"
@@ -127,7 +127,7 @@ module PostTagMethods
       self.old_cached_tags = self.cached_tags
       self.cached_tags = select_value_sql("SELECT cached_tags FROM posts WHERE id = #{id}")
 
-      PostTagHistory.create(:post_id => id, :tags => self.cached_tags, :user_id => updater_user_id, :ip_addr => updater_ip_addr)
+      PostTagHistory.create(:post_id => id, :rating => rating, :tags => cached_tags, :user_id => updater_user_id, :ip_addr => updater_ip_addr)
       self.new_tags = nil
     end
   end
