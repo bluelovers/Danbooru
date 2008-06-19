@@ -80,4 +80,13 @@ class Post < ActiveRecord::Base
   def can_be_seen_by?(user)
     CONFIG["can_see_post"].call(user, self)
   end
+  
+  def normalized_source
+    if source =~ /pixiv\.net\/img\//
+      img_id = source[/(\d+)\.\w+$/, 1]
+      "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{img_id}"
+    else
+      source
+    end
+  end
 end
