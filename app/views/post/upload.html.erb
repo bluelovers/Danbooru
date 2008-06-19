@@ -13,7 +13,7 @@
       <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
     </div>
   <% end %>
-
+  
   <% form_tag({:controller => "post", :action => "create"}, :multipart => true, :id => "edit-form") do %>
     <div id="posts">
       <% if params[:url] %>
@@ -28,7 +28,7 @@
             $("image").width = width * ratio
             $("image").height = height * ratio
             $("scale").innerHTML = "Scaled " + parseInt(100 * ratio) + "%"
-          }          
+          }
         })
         </script>
       <% end %>
@@ -40,7 +40,10 @@
       <table class="form">
         <tfoot>
           <tr>
-            <td colspan="2"><%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %></td>
+            <td colspan="2">
+              <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
+              <%= button_to_function "Similar", "Post.find_similar()" %>
+            </td>
           </tr>
         </tfoot>
         <tbody>
@@ -110,6 +113,7 @@
       <div id="related"><em>None</em></div>
     </div>
   <% end %>
+  
 </div>
 
 <script type="text/javascript">

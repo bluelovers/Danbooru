@@ -1,6 +1,25 @@
 Post = {
   posts: new Hash(),
 
+	find_similar: function() {
+		var old_source_name = $("post_source").name
+		var old_file_name = $("post_file").name
+		var old_target = $("edit-form").target
+		var old_action = $("edit-form").action
+
+		$("post_source").name = "url"
+		$("post_file").name = "file"
+		$("edit-form").target = "_blank"
+		$("edit-form").action = "http://danbooru.iqdb.hanyuu.net/"
+
+		$("edit-form").submit()		
+		
+		$("post_source").name = old_source_name
+		$("post_file").name = old_file_name
+		$("edit-form").target = old_target
+		$("edit-form").action = old_action
+	},
+
   approve: function(post_id) {
     notice("Approving post #" + post_id)
     var params = {}
