@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
-  before_filter :check_load_average if CONFIG["load_average_threshold"]
   
   protected :build_cache_key
   protected :get_cache_key

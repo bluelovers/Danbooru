@@ -5,6 +5,9 @@ class PostController < ApplicationController
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :index, :random]
   before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
+  if CONFIG["load_average_threshold"]
+    before_filter :check_load_average, :only => [:index, :popular_by_day, :popular_by_week, :popular_by_month, :random, :atom, :piclens]
+  end
 
   if CONFIG["enable_caching"]
     around_filter :cache_action, :only => [:index, :atom, :piclens]
