@@ -18,6 +18,7 @@ module ApplicationHelper
       link_to link, url
     end
     text.gsub!(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
+    text.gsub!(/pool #(\d+)/i, '<a href="/pool/show/\1">pool #\1</a>')
     text.gsub!(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
     text.gsub!(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
     text.gsub!(/\[quote\](.+?)\[\/quote\]/m, '<div class="quote">\1</div>')

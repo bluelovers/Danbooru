@@ -164,7 +164,7 @@
       
       <% if CONFIG["enable_parent_posts"] %>
         <dt>parent:1234</dt>
-        <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed.</dd>
+        <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed. If the parent id is the same as the post id, then the parent id will be cleared.</dd>
       <% end %>
 
       <dt>pool:maria-sama_ga_miteru_manga</dt>
@@ -189,6 +189,9 @@
 
       <dt>forum #1000</dt>
       <dd>Creates a link to forum post #1000.</dd>
+      
+      <dt>pool #1000</dt>
+      <dd>Creates a link to pool #1000.</dd>
     
       <dt>[spoiler]spoiler text[/spoiler]</dt>
       <dd>Marks "spoiler text" as a spoiler.</dd>
