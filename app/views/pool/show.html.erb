@@ -1,7 +1,7 @@
 <div id="pool-show">
   <h4>Pool: <%= h(@pool.pretty_name) %></h4>
   <% unless @pool.description.blank? %>
-    <div style="margin-bottom: 2em;"><%= @pool.description %></div>
+    <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
   <% end %>
   <% if @pool.is_public? || @current_user.has_permission?(@pool) %>
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
