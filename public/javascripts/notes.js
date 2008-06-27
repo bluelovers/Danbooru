@@ -661,6 +661,8 @@ Object.extend(Note, {
     if (Note.debug) {
       console.debug("Note.create")
     }
+
+		Note.show()
     
     var insertion_position = Note.getInsertionPosition()
     var top = insertion_position[0]
