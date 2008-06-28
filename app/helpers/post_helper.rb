@@ -22,7 +22,7 @@ module PostHelper
     image_class += " has-parent" if post.parent_id
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
-    image_title = h(post.cached_tags)
+    image_title = h(post.cached_tags + " rating:#{post.pretty_rating} score:#{post.score} user:#{post.author}")
     link_onclick = options[:onclick]
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
     width, height = post.preview_dimensions
