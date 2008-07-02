@@ -452,5 +452,19 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(p1.id, matches[0].id)
   end
   
+  def test_search_pattern
+    p1 = create_post(:tags => "hoge nushi", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
+    p2 = create_post(:tags => "hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    
+    matches = search_posts("*oge")
+    assert_equal(2, matches.size)
+    
+    matches = search_posts("nu*")
+    assert_equal(1, matches.size)
+    
+    matches = search_posts("jaoooo*")
+    assert_equal(0, matches.size)
+  end
+  
   # TODO: additional search tests
 end
