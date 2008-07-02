@@ -21,7 +21,6 @@
     <% unless @forum_post.is_locked? %>
       <%= link_to_function "Respond", "Element.toggle('reply')" %> |
     <% end %>
-    <%= link_to "New Topic", :action => "add" %> |
     <%= link_to "Help", :controller => "help", :action => "forum" %>
   </div>
 
