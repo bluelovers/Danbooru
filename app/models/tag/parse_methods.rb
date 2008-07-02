@@ -113,9 +113,9 @@ module TagParseMethods
       end
 
       unless options[:skip_aliasing]
-        q[:exclude] = TagAlias.to_aliased(q[:exclude])
-        q[:include] = TagAlias.to_aliased(q[:include])
-        q[:related] = TagAlias.to_aliased(q[:related])
+        q[:exclude] = TagAlias.to_aliased(q[:exclude]) if q.has_key?(:exclude)
+        q[:include] = TagAlias.to_aliased(q[:include]) if q.has_key?(:include)
+        q[:related] = TagAlias.to_aliased(q[:related]) if q.has_key?(:related)
       end
 
       return q

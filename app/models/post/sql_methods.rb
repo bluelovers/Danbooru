@@ -98,7 +98,7 @@ module PostSqlMethods
         cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
       end
 
-      if q[:include].any?
+      if q.has_key?(:include)
         joins << "JOIN posts_tags ipt ON ipt.post_id = p.id"
         conds << "ipt.tag_id IN (SELECT id FROM tags WHERE name IN (?))"
         cond_params << (q[:include] + q[:related])
