@@ -16,5 +16,13 @@ module Cache
     end
   end
   
+  def incr(key)
+    if CONFIG["enable_caching"]
+      val = Cache.get(key)
+      Cache.put(key, val.to_i + 1)
+    end
+  end
+  
   module_function :expire
+  module_function :incr
 end

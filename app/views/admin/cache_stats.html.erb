@@ -28,12 +28,12 @@
 
 <div>
   <h5>Memcache Servers</h5>
-  <table>
+  <table width="100%">
     <tr>
-      <th>Server</th>
-      <th>Size</th>
-      <th>Hits:Misses:Total</th>
-      <th>Hit Rate</th>
+      <th width="10%">Server</th>
+      <th width="10%">Size</th>
+      <th width="10%">Hits:Misses:Total</th>
+      <th width="70%">Hit Rate</th>
     </tr>
     <% CACHE.stats.each do |server, stats| %>
       <tr>
@@ -44,4 +44,127 @@
       </tr>
     <% end %>
   </table>  
+</div>
+
+<div>
+  <h5>Post Statistics</h5>
+  <% form_tag(:action => "reset_post_stats") do %>
+    <table width="100%" class="highlightable">
+      <thead>
+        <tr>
+          <th width="15%">Statistic</th>
+          <th width="10%">Anon</th>
+          <th width="10%">Member</th>
+          <th width="10%">Priv</th>
+          <th width="10%">Jan</th>
+          <th width="10%">Mod</th>
+          <th width="10%">Admin</th>
+          <th width="25%"></th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <td colspan="6"><%= submit_tag "Reset" %></td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <td>Hits</td>
+          <td style="text-align: right;"><%= @post_stats["stats/count/level=0"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/count/level=20"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/count/level=30"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/count/level=35"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/count/level=40"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/count/level=50"] %></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>0 Tags</td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=0"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=0"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=0"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=0"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=0"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=0"] %></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>1 Tag</td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=1"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=1"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=1"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=1"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=1"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=1"] %></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2 Tags</td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=2"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=2"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=2"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=2"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=2"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=2"] %></td>
+          <td></td>
+          
+        </tr>
+        <tr>
+          <td>3 Tags</td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=3"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=3"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=3"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=3"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=3"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=3"] %></td>
+          <td></td>
+          
+        </tr>
+        <tr>
+          <td>4 Tags</td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=4"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=4"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=4"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=4"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=4"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=4"] %></td>
+          <td></td>
+          
+        </tr>
+        <tr>
+          <td>Page 0-10</td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=0&page=0-10"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=20&page=0-10"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=30&page=0-10"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=35&page=0-10"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=40&page=0-10"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=50&page=0-10"] %></td>
+          <td></td>
+          
+        </tr>
+        <tr>
+          <td>Page 10-20</td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=0&page=10-20"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=20&page=10-20"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=30&page=10-20"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=35&page=10-20"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=40&page=10-20"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=50&page=10-20"] %></td>
+          <td></td>
+          
+        </tr>
+        <tr>
+          <td>Page 20+</td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=0&page=20+"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=20&page=20+"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=30&page=20+"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=35&page=20+"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=40&page=20+"] %></td>
+          <td style="text-align: right;"><%= @post_stats["stats/page/level=50&page=20+"] %></td>
+          <td></td>
+          
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
 </div>

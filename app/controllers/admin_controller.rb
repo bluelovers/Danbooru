@@ -59,5 +59,41 @@ class AdminController < ApplicationController
       
       @value = Cache.get(params[:key])
     end
+
+    keys = []
+    [0, 20, 30, 35, 40, 50].each do |level|
+      keys << "stats/count/level=#{level}"
+      
+      [0, 1, 2, 3, 4, 5].each do |tag_count|
+        keys << "stats/tags/level=#{level}&tags=#{tag_count}"
+      end
+      
+      keys << "stats/page/level=#{level}&page=0-10"
+      keys << "stats/page/level=#{level}&page=10-20"
+      keys << "stats/page/level=#{level}&page=20+"        
+    end
+
+    @post_stats = keys.inject({}) {|h, k| h[k] = Cache.get(k); h}
+  end
+  
+  def reset_post_stats
+    keys = []
+    [0, 20, 30, 35, 40].each do |level|
+      keys << "stats/count/level=#{level}"
+      
+      [0, 1, 2, 3, 4, 5].each do |tag_count|
+        keys << "stats/tags/level=#{level}&tags=#{tag_count}"
+      end
+      
+      keys << "stats/page/level=#{level}&page=0-10"
+      keys << "stats/page/level=#{level}&page=10-20"
+      keys << "stats/page/level=#{level}&page=20+"        
+    end
+    
+    keys.each do |key|
+      CACHE.set(key, "0", 0, true)
+    end
+    
+    redirect_to :action => "cache_stats"
   end
 end
