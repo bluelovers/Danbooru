@@ -15,11 +15,11 @@
     </div>
     <div class="content" id="right-col">
       <%= CONFIG["ad_code_show_top"] if CONFIG["can_see_ads"].call(@current_user) && @post.can_be_seen_by?(@current_user) %>
-      <%= CONFIG["ad_code_show_bottom"] if CONFIG["can_see_ads"].call(@current_user) %>
       <%= render :partial => "post/show_partials/image" %>      
       <%= render :partial => "post/show_partials/image_footer" %>
       <%= render :partial => "post/show_partials/edit" %>
       <%= render :partial => "post/show_partials/comments" %>
+      <%= CONFIG["ad_code_show_bottom"] if CONFIG["can_see_ads"].call(@current_user) && @post.can_be_seen_by?(@current_user) %>
     </div>
 
     <% content_for("post_cookie_javascripts") do %>
