@@ -1,6 +1,6 @@
 class AdminController < ApplicationController
   layout "default"
-  before_filter :admin_only
+  before_filter :admin_only, :except => [:cache_stats]
 
   def index
     set_title "Admin"
@@ -46,20 +46,6 @@ class AdminController < ApplicationController
   end
 
   def cache_stats
-    if params[:key]
-      if params[:commit] == "Update"
-        if params[:value] =~ /^s:/
-          Cache.put(params[:key], params[:value][2..-1])
-        else
-          Cache.put(params[:key], params[:value].to_i)
-        end
-        
-        flash[:notice] = "Cache updated"
-      end
-      
-      @value = Cache.get(params[:key])
-    end
-
     keys = []
     [0, 20, 30, 35, 40, 50].each do |level|
       keys << "stats/count/level=#{level}"

@@ -1,24 +1,4 @@
 <div>
-  <h5>Memcache Servers</h5>
-  <table width="100%">
-    <tr>
-      <th width="10%">Server</th>
-      <th width="10%">Size</th>
-      <th width="10%">Hits:Misses:Total</th>
-      <th width="70%">Hit Rate</th>
-    </tr>
-    <% CACHE.stats.each do |server, stats| %>
-      <tr>
-        <td><%= server %></td>
-        <td><%= stats["bytes"].to_i / 1048576 %>/<%= stats["limit_maxbytes"].to_i / 1048576 %></td>
-        <td><%= stats["get_hits"] %>:<%= stats["get_misses"] %>:<%= stats["cmd_get"] %></td>
-        <td><%= "%0.2f" % (100 * stats["get_hits"].to_f / stats["cmd_get"].to_f) %>%</td>
-      </tr>
-    <% end %>
-  </table>  
-</div>
-
-<div>
   <h5>Post Statistics</h5>
   <% form_tag(:action => "reset_post_stats") do %>
     <table width="100%" class="highlightable">
@@ -52,87 +32,87 @@
         </tr>
         <tr>
           <td>0 Tags</td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=0"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=0"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=0"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=0"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=0"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=0"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=0&tags=0"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=20&tags=0"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=30&tags=0"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=35&tags=0"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=40&tags=0"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=50&tags=0"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
         </tr>
         <tr>
           <td>1 Tag</td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=1"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=1"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=1"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=1"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=1"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=1"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=0&tags=1"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=20&tags=1"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=30&tags=1"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=35&tags=1"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=40&tags=1"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=50&tags=1"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
         </tr>
         <tr>
           <td>2 Tags</td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=2"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=2"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=2"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=2"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=2"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=2"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=0&tags=2"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=20&tags=2"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=30&tags=2"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=35&tags=2"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=40&tags=2"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=50&tags=2"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
           
         </tr>
         <tr>
           <td>3 Tags</td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=3"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=3"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=3"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=3"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=3"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=3"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=0&tags=3"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=20&tags=3"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=30&tags=3"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=35&tags=3"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=40&tags=3"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=50&tags=3"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
           
         </tr>
         <tr>
           <td>4 Tags</td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=0&tags=4"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=20&tags=4"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=30&tags=4"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=35&tags=4"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=40&tags=4"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/tags/level=50&tags=4"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=0&tags=4"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=20&tags=4"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=30&tags=4"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=35&tags=4"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=40&tags=4"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/tags/level=50&tags=4"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
           
         </tr>
         <tr>
           <td>Page 0-10</td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=0&page=0-10"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=20&page=0-10"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=30&page=0-10"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=35&page=0-10"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=40&page=0-10"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=50&page=0-10"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=0&page=0-10"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=20&page=0-10"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=30&page=0-10"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=35&page=0-10"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=40&page=0-10"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=50&page=0-10"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
           
         </tr>
         <tr>
           <td>Page 10-20</td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=0&page=10-20"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=20&page=10-20"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=30&page=10-20"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=35&page=10-20"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=40&page=10-20"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=50&page=10-20"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=0&page=10-20"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=20&page=10-20"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=30&page=10-20"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=35&page=10-20"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=40&page=10-20"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=50&page=10-20"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
           
         </tr>
         <tr>
           <td>Page 20+</td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=0&page=20+"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=20&page=20+"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=30&page=20+"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=35&page=20+"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=40&page=20+"] %></td>
-          <td style="text-align: right;"><%= @post_stats["stats/page/level=50&page=20+"] %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=0&page=20+"].to_f / @post_stats["stats/count/level=0"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=20&page=20+"].to_f / @post_stats["stats/count/level=20"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=30&page=20+"].to_f / @post_stats["stats/count/level=30"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=35&page=20+"].to_f / @post_stats["stats/count/level=35"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=40&page=20+"].to_f / @post_stats["stats/count/level=40"].to_f * 100, :precision => 1) %></td>
+          <td style="text-align: right;"><%= number_to_percentage(@post_stats["stats/page/level=50&page=20+"].to_f / @post_stats["stats/count/level=50"].to_f * 100, :precision => 1) %></td>
           <td></td>
           
         </tr>
