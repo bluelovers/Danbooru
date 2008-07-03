@@ -39,8 +39,8 @@
         <% @aliases.each do |a| %>
           <tr class="<%= cycle 'even', 'odd' %> <%= a.is_pending? ? 'pending-tag' : nil %>">
             <td><input type="checkbox" name="aliases[<%= a.id %>]" value="1" <%= a.is_pending? ? 'class="pending"' : nil %>></td>
-            <td><%= a.name %> (<%= Tag.find_by_name(a.name).post_count rescue 0 %>)</td>
-            <td><%= Tag.find(a.alias_id).name %> (<%= Tag.find(a.alias_id).post_count rescue 0 %>)</td>
+            <td><%= link_to a.name, :controller => "post", :action => "index", :tags => a.name %> (<%= Tag.find_by_name(a.name).post_count rescue 0 %>)</td>
+            <td><%= link_to a.alias_name, :controller => "post", :action => "index", :tags => a.alias_name %> (<%= Tag.find(a.alias_id).post_count rescue 0 %>)</td>
             <td><%= h a.reason %></td>
           </tr>
         <% end %>        
