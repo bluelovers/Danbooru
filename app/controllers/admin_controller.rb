@@ -77,7 +77,7 @@ class AdminController < ApplicationController
     end
     
     keys.each do |key|
-      CACHE.set(key, "0", 0, true)
+      CACHE.set(key, 0)
     end
     
     redirect_to :action => "cache_stats"
