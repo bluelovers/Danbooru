@@ -106,7 +106,7 @@
   <% if @artist %>
     <span id="label">Artist:</span>
     <%= link_to "Edit", :controller => "artist", :action => "update", :id => @artist.id %>
-    | <%= link_to "Delete", :controller => "artist", :action => "delete", :id => @artist.id %>
+    | <%= link_to "Delete", :controller => "artist", :action => "destroy", :id => @artist.id %>
     <% unless @artist.alias_id %>
       | <%= link_to "Create Alias", :controller => "artist", :action => "add", :alias_id => @artist.id %>
     <% end %>

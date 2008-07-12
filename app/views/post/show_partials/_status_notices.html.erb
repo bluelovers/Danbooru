@@ -36,13 +36,13 @@
 <% if CONFIG["enable_parent_posts"] %>
   <% if @post.parent_id %>
     <div class="status-notice">
-      This post belongs to a <%= link_to "parent post", :action => "show", :id => @post.parent_id %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+      This post belongs to a <%= link_to "parent post", :action => "show", :id => @post.parent_id %>. Child posts are often minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
     </div>
   <% end %>
 
   <% if @post.has_children? %>
     <div class="status-notice">
-      This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often subsequent pages of a doujinshi, or minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+      This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
     </div>
   <% end %>
 <% end %>
