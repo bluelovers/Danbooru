@@ -190,7 +190,7 @@ public
     split_tags = QueryParser.parse(tags)
     page = params[:page].to_i
     limit = params[:limit].to_i
-    limit = 16 if limit == 0
+    limit = 20 if limit == 0
     limit = 1000 if limit > 1000
     count = 0
     begin
@@ -202,7 +202,7 @@ public
 
     set_title "/" + tags.tr("_", " ")
 
-    if count < 16 && split_tags.size == 1 && !split_tags[0].include?("_")
+    if count < 20 && split_tags.size == 1 && !split_tags[0].include?("_")
       # TODO: Am I double escaping here?
       search_for = split_tags[0].to_escaped_for_sql_like
       @tag_suggestions = Tag.find(:all, :conditions => ["(name LIKE ? OR name LIKE ?) AND name <> ?", "%" + search_for, search_for + "%", split_tags[0]], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
@@ -234,13 +234,13 @@ public
   end
 
   def atom
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 24, :order => "p.id DESC"))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
     headers["Content-Type"] = "application/atom+xml"
     render :layout => false
   end
 
   def piclens
-    @posts = WillPaginate::Collection.create(params[:page], 16, Post.fast_count(params[:tags])) do |pager|
+    @posts = WillPaginate::Collection.create(params[:page], 20, Post.fast_count(params[:tags])) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     
