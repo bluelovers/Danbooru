@@ -2,7 +2,7 @@ class CommentController < ApplicationController
   layout "default"
 
   verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
-  before_filter :member_only, :only => [:create, :destroy, :update, :index, :show]
+  before_filter :member_only, :only => [:create, :destroy, :update, :show]
   before_filter :janitor_only, :only => [:moderate]
 
   def edit

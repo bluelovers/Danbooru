@@ -98,7 +98,7 @@ class ApplicationController < ActionController::Base
   end
   
   def cache_action
-    if request.method == :get && params[:format] != "xml" && params[:format] != "json"
+    if request.method == :get && request.env !~ /Googlebot/ && params[:format] != "xml" && params[:format] != "json"
       key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
       
       if key && key.size < 200
