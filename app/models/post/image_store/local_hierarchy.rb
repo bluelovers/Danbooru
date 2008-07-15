@@ -14,11 +14,11 @@ module PostImageStoreMethods
 
     def preview_path
       if status == "deleted"
-        "#{RAILS_ROOT}/public/data/preview/deleted.png"
+        "#{RAILS_ROOT}/public/deleted-preview.png"
       elsif image?
         "#{RAILS_ROOT}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else
-        "#{RAILS_ROOT}/public/data/preview/download.png"
+        "#{RAILS_ROOT}/public/download-preview.png"
       end
     end
 
@@ -30,7 +30,7 @@ module PostImageStoreMethods
       if image?
         CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else
-        CONFIG["url_base"] + "/data/preview/download.png"
+        CONFIG["url_base"] + "/download-preview.png"
       end
     end
 

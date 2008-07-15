@@ -24,7 +24,7 @@ module PostImageStoreMethods
       if image?
         "#{RAILS_ROOT}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else
-        "#{RAILS_ROOT}/public/data/preview/download.png"
+        "#{RAILS_ROOT}/public/download-preview.png"
       end
     end
 
@@ -35,20 +35,20 @@ module PostImageStoreMethods
     def preview_url
       if self.is_warehoused?
         if status == "deleted"
-          select_random_image_server() + "/data/preview/deleted.png"
+          select_random_image_server() + "/deleted-preview.png"
 
         elsif image?
           select_random_image_server() + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
-          select_random_image_server() + "/data/preview/download.png"
+          select_random_image_server() + "/download-preview.png"
         end
       else
         if status == "deleted"
-          CONFIG["url_base"] + "/data/preview/deleted.png"
+          CONFIG["url_base"] + "/deleted-preview.png"
         elsif image?
           CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
-          CONFIG["url_base"] + "/data/preview/download.png"
+          CONFIG["url_base"] + "/download-preview.png"
         end
       end
     end

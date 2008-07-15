@@ -158,7 +158,7 @@ Post = {
 
       count += bld
       if (Post.blacklist_options.replace)
-        thumb.src = bld ? "/preview/blacklisted.png" : post.preview_url
+        thumb.src = bld ? "/blacklisted-preview.png" : post.preview_url
       else
         thumb.show(!bld)
     })
