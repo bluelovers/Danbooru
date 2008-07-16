@@ -23,7 +23,7 @@ Favorite = {
           notice("Post #" + post_id + " added to favorites")
         
           if ($("favorited-by")) {
-            $("favorited-by").update(Favorite.link_to_users(resp.favorited))
+            $("favorited-by").update(Favorite.link_to_users(resp.recent_favorited))
           }
           
           if ($("add-to-favs")) {
@@ -53,7 +53,7 @@ Favorite = {
         notice("Post #" + post_id + " removed from your favorites")
         
         if ($("favorited-by")) {
-          $("favorited-by").update(Favorite.link_to_users(resp.favorited))
+          $("favorited-by").update(Favorite.link_to_users(resp.recent_favorited))
         }
         
         if ($("add-to-favs")) {
