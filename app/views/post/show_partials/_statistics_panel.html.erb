@@ -18,6 +18,6 @@
     <% end %>
     <li>Rating: <%= @post.pretty_rating %></li>
     <li>Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span> (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)</li>
-    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post.favorited_by) %></span></li>
+    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post.favorited_by(6)) %></span></li>
   </ul>
 </div>
