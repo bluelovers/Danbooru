@@ -75,7 +75,7 @@ public
       return
     end
 
-    if @current_user.is_privileged_or_higher?
+    if @current_user.is_contributor_or_higher?
       status = "active"
     else
       status = "pending"

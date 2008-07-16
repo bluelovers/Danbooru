@@ -2,9 +2,29 @@
   <h1>Help: Accounts</h1>
 
   <div class="section">
-    <p>There are three types of accounts: basic, privileged, and blocked.</p>
-    <p>You need a basic account to upload posts, keep favorites, post comments, post on the forum, create and edit notes, create pools, edit artists, edit the wiki, search for up to two tags at a time, and see beyond the first page of a post listing. With a basic account, any post you upload will be put in a queue, to be approved by a moderator.</p>
-    <p>You need a privileged account to upload posts without moderator approval and to view some hidden posts.</p>
+    <p>There are three account types: basic, privileged, and contributor.</p>
+    <table width="100%">
+      <thead>
+        <tr>
+          <th width="20%">Level</th>
+          <th width="80%">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Basic</td>
+          <td>You can upload up to <%= CONFIG["member_post_limit"] %> posts in a day, post up to <%= CONFIG["member_comment_limit"] %> comments in an hour, keep favorites, post on the forum, create notes, create pools, create artists, and edit the wiki. Any post you upload will be subject to moderation.</td>
+        </tr>
+        <tr>
+          <td>Privileged</td>
+          <td>You no longer see ads or 503 pages. You can upload unlimited posts and post unlimited comments, but your posts are still subject to moderation.</td>
+        </tr>
+        <tr>
+          <td>Contributor</td>
+          <td>Your posts are no longer subject to moderation.</td>
+        </tr>
+      </tbody>
+    </table>
     <p>Registration for basic accounts is open. To get a privileged account, you must be invited by a moderator.</p>
     <p>See the <%= link_to "signup", :controller => "user", :action => "signup" %> page for more details.</p>
   </div>

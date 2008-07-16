@@ -43,9 +43,10 @@ class UserControllerTest < ActionController::TestCase
 
     ur.destroy
 
+    # Should succeed
     post :invites, {:member => {:name => "member"}}, {:user_id => 2}
     member.reload
-    assert_equal(CONFIG["user_levels"]["Privileged"], member.level)
+    assert_equal(CONFIG["user_levels"]["Contributor"], member.level)
   end
   
   def test_home

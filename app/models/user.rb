@@ -399,7 +399,7 @@ class User < ActiveRecord::Base
       end
       
       transaction do
-        invitee.level = CONFIG["user_levels"]["Privileged"]
+        invitee.level = CONFIG["user_levels"]["Contributor"]
         invitee.invited_by = id
         invitee.save
         decrement! :invite_count
