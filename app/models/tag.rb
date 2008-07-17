@@ -62,4 +62,13 @@ class Tag < ActiveRecord::Base
     sql = "UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags pt, posts p WHERE pt.tag_id = tags.id AND pt.post_id = p.id AND p.status <> 'deleted')"
     execute_sql sql
   end
+  
+  def self.mass_edit(start_tags, result_tags, updater_id, updater_ip_addr)
+    Post.find_by_tags(start_tags).each do |p|
+      start = TagAlias.to_aliased(Tag.scan_tags(start_tags))
+      result = TagAlias.to_aliased(Tag.scan_tags(result_tags))
+      tags = (p.cached_tags.scan(/\S+/) - start + result).join(" ")
+      p.update_attributes(:updater_user_id => updater_id, :updater_ip_addr => updater_ip_addr, :tags => tags)
+    end
+  end
 end

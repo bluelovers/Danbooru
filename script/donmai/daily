@@ -4,6 +4,7 @@ export RAILS_ENV=production
 cd "$(dirname $0)/../../"
 script/donmai/downbooru
 mongrel_rails cluster::stop
+app/daemons/job_task_processor_ctl.rb stop
 rake maint:purge_tags maint:recalculate_row_count
 script/donmai/backup_db
 script/donmai/backup_db_to_s3
@@ -20,6 +21,7 @@ if [[ `date '+%d'` -eq '01' ]] ; then
   script/donmai/dump_tags
 fi
 script/donmai/send_moderator_report
+app/daemons/job_task_processor_ctl.rb start
 mongrel_rails cluster::start
 sleep 5
 script/donmai/upbooru

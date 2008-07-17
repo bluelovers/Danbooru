@@ -49,10 +49,10 @@ class Post < ActiveRecord::Base
   end
   
   # TODO: refactor or eliminate
-  def favorited_by(limit = nil)
+  def favorited_by
     # Cache results
     if @favorited_by.nil?
-      @favorited_by = User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", self.id], :order => "f.id DESC", :limit => limit)
+      @favorited_by = User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", id], :order => "f.id DESC")
     end
 
     return @favorited_by

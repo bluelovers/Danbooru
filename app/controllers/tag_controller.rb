@@ -91,14 +91,9 @@ class TagController < ApplicationController
         return
       end
 
-      Post.find_by_sql(Post.generate_sql(params[:start])).each do |p|
-        start = TagAlias.to_aliased(Tag.scan_tags(params[:start]))
-        result = TagAlias.to_aliased(Tag.scan_tags(params[:result]))
-        tags = (p.cached_tags.scan(/\S+/) - start + result).join(" ")
-        p.update_attributes(:updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip, :tags => tags)
-      end
+      JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => {"start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip})
 
-      respond_to_success("Tags updated", :action => "mass_edit")
+      respond_to_success("Mass tag edit job created", :controller => "job_task", :action => "index")
     end
   end
 

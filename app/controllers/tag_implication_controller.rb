@@ -31,10 +31,12 @@ class TagImplicationController < ApplicationController
 
     when "Approve"
       if @current_user.is_admin?
-        ids.each {|x| TagImplication.find(x).approve(@current_user.id, request.remote_ip)}
-
-        flash[:notice] = "Tag implications approved"
-        redirect_to :action => "index"
+        ids.each do |x| 
+          JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x})
+        end
+        
+        flash[:notice] = "Tag implication approval jobs created"
+        redirect_to :controller => "job_task", :action => "index"
       else
         access_denied
       end

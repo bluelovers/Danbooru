@@ -1,14 +1,21 @@
 Favorite = {
   link_to_users: function(users) {
     var split_users = users.split(/,/)
+		var html = ""
     
     if ((split_users.size() == 1) && (split_users[0] == "")) {
       return "no one"
     } else {
-      return split_users.map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '+order%3Afav">' + x + '</a>'}).join(", ")
+     	html = split_users.slice(0, 6).map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '+order%3Afav">' + x + '</a>'}).join(", ")
+			
+			if (split_users.size() > 6) {
+				html += '<span id="remaining-favs" style="display: none;">' + split_users.slice(6, -1).map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '+order%3Afav">' + x + '</a>'}).join(", ") + '</span> <span id="remaining-favs-link">(<a href="#" onclick="$(\'remaining-favs\').show(); $(\'remaining-favs-link\').hide(); return false;">' + (split_users.size() - 6) + ' more</a>)</span>'
+			}
+			
+			return html
     }
   },
-  
+
   create: function(post_id) {
     notice('Adding post #' + post_id)
 
@@ -23,7 +30,7 @@ Favorite = {
           notice("Post #" + post_id + " added to favorites")
         
           if ($("favorited-by")) {
-            $("favorited-by").update(Favorite.link_to_users(resp.recent_favorited))
+            $("favorited-by").update(Favorite.link_to_users(resp.favorited_users))
           }
           
           if ($("add-to-favs")) {
@@ -53,7 +60,7 @@ Favorite = {
         notice("Post #" + post_id + " removed from your favorites")
         
         if ($("favorited-by")) {
-          $("favorited-by").update(Favorite.link_to_users(resp.recent_favorited))
+          $("favorited-by").update(Favorite.link_to_users(resp.favorited_users))
         }
         
         if ($("add-to-favs")) {
