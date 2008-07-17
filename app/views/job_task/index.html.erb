@@ -5,17 +5,17 @@
     <tr>
       <th width="15%">Type</th>
       <th width="10%">Status</th>
-      <th width="30%">Data</th>
-      <th width="45%">Message</th>
+      <th width="45%">Data</th>
+      <th width="30%">Message</th>
     </tr>
   </thead>
   <tbody>
     <% @job_tasks.each do |job_task| %>
       <tr>
-        <td><%= job_task.task_type %></td>
-        <td><%= job_task.status %></td>
-        <td><%= job_task.data_as_json %></td>
-        <td><%= job_task.status_message %></td>
+        <td><%= h job_task.task_type %></td>
+        <td><%= h job_task.status %></td>
+        <td><%= h job_task.pretty_data %></td>
+        <td><%= h job_task.status_message %></td>
       </tr>
     <% end %>
   </tbody>
