@@ -32,7 +32,7 @@ class TagImplicationController < ApplicationController
     when "Approve"
       if @current_user.is_admin?
         ids.each do |x| 
-          JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x})
+          JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
         end
         
         flash[:notice] = "Tag implication approval jobs created"

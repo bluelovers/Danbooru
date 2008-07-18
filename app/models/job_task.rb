@@ -33,12 +33,16 @@ class JobTask < ActiveRecord::Base
   
   def execute_approve_tag_alias
     ta = TagAlias.find(data["id"])
-    ta.approve
+    updater_id = data["updater_id"]
+    updater_ip_addr = data["updater_ip_addr"]
+    ta.approve(updater_id, updater_ip_addr)
   end
   
   def execute_approve_tag_implication
     ti = TagImplication.find(data["id"])
-    ti.approve
+    updater_id = data["updater_id"]
+    updater_ip_addr = data["updater_ip_addr"]
+    ti.approve(updater_id, updater_ip_addr)
   end
   
   def pretty_data
