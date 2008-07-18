@@ -26,20 +26,16 @@ class TagControllerTest < ActionController::TestCase
     
     # TODO: test other params
   end
-  
-  def test_mass_edit
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
 
+  def test_mass_edit
     get :mass_edit, {}, {:user_id => 2}
     assert_response :success
-    
-    post :mass_edit, {:start => "hoge", :result => "joge"}, {:user_id => 2}
-    p1.reload
-    p2.reload
-    assert_equal("joge", p1.cached_tags)
-    assert_equal("joge moge", p2.cached_tags)
+
+    # Can't easily test the mass_edit action. The daemon process does the actual work.
+    # Anything we create inside this test is created within a transaction, so any database
+    # connection outside of this one won't see any changes. We can disable transactional
+    # fixtures but this interferes with other tests. Just assume the action works correctly
+    # and test the logic of mass_edit in the unit tests.
   end
   
   def test_edit_preview

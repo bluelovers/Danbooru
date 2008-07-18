@@ -91,7 +91,7 @@ class TagController < ApplicationController
         return
       end
 
-      JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => {"start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip})
+      task = JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => {"start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip})
 
       respond_to_success("Mass tag edit job created", :controller => "job_task", :action => "index")
     end

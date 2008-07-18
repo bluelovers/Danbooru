@@ -8,14 +8,13 @@ class TagAliasControllerTest < ActionController::TestCase
     t = TagAlias.find_by_name("a")
     assert_not_nil(t)
     
-    post :update, {:aliases => {t.id => "1"}, :commit => "Approve"}, {:user_id => 1}
-    t.reload
-    assert_equal(false, t.is_pending?)
-    
     get :index
     assert_response :success
-    
-    post :update, {:aliases => {t.id => "1"}, :commit => "Delete"}, {:user_id => 1}
-    assert_nil(TagAlias.find_by_id(t.id))
+
+    # Can't easily test the update action. The daemon process does the actual work.
+    # Anything we create inside this test is created within a transaction, so any database
+    # connection outside of this one won't see any changes. We can disable transactional
+    # fixtures but this interferes with other tests. Just assume the action works correctly
+    # and test the logic of update in the unit tests.
   end
 end
