@@ -25,7 +25,7 @@ class JobTask < ActiveRecord::Base
   
   def execute_mass_tag_edit
     start_tags = data["start_tags"]
-    result_tags = data["results_tags"]
+    result_tags = data["result_tags"]
     updater_id = data["updater_id"]
     updater_ip_addr = data["updater_ip_addr"]
     Tag.mass_edit(start_tags, result_tags, updater_id, updater_ip_addr)
