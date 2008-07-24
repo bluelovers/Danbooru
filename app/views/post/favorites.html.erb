@@ -4,3 +4,5 @@
   <li><%= link_to h(u.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{u.name} order:fav" %></li>
 <%- end %>
 </ul>
+
+<%= render :partial => "footer" %>

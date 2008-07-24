@@ -10,7 +10,8 @@ h1, h2, h3, h4 {
 
 body {
   font-size: 80%;
-  padding: 1em 3em;
+  padding: f0;
+	margin: 0;
 }
 
 a:link {
@@ -19,7 +20,7 @@ a:link {
 }
 
 .blacklisted-tags-disabled {
-  color: #aaa !important;
+  color: #AAA !important;
 }
 
 a:visited {
@@ -28,7 +29,7 @@ a:visited {
 }
 
 a:hover {
-  color: #33CFFF;
+  color: #9093FF;
   text-decoration: none;
 }
 
@@ -215,8 +216,26 @@ table.form th {
   text-align: right;
 }
 
+table.highlightable {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
 table.highlightable > tbody > tr:hover {
   background: #FFD;
+}
+
+table.highlightable th {
+	color: #171BB3;
+}
+
+table.highlightable td {
+	border: 1px dotted #EEE;
+	margin: 0;
+}
+
+table.highlightable th {
+	margin: 0;
 }
 
 table td {
@@ -230,14 +249,6 @@ table th {
   vertical-align: top;
   padding: 0.2em 0.5em;
   white-space: nowrap;
-}
-
-table tr.bad {
-  background: rgb(255, 230, 230);
-}
-
-table tr.even {
-  background: rgb(247, 247, 247);
 }
 
 table tr.good {
@@ -280,14 +291,17 @@ ul.bare-list li {
 }
 
 ul.flat-list {
-  display: inline;
+  display: block;
+	margin: 0;
+	padding: 0;
 }
 
 ul.flat-list li {
   display: inline;
   list-style-type: none;
   font-weight: bold;
-  margin: 0 1em 0 0;
+	padding: 0;
+	margin: 0 1em 0 0;
 }
 
 ul.flat-list li a {
@@ -295,7 +309,7 @@ ul.flat-list li a {
 }
 
 ul.flat-list li a.forum-update {
-  font-weight: bold;
+	font-style: italic;
 }
 
 ul.link-page {
@@ -319,7 +333,7 @@ a.tag-type-artist {
 }
 
 .tag-type-artist > a:hover {
-  color: #33CFFF;
+  color: #9093FF;
 }
 
 .tag-type-character > a {
@@ -327,7 +341,7 @@ a.tag-type-artist {
 }
 
 .tag-type-character > a:hover {
-  color: #33CFFF;
+  color: #9093FF;
 }
 
 .tag-type-copyright > a {
@@ -335,11 +349,11 @@ a.tag-type-artist {
 }
 
 .tag-type-copyright > a:hover {
-  color: #33CFFF;
+  color: #9093FF;
 }
 
 .added-tags {
-  color: #00cc00;
+  color: #00CC00;
 }
 
 .removed-tags {
@@ -444,8 +458,13 @@ div#comment-list > div.post > div.col2 > div.header > div.tags > span {
   margin: 0 0.5em 0 0;
 }
 
+div#content {
+	padding: 0 20px 30px 20px;
+}
+
 div.content {
   float: left;
+	margin: 0;
   width: 77%;
 }
 
@@ -473,7 +492,6 @@ div#forum > table td:first-child {
   text-align: left;
 }
 
-
 div.has-mail {
   border: 2px solid #AFA;
   padding: 1em;
@@ -485,6 +503,42 @@ div.has-mail {
 
 div#header {
   margin-bottom: 1em;
+}
+
+div#header #site-title {
+	padding: 10px 20px 0px 20px;
+}
+
+div#header ul#navbar {
+	padding: 5px 20px 0px 10px;
+	margin: 0;
+}
+
+div#header ul#navbar li {
+	font-size: 120%;
+	padding: 0 10px;
+	margin: 0;
+}
+
+div#header ul#navbar li.current-page {
+	background-color: #F7F7FF;
+}
+
+div#header ul#navbar li.current-page a {
+	font-weight: bold;
+}
+
+div#header ul#subnavbar {
+	padding: 5px 20px 5px 15px;
+	background-color: #F7F7FF;
+	margin: 0 0 1em 0;
+}
+
+div#header ul#subnavbar li {
+	padding: 0 5px;
+}
+
+div#header ul#subnavbar li a {
 }
 
 div.help {
@@ -573,7 +627,7 @@ div#paginator a.arrow {
 
 div#paginator a.arrow:hover {
   background: white;
-  color: #33CFFF;
+  color: #9093FF;
 }
 
 div#paginator a.current {
@@ -788,6 +842,7 @@ div#wiki-show > div#body {
   line-height: 2em;
   width: 50em;
   text-align: left;
+	float: left;
 }
 
 div#wiki-show > div#body ul {
@@ -799,8 +854,9 @@ div#wiki-show > div#body > ul {
   margin-bottom: 1em;
 }
 
-div#wiki-show > div#byline {
+div#wiki-show > div#body > div#byline {
   color: #666;
+	font-style: italic;
 }
 
 div#wiki-diff > div#body {

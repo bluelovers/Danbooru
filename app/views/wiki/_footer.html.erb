@@ -1,10 +1,5 @@
-<% unless omit_div %>
-<div id="footer">
-<% end %>
-  <%= link_to "Search", :action => "index" %> |
-  <%= link_to "Add Page", :action => "add" %> |
-  <%= link_to "Recent Changes", :action => "index", :order => "date" %> |
-  <%= link_to "Help", :controller => "help", :action => "wiki" %>
-<% unless omit_div %>
-</div>
+<% content_for("subnavbar") do %>
+  <li><%= link_to "New page", :action => "add" %></li>
+  <%= @content_for_footer %>
+  <li><%= link_to "Help", :controller => "help", :action => "wiki" %></li>
 <% end %>

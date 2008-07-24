@@ -10,37 +10,10 @@ class PostController < ApplicationController
   end
   
   if CONFIG["enable_caching"]
-    before_filter :log_statistics, :only => [:index, :atom, :piclens]
     around_filter :cache_action, :only => [:index, :atom, :piclens]
   end
 
   helper :wiki, :tag, :comment, :pool, :favorite
-
-protected
-
-  def log_statistics
-    # Statistics we want to capture:
-    # - User levels
-    # - Number of tags
-    # - Page number
-    
-    tag_count = params[:tags].to_s.scan(/\S+/).size
-    page = params[:page].to_i
-    
-    if page < 10
-      page = "0-10"
-    elsif page < 20
-      page = "10-20"
-    else
-      page = "20+"
-    end
-    
-    Cache.incr("stats/count/level=#{@current_user.level}")
-    Cache.incr("stats/tags/level=#{@current_user.level}&tags=#{tag_count}")
-    Cache.incr("stats/page/level=#{@current_user.level}&page=#{page}")
-  end
-
-public
 
   def verify_action(options)
     redirect_to_proc = false

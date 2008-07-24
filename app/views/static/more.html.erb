@@ -25,12 +25,8 @@
         <li><h4>Reports</h4></li>
         <li><a href="/report/note_changes">Note Changes</a></li>
         <li><a href="/report/tag_changes">Tag Changes</a></li>
-	<li><a href="/stats/awstats.danbooru.html">Web Server Statitics</a></li>
-	<li><a href="/job_task/index">Job Tasks</a></li>
-        <% if CONFIG["enable_caching"] %>
-          <li><a href="/admin/cache_stats">Cache Stats</a></li>
-        <% end %>
-        <!-- <li><a href="/report/wiki_changes">Wiki Changes</a></li> -->
+	      <li><a href="/stats/awstats.danbooru.html">Web Server Statitics</a></li>
+	      <li><a href="/job_task/index">Job Tasks</a></li>
       </ul>
     <% end %>
   </div>
@@ -90,6 +86,7 @@
     <ul>
       <li><h4>Users</h4></li>
       <li><a href="/help/users">Help</a></li>
+      <li><a href="/user/show_blocked_users">Blocked Users</a></li>
       <li><a href="/user/change_password">Change Password</a></li>
       <li><a href="/user/home">Home</a></li>
       <li><a href="/user/invites">Invites</a></li>

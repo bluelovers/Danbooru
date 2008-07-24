@@ -5,7 +5,7 @@
     <%= link_to "Comments", {:controller => "comment", :action => "index"}, :title => 'A paginated list of every comment' %>
     <%= link_to "Tags", {:controller => "tag", :action => "index"}, :title => 'A paginated list of every tag' %>
     <%= link_to "Wiki", {:controller => "wiki"}, :title => 'Wiki' %>
-    <%= link_to "More &raquo;", {:controller => "static", :action => "more"}, :title => "A site map" %>
+    <%= link_to "&raquo;", {:controller => "static", :action => "more"}, :title => "A site map" %>
   </div>
   <div style="margin-bottom: 2em;">
     <% form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>

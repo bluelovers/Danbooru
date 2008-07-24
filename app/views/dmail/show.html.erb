@@ -9,9 +9,9 @@
   </div>
 
   <% content_for(:footer) do %>
-    <%= link_to_function "Show Previous", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})" %> |
+    <li><%= link_to_function "Show conversation", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})" %></li>
     <% if @dmail.to_id == @current_user.id %>
-      <%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %> |
+      <li><%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %></li>
     <% end %>
   <% end %>
 

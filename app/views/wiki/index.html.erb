@@ -1,53 +1,20 @@
 <div style="margin-bottom: 1em;">
-  <% form_tag({:action => "index"}, :method => :get) do %>
-    <table class="form">
-      <tfoot>
-        <tr>
-          <td><%= submit_tag "Search" %></td>
-          <td></td>
+  <%= render :partial => "sidebar" %>
+
+  <div>
+    <table width="100%">
+      <tr>
+        <th width="70%">Title</th>
+        <th width="30%">Last edited</th>
+      </tr>
+      <%- @wiki_pages.each do |wiki_page| -%>
+        <tr class="<%= cycle 'even', 'odd' %>">
+          <td><%= link_to h(wiki_page.pretty_title), :controller => "wiki", :action => "show", :title => wiki_page.title, :nordirect => 1 %></td>
+          <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= h wiki_page.author %></td>
         </tr>
-      </tfoot>
-      <tbody>
-        <tr>
-          <th width="15%">
-            <label for="query">Text</label>
-          </th>
-          <td width="85%">
-            <%= text_field_tag "query", params[:query], :size => 40 %>
-          </td>
-        </tr>
-        <tr>
-          <th><label for="order">Order</label></th>
-          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Date", "date"]], [params[:order] || ""]) %></td>
-        </tr>
-      </tbody>
+      <%- end -%>
     </table>
-  <% end %>
+  </div>
 </div>
 
-<% if @page %>
-  <div id="body">
-    <%= wikilize(@page.body) %>
-  </div>
-<% end %>
-
-<% if @wiki_pages %>
-  <table width="100%">
-    <tr>
-      <th width="70%">Title</th>
-      <th width="30%">Last edited</th>
-    </tr>
-    <%- @wiki_pages.each do |wiki_page| -%>
-      <tr class="<%= cycle 'even', 'odd' %>">
-        <td><%= link_to h(wiki_page.pretty_title), :controller => "wiki", :action => "show", :title => wiki_page.title, :nordirect => 1 %></td>
-        <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= h wiki_page.author %></td>
-      </tr>
-    <%- end -%>
-  </table>
-
-  <div id="paginator">
-    <%= will_paginate(@wiki_pages) %>
-  </div>
-<% end %>
-
-<%= render :partial => "footer", :locals => {:omit_div => false} %>
+<%= render :partial => "footer" %>

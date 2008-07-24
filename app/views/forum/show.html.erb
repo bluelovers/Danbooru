@@ -12,28 +12,27 @@
   <% @children.each do |c| %>
     <%= render :partial => "post", :locals => {:post => c} %>
   <% end %>
+</div>
 
-  <div id="paginator">
-    <%= will_paginate(@children) %>
-  </div>
-
-  <div id="footer">
-    <% unless @forum_post.is_locked? %>
-      <%= link_to_function "Respond", "Element.toggle('reply')" %> |
-    <% end %>
-    <%= link_to "Help", :controller => "help", :action => "forum" %>
-  </div>
-
-  <% unless @forum_post.is_locked? %>
+<% unless @forum_post.is_locked? %>
+  <div style="clear: both;">
+    <h5 id="respond-link"><%= link_to_function "Respond &raquo;", "$('respond-link').hide(); $('reply').show(); $('forum_post_body').focus()" %></h5>
     <div id="reply" style="display: none;">
       <% form_tag({:action => "create"}) do %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
-        <table>
-          <tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60, :value => "" %></td></tr>
-          <tr><td><label for="forum_post_body">Body</label></td><td><%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %></td></tr>
-          <tr><td colspan="2"><%= submit_tag "Post" %></td></tr>
+          <%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %>
+          <%= submit_tag "Post" %>
         </table>
       <% end %>
-    </div>
-  <% end %>
+    </div>    
+  </div>
+<% end %>
+
+<div id="paginator">
+  <%= will_paginate(@children) %>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+<% end %>

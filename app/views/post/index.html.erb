@@ -81,16 +81,6 @@
     <% if CONFIG["can_see_ads"].call(@current_user) %>
       <%= CONFIG["ad_code_index_bottom"] %>
     <% end %>
-
-    <div id="footer">
-      <%= link_to "Upload", :controller => "post", :action => "upload" %> |
-      <span id="my-favorites-container"><%= link_to "My Favorites", "/", :id => "my-favorites" %> |</span>
-      <%= link_to "Atom", :controller => "post", :action => "atom", :tags => params[:tags] %> |
-      <%= link_to "Popular", :controller => "post", :action => "popular_by_day" %> |
-      <%= link_to "Tag History", :controller => "post_tag_history", :action => "index" %> |
-      <%= link_to "Moderate", :controller => "post", :action => "moderate" %> |
-      <%= link_to "Help", :controller => "help", :action => "posts" %>
-    </div>
   </div>
 </div>
 
@@ -132,3 +122,5 @@
   <%= auto_discovery_link_tag_with_id :rss, {:controller => "post", :action => "piclens", :tags => params[:tags], :page => params[:page]}, {:id => 'pl'} %>
   <%= navigation_links(@posts) %>
 <% end %>
+
+<%= render :partial => "footer" %>

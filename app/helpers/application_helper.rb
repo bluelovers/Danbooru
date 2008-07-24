@@ -1,6 +1,16 @@
 require 'cache'
 
 module ApplicationHelper
+  def navbar_link_to(text, options, html_options = nil)
+    if options[:controller] == params[:controller]
+      klass = "current-page"
+    else
+      klass = nil
+    end
+    
+    content_tag("li", link_to(text, options, html_options), :class => klass)
+  end
+    
   def simple_format(text)
     text.to_s.gsub(/\r\n?/, "\n").gsub(/\n/, '<br>')
   end

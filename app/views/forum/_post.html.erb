@@ -1,7 +1,7 @@
 <div class="post">
   <div class="author">
     <h6 class="author"><%= link_to h(post.author), :controller => "user", :action => "show", :id => post.creator_id %></h6>
-    <span class="date">Posted <%= time_ago_in_words post.created_at %> ago</span>
+    <span class="date"><%= time_ago_in_words post.created_at %> ago</span>
   </div>
   <div class="content">
     <% if post.is_parent? %>
@@ -29,7 +29,7 @@
           | <%= link_to "Lock", {:action => "lock", :id => post.id}, :method => :post %>
         <% end %>
       <% end %>
-      | <%= link_to_function "Quote", "Forum.quote(#{post.id})" %>
+      | <%= link_to_function "Respond", "Forum.quote(#{post.id})" %>
     </div>
   </div>
 </div>

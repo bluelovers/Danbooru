@@ -46,12 +46,13 @@ class WikiController < ApplicationController
       if !query.empty?
         search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
       end
+      
       @wiki_pages = WikiPage.paginate(search_params)
-    else
-      @page = WikiPage.find_page("Help:Home")
-    end
 
-    respond_to_list("wiki_pages")
+      respond_to_list("wiki_pages")
+    else
+      redirect_to :action => "show", :title => "Help:Home"
+    end
   end
 
   def preview

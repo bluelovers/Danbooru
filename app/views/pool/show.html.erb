@@ -30,10 +30,10 @@
 </div>
 
 <% content_for("footer") do %>
-  <%= link_to "Edit", :action => "update", :id => params[:id] %> |
-  <%= link_to "Delete", :action => "destroy", :id => params[:id] %> |
-  <%= link_to "Order", :action => "order", :id => params[:id] %> |
-  <%= link_to "Import", :action => "import", :id => params[:id] %> |
+  <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
+  <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>
+  <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
+  <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
 <% end %>
 
 <%= render :partial => "footer" %>

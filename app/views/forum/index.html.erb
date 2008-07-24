@@ -47,13 +47,13 @@
     <%= will_paginate(@forum_posts) %>
   </div>
 
-  <div id="footer">
-    <%= link_to_function "New topic", "Element.toggle('reply')" %> |
+  <% content_for("subnavbar") do %>
+    <li><%= link_to_function "New topic", "$('reply').show(); $('forum_post_title').focus(); $('forum_post_body').scrollTo()" %></li>
     <% unless @current_user.is_anonymous? %>
-      <%= link_to_function "Mark all read", "Forum.mark_all_read()" %> | 
+      <li><%= link_to_function "Mark all read", "Forum.mark_all_read()" %></li>
     <% end %>
-    <%= link_to "Help", :controller => "help", :action => "forum" %>
-  </div>
+    <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+  <% end %>
 
   <div id="reply" style="display: none;">
     <% form_tag({:action => "create"}) do %>

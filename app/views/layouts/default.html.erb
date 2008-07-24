@@ -24,23 +24,21 @@
   <div id="header">
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_header(h(params[:tags])) %></h2>
     <ul class="flat-list" id="navbar">
-      <li><a href="/user/home">My Account</a></li>
-      <li><a href="/post/index">Posts</a></li>
-      <li><a href="/comment/index">Comments</a></li>
-      <li><a href="/note/index">Notes</a></li>
-      <li><a href="/pool/index">Pools</a></li>
-      <% if CONFIG["enable_artists"] %>
-        <li><a href="/artist/index?order=date">Artists</a></li>
-      <% end %>
-      <li><a href="/tag/index?order=date">Tags</a></li>
-      <li><a href="/wiki/index">Wiki</a></li>
-      <li><a href="/forum/index" id="forum-link">Forum</a></li>
-      <% if CONFIG["enable_trac"] %>
-        <li><a href="http://trac.donmai.us">Trac</a></li>
-      <% end %>
-      <li><a href="/help/index">Help</a></li>
-      <li><a href="/static/more">More &raquo;</a></li>
+      <%= navbar_link_to("My Account", {:controller => "user", :action => "home"}, :id => "my-account") %>
+      <%= navbar_link_to("Posts", :controller => "post", :action => "index") %>
+      <%= navbar_link_to("Comments", :controller => "comment", :action => "index") %>
+      <%= navbar_link_to("Notes", :controller => "note", :action => "index") %>
+      <%= navbar_link_to("Artists", :controller => "artist", :action => "index") if CONFIG["enable_artists"] %>
+      <%= navbar_link_to("Tags", :controller => "tag", :action => "index", :order => "date") %>
+      <%= navbar_link_to("Wiki", :controller => "wiki", :action => "index") %>
+      <%= navbar_link_to("Forum", {:controller => "forum", :action => "index"}, :id => "forum-link") %>
+      <%= navbar_link_to("&raquo;", :controller => "static", :action => "more") %>
     </ul>
+    <% if @content_for_subnavbar %>
+      <ul class="flat-list" id="subnavbar">
+        <%= @content_for_subnavbar %>
+      </ul>
+    <% end %>
   </div>
   <% if flash[:notice] %>
     <div id="notice"><%= h flash[:notice] %></div>

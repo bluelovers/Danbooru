@@ -1,12 +1,12 @@
 <div>
-  <div>
+  <div style="margin-bottom: 1em;">
     <div class="history-search-row">
       <div class="history-search-label">
         <label for="user_name">User</label>
       </div>
       <div>
         <% form_tag({:action => "index"}, :method => :get) do %>
-        <%= text_field_tag "user_name", params[:user_name], :id => "user_name", :size => 20 %> <%= submit_tag "Search" %>
+          <%= text_field_tag "user_name", params[:user_name], :id => "user_name", :size => 20 %> <%= submit_tag "Search" %>
         <% end %>
       </div>
     </div>
@@ -33,6 +33,14 @@
           <th width="70%">Tags</th>
         </tr>
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="6">
+            <%= button_to_function "Undo", "PostTagHistory.undo()", :id => "undo" %>
+            <%= button_to_function "Revert to", "", :id => "revert" %>
+          </td>
+        </tr>
+      </tfoot>
       <tbody>
         <% @change_list.each do |change| %>
           <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
@@ -50,10 +58,6 @@
         <% end %>
       </tbody>
     </table>
-  </div>
-  <div id="footer">
-    <%= link_to_function "Undo", "PostTagHistory.undo()", :id => "undo" %> |
-    <a id="revert" href="#">Revert to</a>
   </div>
 </div>
 

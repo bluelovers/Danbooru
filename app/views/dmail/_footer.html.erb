@@ -1,5 +1,5 @@
-<div id="footer">
+<% content_for("subnavbar") do %>
   <%= @content_for_footer %>
-  <%= link_to "Inbox", :action => "inbox" %> |
-  <%= link_to "Compose", :action => "compose" %>
-</div>
+  <li><%= link_to "Inbox", :action => "inbox" %></li>
+  <li><%= link_to "Compose", :action => "compose" %></li>
+<% end %>

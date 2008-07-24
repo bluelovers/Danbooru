@@ -1,0 +1,5 @@
+<% content_for('subnavbar') do %>
+  <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to "Add artist", :action => "create" %></li>
+  <%= @content_for_footer %>
+<% end %>

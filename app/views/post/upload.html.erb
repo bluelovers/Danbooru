@@ -42,7 +42,7 @@
           <tr>
             <td colspan="2">
               <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
-              <%= button_to_function "Similar", "Post.find_similar()" %>
+              <%= button_to_function "Find similar", "Post.find_similar()" %>
             </td>
           </tr>
         </tfoot>
@@ -125,3 +125,5 @@
     RelatedTags.init(Cookie.unescape(Cookie.get('my_tags')), '<%= params[:ref] || params[:url] %>')
   </script>
 <% end %>
+
+<%= render :partial => "footer" %>

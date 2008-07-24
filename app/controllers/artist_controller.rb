@@ -82,11 +82,11 @@ class ArtistController < ApplicationController
     else
       @artist = Artist.find(params[:id])
     end
+    
+    @posts = Post.find_by_tags(@artist.name, :limit => 6, :order => "id desc").select {|x| x.can_be_seen_by?(@current_user)}
 
     if @artist.nil?
       redirect_to :action => "create", :name => params[:name]
-    else
-      redirect_to :controller => "wiki", :action => "show", :title => @artist.name
     end
   end
 end

@@ -48,10 +48,5 @@
     <%= will_paginate(@artists) %>
   </div>
 
-  <div id="footer">
-    <%= link_to "Create", :action => "create" %> |
-    <%= link_to "Order by Date", :order => "date" %> |
-    <%= link_to "Order by Name", :order => "name" %> | 
-    <%= link_to "Help", :controller => "help", :action => "artists" %>
-  </div>
+  <%= render :partial => "footer" %>
 </div>
