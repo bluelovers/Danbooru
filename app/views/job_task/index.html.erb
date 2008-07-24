@@ -3,15 +3,17 @@
 <table width="100%" class="highlightable">
   <thead>
     <tr>
+      <th width="5%">Id</th>
       <th width="15%">Type</th>
       <th width="10%">Status</th>
-      <th width="45%">Data</th>
+      <th width="40%">Data</th>
       <th width="30%">Message</th>
     </tr>
   </thead>
   <tbody>
     <% @job_tasks.each do |job_task| %>
       <tr>
+        <td><%= link_to job_task.id, :action => "show", :id => job_task.id %></td>
         <td><%= h job_task.task_type %></td>
         <td><%= h job_task.status %></td>
         <td><%= h job_task.pretty_data %></td>

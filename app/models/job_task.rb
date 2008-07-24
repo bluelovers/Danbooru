@@ -15,6 +15,7 @@ class JobTask < ActiveRecord::Base
   
   def execute!
     begin
+      execute_sql("SET statement_timeout = 0")
       update_attribute(:status, "processing")
       __send__("execute_#{task_type}")
       update_attribute(:status, "finished")
@@ -60,7 +61,7 @@ class JobTask < ActiveRecord::Base
       
     when "approve_tag_implication"
       ti = TagImplication.find(data["id"])
-      "start:#{ti.predicate_name} result:#{ti.consequent_name}"
+      "start:#{ti.predicate.name} result:#{ti.consequent.name}"
     end
   end
   

@@ -91,9 +91,12 @@ class TagController < ApplicationController
         return
       end
 
-      task = JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => {"start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip})
-
-      respond_to_success("Mass tag edit job created", :controller => "job_task", :action => "index")
+      if CONFIG["enable_asynchronous_tasks"]
+        task = JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => {"start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip})
+        respond_to_success("Mass tag edit job created", :controller => "job_task", :action => "index")
+      else
+        Tag.mass_edit(params[:start], params[:result], @current_user.id, request.remote_ip)
+      end
     end
   end
 

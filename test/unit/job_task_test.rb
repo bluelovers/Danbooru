@@ -16,4 +16,4 @@ class JobTaskTest < ActiveSupport::TestCase
       JobTask.delete_all
     end
   end
-end
+end if CONFIG["enable_asynchronous_tasks"]
