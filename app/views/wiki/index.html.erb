@@ -1,19 +1,21 @@
 <div style="margin-bottom: 1em;">
   <%= render :partial => "sidebar" %>
 
-  <div>
-    <table width="100%">
-      <tr>
-        <th width="70%">Title</th>
-        <th width="30%">Last edited</th>
+  <table width="70%" class="highlightable">
+    <tr>
+      <th width="70%">Title</th>
+      <th width="30%">Last edited</th>
+    </tr>
+    <%- @wiki_pages.each do |wiki_page| -%>
+      <tr class="<%= cycle 'even', 'odd' %>">
+        <td><%= link_to h(wiki_page.pretty_title), :controller => "wiki", :action => "show", :title => wiki_page.title, :nordirect => 1 %></td>
+        <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= h wiki_page.author %></td>
       </tr>
-      <%- @wiki_pages.each do |wiki_page| -%>
-        <tr class="<%= cycle 'even', 'odd' %>">
-          <td><%= link_to h(wiki_page.pretty_title), :controller => "wiki", :action => "show", :title => wiki_page.title, :nordirect => 1 %></td>
-          <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= h wiki_page.author %></td>
-        </tr>
-      <%- end -%>
-    </table>
+    <%- end -%>
+  </table>
+
+  <div id="paginator">
+    <%= will_paginate(@wiki_pages) %>
   </div>
 </div>
 

@@ -24,10 +24,13 @@
   <% end %>
 
   <% if @posts %>
-    <div style="margin-top: 1em; margin-bottom: 1em; display: block; float: left;">
-      <% @posts.each do |p| %>
-        <%= print_preview(p) %>
-      <% end %>
+    <div style="margin-top: 1em; float: left; width: 60em;">
+      <h4>Recent Posts</h4>
+      <div style="margin: 1em 0;">
+        <% @posts.each do |p| %>
+          <%= print_preview(p) %>
+        <% end %>
+      </div>
     </div>
   <% end %>
 
