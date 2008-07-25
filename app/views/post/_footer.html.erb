@@ -4,5 +4,6 @@
   <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day" %></li>
   <li><%= link_to "Recent changes", :controller => "post_tag_history", :action => "index" %></li>
   <li><%= link_to "Moderate", :controller => "post", :action => "moderate" %></li>
+  <%= @content_for_footer %>
   <li><%= link_to "Help", :controller => "help", :action => "posts" %></li>
 <% end %>

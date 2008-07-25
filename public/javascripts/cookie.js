@@ -60,5 +60,13 @@ Cookie = {
     if (this.get("block_reason") != "") {
       $("block-reason").update(this.get("block_reason")).show()
     }
+
+    if ($("my-favorites")) {
+      if (this.get("login") != "") {
+        $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"
+      } else {
+        $("my-favorites-container").hide()
+      }
+    }
   }
 }

@@ -185,7 +185,7 @@ module PostFileMethods
   end
   
   def preview_dimensions
-    if image? && !is_deleted?
+    if image?
       dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
       return [dim[:width], dim[:height]]
     else

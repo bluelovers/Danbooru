@@ -111,11 +111,6 @@
     e.stop();
   })
   PostModeMenu.init()
-  if (Cookie.get("login") != "") {
-    $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"
-  } else {
-    $("my-favorites-container").hide()
-  }
 </script>
 
 <% content_for("html_header") do %>

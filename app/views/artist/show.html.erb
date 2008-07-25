@@ -22,7 +22,7 @@
       <% if @artist.alias_id %>
         <tr>
           <th>Alias for</th>
-          <td><%= link_to h(@artist.alias), :action => "show", :id => @artist.alias_id %></td>
+          <td><%= link_to h(@artist.alias_name), :action => "show", :id => @artist.alias_id %></td>
         </tr>
       <% end %>
       <% if @artist.aliases.any? %>

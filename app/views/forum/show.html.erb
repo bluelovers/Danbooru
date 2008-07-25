@@ -19,10 +19,10 @@
     <h5 id="respond-link"><%= link_to_function "Respond &raquo;", "$('respond-link').hide(); $('reply').show(); $('forum_post_body').focus()" %></h5>
     <div id="reply" style="display: none;">
       <% form_tag({:action => "create"}) do %>
+        <%= hidden_field "forum_post", "title", :value => "" %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
-          <%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %>
-          <%= submit_tag "Post" %>
-        </table>
+        <%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %>
+        <%= submit_tag "Post" %>
       <% end %>
     </div>    
   </div>
