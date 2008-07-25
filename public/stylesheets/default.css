@@ -11,7 +11,7 @@ h1, h2, h3, h4 {
 body {
   font-size: 80%;
   padding: f0;
-	margin: 0;
+  margin: 0;
 }
 
 a:link {
@@ -217,8 +217,8 @@ table.form th {
 }
 
 table.highlightable {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 table.highlightable > tbody > tr:hover {
@@ -226,16 +226,16 @@ table.highlightable > tbody > tr:hover {
 }
 
 table.highlightable th {
-	color: #171BB3;
+  color: #171BB3;
 }
 
 table.highlightable td {
-	border: 1px dotted #EEE;
-	margin: 0;
+  border: 1px dotted #EEE;
+  margin: 0;
 }
 
 table.highlightable th {
-	margin: 0;
+  margin: 0;
 }
 
 table td {
@@ -279,7 +279,7 @@ textarea.no-block {
 }
 
 textarea:focus {
-	background: #FFC;
+  background: #FFC;
 }
 
 ul {
@@ -292,16 +292,16 @@ ul.bare-list li {
 
 ul.flat-list {
   display: block;
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 ul.flat-list li {
   display: inline;
   list-style-type: none;
   font-weight: bold;
-	padding: 0;
-	margin: 0 1em 0 0;
+  padding: 0;
+  margin: 0 1em 0 0;
 }
 
 ul.flat-list li a {
@@ -309,18 +309,18 @@ ul.flat-list li a {
 }
 
 ul.flat-list li a.forum-update {
-	font-style: italic;
+  font-style: italic;
 }
 
 ul.link-page {
-	font-size: 1.2em;
-	font-weight: bold;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 ul.link-page > li {
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 }
 
 .obsolete-tag-change {
@@ -459,12 +459,12 @@ div#comment-list > div.post > div.col2 > div.header > div.tags > span {
 }
 
 div#content {
-	padding: 0 20px 30px 20px;
+  padding: 0 20px 30px 20px;
 }
 
 div.content {
   float: left;
-	margin: 0;
+  margin: 0;
   width: 77%;
 }
 
@@ -506,36 +506,36 @@ div#header {
 }
 
 div#header #site-title {
-	padding: 10px 20px 0px 20px;
+  padding: 10px 20px 0px 20px;
 }
 
 div#header ul#navbar {
-	padding: 5px 20px 0px 10px;
-	margin: 0;
+  padding: 5px 20px 2px 10px;
+  margin: 0;
 }
 
 div#header ul#navbar li {
-	font-size: 120%;
-	padding: 0 10px;
-	margin: 0;
+  font-size: 120%;
+  padding: 0 10px 2px 10px;
+  margin: 0;
 }
 
 div#header ul#navbar li.current-page {
-	background-color: #F7F7FF;
+  background-color: #F7F7FF;
 }
 
 div#header ul#navbar li.current-page a {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 div#header ul#subnavbar {
-	padding: 5px 20px 5px 15px;
-	background-color: #F7F7FF;
-	margin: 0 0 1em 0;
+  padding: 5px 20px 5px 15px;
+  background-color: #F7F7FF;
+  margin: 0 0 1em 0;
 }
 
 div#header ul#subnavbar li {
-	padding: 0 5px;
+  padding: 0 5px;
 }
 
 div#header ul#subnavbar li a {
@@ -579,7 +579,7 @@ div.help h4 {
 }
 
 div#info {
-	font-style: italic;
+  font-style: italic;
 }
 
 div.mail .received {
@@ -603,7 +603,7 @@ div#notice {
 }
 
 div.page {
-	width: 40em;
+  width: 40em;
 }
 
 div#paginator {
@@ -843,7 +843,7 @@ div#wiki-show > div#body {
   line-height: 2em;
   width: 50em;
   text-align: left;
-	float: left;
+  float: left;
 }
 
 div#wiki-show > div#body ul {
@@ -857,7 +857,7 @@ div#wiki-show > div#body > ul {
 
 div#wiki-show > div#body > div#byline {
   color: #666;
-	font-style: italic;
+  font-style: italic;
 }
 
 div#wiki-diff > div#body {
