@@ -35,17 +35,4 @@ class AdminControllerTest < ActionController::TestCase
     admin.reload
     assert_not_equal(old_password_hash, admin.password_hash)
   end
-  
-  if CONFIG["enable_caching"]
-    def test_cache_stats
-      if CONFIG["enable_caching"]
-        CACHE.flush_all
-      end
-      
-      get :cache_stats, {}, {:user_id => 1}
-      assert_response :success
-      
-      # TODO: test different parameters
-    end
-  end
 end

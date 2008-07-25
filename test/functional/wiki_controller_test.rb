@@ -31,7 +31,7 @@ class WikiControllerTest < ActionController::TestCase
     page2 = create_page("moge")
     
     get :index
-    assert_response :success
+    assert_redirected_to :action => "show", :title => "Help:Home"
     
     get :index, {:query => "moge"}
     assert_response :success

@@ -1,6 +1,14 @@
 module TagRelatedTagMethods
   module ClassMethods
     def calculate_related_by_type(tag, type, limit = 25)
+      if CONFIG["enable_caching"] && tag.size < 230
+        results = Cache.get("reltagsbytype/#{type}/#{tag}")
+        
+        if results
+          return JSON.parse(results)
+        end
+      end
+      
       sql = <<-EOS
         SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name,
         COUNT(pt0.tag_id) AS post_count
@@ -13,7 +21,17 @@ module TagRelatedTagMethods
         LIMIT ?
       EOS
 
-      return select_all_sql(sql, tag, type, limit)
+      results = select_all_sql(sql, tag, type, limit)
+      
+      if CONFIG["enable_caching"] && tag.size < 230
+        post_count = (Tag.find_by_name(tag).post_count rescue 0) / 3
+        post_count = 12 if post_count < 12
+        post_count = 200 if post_count > 200
+        
+        Cache.put("reltagsbytype/#{type}/#{tag}", results.map {|x| {"name" => x["name"], "post_count" => x["post_count"]}}.to_json, post_count.hours)
+      end
+      
+      return results
     end
 
     def calculate_related(tags)

@@ -82,7 +82,29 @@ RelatedTags = {
   find: function(field, type) {
     $("related").update("<em>Fetching...</em>")
     var field = $(field)
-    var tags = field.value
+		var tags = null
+		
+		if (field.selectionStart != field.textLength) {
+			var a = field.selectionStart
+			var b = field.selectionStart
+			
+			while ((a > 0) && field.value[a] != " ") {
+				a -= 1
+			}
+			
+			if (field.value[a] == " ") {
+				a += 1
+			}
+			
+			while ((b < field.textLength) && field.value[b] != " ") {
+				b += 1
+			}
+			
+			tags = field.value.slice(a, b)
+		} else {
+			tags = field.value
+		}
+
     var params = {"tags": tags}
     if (type) {
       params["type"] = type
