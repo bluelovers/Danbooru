@@ -37,22 +37,19 @@ class WikiController < ApplicationController
     query = params[:query] || ""
     query = query.scan(/\S+/)
 
-    if !query.empty? || params[:order]
-      search_params = {
-        :order => order,
-        :per_page => limit, 
-        :page => params[:page]
-      }
-      if !query.empty?
-        search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
-      end
-      
-      @wiki_pages = WikiPage.paginate(search_params)
+    search_params = {
+      :order => order,
+      :per_page => limit, 
+      :page => params[:page]
+    }
 
-      respond_to_list("wiki_pages")
-    else
-      redirect_to :action => "show", :title => "Help:Home"
+    if !query.empty?
+      search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
     end
+      
+    @wiki_pages = WikiPage.paginate(search_params)
+
+    respond_to_list("wiki_pages")
   end
 
   def preview
