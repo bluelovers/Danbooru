@@ -1,4 +1,5 @@
 <% content_for("subnavbar") do %>
+  <li><%= link_to "List", :controller => "post", :action => "index" %></li>
   <li><%= link_to "Upload", :controller => "post", :action => "upload" %></li>
   <li id="my-favorites-container"><%= link_to "My Favorites", "/", :id => "my-favorites" %></li>
   <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day" %></li>
