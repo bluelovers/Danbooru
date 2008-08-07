@@ -1,6 +1,6 @@
 <div>
   <% if posts.empty? %>
-    <h4>Nobody here but us chickens!</h4>
+    <p>Nobody here but us chickens!</p>
   <% else %>
     <% posts.each do |post| %>
       <%= print_preview(post, :onclick => "return PostModeMenu.click(#{post.id})") %>

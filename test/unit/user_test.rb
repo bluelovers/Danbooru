@@ -109,23 +109,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal("1", results[1]["count"])
   end
   
-  def test_favorite_tags
-    p1 = create_post("tag1")
-    p2 = create_post("tag2")
-    p3 = create_post("tag3")
-    p4 = create_post("tag4")
-    p5 = create_post("tag1")
-    create_favorite(2, p1.id)
-    create_favorite(2, p2.id)
-    create_favorite(2, p5.id)
-    results = User.find(2).favorite_tags.sort {|a, b| a["tag"] <=> b["tag"]}
-    assert_equal(2, results.size)
-    assert_equal("tag1", results[0]["tag"])
-    assert_equal("2", results[0]["count"])
-    assert_equal("tag2", results[1]["tag"])
-    assert_equal("1", results[1]["count"])
-  end
-  
   def test_uploaded_posts
     p1 = create_post("tag1", 2)
     p2 = create_post("tag2", 2)

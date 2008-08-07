@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_favorite_tags)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -14,13 +14,24 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute!
+    if repeat_count > 0
+      count = repeat_count - 1
+    else
+      count = repeat_count
+    end
+    
     begin
       execute_sql("SET statement_timeout = 0")
       update_attribute(:status, "processing")
       __send__("execute_#{task_type}")
-      update_attribute(:status, "finished")
+      
+      if count == 0
+        update_attributes(:status => "pending", :repeat_count => count)
+      else
+        update_attributes(:status => "finished", :repeat_count => count)
+      end
     rescue Exception => x
-      update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
+      update_attributes(:status => "error", :status_message => "#{x.class}: #{x}", :repeat_count => count)
     end
   end
   
@@ -46,6 +57,23 @@ class JobTask < ActiveRecord::Base
     ti.approve(updater_id, updater_ip_addr)
   end
   
+  def execute_calculate_favorite_tags
+    # TODO: move time check into data
+    should_update = Cache.get("calc-fav-tags")
+    last_processed_post_id = data["last_processed_post_id"].to_i
+    
+    if last_post_id == 0
+      last_post_id = Post.max("id").to_i
+    end
+    
+    if should_update.nil?
+      Cache.put("calc-fav-tags", 1.hour)
+      FavoriteTag.process_all(last_processed_post_id)
+      
+      update_attribute(:last_processed_post_id, Post.max("id"))
+    end
+  end
+  
   def pretty_data
     case task_type
     when "mass_tag_edit"
@@ -62,6 +90,9 @@ class JobTask < ActiveRecord::Base
     when "approve_tag_implication"
       ti = TagImplication.find(data["id"])
       "start:#{ti.predicate.name} result:#{ti.consequent.name}"
+      
+    when "calculate_favorite_tags"
+      "post_id:#{data['last_processed_post_id']}"
     end
   end
   

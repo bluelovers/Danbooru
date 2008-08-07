@@ -76,6 +76,16 @@ module PostSqlMethods
         cond_params << q[:source]
       end
 
+      if q[:favtag].is_a?(String)
+        user = User.find_by_name(q[:favtag])
+
+        if user
+          post_ids = FavoriteTag.find_post_ids(user.id)
+          conds << "p.id IN (?)"
+          cond_params << post_ids
+        end
+      end
+
       if q[:fav].is_a?(String)
         joins << "JOIN favorites f ON f.post_id = p.id JOIN users fu ON f.user_id = fu.id"
         conds << "lower(fu.name) = lower(?)"

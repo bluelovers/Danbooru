@@ -51,6 +51,11 @@
     <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
   </div>
   
+  <div id="upgrade-account">
+    <%= link_to "Upgrade your account for only $20", :controller => "help", :action => "users" %>
+    <%= link_to_function "No thanks", "$('upgrade-account').hide(); Cookie.put('hide-upgrade-account', '1')", :id => "hide-upgrade-account-link" %>
+  </div>
+  
   <div class="blocked" id="block-reason" style="display: none;">
   </div>
 

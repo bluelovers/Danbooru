@@ -71,7 +71,7 @@ sudo -u postgres createuser -s danbooru
 sudo -u danbooru createdb danbooru
 sudo -u danbooru psql danbooru < db/postgres.sql
 sudo -u danbooru rake db:migrate RAILS_ENV=production
-mongrel_rails cluster::start
+script/donmai/upbooru
 
 # Set up nginx
 DANBOORU_CONF_FILE="/etc/nginx/sites-enabled/danbooru.conf"

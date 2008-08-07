@@ -165,3 +165,6 @@ CONFIG["enable_asynchronous_tasks"] = false
 # If you want to redirect traffic when the server load average spikes (for the 5min interval), initialize this setting. Set to false if you want to disable this feature.
 # CONFIG["load_average_threshold"] = 2
 CONFIG["load_average_threshold"] = false
+
+CONFIG["favorite_tag_limit"] = 60
+

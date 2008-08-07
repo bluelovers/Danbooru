@@ -33,7 +33,16 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_my_tags">My Tags</label>
+            <label class="block" for="user_favorite_tags_text">Favorite Tags</label>
+            <p>Enter a list of tags you really like, whitespace delimited.</p>
+          </th>
+          <td>
+            <%= text_field "user", "favorite_tags_text", :size => 40 %>
+          </td>          
+        </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_my_tags">Edit Tags</label>
             <p>These will be accessible when you <a href="/post/upload">upload</a> or edit a post.</p>
           </th>
           <td>

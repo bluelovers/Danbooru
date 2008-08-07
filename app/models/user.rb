@@ -411,6 +411,37 @@ class User < ActiveRecord::Base
     end
   end
   
+  module UserFavoriteTagMethods
+    def self.included(m)
+      m.has_many :favorite_tags
+    end
+    
+    def favorite_tags_text=(text)
+      current_fav_tags = favorite_tags
+      new_fav_tags = text.scan(/\S+/)
+      
+      new_fav_tags.each do |new_fav_tag|
+        if current_fav_tags.all? {|x| x.tag_query != new_fav_tag}
+          favorite_tags.create(:tag_query => new_fav_tag)
+        end
+      end
+      
+      current_fav_tags.each do |current_fav_tag|
+        if new_fav_tags.all? {|x| x != current_fav_tag.tag_query}
+          FavoriteTag.destroy(["user_id = ? AND tag_query = ?", id, current_fav_tag.tag_query])
+        end
+      end
+    end
+    
+    def favorite_tags_text
+      favorite_tags.map(&:tag_query).join(" ")
+    end
+    
+    def favorite_tag_posts(limit)
+      FavoriteTag.find_posts(id, limit)
+    end
+  end
+  
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
@@ -427,6 +458,7 @@ class User < ActiveRecord::Base
   include UserFavoriteMethods
   include UserLevelMethods
   include UserInviteMethods
+  include UserFavoriteTagMethods
 
   @salt = CONFIG["user_password_salt"]
   

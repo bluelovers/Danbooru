@@ -61,6 +61,10 @@ Cookie = {
       $("block-reason").update(this.get("block_reason")).show()
     }
 
+		if (this.get("hide-upgrade-account") == "1") {
+			$("upgrade-account").hide()
+		}
+
     if ($("my-favorites")) {
       if (this.get("login") != "") {
         $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"

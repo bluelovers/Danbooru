@@ -7,30 +7,35 @@
       <thead>
         <tr>
           <th width="20%">Level</th>
-          <th width="80%">Description</th>
+          <th width="20%">Cost</th>
+          <th width="60%">Description</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>Basic</td>
-          <td>You can upload up to <%= CONFIG["member_post_limit"] %> posts in a day, post up to <%= CONFIG["member_comment_limit"] %> comments in an hour, keep favorites, post on the forum, create notes, create pools, create artists, and edit the wiki. Any post you upload will be subject to moderation.</td>
+          <td>Free</td>
+          <td>You can upload up to <%= CONFIG["member_post_limit"] %> posts in a day, post up to <%= CONFIG["member_comment_limit"] %> comments in an hour, and search up to two tags at a time. Any post you upload will be subject to moderation.</td>
         </tr>
         <tr>
           <td>Privileged</td>
-          <td>You no longer see ads or 503 pages. You can upload unlimited posts and post unlimited comments, but your posts are still subject to moderation.</td>
+          <td>$20<br>(one time)</td>
+          <td>You no longer see ads or 503 pages, and you can search up to six tags at once. You can upload unlimited posts and post unlimited comments, but your posts are still subject to moderation.</td>
         </tr>
         <tr>
           <td>Contributor</td>
+          <td>Invite only</td>
           <td>Your posts are no longer subject to moderation.</td>
         </tr>
       </tbody>
     </table>
-    <p>Registration for basic accounts is open. To get a privileged account, you must be invited by a moderator.</p>
+    <p>Registration for basic accounts is free and open. To get a privileged account, please send a check or money order for $20 to the following address:</p>
+    <p>
+      <addr>PO Box ####</addr>
+      <addr>Rockville, MD 20852</addr>
+      <addr>United States</addr>
+    </p>
+    <p><strong style="color: red;">BE SURE TO INCLUDE YOUR USERNAME</strong>. Payments without a username will be discarded. Allow at least one week for checks to clear. If you want to pay using an alternative method, please contact the <%= mail_to "webmaster@danbooru.donmai.us", "webmaster" %>.</p>
     <p>See the <%= link_to "signup", :controller => "user", :action => "signup" %> page for more details.</p>
-  </div>
-  
-  <div class="section">
-    <h4>Blocked Accounts</h4>
-    <p>Your account may have been marked as blocked. Blocked accounts can't upload posts, and they can't post comments or post to the forum. You can still make tag changes, keep favorites, edit the wiki, and edit notes. Blocks usually last one week.</p>
   </div>
 </div>

@@ -52,6 +52,12 @@ a.spoiler:hover {
   color: white;
 }
 
+addr {
+	display: block;
+	margin-left: 2em;
+	font-weight: bold;
+}
+
 code {
   font-family: monospace;
   font-size: 1.2em;
@@ -826,6 +832,25 @@ div#tag-list {
 div#tag-list > a {
   padding-right: 5px;
 }
+
+div#upgrade-account {
+	margin: 1em;
+	padding: 1em;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-align: center;
+}
+
+div#upgrade-account a {
+	color: black;
+}
+
+div#upgrade-account a#hide-upgrade-account-link {
+	font-size: 0.8em;
+	color: #CCC;
+	display: block;
+}
+
 
 div#user-record > table > tbody > tr.positive-record {
   background: #EFE;

@@ -166,6 +166,15 @@ class PostController < ApplicationController
     limit = 20 if limit == 0
     limit = 1000 if limit > 1000
     count = 0
+    
+    if @current_user.is_member_or_lower? && split_tags.size > 2
+      respond_to_error("You can only search up to two tags at once with a basic account", :action => "index")
+      return
+    elsif split_tags.size > 6
+      respond_to_error("You can only search up to six tags at once", :action => "index")
+      return
+    end
+    
     begin
       count = Post.fast_count(tags)
     rescue => x
