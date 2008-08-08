@@ -74,7 +74,6 @@ class User < ActiveRecord::Base
     def self.included(m)
       m.before_save :encrypt_password
       m.validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
-      m.validates_format_of :password, :with => /\d/, :if => lambda {|rec| rec.password}, :message => "must have at least one number"
       m.validates_confirmation_of :password
     end
     
@@ -383,9 +382,13 @@ class User < ActiveRecord::Base
     class NoInvites < Exception ; end
     class HasNegativeRecord < Exception ; end
     
-    def invite!(name)
+    def invite!(name, level)
       if invite_count <= 0
         raise NoInvites
+      end
+      
+      if level.to_i >= CONFIG["user_levels"]["Contributor"]
+        level = CONFIG["user_levels"]["Contributor"]
       end
       
       invitee = User.find_by_name(name)
@@ -399,7 +402,7 @@ class User < ActiveRecord::Base
       end
       
       transaction do
-        invitee.level = CONFIG["user_levels"]["Contributor"]
+        invitee.level = level
         invitee.invited_by = id
         invitee.save
         decrement! :invite_count

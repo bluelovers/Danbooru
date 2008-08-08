@@ -58,12 +58,7 @@ class UserTest < ActiveSupport::TestCase
     user.password_confirmation = "zugzug5"
     user.save
     assert_equal(["Password doesn't match confirmation"], user.errors.full_messages)
-    
-    user.password = "zugzug"
-    user.password_confirmation = "zugzug"
-    user.save
-    assert_equal(["Password must have at least one number"], user.errors.full_messages)
-    
+
     user.password = "x5"
     user.password_confirmation = "x5"
     user.save

@@ -28,7 +28,7 @@ class UserControllerTest < ActionController::TestCase
     member = User.find(4)
     
     # Should fail
-    post :invites, {:member => {:name => "member"}}, {:user_id => 2}
+    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => 2}
     member.reload
     assert_equal(CONFIG["user_levels"]["Member"], member.level)    
     
@@ -37,14 +37,14 @@ class UserControllerTest < ActionController::TestCase
     mod.invite_count = 10
     mod.save
     ur = UserRecord.create(:user_id => 4, :is_positive => false, :body => "bad", :reported_by => 1)    
-    post :invites, {:member => {:name => "member"}}, {:user_id => 2}
+    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => 2}
     member.reload
     assert_equal(CONFIG["user_levels"]["Member"], member.level)    
 
     ur.destroy
 
     # Should succeed
-    post :invites, {:member => {:name => "member"}}, {:user_id => 2}
+    post :invites, {:member => {:name => "member", :level => 50}}, {:user_id => 2}
     member.reload
     assert_equal(CONFIG["user_levels"]["Contributor"], member.level)
   end

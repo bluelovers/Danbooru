@@ -27,7 +27,7 @@
         <tr>
           <th>
             <label class="block" for="user_email">Email</label>
-            <p>This field is required to activate your account.</p>
+            <p>Optional, for email notifications and password resets.</p>
           </th>
           <td>
             <%= text_field "user", "email", :size => 30 %>
@@ -36,7 +36,7 @@
         <tr>
           <th>
             <label class="block" for="user_password">Password</label>
-            <p>Your password must contain at least one number.</p>
+            <p>Minimum of five characters.</p>
           </th>
           <td>
             <%= password_field "user", "password", :size => 30 %>

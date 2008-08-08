@@ -31,7 +31,7 @@ class UserController < ApplicationController
     if request.post?
       if params[:member]
         begin
-          @current_user.invite!(params[:member][:name])
+          @current_user.invite!(params[:member][:name], params[:member][:level])
           flash[:notice] = "User was invited"
           
         rescue User::NoInvites

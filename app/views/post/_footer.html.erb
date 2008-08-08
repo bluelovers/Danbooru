@@ -4,7 +4,9 @@
   <li id="my-favorites-container"><%= link_to "Favorites", "/", :id => "my-favorites" %></li>
   <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day" %></li>
   <li><%= link_to "Recent changes", :controller => "post_tag_history", :action => "index" %></li>
-  <li><%= link_to "Moderate", :controller => "post", :action => "moderate" %></li>
+  <% if @current_user.is_janitor_or_higher? %>
+    <li><%= link_to "Moderate", :controller => "post", :action => "moderate" %></li>
+  <% end %>
   <%= @content_for_footer %>
   <li><%= link_to "Help", :controller => "help", :action => "posts" %></li>
 <% end %>
