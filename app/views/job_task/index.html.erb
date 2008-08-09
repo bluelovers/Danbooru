@@ -16,7 +16,7 @@
         <td><%= link_to job_task.id, :action => "show", :id => job_task.id %></td>
         <td><%= h job_task.task_type %></td>
         <td><%= h job_task.status %></td>
-        <td><%= h job_task.pretty_data %></td>
+        <td><%= h job_task.pretty_data rescue "ERROR" %></td>
         <td><%= h job_task.status_message %></td>
       </tr>
     <% end %>

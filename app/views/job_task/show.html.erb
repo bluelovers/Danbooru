@@ -3,7 +3,7 @@
 <ul>
   <li><strong>Type</strong>: <%= @job_task.task_type %></li>
   <li><strong>Status</strong>: <%= @job_task.status %></li>
-  <li><strong>Data</strong>: <%= @job_task.pretty_data %></li>
+  <li><strong>Data</strong>: <%= @job_task.pretty_data rescue "ERROR" %></li>
   <li><strong>Message</strong>: <%= @job_task.status_message %></li>
 </ul>
 

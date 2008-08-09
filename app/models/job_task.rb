@@ -25,7 +25,7 @@ class JobTask < ActiveRecord::Base
       update_attribute(:status, "processing")
       __send__("execute_#{task_type}")
       
-      if count == 0
+      if count != 0
         update_attributes(:status => "pending", :repeat_count => count)
       else
         update_attributes(:status => "finished", :repeat_count => count)
@@ -62,15 +62,15 @@ class JobTask < ActiveRecord::Base
     should_update = Cache.get("calc-fav-tags")
     last_processed_post_id = data["last_processed_post_id"].to_i
     
-    if last_post_id == 0
-      last_post_id = Post.max("id").to_i
+    if last_processed_post_id == 0
+      last_processed_post_id = Post.maximum("id").to_i
     end
     
     if should_update.nil?
       Cache.put("calc-fav-tags", 1.hour)
       FavoriteTag.process_all(last_processed_post_id)
       
-      update_attribute(:last_processed_post_id, Post.max("id"))
+      update_attribute(:data, {"last_processed_post_id" => Post.maximum("id")})
     end
   end
   
