@@ -431,13 +431,13 @@ class User < ActiveRecord::Base
       
       current_fav_tags.each do |current_fav_tag|
         if new_fav_tags.all? {|x| x != current_fav_tag.tag_query}
-          FavoriteTag.destroy(["user_id = ? AND tag_query = ?", id, current_fav_tag.tag_query])
+          FavoriteTag.destroy_all(["user_id = ? AND tag_query = ?", id, current_fav_tag.tag_query])
         end
       end
     end
     
     def favorite_tags_text
-      favorite_tags.map(&:tag_query).join(" ")
+      favorite_tags.map(&:tag_query).sort.join(" ")
     end
     
     def favorite_tag_posts(limit)
