@@ -236,57 +236,6 @@ class User < ActiveRecord::Base
 
       return uploaded_tags
     end
-
-    def favorite_tags(options = {})
-      type = options[:type]
-
-      if CONFIG["enable_caching"]
-        favorite_tags = Cache.get("favorite_tags/#{id}/#{type}")
-        return favorite_tags unless favorite_tags == nil
-      end
-
-      if RAILS_ENV == "test"
-        # disable filtering in test mode to simplify tests
-        popular_tags = ""
-      else
-        popular_tags = select_values_sql("SELECT id FROM tags WHERE tag_type = #{CONFIG['tag_types']['General']} ORDER BY post_count DESC LIMIT 8").join(", ")
-        popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
-      end
-
-      if type
-        sql = <<-EOS
-          SELECT (SELECT name FROM tags WHERE id = pt.tag_id) AS tag, COUNT(*) AS count
-          FROM posts_tags pt, tags t, favorites f
-          WHERE f.user_id = #{id}
-          AND f.post_id = pt.post_id
-          AND pt.tag_id = t.id
-          #{popular_tags}
-          AND t.tag_type = #{type.to_i}
-          GROUP BY pt.tag_id
-          ORDER BY count DESC
-          LIMIT 6
-        EOS
-      else
-        sql = <<-EOS
-          SELECT (SELECT name FROM tags WHERE id = pt.tag_id) AS tag, COUNT(*) AS count
-          FROM posts_tags pt, favorites f
-          WHERE f.user_id = #{id}
-          AND f.post_id = pt.post_id
-          #{popular_tags}
-          GROUP BY pt.tag_id
-          ORDER BY count DESC
-          LIMIT 6
-        EOS
-      end
-
-      favorite_tags = select_all_sql(sql)
-
-      if CONFIG["enable_caching"]
-        Cache.put("favorite_tags/#{id}/#{type}", favorite_tags, 1.day)
-      end
-
-      return favorite_tags
-    end
   end
   
   module UserPostMethods
@@ -416,7 +365,7 @@ class User < ActiveRecord::Base
   
   module UserFavoriteTagMethods
     def self.included(m)
-      m.has_many :favorite_tags
+      m.has_many :favorite_tags, :dependent => :delete_all
     end
     
     def favorite_tags_text=(text)
