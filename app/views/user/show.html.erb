@@ -17,7 +17,17 @@
     </tr>
     <tr>
       <td><strong>Favorite Tags</strong></td>
-      <td><%= @user.favorite_tags.map {|x| link_to(h(x.tag_query), :controller => "post", :action => "index", :tags => x.tag_query)}.join(", ") %></td>
+      <td>
+        <% if @user.favorite_tags.empty? %>
+          None
+        <% else %>
+          <%= @user.favorite_tags.map {|x| link_to(h(x.tag_query), :controller => "post", :action => "index", :tags => x.tag_query)}.join(", ") %>
+        <% end %>
+          
+        <% if @current_user.id == @user.id %>
+          (<%= link_to "edit", :action => "edit" %>)
+        <% end %>
+      </td>
     </tr>
     <tr>
       <td><strong>Posts</strong></td>
@@ -67,8 +77,9 @@
         <% if !UserRecord.exists?(["user_id = ?", @user.id]) %>
           None
         <% else %>
-          <%= link_to UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = true", @user.id]) - UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = false", @user.id]), :controller => "user_record", :action => "index", :user_id => @user.id %>
+          <%= UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = true", @user.id]) - UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = false", @user.id]) %>
         <% end %>
+        (<%= link_to "add", :controller => "user_record", :action => "index", :user_id => @user.id %>)
       </td>
     </tr>
   </table>
