@@ -420,19 +420,10 @@ class User < ActiveRecord::Base
     end
     
     def favorite_tags_text=(text)
-      current_fav_tags = favorite_tags
-      new_fav_tags = text.scan(/\S+/)
+      favorite_tags.clear
       
-      new_fav_tags.each do |new_fav_tag|
-        if current_fav_tags.all? {|x| x.tag_query != new_fav_tag}
-          favorite_tags.create(:tag_query => new_fav_tag)
-        end
-      end
-      
-      current_fav_tags.each do |current_fav_tag|
-        if new_fav_tags.all? {|x| x != current_fav_tag.tag_query}
-          FavoriteTag.destroy_all(["user_id = ? AND tag_query = ?", id, current_fav_tag.tag_query])
-        end
+      text.scan(/\S+/).slice(0, 20).each do |new_fav_tag|
+        favorite_tags.create(:tag_query => new_fav_tag)
       end
     end
     
