@@ -56,7 +56,7 @@ module PostImageStoreMethods
 
     def preview_url
       if self.image?
-        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
+        CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else
         CONFIG["url_base"] + "/download-preview.png"
       end

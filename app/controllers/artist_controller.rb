@@ -38,7 +38,7 @@ class ArtistController < ApplicationController
       if artist.errors.empty?
         respond_to_success("Artist created", :action => "show", :id => artist.id)
       else
-        respond_to_error(artist, :action => "add", :alias_id => params[:alias_id])
+        respond_to_error(artist, :action => "create", :alias_id => params[:alias_id])
       end
     else
       @artist = Artist.new

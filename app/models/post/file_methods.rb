@@ -230,8 +230,7 @@ module PostFileMethods
     # If we're not reducing the resolution for the sample image, only reencode if the
     # source image is above the reencode threshold.  Anything smaller won't be reduced
     # enough by the reencode to bother, so don't reencode it and save disk space.
-    if size[:width] == width && size[:height] == height &&
-      File.size?(path) < CONFIG["sample_always_generate_size"]
+    if size[:width] == width && size[:height] == height && File.size?(path) < CONFIG["sample_always_generate_size"]
       return true
     end
 
@@ -243,7 +242,7 @@ module PostFileMethods
 
     size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]})
     begin
-      Danbooru.resize(file_ext, path, tempfile_sample_path, size, 95)
+      Danbooru.resize(file_ext, path, tempfile_sample_path, size, 90)
     rescue Exception => x
       errors.add "sample", "couldn't be created: #{x}"
       return false

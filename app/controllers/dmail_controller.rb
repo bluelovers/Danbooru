@@ -49,4 +49,19 @@ class DmailController < ApplicationController
       end
     end
   end
+
+  def mark_all_read
+    if request.post?
+      if params[:commit] == "Yes"
+        Dmail.find(:all, :conditions => ["to_id = ? and has_seen = false", @current_user.id]).each do |dmail|
+          dmail.update_attribute(:has_seen, true)
+        end
+
+        @current_user.update_attribute(:has_mail, false)
+        respond_to_success("All messages marked as read", {:action => "inbox"})
+      else
+        redirect_to :action => "inbox"
+      end
+    end
+  end
 end

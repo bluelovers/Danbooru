@@ -24,7 +24,11 @@ class UserController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
+    if params[:name]
+      @user = User.find_by_name(params[:name])
+    else
+      @user = User.find(params[:id])
+    end
   end
   
   def invites
