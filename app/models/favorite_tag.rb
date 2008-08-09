@@ -3,7 +3,9 @@ class FavoriteTag < ActiveRecord::Base
   before_create :initialize_post_ids
   
   def initialize_post_ids
-    self.cached_post_ids = Post.find_by_tags(tag_query, :limit => 60, :select => "p.id").map(&:id).join(",")
+    if user.is_privileged_or_higher?
+      self.cached_post_ids = Post.find_by_tags(tag_query, :limit => 60, :select => "p.id").map(&:id).join(",")
+    end
   end
   
   def interested?(post_id)
