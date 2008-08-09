@@ -25,13 +25,11 @@ class FavoriteTagTest < ActiveSupport::TestCase
     p2 = create_post(2, :tags => "moge")
     fav_tag = create_fav_tag("hoge", 1)
     
-    fav_tag.add_post!(p1.id)
+    p3 = create_post(3, :tags => "hoge moge")
+    FavoriteTag.process_all(p2.id)
+    fav_tag.reload
     
-    assert_equal("#{p1.id}", fav_tag.cached_post_ids)
-    
-    fav_tag.add_post!(p2.id)
-    
-    assert_equal("#{p2.id},#{p1.id}", fav_tag.cached_post_ids)
+    assert_equal("#{p3.id},#{p1.id}", fav_tag.cached_post_ids)
   end
   
   def test_prune
@@ -68,9 +66,10 @@ class FavoriteTagTest < ActiveSupport::TestCase
   end
   
   def test_process_all
+    fav_tag = create_fav_tag("hoge", 1)
+    
     p1 = create_post(1, :tags => "hoge")
     p2 = create_post(2, :tags => "moge")
-    fav_tag = create_fav_tag("hoge", 1)
     
     FavoriteTag.process_all(0)
     

@@ -1,5 +1,10 @@
 class FavoriteTag < ActiveRecord::Base
   belongs_to :user
+  before_create :initialize_post_ids
+  
+  def initialize_post_ids
+    self.cached_post_ids = Post.find_by_tags(tag_query, :limit => 60, :select => "p.id").map(&:id).join(",")
+  end
   
   def interested?(post_id)
     Post.find_by_tags(tag_query + " id:#{post_id}").any?

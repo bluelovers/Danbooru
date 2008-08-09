@@ -176,6 +176,8 @@ module PostSqlMethods
 
       if options[:count]
         sql << "COUNT(*)"
+      elsif options[:select]
+        sql << options[:select]
       else
         sql << "p.*"
       end
