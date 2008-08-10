@@ -2,7 +2,7 @@
   <h1>Help: Bookmarklet</h1>
 
   <div class="section">
-    <p>Bookmark the following link: <a href="javascript:(function(){var%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('src','http://<%= CONFIG['server_host'] %>/javascripts/bookmarklet.js');document.body.appendChild(e)})()">Post to <%= CONFIG['app_name'] %></a>.</p>
+    <p>Bookmark the following link: <a href="javascript:location.href='http://<%= CONFIG['server_host'] %>/post/upload?url='+encodeURIComponent(location.href)">Post to <%= CONFIG['app_name'] %></a>.</p>
   
     <div class="section">
       <h4>How to Use</h4>
