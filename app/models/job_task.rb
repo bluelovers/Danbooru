@@ -22,16 +22,16 @@ class JobTask < ActiveRecord::Base
     
     begin
       execute_sql("SET statement_timeout = 0")
-      update_attribute(:status, "processing")
+      update_attributes(:status => "processing")
       __send__("execute_#{task_type}")
       
-      if count != 0
-        update_attributes(:status => "pending", :repeat_count => count)
+      if count == 0
+        update_attributes(:status => "finished")
       else
-        update_attributes(:status => "finished", :repeat_count => count)
+        update_attributes(:status => "pending", :repeat_count => count)
       end
     rescue Exception => x
-      update_attributes(:status => "error", :status_message => "#{x.class}: #{x}", :repeat_count => count)
+      update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
     end
   end
   
@@ -58,20 +58,17 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_calculate_favorite_tags
-    # TODO: move time check into data
-    should_update = Cache.get("calc-fav-tags")
+    return if Cache.get("delay-favtags-calc")
+
     last_processed_post_id = data["last_processed_post_id"].to_i
     
     if last_processed_post_id == 0
       last_processed_post_id = Post.maximum("id").to_i
     end
     
-    if should_update.nil?
-      Cache.put("calc-fav-tags", 1.hour)
-      FavoriteTag.process_all(last_processed_post_id)
-      
-      update_attribute(:data, {"last_processed_post_id" => Post.maximum("id")})
-    end
+    Cache.put("delay-favtags-calc", "1", 10.minutes)
+    FavoriteTag.process_all(last_processed_post_id)
+    update_attributes(:data => {"last_processed_post_id" => Post.maximum("id")})
   end
   
   def pretty_data
@@ -98,9 +95,10 @@ class JobTask < ActiveRecord::Base
   
   def self.execute_all
     while true
-      task = find(:first, :conditions => ["status = ?", "pending"], :order => "id")
-      task.execute! if task
-      sleep 1
+      find(:all, :conditions => ["status = ?", "pending"], :order => "id desc").each do |task|
+        task.execute!
+        sleep 1
+      end
     end
   end  
 end

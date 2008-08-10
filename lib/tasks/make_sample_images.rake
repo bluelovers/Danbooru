@@ -3,7 +3,7 @@ namespace :sample_images do
     unless post.regenerate_sample
       unless post.errors.empty?
     	error = post.errors.full_messages.join(", ")
-    	puts "Error: post ##{post_.id}: #{error}"
+    	puts "Error: post ##{post.id}: #{error}"
       end
     
       return false
