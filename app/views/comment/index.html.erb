@@ -12,7 +12,7 @@
         <div class="header">
           <div>
             <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
-            <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "post", :action => "index", :tags => "user:#{post.author}" %></span>
+            <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
             <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
             <span class="info"><strong>Score</strong> <span id="post-score-<%= post.id %>"><%= post.score %></span> (vote <%= link_to_function("up", "Post.vote(1, #{post.id})") %>/<%= link_to_function("down", "Post.vote(-1, #{post.id})") %>)</span>
             <% if post.comments.size > 6 %>

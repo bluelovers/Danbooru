@@ -6,5 +6,5 @@ ActionMailer::Base.perform_deliveries = true
 ActionMailer::Base.smtp_settings = {
   :address => "localhost",
   :port => 25,
-  :domain => "db.donmai.us"
+  :domain => CONFIG["server_host"]
 }

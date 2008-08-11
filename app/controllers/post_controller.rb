@@ -348,4 +348,8 @@ class PostController < ApplicationController
     post.update_attributes(:status => "active")
     respond_to_success("Post was undeleted", :action => "show", :id => params[:id])
   end
+  
+  def exception
+    raise "error"
+  end
 end
