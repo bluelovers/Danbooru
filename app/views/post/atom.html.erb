@@ -4,7 +4,7 @@
 	<title><%= h CONFIG["app_name"] %></title>
 	<link href="http://<%= h CONFIG["server_host"] %>/post/atom" rel="self"/>
   <link href="http://<%= h CONFIG["server_host"] %>/post/index" rel="alternate"/>
-  <id>http://<%= h CONFIG["server_host"] %>/post/atom</id>
+  <id>http://<%= h CONFIG["server_host"] %>/post/atom?tags=<%= h params[:tags] %></id>
   <% if @posts.any? %>
     <updated><%= @posts[0].created_at.gmtime.xmlschema %></updated>
   <% end %>
