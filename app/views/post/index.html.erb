@@ -7,9 +7,7 @@
 
   <div class="sidebar">
     <%= render :partial => "search" %>
-    <% if CONFIG["can_see_ads"].call(@current_user) %>
-      <%= CONFIG["ad_code_side_#{rand(4)+1}"] %>
-    <% end %>
+    <%= print_advertisement("vertical") %>
     <div style="margin-bottom: 1em;">
       <h5>Mode</h5>
       <form onsubmit="return false;" action="">
@@ -51,10 +49,7 @@
     <%= render :partial => 'tags' %>
   </div>
   <div class="content">
-    <% if CONFIG["can_see_ads"].call(@current_user) %>
-      <%= CONFIG["ad_code_top_#{rand(4)+1}"] %>
-    <% end %>
-    
+    <%= print_advertisement("horizontal") %>      
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
         The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>

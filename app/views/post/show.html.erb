@@ -6,7 +6,7 @@
 
     <div class="sidebar">
       <%= render :partial => "search" %>
-      <%= CONFIG["ad_code_side_#{rand(4)+1}"] if CONFIG["can_see_ads"].call(@current_user) && @post.can_be_seen_by?(@current_user) %>
+      <%= print_advertisement("vertical") %>
       <%= render :partial => "tags" %>
       <%= render :partial => "post/show_partials/statistics_panel" %>
       <%= render :partial => "post/show_partials/options_panel" %>
@@ -14,7 +14,7 @@
       <%= render :partial => "post/show_partials/related_posts_panel" %>
     </div>
     <div class="content" id="right-col">
-      <%= CONFIG["ad_code_top_#{rand(4)+1}"] if CONFIG["can_see_ads"].call(@current_user) && @post.can_be_seen_by?(@current_user) %>
+      <%= print_advertisement("horizontal") %>
       <%= render :partial => "post/show_partials/image" %>      
       <%= render :partial => "post/show_partials/image_footer" %>
       <%= render :partial => "post/show_partials/edit" %>
