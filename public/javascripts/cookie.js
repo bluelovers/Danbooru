@@ -62,7 +62,9 @@ Cookie = {
     }
 
 		if (this.get("hide-upgrade-account") == "1") {
-			$("upgrade-account").hide()
+      if ($("upgrade-account")) {
+   	    $("upgrade-account").hide()
+      }
 		}
 
     if ($("my-favorites")) {

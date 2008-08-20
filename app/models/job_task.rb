@@ -99,6 +99,7 @@ class JobTask < ActiveRecord::Base
         task.execute!
         sleep 1
       end
+      sleep 60
     end
   end  
 end
