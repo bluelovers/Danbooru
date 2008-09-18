@@ -19,6 +19,10 @@ module Danbooru
         headers = {
           "User-Agent" => "#{CONFIG["app_name"]}/#{CONFIG["version"]}"
         }
+        
+        if source =~ /pixiv\.net/
+          headers["Referer"] = "http://www.pixiv.net"
+        end
     
         http.request_get(url.request_uri, headers) do |res|
           case res
