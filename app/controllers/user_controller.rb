@@ -29,6 +29,10 @@ class UserController < ApplicationController
     else
       @user = User.find(params[:id])
     end
+
+    if @user.nil?
+      redirect_to "/404"
+    end
   end
   
   def invites
