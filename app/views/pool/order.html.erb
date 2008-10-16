@@ -6,7 +6,7 @@
     var i = 0
     var step = parseInt(prompt("Enter an interval"))
 
-    document.getElementsByClassName("pp").each(function(x) {
+    $$(".pp").each(function(x) {
       x.value = i
       i += step
     })
@@ -14,11 +14,11 @@
 
   function orderReverse() {
     var orders = []
-    document.getElementsByClassName("pp").each(function(x) {
+    $$(".pp").each(function(x) {
       orders.push(x.value)
     })
     var i = orders.size() - 1
-    document.getElementsByClassName("pp").each(function(x) {
+    $$(".pp").each(function(x) {
       x.value = orders[i]
       i -= 1
     })
