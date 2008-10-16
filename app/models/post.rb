@@ -31,6 +31,8 @@ class Post < ActiveRecord::Base
   end
   
   def flag!(reason, creator_id)
+    return unless status == "active"
+    
     update_attributes(:status => "flagged")
     
     if flag_detail

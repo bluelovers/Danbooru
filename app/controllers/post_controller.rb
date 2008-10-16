@@ -318,8 +318,8 @@ class PostController < ApplicationController
 
   def flag
     post = Post.find(params[:id])
-    if post.status == "deleted" then
-      respond_to_error("Can't flag deleted post", :action => "show", :id => params[:id])
+    if post.status != "active"
+      respond_to_error("Can only flag active posts", :action => "show", :id => params[:id])
       return
     end
 
