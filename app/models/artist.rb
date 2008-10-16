@@ -100,7 +100,7 @@ class Artist < ActiveRecord::Base
     end
     
     def alias_names
-      aliases.map(&:name).join(" ")
+      aliases.map(&:name).join(", ")
     end
 
     def aliases
@@ -167,7 +167,7 @@ class Artist < ActiveRecord::Base
     end
     
     def member_names
-      members.map(&:name).join(" ")
+      members.map(&:name).join(", ")
     end
     
     def member_names=(names)
