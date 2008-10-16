@@ -23,7 +23,7 @@ module Danbooru
         if source =~ /pixiv\.net/
           headers["Referer"] = "http://www.pixiv.net"
         end
-    
+        
         http.request_get(url.request_uri, headers) do |res|
           case res
           when Net::HTTPSuccess then
