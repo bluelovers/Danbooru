@@ -20,7 +20,11 @@ require 'uri'
 require 'net/http'
 require 'aws/s3' if [:amazon_s3, :local_flat_with_amazon_s3_backup].include?(CONFIG["image_store"])
 require 'danbooru_image_resizer/danbooru_image_resizer'
-require 'superredcloth'
+begin
+  require 'superredcloth'
+rescue Exception
+  require 'RedCloth'
+end
 require 'html_4_tags'
 require 'google_chart' if CONFIG["enable_reporting"]
 require 'core_extensions'
