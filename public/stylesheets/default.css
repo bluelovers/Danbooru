@@ -166,6 +166,10 @@ span.date {
   color: #AAA;
 }
 
+span.date a {
+  color: #AAA;
+}
+
 span.locked-topic {
   color: #666;
 }
