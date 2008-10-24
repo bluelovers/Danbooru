@@ -30,6 +30,8 @@ class JobTask < ActiveRecord::Base
       else
         update_attributes(:status => "pending", :repeat_count => count)
       end
+    rescue SystemExit => x
+      update_attributes(:status => "pending")
     rescue Exception => x
       update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
     end
