@@ -47,7 +47,7 @@ echo "host     all         postgres,danbooru          127.0.0.1/32        trust"
 
 # Install Danbooru
 cd /var/www
-svn co svn://donmai.us/danbooru/trunk danbooru
+svn export svn://donmai.us/danbooru/trunk danbooru
 chown -R danbooru:danbooru danbooru
 cd danbooru
 mkdir -p public/data/sample

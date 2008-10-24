@@ -4,4 +4,26 @@ For best performance, you will need at least 256MB of RAM for PostgreSQL and Rai
 
 If you are installing on a Debian system, run the INSTALL.debian script as root. This will install all the necessary packages and Ruby gems. It will also create a Danbooru user account, set up the web server, set up the database, and set up the Danbooru config files. At the end you should be able to connect to the web server and create an account.
 
-The first account you create will automatically become the administrator, so you should do this first.
+For other systems:
+
+- Danbooru has the following general dependencies: gcc, g++, make, readline, zlib, flex, bison, gd2, bzip2, postgresql-8.3, ruby, rubygems, ragel, memcached, subversion, nginx (or apache). Use your operating system's package management system whenever possible. This will simplify the process of installing init scripts, which will not always happen when compiling from source.
+- Danbooru has the following Ruby gem dependencies: postgres, diff-lcs, html5, mongrel, mongrel_cluster, memcache-client, aws-s3, gchartrb, json, rails (version 2.0.2), acts_as_versioned, superredcloth
+  - You need to install superredcloth from why's repository. The command is: "gem install -y superredcloth --source http://code.whytheluckystiff.net". 
+    - This compile fails on OS X 10.5 because the bundled version of gcc doesn't like -Os. This thread (http://www.ruby-forum.com/topic/134901) describes a fix.
+  - You may need to specify the path to your PostgreSQL libraries and includes when building the postgres gem. The general format for this is: "gem install postgres -- --with-pgsql-dir=/usr/local/pgsql". Experiment with the other configure settings if this doesn't work.
+- It's recommended you create a dedicated account for running the Danbooru database and/or web processes. If you go this route:
+  - Use the createuser command while logged in as postgres to grant database access to the danbooru account.
+  - You will need to update the pg_hba.conf file to grant your danbooru account trusted localhost access. Make sure to restart the database server after making any changes.
+- You now have to check out the Danbooru source code. It's recommended you create it in the /var/www directory, but you can put the code anywhere. 
+  - To export from Subversion: "svn export svn://donmai.us/danbooru/trunk danbooru"
+  - Recursively change the owner of this directory to the danbooru account.
+  - Create a public/data/sample directory.
+  - Compile the resizer at lib/danbooru_image_resizer: "ruby extconf.rb && make". Do not make install it. If this fails you will need to figure out your gd2/libjpeg/libpng dependencies.
+  - Create new database.yml and local_config.rb files in the config directory. Example files are provided.
+  - Create the database: "createdb danbooru"
+  - Load the schema: "psql danbooru < db/postgres.sql"
+  - Run the migrations: "RAILS_ENV=production rake db:migrate"
+  - Create the mongrel cluster config file: "mongrel_rails cluster::configure -e production -p 3000 -N 3 -c /var/www/danbooru"
+  - Start the application: "script/donmai/upbooru". You should be able to connect to http://localhost:3000 using links/lynx/elinks. You should also see a job_task_processor.rb process running in the background.
+- You now have to setup your web server to proxy requests to Mongrel. There are hundreds of example configuration files availble on the web, just search for "rails apache" or "rails nginx".
+- You should now be able to connect to your Danbooru instance. The first account you create will automatically become the administrator, so you should do this first.
