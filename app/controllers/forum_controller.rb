@@ -16,6 +16,10 @@ class ForumController < ApplicationController
     redirect_to :action => "show", :id => params[:id]
   end
 
+  def preview
+    render :inline => "<h4>Preview:</h4><%= format_text(params[:forum_post][:body]) %>"
+  end
+
   def create
     @forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
 
