@@ -10,8 +10,8 @@ class ArtistControllerTest < ActionController::TestCase
   def test_destroy
     artist = create_artist("bob")
     
-    post :destroy, {:format => "json", :id => artist.id}, {:user_id => 1}
-    assert_response :success
+    post :destroy, {:id => artist.id, :commit => "Yes"}, {:user_id => 1}
+    assert_redirected_to :action => "index"
     assert_nil(Artist.find_by_name("bob"))
   end
   

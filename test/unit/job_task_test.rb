@@ -4,11 +4,10 @@ class JobTaskTest < ActiveSupport::TestCase
   fixtures :users
   
   def test_all
-    # Will always fail, need to think of a way to test daemons
     begin
       ta = TagAlias.create(:name => "a", :alias => "b", :creator_id => 1, :is_pending => true)
       JobTask.create(:task_type => "approve_tag_alias", :status => "pending", :data => {"id" => ta.id, "updater_id" => 1, "updater_ip_addr" => "127.0.0.1"})
-      sleep 2
+      JobTask.execute_once
       ta.reload
       assert(!ta.is_pending?)
     ensure

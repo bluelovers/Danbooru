@@ -95,12 +95,16 @@ class JobTask < ActiveRecord::Base
     end
   end
   
+  def self.execute_once
+    find(:all, :conditions => ["status = ?", "pending"], :order => "id desc").each do |task|
+      task.execute!
+      sleep 1
+    end
+  end
+  
   def self.execute_all
     while true
-      find(:all, :conditions => ["status = ?", "pending"], :order => "id desc").each do |task|
-        task.execute!
-        sleep 1
-      end
+      execute_once
       sleep 60
     end
   end  

@@ -1,6 +1,16 @@
 class Ban < ActiveRecord::Base
+  before_create :save_level
   after_create :save_to_record
   after_create :update_level
+  after_destroy :restore_level
+  
+  def restore_level
+    User.find(user_id).update_attribute(:level, old_level)
+  end
+  
+  def save_level
+    self.old_level = User.find(user_id).level
+  end
   
   def update_level
     user = User.find(user_id)
