@@ -15,7 +15,7 @@ class PoolController < ApplicationController
   
   def show
     @pool = Pool.find(params[:id])
-    @posts = Post.paginate :per_page => 24, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ?", params[:id]], :select => "posts.*", :page => params[:page]
+    @posts = Post.paginate :per_page => 24, :order => "pools_posts.sequence, pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => ["pools_posts.pool_id = ? AND posts.status <> 'deleted'", params[:id]], :select => "posts.*", :page => params[:page]
 
     respond_to do |fmt|
       fmt.html
