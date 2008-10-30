@@ -5,6 +5,10 @@ class ArtistController < ApplicationController
   before_filter :privileged_only, :only => [:destroy]
   helper :post, :wiki
 
+  def preview
+    render :inline => "<h4>Preview</h4><%= format_text(params[:artist][:notes]) %>"
+  end
+
   def destroy
     @artist = Artist.find(params[:id])
     

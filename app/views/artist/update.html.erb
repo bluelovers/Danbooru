@@ -1,6 +1,9 @@
 <div id="artist-update">
   <p>Separate multiple aliases and group members with commas.</p>
   
+  <div id="preview" style="display: none; margin: 1em 0;">
+  </div>
+
   <% form_tag(:action => "update") do %>
     <%= hidden_field_tag "id", @artist.id %>
     
@@ -29,6 +32,7 @@
         <td colspan="2">
           <%= submit_tag "Save" %>
           <%= button_to_function "Cancel", "history.back()" %>
+          <%= submit_to_remote "preview", "Preview Notes", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
         </td>
       </tr>
     </table>
