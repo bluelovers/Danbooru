@@ -350,13 +350,16 @@ class PostTest < ActiveSupport::TestCase
     old_caching_status = CONFIG["enable_caching"]
     CONFIG["enable_caching"] = false
     post = create_post
-    assert(post.vote!(1, "127.0.0.1"), "Vote should have succeeded")
+    assert_nothing_raised {post.vote!(User.find(4), 1, "127.0.0.1")}
     post.reload
     assert_equal(1, post.score)
-    assert(!post.vote!(-1, "127.0.0.1"), "Vote should have failed")
+    assert_raise(PostVoteMethods::AlreadyVotedError) {post.vote!(User.find(4), -1, "127.0.0.1")}
     post.reload
     assert_equal(1, post.score)
     CONFIG["enable_caching"] = old_caching_status
+    assert_nothing_raised {post.vote!(User.find(1), 1, "127.0.0.2")}
+    post.reload
+    assert_equal(6, post.score)
   end
   
   def test_destroy_with_reason

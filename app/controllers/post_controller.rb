@@ -304,14 +304,12 @@ class PostController < ApplicationController
     p = Post.find(params[:id])
     score = params[:score].to_i
     
-    if !@current_user.is_mod_or_higher? && score != 1 && score != -1
-      respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
-      return
-    end
-
-    if p.vote!(score, request.remote_ip)
+    begin
+      p.vote!(@current_user, score, request.remote_ip)
       respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
-    else
+    rescue PostVoteMethods::InvalidScoreError
+      respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
+    rescue PostVoteMethods::AlreadyVotedError
       respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
     end
   end
