@@ -495,6 +495,53 @@
     <h2>Pools</h2>
     
     <div class="section">
+      <h4>List Pools</h4>
+      <p>The base URL is /pool/index.xml. If you don't specify any parameters you'll get a list of all pools.</p>
+      <ul>
+        <li><strong>query</strong> The title.</li>
+        <li><strong>page</strong> The page.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>List Posts</h4>
+      <p>The base URL is /pool/show.xml. If you don't specify any parameters you'll get a list of all pools.</p>
+      <ul>
+        <li><strong>id</strong> The pool id number.</li>
+        <li><strong>page</strong> The page.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Update</h4>
+      <p>The base URL is /pool/update.xml.</p>
+      <ul>
+        <li><strong>id</strong> The pool id number.</li>
+        <li><strong>pool[name]</strong> The name.</li>
+        <li><strong>pool[is_public]</strong> 1 or 0, whether or not the pool is public.</li>
+        <li><strong>pool[description]</strong> A description of the pool.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Create</h4>
+      <p>The base URL is /pool/create.xml.</p>
+      <ul>
+        <li><strong>pool[name]</strong> The name.</li>
+        <li><strong>pool[is_public]</strong> 1 or 0, whether or not the pool is public.</li>
+        <li><strong>pool[description]</strong> A description of the pool.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>Destroy</h4>
+      <p>The base URL is /pool/destroy.xml.</p>
+      <ul>
+        <li><strong>id</strong> The pool id number.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
       <h4>Add Post</h4>
       <p>The base URL is /pool/add_post.xml. Potential error reasons: "Post already exists", "access denied"</p>
       <ul>
@@ -519,6 +566,11 @@
     <a name="changelog"></a>
     <h2>Change Log</h2>
     <div class="section">
+      <h4>1.15.0</h4>
+      <ul>
+        <li>Added documentation for pools</li>
+      </ul>
+      
       <h4>1.13.0</h4>
       <ul>
         <li>Changed interface for artists to use new URL system</li>

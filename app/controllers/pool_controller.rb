@@ -45,7 +45,7 @@ class PoolController < ApplicationController
 
     if request.post?
       @pool.update_attributes(params[:pool])
-      redirect_to :action => "show", :id => params[:id]
+      respond_to_success("Pool updated", :action => "show", :id => params[:id])
     end
   end
   
@@ -54,12 +54,9 @@ class PoolController < ApplicationController
       @pool = Pool.create(params[:pool].merge(:user_id => @current_user.id))
       
       if @pool.errors.empty?
-        flash[:notice] = "Pool created"
-        redirect_to(:action => "show", :id => @pool.id)
+        respond_to_success("Pool created", :action => "show", :id => @pool.id)
       else
-        messages = @pool.errors.full_messages.join(", ")
-        flash[:notice] = "Error: #{messages}"
-        redirect_to(:action => "index")
+        respond_to_error(@pool, :action => "index")
       end
     else
       @pool = Pool.new(:user_id => @current_user.id)
@@ -72,11 +69,9 @@ class PoolController < ApplicationController
     if request.post?
       if @current_user.has_permission?(@pool)
         @pool.destroy
-        flash[:notice] = "Pool deleted"
-        redirect_to :action => "index"
+        respond_to_success("Pool deleted", :action => "index")
       else
-        flash[:notice] = "Access denied"
-        redirect_to :action => "index"
+        access_denied()
       end
     end
   end
