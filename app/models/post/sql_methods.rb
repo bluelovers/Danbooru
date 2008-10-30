@@ -168,10 +168,6 @@ module PostSqlMethods
         conds << "p.status = 'flagged'"
       end
 
-      if original_query.blank?
-        conds << "p.parent_id is null"
-      end
-
       sql = "SELECT "
 
       if options[:count]
