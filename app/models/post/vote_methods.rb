@@ -10,7 +10,7 @@ module PostVoteMethods
       raise InvalidScoreError.new
     end
     
-    if current_user.is_mod_or_higher?
+    if current_user.is_mod_or_higher? && score < 0
       score *= 5
     end
     
