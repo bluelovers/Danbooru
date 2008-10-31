@@ -359,7 +359,10 @@ class PostTest < ActiveSupport::TestCase
     CONFIG["enable_caching"] = old_caching_status
     assert_nothing_raised {post.vote!(User.find(1), 1, "127.0.0.2")}
     post.reload
-    assert_equal(6, post.score)
+    assert_equal(2, post.score)
+    assert_nothing_raised {post.vote!(User.find(1), -1, "127.0.0.3")}
+    post.reload
+    assert_equal(-3, post.score)
   end
   
   def test_destroy_with_reason
