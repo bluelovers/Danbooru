@@ -2,6 +2,9 @@
   <h5>Options</h5>
   <ul>
     <li><%= link_to_function "Edit", "$('comments').hide(); $('edit').show().scrollTo(); $('post_tags').focus()" %></li>
+    <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
+      <li><%= link_to_function "Resize image", "Post.resize_image()" %></li>
+    <% end %>
     <% if @post.image? && @post.can_be_seen_by?(@current_user) %>
       <li><%= link_to("#{@post.has_sample? ? "Original image":"Image"} (#{number_to_human_size(@post.file_size)})", @post.file_url, :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged", :id => "highres", :onclick => "Post.highres(); return false") %></li>
     <% end %>
