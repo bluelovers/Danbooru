@@ -13,7 +13,7 @@ class Comment < ActiveRecord::Base
   end
 
   def update_last_commented_at
-    return if self.do_not_bump_post == "1"
+    return if self.do_not_bump_post
     
     comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{post_id}").to_i
     if comment_count <= CONFIG["comment_threshold"]

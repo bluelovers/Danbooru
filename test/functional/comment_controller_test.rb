@@ -48,22 +48,15 @@ class CommentControllerTest < ActionController::TestCase
     old_member_comment_limit = CONFIG["member_comment_limit"]
     CONFIG["member_comment_limit"] = 1
     create_comment(1, "c1", :user_id => 4)
-    post :create, {:comment => {:post_id => 1, :body => "c2"}}, {:user_id => 4}
+    post :create, {:comment => {:post_id => 1, :body => "c2"}, :commit => "Post"}, {:user_id => 4}
     assert_redirected_to :controller => "comment", :action => "index"
     assert_equal(1, Post.find(1).comments.size)
     assert_equal("c1", Post.find(1).comments[0].body)
     CONFIG["member_comment_limit"] = old_member_comment_limit
   end
   
-  def test_create_anonymous
-    post :create, {:comment => {:post_id => 1, :body => "hoge"}, :commit => "Post as Anonymous"}, {:user_id => 1}
-    post = Post.find(1)
-    assert_equal(1, post.comments.size)
-    assert_nil(post.comments[0].user_id)
-  end
-  
   def test_create_do_not_bump_post
-    post :create, {:comment => {:post_id => 1, :body => "hoge", :do_not_bump_post => "1"}}, {:user_id => 1}
+    post :create, {:comment => {:post_id => 1, :body => "hoge"}, :commit => "Post without bumping"}, {:user_id => 1}
     post = Post.find(1)
     assert_equal(1, post.comments.size)
     assert_nil(post.last_commented_at)
