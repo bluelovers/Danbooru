@@ -23,15 +23,16 @@
             <% if @current_user.is_admin_or_higher? %>
               <%= button_to_function "Select pending", "$$('.pending').each(function(x) {x.checked = true})" %> 
               <%= submit_tag "Approve" %> 
-            <% end %>
-            <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
-            <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_alias_name').focus()" %>
+              <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
+              <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_alias_name').focus()" %>
 
-            <div id="reason-box" style="display: none; margin-top: 1em;">
-              <strong>Reason:</strong>
-              <%= text_field_tag "reason", "", :size => 40 %>
-              <%= submit_tag "Delete" %>
-            </div>
+              <div id="reason-box" style="display: none; margin-top: 1em;">
+                <strong>Reason:</strong>
+                <%= text_field_tag "reason", "", :size => 40 %>
+                <%= submit_tag "Delete" %>
+              </div>
+            <% end %>
+
           </td>
         </tr>
       </tfoot>
@@ -49,37 +50,43 @@
   <% end %>
 </div>
 
-<div id="add-box" style="display: none;">
-  <% form_tag(:action => "create") do %>
-    <h4>Add Alias</h4>
-    <p>You can suggest a new alias, but it must be approved by an administrator before it is activated.</p>  
+<% if @current_user.is_admin_or_higher? %>
+  <div id="add-box" style="display: none;">
+    <% form_tag(:action => "create") do %>
+      <h4>Add Alias</h4>
 
-    <% unless @current_user.is_anonymous? %>
-      <%= hidden_field_tag "tag_alias[creator_id]", @current_user.id %>
-    <% end %>
+      <% unless @current_user.is_anonymous? %>
+        <%= hidden_field_tag "tag_alias[creator_id]", @current_user.id %>
+      <% end %>
     
-    <table>
-      <tr>
-        <th><label for="tag_alias_name">Name</label></th>
-        <td><%= text_field "tag_alias", "name", :size => 40 %></td>
-      </tr>
-      <tr>
-        <th><label for="tag_alias_alias">Alias to</label></th>
-        <td><%= text_field "tag_alias", "alias", :size => 40 %></td>
-      </tr>
-      <tr>
-        <th><label for="tag_alias_reason">Reason</label></th>
-        <td><%= text_area "tag_alias", "reason", :size => "40x2" %></td>
-      </tr>
-      <tr>
-        <td colspan="2"><%= submit_tag "Submit" %></td>
-      </tr>
-    </table>
-  <% end %>
-</div>
+      <table>
+        <tr>
+          <th><label for="tag_alias_name">Name</label></th>
+          <td><%= text_field "tag_alias", "name", :size => 40 %></td>
+        </tr>
+        <tr>
+          <th><label for="tag_alias_alias">Alias to</label></th>
+          <td><%= text_field "tag_alias", "alias", :size => 40 %></td>
+        </tr>
+        <tr>
+          <th><label for="tag_alias_reason">Reason</label></th>
+          <td><%= text_area "tag_alias", "reason", :size => "40x2" %></td>
+        </tr>
+        <tr>
+          <td colspan="2"><%= submit_tag "Submit" %></td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+<% end %>
 
 <div id="paginator">
   <%= will_paginate(@aliases) %>
 </div>
 
+<% content_for("footer") do %>
+  <%= link_to "Add alias", :controller => "forum", :action => "new", :type => "alias" %>  
+<% end %>
+
 <%= render :partial => "/tag/footer" %>
+

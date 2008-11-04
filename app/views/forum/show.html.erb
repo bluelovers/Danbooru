@@ -39,6 +39,7 @@
 
 <% content_for("subnavbar") do %>
   <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to "New topic", :action => "new" %></li>
   <% unless @forum_post.is_parent? %>
     <li><%= link_to "Parent", :action => "show", :id => @forum_post.parent_id %></li>
   <% end %>

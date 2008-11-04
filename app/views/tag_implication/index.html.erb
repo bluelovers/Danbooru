@@ -22,15 +22,15 @@
           <% if @current_user.is_admin_or_higher? %>
             <%= button_to_function "Select pending", "$$('.pending').each(function(x) {x.checked = true})" %> 
             <%= submit_tag "Approve" %> 
+            <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
+            <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_implication_predicate').focus()" %>
+
+            <div id="reason-box" style="display: none; margin-top: 1em;">
+              <strong>Reason:</strong>
+              <%= text_field_tag "reason", "", :size => 40 %>
+              <%= submit_tag "Delete" %>
+            </div>
           <% end %>
-          <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
-          <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_implication_predicate').focus()" %>
-          
-          <div id="reason-box" style="display: none; margin-top: 1em;">
-            <strong>Reason:</strong>
-            <%= text_field_tag "reason", "", :size => 40 %>
-            <%= submit_tag "Delete" %>
-          </div>
         </td>
       </tr>      
     </tfoot>
@@ -47,37 +47,41 @@
   </table>
 <% end %>
 
-<div id="add-box" style="display: none;">
-  <% form_tag(:action => "create") do %>
-    <h4>Add Implication</h4>
-    <p>You can suggest a new implication, but it must be approved by an administrator before it is activated.</p>  
-    <p>The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.</p>
-    <% unless @current_user.is_anonymous? %>
-      <%= hidden_field_tag "tag_implication[creator_id]", @current_user.id %>
-    <% end %>
+<% if @current_user.is_admin_or_higher? %>
+  <div id="add-box" style="display: none;">
+    <% form_tag(:action => "create") do %>
+      <h4>Add Implication</h4>
+      <% unless @current_user.is_anonymous? %>
+        <%= hidden_field_tag "tag_implication[creator_id]", @current_user.id %>
+      <% end %>
     
-    <table>
-      <tr>
-        <th><label for="tag_implication_predicate">Predicate</label></th>
-        <td><%= text_field "tag_implication", "predicate", :size => 40 %></td>
-      </tr>
-      <tr>
-        <th><label for="tag_implication_consequent">Consequent</label></th>
-        <td><%= text_field "tag_implication", "consequent", :size => 40 %></td>
-      </tr>
-      <tr>
-        <th><label for="tag_implication_reason">Reason</label></th>
-        <td><%= text_area "tag_implication", "reason", :size => "40x2" %></td>
-      </tr>
-      <tr>
-        <td colspan="2"><%= submit_tag "Submit" %></td>
-      </tr>
-    </table>
-  <% end %>
-</div>
+      <table>
+        <tr>
+          <th><label for="tag_implication_predicate">Predicate</label></th>
+          <td><%= text_field "tag_implication", "predicate", :size => 40 %></td>
+        </tr>
+        <tr>
+          <th><label for="tag_implication_consequent">Consequent</label></th>
+          <td><%= text_field "tag_implication", "consequent", :size => 40 %></td>
+        </tr>
+        <tr>
+          <th><label for="tag_implication_reason">Reason</label></th>
+          <td><%= text_area "tag_implication", "reason", :size => "40x2" %></td>
+        </tr>
+        <tr>
+          <td colspan="2"><%= submit_tag "Submit" %></td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+<% end %>
 
 <div id="paginator">
   <%= will_paginate(@implications) %>
 </div>
+
+<% content_for("footer") do %> 
+  <li><%= link_to "Add implication", :controller => "forum", :action => "new", :type => "impl" %></li>
+<% end %>
 
 <%= render :partial => "/tag/footer" %>

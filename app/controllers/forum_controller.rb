@@ -19,6 +19,18 @@ class ForumController < ApplicationController
   def preview
     render :inline => "<h4>Preview</h4><%= format_text(params[:forum_post][:body]) %>"
   end
+  
+  def new
+    @forum_post = ForumPost.new
+    
+    if params[:type] == "alias"
+      @forum_post.title = "Tag Alias: "
+      @forum_post.body = "Aliasing ___ to ___.\n\nReason: "
+    elsif params[:type] == "impl"
+      @forum_post.title = "Tag Implication: "
+      @forum_post.body = "Implicating ___ to ___.\n\nReason: "
+    end
+  end
 
   def create
     @forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
