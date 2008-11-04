@@ -4,6 +4,7 @@
 module PostFileMethods
   def self.included(m)
     m.before_validation_on_create :download_source
+    m.before_validation_on_create :ensure_tempfile_exists
     m.before_validation_on_create :determine_content_type
     m.before_validation_on_create :validate_content_type
     m.before_validation_on_create :generate_hash
@@ -11,6 +12,13 @@ module PostFileMethods
     m.before_validation_on_create :generate_sample
     m.before_validation_on_create :generate_preview
     m.before_validation_on_create :move_file
+  end
+  
+  def ensure_tempfile_exists
+    unless File.exists?(tempfile_path)
+      errors.add :file, "not found, try uploading again"
+      return false
+    end
   end
   
   def validate_content_type
