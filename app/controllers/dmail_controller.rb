@@ -64,9 +64,7 @@ class DmailController < ApplicationController
 
 protected
   def check_if_user_has_mail
-    if Dmail.exists?(["has_seen = false and to_id = ?", @current_user.id]) && !@current_user.has_mail?
-      @current_user.update_attribute(:has_mail, true)
-    elsif @current_user.has_mail?
+    if !Dmail.exists?(["has_seen = false and to_id = ?", @current_user.id]) && @current_user.has_mail?
       @current_user.update_attribute(:has_mail, false)
     end    
   end
