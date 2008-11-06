@@ -22,6 +22,12 @@ module Danbooru
         
         if source =~ /pixiv\.net/
           headers["Referer"] = "http://www.pixiv.net"
+          
+          # Don't download the small version
+          if source =~ %r!(/img/.+?/.+?)_m.+$!
+            match = $1
+            source.sub!(match + "_m", match)
+          end
         end
         
         http.request_get(url.request_uri, headers) do |res|
