@@ -12,6 +12,23 @@ class PostTagHistory < ActiveRecord::Base
       end
     end.to_hash
   end
+  
+  def self.undo_changes_by_user(user_id)
+    transaction do  
+      posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.*", :conditions => ["pth.user_id = ?", user_id])
+            
+      PostTagHistory.destroy_all(["user_id = ?", user_id])
+      posts.each do |post|
+        first = post.tag_history.first
+        if first
+          post.tags = first.tags
+          post.updater_ip_addr = first.ip_addr
+          post.updater_user_id = first.user_id
+          post.save!
+        end
+      end
+    end
+  end
 
   # The contents of options[:posts] must be saved by the caller.  This allows
   # undoing many tag changes across many posts; all †changes to a particular
