@@ -31,14 +31,12 @@ class Post < ActiveRecord::Base
   end
   
   def flag!(reason, creator_id)
-    return unless status == "active"
-    
     update_attributes(:status => "flagged")
     
     if flag_detail
       flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
     else
-      FlaggedPostDetail.create(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
+      FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
     end
   end
   
