@@ -137,7 +137,7 @@ class PostController < ApplicationController
   
     @post = Post.find(params[:id])
 
-    if @current_user.has_permission?(@post)
+    if @current_user.is_janitor_or_higher?
       if @post.status == "deleted"
         @post.delete_from_database
       else

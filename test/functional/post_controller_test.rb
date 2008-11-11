@@ -82,12 +82,16 @@ class PostControllerTest < ActionController::TestCase
     assert_equal("active", p1.status)
     
     post :destroy, {:id => p1.id, :reason => "sage"}, {:user_id => 3}
-    assert_redirected_to :action => "index"
+    assert_redirected_to :controller => "user", :action => "login"
+    p1.reload
+    assert_equal("active", p1.status)
+    
+    post :destroy, {:id => p1.id, :reason => "sage"}, {:user_id => 1}
     p1.reload
     assert_equal("deleted", p1.status)
     assert_not_nil(p1.flag_detail)
     assert_equal("sage", p1.flag_detail.reason)
-    
+
     post :destroy, {:id => p1.id, :reason => "sage"}, {:user_id => 1}
     assert_nil(Post.find_by_id(p1.id))
   end
