@@ -85,7 +85,7 @@ class ForumController < ApplicationController
     @forum_post.attributes = params[:forum_post]
     if @forum_post.save
       flash[:notice] = "Post updated"
-      redirect_to :action => "show", :id => @forum_post.root_id
+      redirect_to :action => "show", :id => @forum_post.root_id, :page => (@forum_post.root.response_count / 10.0).ceil
     else
       render_error(@forum_post)
     end
