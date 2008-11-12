@@ -15,7 +15,11 @@ module TagParseMethods
         elsif type == :float
           x.to_f
         elsif type == :date
-          x.to_date
+          begin
+            x.to_date
+          rescue Exception
+            nil
+          end
         end
       end
 
