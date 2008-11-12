@@ -125,7 +125,7 @@ class TagController < ApplicationController
         all
       end
     else
-      @tags = params[:tags].to_s.scan(/\S+/)
+      @tags = Tag.scan_tags(params[:tags])
       @patterns, @tags = @tags.partition {|x| x.include?("*")}
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|
