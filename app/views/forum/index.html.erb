@@ -27,7 +27,7 @@
             <% end %>
 
             <% if fp.response_count > 10 %>
-              <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.response_count / 10.0).ceil}, :class => "last-page" %>
+              <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
             <% end %>
 
             <% if fp.is_locked? %>
