@@ -26,7 +26,7 @@
               <span class="forum-topic"><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
             <% end %>
 
-            <% if fp.response_count > 10 %>
+            <% if fp.response_count > 30 %>
               <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
             <% end %>
 
