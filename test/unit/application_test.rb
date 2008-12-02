@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class ApplicationTest < ActiveSupport::TestCase
   fixtures :users, :posts
   include CacheHelper
+  include ApplicationHelper
 
   def update_post(post, params = {})
     post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
@@ -99,5 +100,10 @@ class ApplicationTest < ActiveSupport::TestCase
     limit1 = get_cache_key("post", "index", {:tags => "", :limit => "100"})[0]
     limit2 = get_cache_key("post", "index", {:tags => "", :limit => ""})[0]
     assert_not_equal(limit1, limit2)
+  end
+  
+  def test_format_text
+    assert_equal('<p>hello</p>', format_text('hello'))
+    assert_equal('', actual)
   end
 end

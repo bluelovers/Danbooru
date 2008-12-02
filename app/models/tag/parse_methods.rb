@@ -7,42 +7,42 @@ module TagParseMethods
     def scan_tags(tags)
       tags.to_s.gsub(/[*%,]/, "").downcase.scan(/\S+/).uniq
     end
-
-    def parse_helper(range, type = :integer)
-      cast = lambda do |x|
-        if type == :integer
-          x.to_i
-        elsif type == :float
-          x.to_f
-        elsif type == :date
-          begin
-            x.to_date
-          rescue Exception
-            nil
-          end
+    
+    def parse_cast(x, type)
+      if type == :integer
+        x.to_i
+      elsif type == :float
+        x.to_f
+      elsif type == :date
+        begin
+          x.to_date
+        rescue Exception
+          nil
         end
       end
-
+    end
+    
+    def parse_helper(range, type = :integer)
       # "1", "0.5", "5.", ".5":
       # (-?(\d+(\.\d*)?|\d*\.\d+))
       case range
       when /^(.+?)\.\.(.+)/
-        return [:between, cast[$1], cast[$2]]
+        return [:between, parse_cast($1, type), parse_cast($2, type)]
 
       when /^<=(.+)/, /^\.\.(.+)/
-        return [:lte, cast[$1]]
+        return [:lte, parse_cast($1, type)]
 
       when /^<(.+)/
-        return [:lt, cast[$1]]
+        return [:lt, parse_cast($1, type)]
 
       when /^>=(.+)/, /^(.+)\.\.$/
-        return [:gte, cast[$1]]
+        return [:gte, parse_cast($1, type)]
 
       when /^>(.+)/
-        return [:gt, cast[$1]]
+        return [:gt, parse_cast($1, type)]
 
       else
-        return [:eq, cast[range]]
+        return [:eq, parse_cast(range, type)]
 
       end
     end
@@ -110,7 +110,7 @@ module TagParseMethods
         elsif token[0] == ?~
           q[:include] << token[1..-1]
         elsif token.include?("*")
-          q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 20).map {|i| i.name}
+          q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 25, :order => "post_count DESC").map {|i| i.name}
         else
           q[:related] << token
         end

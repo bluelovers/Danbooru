@@ -22,10 +22,10 @@ module ApplicationHelper
       text = simple_format(text)
     end
 
-    text.gsub!(/(http:\/\/[a-zA-Z0-9_.\/~%?&=;,-]+)/) do
+    text.gsub!(/(http:\/\/\S+)([,;.)])?/) do
       link = $1
-      url = link.gsub(/[.;,:'"]+$/, "")
-      link_to link, url
+      link_end = $2
+      link_to(link, link) + link_end
     end
     text.gsub!(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
     text.gsub!(/pool #(\d+)/i, '<a href="/pool/show/\1">pool #\1</a>')
@@ -36,15 +36,8 @@ module ApplicationHelper
     text.gsub!(/<\/div><\/p>/, "</div>")
     text.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
     text.gsub!(/(\w+ said:)/, '<em>\1</em>')
-    text.gsub!(/\[\[(.+?)\]\]/) do
-      match = $1
-
-      if match =~ /(.+?)\|(.+)/
-        link_to $2, :controller => "wiki", :action => "show", :title => $1.gsub(/\s/, '_').downcase
-      else
-        link_to match, :controller => "wiki", :action => "show", :title => match.gsub(/\s/, '_').downcase
-      end
-    end
+    text.gsub!(/\[\[(.+?)\]\]/, link_to('\1', :controller => "wiki", :action => "show", :title => '\1'))
+    text.gsub!(/\{\{(.+?)\}\}/, link_to('\1', :controller => "post", :action => "index", :tags => '\1'))
     text.gsub!(/<\/div>(?:<br>)+/, "</div>")
 
     return text
