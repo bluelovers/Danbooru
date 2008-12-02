@@ -343,6 +343,13 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, Post.count_by_sql(Post.generate_sql("tag2", :count => true)))
     assert_equal(1, Post.count_by_sql(Post.generate_sql("tag3", :count => true)))
     assert_equal(1, Post.count_by_sql(Post.generate_sql("tag4", :count => true)))
+    
+    update_post(post, :tags => "general:tag3 artist:tag3")
+    assert_equal("tag3", post.cached_tags)
+    assert_equal(0, Post.count_by_sql(Post.generate_sql("tag1", :count => true)))
+    assert_equal(0, Post.count_by_sql(Post.generate_sql("tag2", :count => true)))
+    assert_equal(1, Post.count_by_sql(Post.generate_sql("tag3", :count => true)))
+    assert_equal(0, Post.count_by_sql(Post.generate_sql("tag4", :count => true)))    
   end
   
   def test_voting

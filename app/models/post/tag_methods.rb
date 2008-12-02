@@ -74,9 +74,10 @@ module PostTagMethods
       self.old_tags = Tag.scan_tags(old_tags)
       self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
     end
+
+    metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
     
     transaction do
-      metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
       metatags.each do |metatag|
         case metatag
         when /^pool:(.+)/
@@ -118,7 +119,7 @@ module PostTagMethods
 
       # TODO: be more selective in deleting from the join table
       execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
-      self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}
+      self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
       execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + new_tags.map {|x| ("(#{id}, #{x.id})")}.join(", "))
 
       Post.recalculate_cached_tags(self.id)

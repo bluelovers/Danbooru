@@ -1,6 +1,4 @@
-require 'cache'
-
-module ApplicationHelper  
+module ApplicationHelper
   def navbar_link_to(text, options, html_options = nil)
     if options[:controller] == params[:controller]
       klass = "current-page"
