@@ -19,7 +19,7 @@ class ArtistUrlTest < ActiveSupport::TestCase
 
     url = ArtistUrl.create(:artist_id => 1, :url => "http://monet.com/")
     assert_equal("http://monet.com/", url.url)
-    assert_equal("http://monet.com", url.normalized_url)
+    assert_equal("http://monet.com/", url.normalized_url)
 
     url = ArtistUrl.create(:artist_id => 1, :url => "http://blog55.fc2.com/monet")
     assert_equal("http://blog55.fc2.com/monet", url.url)
