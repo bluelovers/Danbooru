@@ -23,7 +23,7 @@ module ApplicationHelper
     text.gsub!(/(http:\/\/\S+)([,;.)])?/) do
       link = $1
       link_end = $2
-      link_to(link, link) + link_end
+      link_to(link, link) + link_end.to_s
     end
     text.gsub!(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
     text.gsub!(/pool #(\d+)/i, '<a href="/pool/show/\1">pool #\1</a>')
