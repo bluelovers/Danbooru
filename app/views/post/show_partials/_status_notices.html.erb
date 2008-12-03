@@ -1,6 +1,6 @@
 <% if @post.is_flagged? %>
   <div class="status-notice">
-    This post was flagged for deletion by <%= h @post.flag_detail.author %>. Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>
+    This post was flagged for deletion by <%= h @post.flag_detail.author %>. Reason: <%= h @post.flag_detail.reason %>
   </div>
 <% elsif @post.is_pending? %>
   <div class="status-notice" id="pending-notice">
@@ -10,7 +10,7 @@
   <div class="status-notice">
     This post was deleted. 
     <% if @post.flag_detail %>
-      Reason: <%= format_text(@post.flag_detail.reason, :skip_simple_format => true) %>. MD5: <%= @post.md5 %>
+      Reason: <%= h @post.flag_detail.reason %>. MD5: <%= @post.md5 %>
     <% end %>
   </div>
 <% end %>

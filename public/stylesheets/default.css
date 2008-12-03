@@ -58,6 +58,13 @@ addr {
 	font-weight: bold;
 }
 
+blockquote {
+  margin: 0 0 1em 0;
+  padding: 1em;
+  border: 1px solid #666;
+  background: #EEE;
+}
+
 code {
   font-family: monospace;
   font-size: 1.2em;
@@ -722,13 +729,6 @@ div#post-view > div#right-col > div > img {
 div#post-view > div#right-col > div#edit {
   margin-bottom: 2em;
   padding: 1em;
-}
-
-div.quote {
-  margin: 0 0 1em 0;
-  padding: 1em;
-  border: 1px solid #666;
-  background: #EEE;
 }
 
 div#related {

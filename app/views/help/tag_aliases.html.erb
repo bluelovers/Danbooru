@@ -5,3 +5,7 @@
   <p>When a tag is aliased to another tag, that means that the two tags are equivalent. You would not generally alias <code>rectangle</code> to <code>square</code>, for example, because while all squares are rectangles, not all rectangles are squares. To model this sort of relationship, you would need to use <%= link_to "implications", :action => "tag_implications" %>.</p>
   <p>While anyone can <%= link_to "suggest", :controller => "tag_alias", :action => "index" %> an alias, only an administrator can approve it.</p>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

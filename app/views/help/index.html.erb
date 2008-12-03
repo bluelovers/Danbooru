@@ -13,6 +13,7 @@
     <li><a href="/help/trac">&raquo; Bugs</a></li>
     <li><a href="/help/cheatsheet">&raquo; Cheat Sheet</a></li>
     <li><a href="/help/comments">&raquo; Comments</a></li>
+    <li><a href="/help/dtext">&raquo; DText</a></li>
     <li><a href="/help/extension">&raquo; Firefox Extension</a></li>
     <% if CONFIG["image_samples"] %>
       <li><a href="/help/image_sampling">&raquo; Image Sampling</a></li>
@@ -36,3 +37,7 @@
     <li><a href="/help/wiki">&raquo; Wiki</a></li>
   </ul>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

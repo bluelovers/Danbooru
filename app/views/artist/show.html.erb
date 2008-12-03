@@ -2,7 +2,7 @@
   <h3>Artist: <%= h @artist.name.tr("_", " ") %></h3>
   <% unless @artist.notes.blank? %>
     <div style="margin-bottom: 1em;">
-      <%= wikilize(@artist.notes) %>
+      <%= format_text(@artist.notes) %>
     </div>
   <% end %>
   <div style="margin-bottom: 1em; clear: both;">

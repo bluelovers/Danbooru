@@ -17,7 +17,7 @@
     <p>No page currently exists.</p>
   <% else %>
     <div id="body">
-      <%= wikilize(@page.body) %>
+      <%= format_text(@page.body) %>
       
       <div id="byline">Updated by <%= link_to h(@page.author), :controller => "user", :action => "show", :id => @page.user_id %> <%= time_ago_in_words(@page.updated_at) %> ago</div>
     </div>

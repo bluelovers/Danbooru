@@ -6,3 +6,7 @@
     <p>All Danbooru code is released under a FreeBSD license.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

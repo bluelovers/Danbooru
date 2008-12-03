@@ -2,31 +2,10 @@
   <h1>Help: Forum</h1>
 
   <div class="section">
-    <p>All forum posts are sanitized, meaning all HTML is escaped. That being said, there are a few features you can use:</p>
-  
-    <div class="section">
-      <h4>Spoilers</h4>
-      <p>Surround spoiler text with <code>[spoiler]</code> tags.</p>
-    </div>
-  
-    <div class="section">
-      <h4>URLs</h4>
-      <p>Any URL starting with http:// will automatically be converted into a link.</p>
-    </div>
-  
-    <div class="section">
-      <h4>Post Link Shorthand</h4>
-      <p>You can link to specific post/view pages using the following shorthand: <code>post #nnnn</code>, where <code>nnnn</code> is the id  number of the post.</p>
-    </div>
-    
-    <div class="section">
-      <h4>Forum Link Shorthand</h4>
-      <p>You can link to a specific forum post or topic using the following shorthand: <code>forum #nnnn</code>, where <code>nnnn</code> is the id number of the post.</p>
-    </div>
-    
-    <div class="section">
-      <h4>Wiki Links</h4>
-      <p>You can link to the wiki using the <code>[[title]]</code> syntax. See the help documentation for the <a href="/help/wiki">wiki</a> for more details.</p>
-    </div>
+    <p>All forum posts are formatted using <%= link_to "DText", :action => "dtext" %>.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

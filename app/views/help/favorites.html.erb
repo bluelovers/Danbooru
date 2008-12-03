@@ -7,3 +7,7 @@
     <p>You can view your favorites by clicking on <strong>My Favorites</strong> from the <a href="/post/index">main listing</a>, or going to <a href="/user/home">My Account</a>, then <strong>My Favorites</strong>.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

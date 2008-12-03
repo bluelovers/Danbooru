@@ -6,7 +6,7 @@ class ArtistController < ApplicationController
   helper :post, :wiki
 
   def preview
-    render :inline => "<h4>Preview</h4><%= wikilize(params[:artist][:notes]) %>"
+    render :inline => "<h4>Preview</h4><%= format_text(params[:artist][:notes]) %>"
   end
 
   def destroy

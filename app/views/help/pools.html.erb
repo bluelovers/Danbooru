@@ -9,3 +9,7 @@
     <p>To remove a post from a pool, go to the pool's page and select the Delete Mode checkbox. Then click on the posts you want to delete. This works similarly to how posts are deleted from favorites.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

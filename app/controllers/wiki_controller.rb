@@ -53,7 +53,7 @@ class WikiController < ApplicationController
   end
 
   def preview
-    render :inline => "<%= wikilize(params[:body]) %>"
+    render :inline => "<%= format_text(params[:body]) %>"
   end
 
   def add

@@ -16,3 +16,7 @@
     <p>All HTML code will be sanitized. You can place small translation notes by surrounding a block of text with <code>&lt;tn&gt;...&lt;/tn&gt;</code> tags.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

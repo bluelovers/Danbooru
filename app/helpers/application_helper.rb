@@ -8,57 +8,9 @@ module ApplicationHelper
     
     content_tag("li", link_to(text, options, html_options), :class => klass)
   end
-    
-  def simple_format(text)
-    text.to_s.gsub(/\r\n?/, "\n").gsub(/\n/, '<br>')
-  end
-  
+
   def format_text(text, options = {})
-    text = hs(text)
-
-    unless options[:skip_simple_format]
-      text = simple_format(text)
-    end
-
-    text.gsub!(/(http:\/\/[a-zA-Z0-9_.\/~%?&=;,#:-]+)/) do |link|
-      if link =~ /([.,;])$/
-        close = $1
-        link.sub!(/[.,:]$/, "")
-        link_to(link, link) + close
-      else
-        link_to(link, link)
-      end
-    end
-    text.gsub!(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
-    text.gsub!(/pool #(\d+)/i, '<a href="/pool/show/\1">pool #\1</a>')
-    text.gsub!(/comment #(\d+)/i, '<a href="/comment/show/\1">comment #\1</a>')
-    text.gsub!(/forum #(\d+)/i, '<a href="/forum/show/\1">forum #\1</a>')
-    text.gsub!(/\[quote\](.+?)\[\/quote\]/m, '<div class="quote">\1</div>')
-    text.gsub!(/<p><div/, "<div")
-    text.gsub!(/<\/div><\/p>/, "</div>")
-    text.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
-    text.gsub!(/(\w+ said:)/, '<em>\1</em>')
-    text.gsub!(/\[\[(.+?)\]\]/, link_to('\1', :controller => "wiki", :action => "show", :title => '\1'))
-    text.gsub!(/\{\{(.+?)\}\}/, link_to('\1', :controller => "post", :action => "index", :tags => '\1'))
-    text.gsub!(/<\/div>(?:<br>)+/, "</div>")
-
-    return text
-  end
-  
-  def textilize(text)
-    if text.blank?
-      return ""
-    end
-
-    text = text.gsub(/&lt;notextile&gt;/, "<notextile>")
-    text = text.gsub(/&lt;\/notextile&gt;/, "</notextile>")
-
-    if defined?(SuperRedCloth)
-      textilized = SuperRedCloth.new(text)
-    else
-      textilized = RedCloth.new(text)
-    end
-    textilized.to_html
+    DText.parse(text)
   end
 
   def id_to_color(id)

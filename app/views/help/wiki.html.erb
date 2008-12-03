@@ -1,7 +1,7 @@
 <div class="help">
   <h1>Help: Wiki</h1>
-  <p>Danbooru uses a custom wiki engine with minimal functionality. All formatting is done via <a href="http://hobix.com/textile">Textile</a> (specifically through the SuperRedCloth library).</p>
-  <p>To create an internal wiki link, wrap the title in two sets of square brackets. <code>[[Like this]]</code>. You can also create an alias, <code>[[real link|like this]]</code>.</p>
+  <p>Danbooru uses <%= link_to "DText", :action => "dtext" %> for all formatting.</p>
+  <p>To create an internal wiki link, wrap the title in two sets of square brackets. <code>[[Like this]]</code>.</p>
   
   <div class="section">
     <h4>Style Guideline</h4>
@@ -13,3 +13,7 @@
     </ul>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

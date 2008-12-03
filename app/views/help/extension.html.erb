@@ -7,3 +7,7 @@
     <p>As of version 0.2.8 the autocomplete function extends to the input fields on Danbooru itself.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>
