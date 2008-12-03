@@ -20,10 +20,14 @@ module ApplicationHelper
       text = simple_format(text)
     end
 
-    text.gsub!(/(http:\/\/\S+)([,;.)])?/) do
-      link = $1
-      link_end = $2
-      link_to(link, link) + link_end.to_s
+    text.gsub!(/(http:\/\/[a-zA-Z0-9_.\/~%?&=;,#:-]+)/) do |link|
+      if link =~ /([.,;])$/
+        close = $1
+        link.sub!(/[.,:]$/, "")
+        link_to(link, link) + close
+      else
+        link_to(link, link)
+      end
     end
     text.gsub!(/post #(\d+)/i, '<a href="/post/show/\1">post #\1</a>')
     text.gsub!(/pool #(\d+)/i, '<a href="/pool/show/\1">pool #\1</a>')
