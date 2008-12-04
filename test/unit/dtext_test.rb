@@ -47,4 +47,8 @@ class DTextTest < ActiveSupport::TestCase
     assert_equal('<p><a href="/post/index?tags=tag1+tag2">tag1 tag2</a></p>', p("{{tag1 tag2}}"))
     assert_equal('<p><a href="/post/index?tags=%3C3">&lt;3</a></p>', p("{{<3}}"))
   end
+  
+  def test_extra_newlines
+    assert_equal('<p>a</p><p>b</p>', p("a\n\n\n\n\n\n\nb\n\n\n\n"))
+  end
 end

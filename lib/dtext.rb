@@ -76,6 +76,7 @@ module DText
     # Make sure quote tags are surrounded by newlines
     str.gsub!(/\s*\[quote\]\s*/m, "\n\n[quote]\n\n")
     str.gsub!(/\s*\[\/quote\]\s*/m, "\n\n[/quote]\n\n")
+    str.gsub!(/(?:\r?\n){3,}/, "\n\n")
     str.strip!
     blocks = str.split(/(?:\r?\n){2}/)
     
