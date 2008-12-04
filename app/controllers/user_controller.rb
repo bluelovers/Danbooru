@@ -42,6 +42,9 @@ class UserController < ApplicationController
           @current_user.invite!(params[:member][:name], params[:member][:level])
           flash[:notice] = "User was invited"
           
+        rescue ActiveRecord::RecordNotFound
+          flash[:notice] = "Account not found"
+          
         rescue User::NoInvites
           flash[:notice] = "You have no invites for use"
           
