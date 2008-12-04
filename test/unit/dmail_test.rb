@@ -13,6 +13,30 @@ class DmailTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries = []
   end
   
+  def test_mark_as_read
+    member = User.find_by_name("member")
+    msg1 = Dmail.create(:to_name => "member", :from_name => "admin", :title => "hello", :body => "hello")
+    msg2 = Dmail.create(:to_name => "member", :from_name => "admin", :title => "hello", :body => "hello")
+    msg3 = Dmail.create(:to_name => "member", :from_name => "admin", :title => "hello", :body => "hello")
+    
+    member.reload
+    assert_equal(true, member.has_mail?)
+    
+    msg1.mark_as_read!(member)
+    msg1.reload
+    member.reload
+    assert_equal(true, msg1.has_seen?)
+    assert_equal(true, member.has_mail?)
+    
+    msg2.mark_as_read!(member)
+    member.reload
+    assert_equal(true, member.has_mail?)
+    
+    msg3.mark_as_read!(member)
+    member.reload
+    assert_equal(false, member.has_mail?)
+  end
+  
   def test_all
     msg = Dmail.create(:to_name => "member", :from_name => "admin", :title => "hello", :body => "hello")
     assert_equal(4, msg.to_id)

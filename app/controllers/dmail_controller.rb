@@ -1,6 +1,5 @@
 class DmailController < ApplicationController
   before_filter :blocked_only
-  before_filter :check_if_user_has_mail, :only => [:inbox, :show]
   layout "default"
   
   def auto_complete_for_dmail_to_name
@@ -43,7 +42,7 @@ class DmailController < ApplicationController
     end
 
     if @dmail.to_id == @current_user.id
-      @dmail.update_attribute(:has_seen, true)    
+      @dmail.mark_as_read!(@current_user)
     end
   end
 
@@ -60,12 +59,5 @@ class DmailController < ApplicationController
         redirect_to :action => "inbox"
       end
     end
-  end
-
-protected
-  def check_if_user_has_mail
-    if !Dmail.exists?(["has_seen = false and to_id = ?", @current_user.id]) && @current_user.has_mail?
-      @current_user.update_attribute(:has_mail, false)
-    end    
   end
 end

@@ -7,13 +7,21 @@ class Dmail < ActiveRecord::Base
   belongs_to :to, :class_name => "User", :foreign_key => "to_id"
   belongs_to :from, :class_name => "User", :foreign_key => "from_id"
   
-  after_save :update_recipient
+  after_create :update_recipient
   after_create :send_dmail
   
   def send_dmail
     if to.receive_dmails? && to.email.include?("@")
       UserMailer.deliver_dmail(to, from, title, body)
     end    
+  end
+  
+  def mark_as_read!(current_user)
+    update_attribute(:has_seen, true)
+    
+    unless Dmail.exists?(["to_id = ? AND has_seen = false", current_user.id])
+      current_user.update_attribute(:has_mail, false)
+    end
   end
   
   def update_recipient
