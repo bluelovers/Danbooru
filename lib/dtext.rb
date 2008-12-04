@@ -7,7 +7,13 @@ module DText
     str = CGI.escapeHTML(str)
     str.gsub!(/\[\[.+?\]\]/m) do |tag|
       tag = tag[2..-3]
-      '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag)) + '">' + tag + '</a>'
+      if tag =~ /^(.+?)\|(.+)$/
+        tag = $1
+        name = $2
+        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag)) + '">' + name + '</a>'
+      else
+        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag)) + '">' + tag + '</a>'
+      end
     end
     str.gsub!(/\{\{.+?\}\}/m) do |tag|
       tag = tag[2..-3]
