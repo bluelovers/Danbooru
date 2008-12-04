@@ -41,7 +41,12 @@ class TagController < ApplicationController
 
     unless params[:name].blank?
       conds << "name LIKE ? ESCAPE E'\\\\'"
-      cond_params << "%" + params[:name].to_escaped_for_sql_like + "%"
+      
+      if params[:name].include?("*")
+        cond_params << params[:name].to_escaped_for_sql_like
+      else      
+        cond_params << "%" + params[:name].to_escaped_for_sql_like + "%"
+      end
     end
 
     unless params[:type].blank?
