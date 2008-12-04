@@ -44,7 +44,11 @@ class WikiController < ApplicationController
     }
 
     if !query.empty?
-      search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
+      if query =~ /^title:/
+        search_params[:conditions] = ["title ilike ?", "%" + query[6..-1].tr(" ", "_") + "%"]
+      else
+        search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
+      end
     end
       
     @wiki_pages = WikiPage.paginate(search_params)
