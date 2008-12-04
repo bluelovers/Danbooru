@@ -186,4 +186,20 @@ class PoolTest < ActiveSupport::TestCase
     assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, 1]))
     assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, 2]))
   end
+  
+  def test_access
+    pool = create_pool
+    assert_raise(Pool::AccessDeniedError) do
+      pool.add_post(1, :user => User.find(4))
+    end
+    assert_nothing_raised do
+      pool.add_post(1, :user => User.find(2))
+    end
+    assert_raise(Pool::AccessDeniedError) do
+      pool.remove_post(1, :user => User.find(4))
+    end
+    assert_nothing_raised do
+      pool.remove_post(1, :user => User.find(2))
+    end
+  end
 end

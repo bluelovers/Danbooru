@@ -89,15 +89,21 @@ module PostTagMethods
               pool = Pool.create(:name => name, :description => "This pool was automatically generated", :is_public => false, :user_id => updater_user_id)
             end
 
-            pool.add_post(id) if pool
+            pool.add_post(id, :user => User.find(updater_user_id)) if pool
           rescue Pool::PostAlreadyExistsError
+          rescue Pool::AccessDeniedError
           end
 
 
         when /^-pool:(.+)/
           name = $1
           pool = Pool.find_by_name(name)
-          pool.remove_post(id) if pool
+          if pool
+            begin
+              pool.remove_post(id, :user => User.find(updater_user_id))
+            rescue Pool::AccessDeniedError
+            end
+          end
 
         
         when /^rating:([qse])/

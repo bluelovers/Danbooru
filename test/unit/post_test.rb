@@ -19,6 +19,10 @@ class PostTest < ActiveSupport::TestCase
     Post.find_by_sql(Post.generate_sql(tags)).sort {|a, b| a.id <=> b.id}
   end
   
+  def create_pool(name, params = {})
+    Pool.create({:name => name, :user_id => 1, :is_public => false, :description => "hoge"}.merge(params))
+  end
+  
   def create_post(params = {})
     Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg")}.merge(params))
   end
@@ -325,6 +329,11 @@ class PostTest < ActiveSupport::TestCase
     post.reload
     assert_nil(post.parent_id)
     assert(!Post.find(1).has_children?, "Post should not have children")
+    
+    # Test access checks for existing pool
+    pool = create_pool("hoge")
+    update_post(post, :tags => "pool:hoge", :updater_user_id => 4)
+    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id]))
   end
   
   def test_tagging

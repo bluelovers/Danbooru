@@ -4,15 +4,26 @@ class Pool < ActiveRecord::Base
   class PostAlreadyExistsError < Exception
   end
   
+  class AccessDeniedError < Exception
+  end
+  
   module PostMethods
     def self.included(m)
       m.has_many :pool_posts, :class_name => "PoolPost", :order => "sequence"
+    end
+    
+    def can_be_updated_by?(user)
+      is_public? || user.has_permission?(self)
     end
     
     def add_post(post_id, options = {})
       transaction do
         if PoolPost.exists?(["pool_id = ? AND post_id = ?", id, post_id])
           raise PostAlreadyExistsError
+        end
+        
+        if options[:user] && !can_be_updated_by?(options[:user])
+          raise AccessDeniedError
         end
         
         seq = options[:sequence] || next_sequence
@@ -25,8 +36,12 @@ class Pool < ActiveRecord::Base
       end
     end
 
-    def remove_post(post_id)
+    def remove_post(post_id, options = {})
       transaction do
+        if options[:user] && !can_be_updated_by?(options[:user])
+          raise AccessDeniedError
+        end
+        
         if PoolPost.exists?(["pool_id = ? and post_id = ?", id, post_id])
           PoolPost.destroy_all(["pool_id = ? and post_id = ?", id, post_id])
           decrement!(:post_count)
