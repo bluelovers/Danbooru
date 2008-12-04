@@ -194,6 +194,16 @@ class PostTest < ActiveSupport::TestCase
     p2.reload
     assert(!p1.has_children?, "Parent should no longer have children")
     assert(p2.has_children?, "Parent should have children")
+    
+    # Parent should be updated when all children are deleted
+    c1.destroy
+    p2.reload
+    assert(!p2.has_children?, "Parent should not have children")
+
+    # Undeleting should restore the status
+    c1.undelete!
+    p2.reload
+    assert(p2.has_children?, "Parent should have children")
   end
   
   def test_rating
