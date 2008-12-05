@@ -25,10 +25,10 @@ module DText
     str.gsub!(/pool #(\d+)/m, '<a href="/pool/show/\1">post #\1</a>')
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/(\w+ said:)/m, '<em>\1</em>')
-    str.gsub!(/\[spoilers?\]/, '<a href="#" class="spoiler">')
-    str.gsub!(/\[\/spoilers?\]/, '</a>')
-    str.gsub!(/(https?:\/\/[a-zA-Z0-9_\-#~%.,:;\(\)\[\]$@!&=+?\/]+)/) do |link|
-      if link =~ /([;,.!?])$/
+    str.gsub!(/\[spoilers?\]/m, '<a href="#" class="spoiler">')
+    str.gsub!(/\[\/spoilers?\]/m, '</a>')
+    str.gsub!(/(https?:\/\/[a-zA-Z0-9_\-#~%.,:;\(\)\[\]$@!&=+?\/]+)/m) do |link|
+      if link =~ /([;,.!?\)\]])$/
         link.chop!
         ch = $1
       else
@@ -43,11 +43,15 @@ module DText
   def parse_list(str)
     html = ""
     layout = []
+    nest = 0
 
     str.split(/\n/).each do |line|
-      line =~ /^(\*+) (.+)/
-      nest = $1.size
-      content = parse_inline($2)
+      if line =~ /^\s*(\*+) (.+)/
+        nest = $1.size
+        content = parse_inline($2)
+      else
+        content = parse_inline(line)
+      end
 
       if nest > layout.size
         html += "<ul>"
@@ -87,7 +91,7 @@ module DText
         content = $2
         "<#{tag}>" + parse_inline(content) + "</#{tag}>"
 
-      when /^\*+ /
+      when /^\s*\*+ /
         parse_list(block)
         
       when "[quote]"
