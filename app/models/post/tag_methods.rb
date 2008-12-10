@@ -126,7 +126,25 @@ module PostTagMethods
       # TODO: be more selective in deleting from the join table
       execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
       self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
-      execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + new_tags.map {|x| ("(#{id}, #{x.id})")}.join(", "))
+
+      # Tricky: Postgresql's locking won't serialize this DELETE/INSERT, so it's
+      # possible for two simultaneous updates to both delete all tags, then insert
+      # them, duplicating them all.
+      #
+      # Work around this by selecting the existing tags within the INSERT and removing
+      # any that already exist.  Normally, the inner SELECT will return no rows; if
+      # another process inserts rows before our INSERT, it'll return the rows that it
+      # inserted and we'll avoid duplicating them.
+      tag_set = new_tags.map {|x| ("(#{id}, #{x.id})")}.join(", ")
+      #execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + tag_set)
+      sql = <<-EOS
+        INSERT INTO posts_tags (post_id, tag_id)
+        SELECT t.post_id, t.tag_id
+         FROM (VALUES #{tag_set}) AS t(post_id, tag_id)
+         WHERE t.tag_id NOT IN (SELECT tag_id FROM posts_tags pt WHERE pt.post_id = #{self.id})
+      EOS
+
+      execute_sql(sql)
 
       Post.recalculate_cached_tags(self.id)
 

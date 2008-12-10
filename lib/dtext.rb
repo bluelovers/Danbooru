@@ -25,6 +25,10 @@ module DText
     str.gsub!(/pool #(\d+)/m, '<a href="/pool/show/\1">post #\1</a>')
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/(\w+ said:)/m, '<em>\1</em>')
+    str.gsub!("[b]", "<strong>")
+    str.gsub!("[/b]", "</strong>")
+    str.gsub!("[i]", "<em>")
+    str.gsub!("[/i]", "</em>")
     str.gsub!(/\[spoilers?\]/m, '<a href="#" class="spoiler">')
     str.gsub!(/\[\/spoilers?\]/m, '</a>')
     str.gsub!(/(https?:\/\/[a-zA-Z0-9_\-#~%.,:;\(\)\[\]$@!&=+?\/]+)/m) do |link|
