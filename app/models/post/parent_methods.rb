@@ -17,7 +17,7 @@ module PostParentMethods
         old_parent_id = select_value_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
       end
       
-      if parent_id.to_i == post_id.to_i
+      if parent_id.to_i == post_id.to_i || parent_id.to_i == 0
         parent_id = nil
       end
 
