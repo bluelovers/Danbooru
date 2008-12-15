@@ -19,18 +19,14 @@ module DText
       tag = tag[2..-3]
       '<a href="/post/index?tags=' + CGI.escape(CGI.unescapeHTML(tag)) + '">' + tag + '</a>'
     end
-    str.gsub!(/post #(\d+)/m, '<a href="/post/show/\1">post #\1</a>')
-    str.gsub!(/forum #(\d+)/m, '<a href="/forum/show/\1">forum #\1</a>')
-    str.gsub!(/comment #(\d+)/m, '<a href="/forum/show/\1">comment #\1</a>')
-    str.gsub!(/pool #(\d+)/m, '<a href="/pool/show/\1">post #\1</a>')
+    str.gsub!(/[Pp]ost #(\d+)/, '<a href="/post/show/\1">post #\1</a>')
+    str.gsub!(/[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>')
+    str.gsub!(/[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>')
+    str.gsub!(/[Pp]ool #(\d+)/, '<a href="/pool/show/\1">post #\1</a>')
     str.gsub!(/\n/m, "<br>")
-    str.gsub!(/(\w+ said:)/m, '<em>\1</em>')
-    str.gsub!("[b]", "<strong>")
-    str.gsub!("[/b]", "</strong>")
-    str.gsub!("[i]", "<em>")
-    str.gsub!("[/i]", "</em>")
-    str.gsub!(/\[spoilers?\]/m, '<a href="#" class="spoiler">')
-    str.gsub!(/\[\/spoilers?\]/m, '</a>')
+    str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
+    str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
+    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
     str.gsub!(/(https?:\/\/[a-zA-Z0-9_\-#~%.,:;\(\)\[\]$@!&=+?\/]+)/m) do |link|
       if link =~ /([;,.!?\)\]])$/
         link.chop!
