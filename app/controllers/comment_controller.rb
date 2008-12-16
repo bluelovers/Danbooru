@@ -36,11 +36,7 @@ class CommentController < ApplicationController
       return
     end
 
-    if params[:commit] == "Post as Anonymous" && @current_user.is_privileged_or_higher?
-      user_id = nil
-    else
-      user_id = session[:user_id]
-    end
+    user_id = session[:user_id]
 
     comment = Comment.new(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if params[:commit] == "Post without bumping"
