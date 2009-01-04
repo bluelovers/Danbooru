@@ -37,7 +37,7 @@
             <p>Enter a list of tags you really like, whitespace delimited.</p>
           </th>
           <td>
-            <%= text_field "user", "favorite_tags_text", :size => 40 %>
+            <%= text_area "user", "favorite_tags_text", :size => "40x5" %>
           </td>          
         </tr>
         <tr>
@@ -46,7 +46,7 @@
             <p>These will be accessible when you <a href="/post/upload">upload</a> or edit a post.</p>
           </th>
           <td>
-            <%= text_field "user", "my_tags", :size => 40 %>
+            <%= text_area "user", "my_tags", :size => "40x5" %>
           </td>
         </tr>
         <tr>
