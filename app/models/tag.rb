@@ -71,4 +71,15 @@ class Tag < ActiveRecord::Base
       p.update_attributes(:updater_user_id => updater_id, :updater_ip_addr => updater_ip_addr, :tags => tags)
     end
   end
+  
+  def self.find_suggestions(query)
+    if query.include?("_") && query.index("_") == query.rindex("_")
+      # Contains only one underscore
+      search_for = query.split(/_/).reverse.join("_").to_escaped_for_sql_like
+    else
+      search_for = "%" + query.to_escaped_for_sql_like + "%"
+    end
+    
+    Tag.find(:all, :conditions => ["name LIKE ? ESCAPE '\\\\' AND name <> ?", search_for, query], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
+  end
 end
