@@ -174,4 +174,12 @@ class TagTest < ActiveSupport::TestCase
     t = Tag.find_or_create_by_name("artist:foo")
     assert_equal("artist", t.type_name)
   end
+  
+  def test_suggestions
+    create_post("julius_caesar")
+    create_post("julian")
+    
+    assert_equal(["julius_caesar"], Tag.find_suggestions("caesar_julius"))
+    assert_equal(["julian", "julius_caesar"], Tag.find_suggestions("juli"))
+  end
 end
