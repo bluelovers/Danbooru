@@ -82,3 +82,25 @@ extern "C" void Init_danbooru_image_resizer() {
   danbooru_module = rb_define_module("Danbooru");
   rb_define_module_function(danbooru_module, "resize_image", (VALUE(*)(...))danbooru_resize_image, 6);
 }
+
+int main() {
+  char * read_path = "/Users/ayi/14806.jpg";
+  char * write_path = "/Users/ayi/preview.jpg";
+  int output_width = 450;
+  int output_height = 11925;
+  int output_quality = 3;
+  
+  FILE * write_file = fopen(write_path, "wb");
+  
+	JPEGCompressor *compressor = new JPEGCompressor(write_file);
+	Resizer *resizer = new Resizer(compressor);
+	resizer->SetDest(output_width, output_height, output_quality);
+	
+	Reader *reader = new JPEG;
+	ret = reader->Read(read_file, resizer, error);
+	
+  delete reader;
+  delete resizer;
+  delete compressor;
+  return 0;
+}

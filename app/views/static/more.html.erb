@@ -5,7 +5,7 @@
       <li><h4>Posts</h4></li>
       <li><a href="/help/posts">Help</a></li>
       <li><a href="/post/atom">Atom Feed</a></li>
-      <li><a href="/post/index">List</a></li>
+      <li><a href="/post/index">Listing</a></li>
       <li><a href="/post/popular_by_day">Popular (by day)</a></li>
       <li><a href="/post/popular_by_week">Popular (by week)</a></li>
       <li><a href="/post/popular_by_month">Popular (by month)</a></li>
@@ -20,16 +20,14 @@
       <li><a href="http://unbuffered.info/danbooruup">Firefox Extension</a></li>
       <li><a href="/help/api">API Documentation</a></li>
     </ul>
-    <% if CONFIG["enable_reporting"] %>
-      <ul>
-        <li><h4>Reports</h4></li>
-        <li><a href="/report/note_changes">Note Changes</a></li>
-        <li><a href="/report/tag_changes">Tag Changes</a></li>
-	      <li><a href="/stats/awstats.danbooru.html">Web Server Statitics</a></li>
-	      <li><a href="/job_task/index">Job Tasks</a></li>
-	      <li><a href="/advertisement/show_stats">Advertisement Statistics</a></li>
-      </ul>
-    <% end %>
+    <ul>
+      <li><h4>Reports</h4></li>
+      <li><a href="/report/note_changes">Note Changes</a></li>
+      <li><a href="/report/tag_changes">Tag Changes</a></li>
+      <!-- <li><a href="/stats/awstats.danbooru.html">Web Server Statitics</a></li> -->
+      <li><a href="/job_task/index">Job Tasks</a></li>
+      <li><a href="/advertisement/show_stats">Advertisement Statistics</a></li>
+    </ul>
   </div>
   <div>
     <ul>
@@ -46,26 +44,26 @@
       <li><h4>Notes</h4></li>
       <li><a href="/help/notes">Help</a></li>
       <li><a href="/note/history">History</a></li>
-      <li><a href="/note/index">List</a></li>
+      <li><a href="/note/index">Listing</a></li>
     </ul>
     <% if CONFIG["enable_artists"] %>
       <ul>
         <li><h4>Artists</h4></li>
         <li><a href="/help/artists">Help</a></li>
-        <li><a href="/artist/index">List</a></li>
+        <li><a href="/artist/index">Listing</a></li>
       </ul>
     <% end %>
     <ul>
       <li><h4>Pools</h4></li>
       <li><a href="/help/pools">Help</a></li>
-      <li><a href="/pool/index">List</a></li>
+      <li><a href="/pool/index">Listing</a></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4>Comments</h4></li>
       <li><a href="/help/comments">Help</a></li>
-      <li><a href="/comment/index">List</a></li>
+      <li><a href="/comment/index">Listing</a></li>
       <li><a href="/comment/moderate">Moderate</a></li>
       <% if CONFIG["enable_trac"] %>
         <li><a href="http://trac.donmai.us">Trac</a></li>
@@ -74,12 +72,12 @@
     <ul>
       <li><h4>Forum</h4></li>
       <li><a href="/help/forum">Help</a></li>
-      <li><a href="/forum/index">List</a></li>
+      <li><a href="/forum/index">Listing</a></li>
     </ul>
     <ul>
       <li><h4>Wiki</h4></li>
       <li><a href="/help/wiki">Help</a></li>
-      <li><a href="/wiki/index">List</a></li>
+      <li><a href="/wiki/index">Listing</a></li>
       <li><a href="/wiki/history">History</a></li>
     </ul>
   </div>
@@ -91,7 +89,7 @@
       <li><a href="/user/change_password">Change Password</a></li>
       <li><a href="/user/home">Home</a></li>
       <li><a href="/user/invites">Invites</a></li>
-      <li><a href="/user/index">List</a></li>
+      <li><a href="/user/index">Listing</a></li>
       <li><a href="/user/login">Login</a></li>
       <li><a href="/user/logout">Logout</a></li>
       <% unless @current_user.nil? %>
