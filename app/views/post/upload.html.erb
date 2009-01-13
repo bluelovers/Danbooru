@@ -15,7 +15,7 @@
   <% end %>
   
   <div style="margin-bottom: 1em; width: 60em;" id="upload-disclaimer">
-    <strong>NOTE: YOU CANNOT DELETE YOUR OWN UPLOADS!</strong> You will have to ask a janitor or a moderator to delete it for you, and they are not obligated to do so. Remember that this site is open to web spiders so someone will be able to easily search your name on this site. <%= link_to_function "Hide this disclaimer", "Cookie.put('upload-disclaimer', '1'); $('upload-disclaimer').hide()" %>.
+    <strong>NOTE: YOU CANNOT DELETE YOUR OWN UPLOADS!</strong> You will have to ask a janitor or a moderator to delete it for you, and they are not obligated to do so. <%= link_to_function "Hide this disclaimer", "Cookie.put('upload-disclaimer', '1'); $('upload-disclaimer').hide()" %>.
   </div>
   
   <% form_tag({:controller => "post", :action => "create"}, :multipart => true, :id => "edit-form") do %>
@@ -44,7 +44,8 @@
       <table class="form">
         <tfoot>
           <tr>
-            <td colspan="2">
+            <td></td>
+            <td>
               <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
               <%= button_to_function "Find similar", "Post.find_similar()" %>
             </td>
