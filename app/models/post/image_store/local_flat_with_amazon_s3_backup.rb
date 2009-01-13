@@ -37,6 +37,7 @@ module PostImageStoreMethods
     end
 
     def file_url
+      #"http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/#{file_name}"
       CONFIG["url_base"] + "/data/#{file_name}"
     end
 
@@ -55,6 +56,12 @@ module PostImageStoreMethods
     end
 
     def preview_url
+#      if self.image?
+#        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
+#      else
+#        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
+#      end
+
       if self.image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else
