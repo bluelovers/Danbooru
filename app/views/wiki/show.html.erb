@@ -18,8 +18,6 @@
   <% else %>
     <div id="body">
       <%= format_text(@page.body) %>
-      
-      <div id="byline">Updated by <%= link_to h(@page.author), :controller => "user", :action => "show", :id => @page.user_id %> <%= time_ago_in_words(@page.updated_at) %> ago</div>
     </div>
   <% end %>
 
@@ -34,32 +32,26 @@
     </div>
   <% end %>
 
-  <% content_for("footer") do %>
+  <%= render :partial => "footer" %>
+  
+  <div id="footer">
     <% if @page.nil? %>
-      <li><%= link_to "View posts", :controller => "post", :action => "index", :tags => params[:title] %></li>
-      <li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params[:title] %></li>
+      <%= link_to "Posts", :controller => "post", :action => "index", :tags => params[:title] %>
+      | <%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params[:title] %>
     <% else %>
-      <% unless @page.first_version? %>
-        <li><%= link_to "Previous version", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1 %></li>
-      <% end %>
-      <% unless @page.last_version? %>
-        <li><%= link_to "Next version", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %></li>
-      <% end %>
-      <li><%= link_to "View posts", :controller => "post", :action => "index", :tags => @page.title %></li>
-      <li><%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %></li>
+      <%= link_to "Posts", :controller => "post", :action => "index", :tags => @page.title %>
+      | <%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %>
       <% if not @page.is_locked? %>
-        <li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => @page.title, :version => @page.version %></li>
+        | <%= link_to "Edit", :controller => "wiki", :action => "edit", :title => @page.title, :version => @page.version %>
       <% end %>
       <% if @page.is_locked? %>
-        <li><%= link_to "Unlock", {:controller => "wiki", :action => "unlock", :title => @page.title}, :method => "post" %></li>
+        | <%= link_to "Unlock", {:controller => "wiki", :action => "unlock", :title => @page.title}, :method => "post" %>
       <% else %>
-        <li><%= link_to "Revert", {:controller => "wiki", :action => "revert", :title => @page.title, :version => @page.version}, :confirm => "Are you sure you want to revert to this page?", :method => :post %></li>
-        <li><%= link_to "Delete", {:controller => "wiki", :action => "destroy", :title => @page.title}, :confirm => "Are you sure you want to delete this page (and all versions)?", :method => :post %></li>
-        <li><%= link_to "Lock", {:controller => "wiki", :action => "lock", :title => @page.title}, :method => :post %></li>
-        <li><%= link_to "Rename", :action => "rename", :title => @page.title %></li>
-      <% end %>
+        | <%= link_to "Revert", {:controller => "wiki", :action => "revert", :title => @page.title, :version => @page.version}, :confirm => "Are you sure you want to revert to this page?", :method => :post %>
+        | <%= link_to "Delete", {:controller => "wiki", :action => "destroy", :title => @page.title}, :confirm => "Are you sure you want to delete this page (and all versions)?", :method => :post %>
+        | <%= link_to "Lock", {:controller => "wiki", :action => "lock", :title => @page.title}, :method => :post %>
+        | <%= link_to "Rename", :action => "rename", :title => @page.title %>
+      <% end %>    
     <% end %>
-  <% end %>
-  
-  <%= render :partial => "footer" %>
+  </div>
 </div>

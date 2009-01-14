@@ -84,9 +84,8 @@
   <%= will_paginate(@aliases) %>
 </div>
 
-<% content_for("footer") do %>
-  <%= link_to "Add alias", :controller => "forum", :action => "new", :type => "alias" %>  
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :controller => "tag_alias", :action => "index" %></li>
+  <li><%= link_to "Add", :controller => "forum", :action => "new", :type => "alias" %></li>
+  <li><%= link_to "Help", :controller => "help", :action => "tag_aliases" %></li>
 <% end %>
-
-<%= render :partial => "/tag/footer" %>
-

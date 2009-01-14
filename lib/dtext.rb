@@ -27,7 +27,14 @@ module DText
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
     str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
-    str.gsub!(/(https?:\/\/[a-zA-Z0-9_\-#~%.,:;\(\)\[\]$@!&=+?\/]+)/m) do |link|
+    str.gsub!(/(&quot;.+?&quot;:(http:\/\/|\/)\S+|http:\/\/\S+)/m) do |link|
+      if link =~ /^&quot;(.+?)&quot;:(.+)$/
+        text = $1
+        link = $2
+      else
+        text = link
+      end
+      
       if link =~ /([;,.!?\)\]])$/
         link.chop!
         ch = $1
@@ -35,7 +42,7 @@ module DText
         ch = ""
       end
 
-      '<a href="' + link + '">' + link + '</a>' + ch
+      '<a href="' + link + '">' + text + '</a>' + ch
     end
     str
   end

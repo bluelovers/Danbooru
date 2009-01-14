@@ -23,8 +23,15 @@
             <%= button_to_function "Select pending", "$$('.pending').each(function(x) {x.checked = true})" %> 
             <%= submit_tag "Approve" %> 
             <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
+          <% end %>
+          
+          <% if @current_user.is_admin_or_higher? %>
             <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_implication_predicate').focus()" %>
+          <% else %>
+            <%= button_to_function "Add", "window.location = '/forum/new?type=impl'" %>            
+          <% end %>
 
+          <% if @current_user.is_admin_or_higher? %>
             <div id="reason-box" style="display: none; margin-top: 1em;">
               <strong>Reason:</strong>
               <%= text_field_tag "reason", "", :size => 40 %>
@@ -80,8 +87,9 @@
   <%= will_paginate(@implications) %>
 </div>
 
-<% content_for("footer") do %> 
-  <li><%= link_to "Add implication", :controller => "forum", :action => "new", :type => "impl" %></li>
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :controller => "tag_implication", :action => "index" %></li>
+  <li><%= link_to "Add", :controller => "forum", :action => "new", :type => "impl" %></li>
+  <li><%= link_to "Help", :controller => "help", :action => "tag_implications" %></li>
 <% end %>
 
-<%= render :partial => "/tag/footer" %>

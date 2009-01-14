@@ -53,14 +53,13 @@
     <% end %>
   </div>
   
-  <% content_for("footer") do %>
-    <li><%= link_to "Edit", :action => "update", :id => @artist.id %></li>
-    <li><%= link_to "Delete", :action => "destroy", :id => @artist.id %></li>
+  <div id="footer">
+    <%= link_to "Edit", :action => "update", :id => @artist.id %>
+    | <%= link_to "Delete", :action => "destroy", :id => @artist.id %>
     <% unless @artist.alias_id %>
-      <li><%= link_to "View posts", :controller => "post", :action => "index", :tags => @artist.name %></li>
-      <li><%= link_to "Create alias", :action => "add", :alias_id => @artist.id %></li>
+      | <%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %>
     <% end %>
-  <% end %>
+  </div>
   
   <%= render :partial => "footer" %>
 </div>
