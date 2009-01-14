@@ -8,6 +8,8 @@ class PostTagHistoryController < ApplicationController
     @change_list = @changes.map do |c|
       { :change => c }.merge(c.tag_changes(c.previous))
     end
+    
+    respond_to_list("changes")
   end
   
   def revert
