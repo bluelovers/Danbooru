@@ -5,7 +5,7 @@ cd "$(dirname $0)/../../"
 script/donmai/downbooru
 mongrel_rails cluster::stop
 app/daemons/job_task_processor_ctl.rb stop
-rake maint:purge_tags maint:recalculate_row_count
+rake maint:recalculate_row_count
 script/donmai/backup_db
 script/donmai/backup_db_to_s3
 script/donmai/backup_svn_to_s3
