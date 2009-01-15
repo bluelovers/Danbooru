@@ -26,7 +26,7 @@ module DText
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
-    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler">\1</a>')
+    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span class="spoiler">\1</span>')
     str.gsub!(/(&quot;.+?&quot;:(http:\/\/|\/)\S+|http:\/\/\S+)/m) do |link|
       if link =~ /^&quot;(.+?)&quot;:(.+)$/
         text = $1

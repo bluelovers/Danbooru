@@ -42,16 +42,6 @@ a.last-page {
   color: #666;
 }
 
-a.spoiler {
-  color: black;
-  background: black;
-  cursor: text;
-}
-
-a.spoiler:hover {
-  color: white;
-}
-
 addr {
 	display: block;
 	margin-left: 2em;
@@ -187,6 +177,16 @@ span.informational {
 
 span.post-count {
   color: #AAA;
+}
+
+span.spoiler {
+  color: black;
+  background: black;
+  cursor: text;
+}
+
+span.spoiler:hover {
+  color: white;
 }
 
 span.thumb {
