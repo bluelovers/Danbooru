@@ -32,7 +32,7 @@ class CommentController < ApplicationController
   def create
     if @current_user.is_member_or_lower? && params[:commit] == "Post" && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
       # TODO: move this to the model
-      respond_to_error("Hourly limit exceeded", {:action => "index"}, :status => 421)
+      respond_to_error("Hourly limit exceeded", {:controller => "post", :action => "show", :id => params[:commit][:post_id]}, :status => 421)
       return
     end
 
@@ -42,7 +42,7 @@ class CommentController < ApplicationController
     if params[:commit] == "Post without bumping"
       comment.do_not_bump_post = true
     end
-        
+    
     if comment.save
       respond_to_success("Comment created", :action => "index")
     else
