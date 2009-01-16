@@ -1,3 +1,3 @@
-require "asset_cache"
+# require "asset_cache"
 
-AssetCache.clear_js_cache
+# AssetCache.clear_js_cache

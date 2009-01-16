@@ -52,12 +52,6 @@ class User < ActiveRecord::Base
         find(:first, :conditions => ["lower(name) = lower(?) AND password_hash = ?", name, pass])
       end
 
-      if CONFIG["enable_account_email_activation"]
-        def confirmation_hash(name)
-          Digest::SHA256.hexdigest("~-#{name}-~#{salt}")
-        end
-      end
-    
       def sha1(pass)
         Digest::SHA1.hexdigest("#{salt}--#{pass}--")
       end
@@ -365,7 +359,7 @@ class User < ActiveRecord::Base
   
   module UserFavoriteTagMethods
     def self.included(m)
-      m.has_many :favorite_tags, :dependent => :delete_all
+      m.has_many :favorite_tags, :dependent => :delete_all, :order => "name"
     end
     
     def favorite_tags_text=(text)
