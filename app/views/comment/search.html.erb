@@ -1,0 +1,33 @@
+<div id="forum">
+  <div style="margin-bottom: 1em;">
+    <% form_tag({:action => "search"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search"%>
+    <% end %>
+  </div>
+  
+  <table class="highlightable">
+    <thead>
+      <tr>
+        <th width="20%">Post</th>
+        <th width="55%">Comment</th>
+        <th width="15%">Author</th>
+        <th width="10%">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @comments.each do |comment| %>
+        <tr>
+          <td><%= link_to image_tag(comment.post.preview_url, :width => comment.post.preview_dimensions[0], :height => comment.post.preview_dimensions[1]), :controller => "post", :action => "show", :id => comment.post_id %></td>
+          <td><%= format_text(comment.body, :mode => :comment) %></td>
+          <td><%= h comment.pretty_author %></td>
+          <td><%= time_ago_in_words comment.created_at %> ago</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div id="paginator">
+    <%= will_paginate(@comments) %>
+  </div>
+</div>
