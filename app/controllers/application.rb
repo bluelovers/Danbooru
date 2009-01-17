@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include ExceptionNotifiable
+
   # This is a proxy class to make various nil checks unnecessary
   class AnonymousUser
     def id
