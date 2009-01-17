@@ -6,4 +6,4 @@ JobTask.find(:all, :conditions => ["status = ? and created_at < ?", "finished", 
   job.destroy
 end
 
-JobTask.update_all("status = 'pending'", "task_type = 'calculate_favorite_tags'")
+JobTask.update_all("status = 'pending', status_message = ''", "task_type = 'calculate_favorite_tags'")
