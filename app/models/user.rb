@@ -374,8 +374,8 @@ class User < ActiveRecord::Base
       favorite_tags.map(&:tag_query).sort.join(" ")
     end
     
-    def favorite_tag_posts(limit)
-      FavoriteTag.find_posts(id, limit)
+    def favorite_tag_posts(limit, favtag_name)
+      FavoriteTag.find_posts(id, favtag_name, limit)
     end
   end
   

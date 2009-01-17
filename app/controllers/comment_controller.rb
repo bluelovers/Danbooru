@@ -103,7 +103,7 @@ class CommentController < ApplicationController
       query = params[:query].scan(/\S+/).join(" & ")
       @comments = Comment.paginate :order => "id desc", :per_page => 30, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
     else
-      @comments = []
+      @comments = Comment.paginate :per_page => 30, :conditions => "FALSE", :page => params[:page]
     end
     
     respond_to_list("comments")
