@@ -36,9 +36,6 @@ class PostController < ApplicationController
   end
 
   def upload
-#    redirect_to :action => "upload_problem"
-#    return
-
     if params[:url]
       @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
     end
@@ -49,9 +46,6 @@ class PostController < ApplicationController
   end
 
   def create
-#    respond_to_error("Uploads temporarily disabled due to Amazon S3 issues", :action => "upload_problem")
-#    return
-
     if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to_error("Daily limit exceeded", {:action => "error"}, :status => 421)
       return
@@ -153,7 +147,7 @@ class PostController < ApplicationController
         Post.destroy_with_reason(@post.id, params[:reason], @current_user)
       end
 
-      respond_to_success("Post deleted", :action => "index")
+      respond_to_success("Post deleted", :action => "show", :id => @post.id)
     else
       access_denied()
     end

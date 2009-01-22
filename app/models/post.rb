@@ -25,9 +25,11 @@ class Post < ActiveRecord::Base
   
   def self.destroy_with_reason(id, reason, current_user)
     post = Post.find(id)
-    post.flag!(reason, current_user)
-    post.reload
-    post.destroy
+    Post.transaction do
+      post.flag!(reason, current_user)
+      post.reload
+      post.destroy
+    end
   end
   
   def flag!(reason, creator_id)

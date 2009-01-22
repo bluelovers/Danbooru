@@ -10,25 +10,15 @@
   <%= submit_tag "Delete" %> <%= submit_tag "Cancel" %>
 <% end %>
 
-<div class="deleting-post">
-<% if !@post.is_deleted? %>
-  <% if @post.fav_count > 0 %>
-    <br>
-    <p><%= @post.fav_count %> <%= @post.fav_count!=1? "users have":"user has" %> favorited this post.
-    <% if @post_parent %>
-      Favorites will be transferred to the following parent post.
-      If this is incorrect, reparent this post before deleting it.<p>
-    <% if CONFIG["can_see_post"].call(@current_user, @post_parent) %>
-      <ul id="post-list-posts"> <%= print_preview(@post_parent, :hide_directlink=>true) %> </ul>
-    <% else %>
-      (parent post hidden due to access restrictions)
-    <% end %>
-
-    <% else %>
-      This post has no parent.  If this post has been replaced, reparent this post before deleting, and favorites will be transferred.<p>
-    <% end %>
-  <% end %>
+<% if !@post.is_deleted? && @post.fav_count > 0 %>
+  <div class="deleting-post">
+    <p>
+      This post was favorited by <%= pluralize @post.fav_count, "user" %>.
+      <% if @post.parent_id %>
+        Favorites will be transferred to <%= link_to "this parent post", :action => "show", :id => @post.parent_id, :target => "_blank" %>. If this is incorrect, reparent this post before deleting it.
+      <% end %>
+    <p>
+  </div>
 <% end %>
-</div>
 
 <%= render :partial => "footer" %>
