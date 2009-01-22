@@ -78,7 +78,7 @@
               <% end %>
             </th>
             <td>
-              <%= text_area "post", "tags", :size => "60x2", :tabindex => 3 %>
+              <%= text_area "post", "tags", :size => "60x4", :tabindex => 3 %>
               <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
               <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
               <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
