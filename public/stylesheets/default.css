@@ -276,6 +276,10 @@ table th {
   white-space: nowrap;
 }
 
+table tr.dupe {
+  background: rgb(230, 230, 255);
+}
+
 table tr.good {
   background: rgb(230, 255, 230);
 }

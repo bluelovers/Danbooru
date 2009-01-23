@@ -77,22 +77,22 @@
   </table>
 </div>
 
-<% @user.tag_subscriptions.visible.each do |tag_subscription| %>
-  <div style="margin-bottom: 1em; float: left; clear: both;">
-    <h4>Tag Subscription: <%= h tag_subscription.name %> <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
-    <%= render :partial => "post/posts", :locals => {:posts => @user.tag_subscription_posts(5, tag_subscription.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
-  </div>
-<% end %>
+<div style="margin-bottom: 1em;  float: left; clear: both;">
+  <h4>Recent Uploads <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
+  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_uploaded_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
+</div>
 
 <div style="margin-bottom: 1em; float: left; clear: both;">
   <h4>Recent Favorites <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "fav:#{@user.name} order:fav" %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.recent_favorite_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
 </div>
 
-<div style="margin-bottom: 1em;  float: left; clear: both;">
-  <h4>Recent Uploads <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_uploaded_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
-</div>
+<% @user.tag_subscriptions.visible.each do |tag_subscription| %>
+  <div style="margin-bottom: 1em; float: left; clear: both;">
+    <h4>Tag Subscription: <%= h tag_subscription.name %> <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.tag_subscription_posts(5, tag_subscription.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
+  </div>
+<% end %>
 
 <% content_for("footer") do %>
   <li><%= link_to "List", :controller => "user", :action => "index" %></li>
