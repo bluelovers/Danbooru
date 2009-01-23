@@ -6,7 +6,7 @@ class UserController < ApplicationController
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
-  helper :post
+  helper :post, :tag_subscription
   filter_parameter_logging :password
   auto_complete_for :user, :name
 

@@ -164,7 +164,7 @@ CONFIG["enable_asynchronous_tasks"] = false
 CONFIG["load_average_threshold"] = false
 
 # Max number of posts to cache
-CONFIG["favorite_tag_post_limit"] = 200
+CONFIG["tag_subscription_post_limit"] = 200
 
-# Max number of fav tags per user
-CONFIG["favorite_tag_limit"] = 5
+# Max number of tag subscriptions per user
+CONFIG["max_tag_subscriptions"] = 5
