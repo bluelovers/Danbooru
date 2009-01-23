@@ -9,7 +9,7 @@
 
 <% content_for("subnavbar") do %>
   <li><%= link_to "List", :action => "index" %></li>
-  <li><%= link_to "Delete", :action => "destroy" %></li>
+  <li><%= link_to "Delete", :action => "destroy", :id => @job_task.id %></li>
   <% if @job_task.status == "error" %>
     <li><%= link_to "Restart", :action => "restart", :id => @job_task.id %></li>
   <% end %>
