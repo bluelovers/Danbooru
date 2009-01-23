@@ -20,6 +20,10 @@
       <% else %>
         <%= format_text(@page.body) %>
       <% end %>
+      
+      <% if ta = TagAlias.find_by_name(params[:title]) %>
+        <p>This tag has been aliased to <%= link_to(h(ta.alias_name), :action => "show", :title => ta.alias_name) %>.</p>
+      <% end %>
     </div>
 
     <% if @posts %>
