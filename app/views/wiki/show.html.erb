@@ -13,31 +13,27 @@
     <% end %>
   </h2>
 
-  <% if @page.nil? %>
-    <p>No page currently exists.</p>
-  <% else %>
-    <div id="body">
-      <div style="margin-bottom: 1em;">
-        <%= format_text(@page.body) %>        
-      </div>
-      
-      <div style="margin-bottom: 1em;">
-
-      </div>
-
-      <% if @posts %>
-        <div style="margin-bottom: 1em;">
-          <h4>Recent Posts</h4>
-          <div style="margin: 1em 0;">
-            <% @posts.each do |p| %>
-              <%= print_preview(p) %>
-            <% end %>
-          </div>
-        </div>
+  <div id="body">
+    <div style="margin-bottom: 1em;">
+      <% if @page.nil? %>
+        <p>No page currently exists.</p>
+      <% else %>
+        <%= format_text(@page.body) %>
       <% end %>
     </div>
-  <% end %>
 
+    <% if @posts %>
+      <div style="margin-bottom: 1em;">
+        <h4>Recent Posts</h4>
+        <div style="margin: 1em 0;">
+          <% @posts.each do |p| %>
+            <%= print_preview(p) %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
   <% content_for("footer") do %>
     <li>|</li>
     <% if @page.nil? %>
