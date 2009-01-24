@@ -168,3 +168,4 @@ CONFIG["tag_subscription_post_limit"] = 200
 
 # Max number of tag subscriptions per user
 CONFIG["max_tag_subscriptions"] = 5
+
