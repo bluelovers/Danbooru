@@ -3,7 +3,7 @@
   <li><%= link_to "Upload", :controller => "post", :action => "upload" %></li>
   <li id="my-favorites-container"><%= link_to "Favorites", "/", :id => "my-favorites" %></li>
   <% if @current_user.is_privileged_or_higher? %>
-    <li id="my-favtags-container"><%= link_to "Fav tags", "/", :id => "my-favtags" %></li>
+    <li id="my-subscriptions-container"><%= link_to "Subscriptions", "/", :id => "my-subscriptions" %></li>
   <% end %>
   <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day" %></li>
   <li><%= link_to "Recent changes", :controller => "post_tag_history", :action => "index" %></li>
