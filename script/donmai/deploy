@@ -6,6 +6,7 @@ app/daemons/job_task_processor_ctl.rb stop
 svn update
 sleep 5
 RAILS_ENV=production rake db:migrate
+script/build_application_js
 app/daemons/job_task_processor_ctl.rb start
 mongrel_rails cluster::start
 sleep 15

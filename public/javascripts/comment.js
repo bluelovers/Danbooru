@@ -1,6 +1,8 @@
 Comment = {
   flag: function(id) {
-    notice("Flagging comment for deletion...")
+    if (!confirm("Are you sure you want to flag this comment for deletion?") ) {
+      return;
+    }
 
     new Ajax.Request("/comment/mark_as_spam.json", {
       parameters: {
