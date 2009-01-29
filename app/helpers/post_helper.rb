@@ -65,7 +65,7 @@ module PostHelper
       cache_key = "tag_sidebar:" + @current_user.is_privileged_or_higher?.to_s + ":" + Digest::MD5.hexdigest(query.to_s)
     end
 
-    Cache.get(cache_key) do
+    Cache.get(cache_key, 4.hours) do
       if query.is_a?(Post)
         tags = {:include => query.cached_tags.split(/ /)}
       elsif !query.blank?
@@ -90,7 +90,7 @@ module PostHelper
       end
     
       if tags[:related]
-        tags[:related].each do |tag|
+        Tag.find_related(tags[:related]).map {|x| TagProxy.new(x[0], x[1])}.each do |tag|
           html << print_tag_sidebar_helper(tag)
         end
       end
