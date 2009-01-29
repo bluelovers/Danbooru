@@ -113,7 +113,7 @@ module PostTagMethods
         when /^parent:(\d*)/
           self.parent_id = $1
         
-          if CONFIG["enable_parent_posts"] && Post.exists?(parent_id)
+          if Post.exists?(parent_id)
             Post.set_parent(id, parent_id)
           end
         end

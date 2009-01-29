@@ -110,17 +110,15 @@ module TagParseMethods
         elsif token[0] == ?~
           q[:include] << token[1..-1]
         elsif token.include?("*")
-          q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 25, :order => "post_count DESC").map {|i| i.name}
+          q[:include] += find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name", :limit => 25, :order => "post_count DESC").map(&:name)
         else
           q[:related] << token
         end
       end
 
-      unless options[:skip_aliasing]
-        q[:exclude] = TagAlias.to_aliased(q[:exclude]) if q.has_key?(:exclude)
-        q[:include] = TagAlias.to_aliased(q[:include]) if q.has_key?(:include)
-        q[:related] = TagAlias.to_aliased(q[:related]) if q.has_key?(:related)
-      end
+      q[:exclude] = TagAlias.to_aliased(q[:exclude], :strip_prefix => true) if q.has_key?(:exclude)
+      q[:include] = TagAlias.to_aliased(q[:include], :strip_prefix => true) if q.has_key?(:include)
+      q[:related] = TagAlias.to_aliased(q[:related]) if q.has_key?(:related)
 
       return q
     end

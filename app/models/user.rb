@@ -130,11 +130,7 @@ class User < ActiveRecord::Base
       end
 
       def find_name(user_id)
-        if CONFIG["enable_caching"]
-          return Cache.get("user_name:#{user_id}") do
-            find_name_helper(user_id)
-          end
-        else
+        return Cache.get("user_name:#{user_id}") do
           find_name_helper(user_id)
         end
       end
@@ -149,7 +145,7 @@ class User < ActiveRecord::Base
       m.validates_length_of :name, :within => 2..20, :on => :create
       m.validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
       m.validates_uniqueness_of :name, :case_sensitive => false, :on => :create
-      m.after_save :update_cached_name if CONFIG["enable_caching"]
+      m.after_save :update_cached_name
     end
     
     def pretty_name
@@ -183,10 +179,8 @@ class User < ActiveRecord::Base
     def uploaded_tags(options = {})
       type = options[:type]
 
-      if CONFIG["enable_caching"]
-        uploaded_tags = Cache.get("uploaded_tags/#{id}/#{type}")
-        return uploaded_tags unless uploaded_tags == nil
-      end
+      uploaded_tags = Cache.get("uploaded_tags/#{id}/#{type}")
+      return uploaded_tags unless uploaded_tags == nil
 
       if RAILS_ENV == "test"
         # disable filtering in test mode to simplify tests
@@ -224,9 +218,7 @@ class User < ActiveRecord::Base
 
       uploaded_tags = select_all_sql(sql)
 
-      if CONFIG["enable_caching"]
-        Cache.put("uploaded_tags/#{id}/#{type}", uploaded_tags, 1.day)
-      end
+      Cache.put("uploaded_tags/#{id}/#{type}", uploaded_tags, 1.day)
 
       return uploaded_tags
     end

@@ -27,18 +27,6 @@ class TagSubscriptionTest < ActiveSupport::TestCase
     assert_equal("#{p2.id},#{p1.id}", ft.cached_post_ids)
   end
   
-  def test_prune
-    old = CONFIG["tag_subscription_post_limit"]
-    CONFIG["tag_subscription_post_limit"] = 3
-
-    ft = create_tag_subscription("tag1")
-    ft.update_attribute(:cached_post_ids, "6,5,4,3,2,1")
-    ft.prune!
-    assert_equal("6", ft.cached_post_ids)
-    
-    CONFIG["tag_subscription_post_limit"] = old
-  end
-  
   def test_find_post_ids
     p1 = create_post("tag1 tag2 tag3")
     p2 = create_post("tag2")

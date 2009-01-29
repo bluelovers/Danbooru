@@ -5,7 +5,7 @@ class PostTest < ActiveSupport::TestCase
   
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      MEMCACHE.flush_all
     end
     
     # TODO: revert these after testing in teardown

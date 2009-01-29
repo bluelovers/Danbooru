@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class TagTest < ActiveSupport::TestCase
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      MEMCACHE.flush_all
     end
     
     @test_number = 1
@@ -30,15 +30,15 @@ class TagTest < ActiveSupport::TestCase
     p2 = create_post("tag1")
     p3 = create_post("tag1 tag2")
     
-    results = Tag.count_by_period(3.days.ago, Time.now).sort {|a, b| a["name"] <=> b["name"]}
-    assert_equal("2", results[0]["post_count"])
-    assert_equal("tag1", results[0]["name"])
-    assert_equal("1", results[1]["post_count"])
-    assert_equal("tag2", results[1]["name"])
+    results = Tag.count_by_period(3.days.ago, Time.now).sort {|a, b| a.to_s <=> b.to_s}
+    assert_equal("2", results[0].post_count)
+    assert_equal("tag1", results[0].name)
+    assert_equal("1", results[1].post_count)
+    assert_equal("tag2", results[1].name)
 
-    results = Tag.count_by_period(20.days.ago, 5.days.ago).sort {|a, b| a["name"] <=> b["name"]}
-    assert_equal("1", results[0]["post_count"])
-    assert_equal("tag1", results[0]["name"])
+    results = Tag.count_by_period(20.days.ago, 5.days.ago).sort {|a, b| a.to_s <=> b.to_s}
+    assert_equal("1", results[0].post_count)
+    assert_equal("tag1", results[0].name)
   end
   
   def test_find_or_create_by_name

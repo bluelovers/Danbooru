@@ -14,6 +14,16 @@ class TagSubscription < ActiveRecord::Base
     end
   end
   
+  def self.find_tags(subscription_name)
+    if subscription_name =~ /^(.+?):(.+)$/
+      user_name = $1
+      sub_group = $2
+    else
+      user_name = subscription_name
+      sub_group = nil
+    end
+  end
+  
   def self.find_post_ids(user_id, name = nil, limit = CONFIG["tag_subscription_post_limit"])
     if name
       find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.sort.reverse.slice(0, limit)

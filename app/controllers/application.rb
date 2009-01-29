@@ -185,24 +185,14 @@ class ApplicationController < ActionController::Base
   protected :build_cache_key
   protected :get_cache_key
 
-  protected
-  def check_load_average
-    current_load = Sys::CPU.load_avg[1]
-    
-    if request.get? && request.env["HTTP_USER_AGENT"] !~ /Google/ && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
-      render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
-      return false
-    end
-  end  
-  
+protected
   def set_title(title = CONFIG["app_name"])
     @page_title = CGI.escapeHTML(title)
   end
 
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
-      tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).downcase.scan(/\S+/))
-      tags += cookies["recent_tags"].to_s.scan(/\S+/)
+      tags = TagAlias.to_aliased(params[:tags] || params[:post][:tags]) + cookies["recent_tags"].to_s.scan(/\S+/)
       cookies["recent_tags"] = tags.slice(0, 20).join(" ")
     end
   end

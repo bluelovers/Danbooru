@@ -33,4 +33,70 @@ module PostHelper
     span = %{<span class="thumb" id="p#{post.id}">#{link}</span>}
     return span
   end
+  
+  def print_tag_sidebar_helper(tag)
+    if tag.is_a?(String)
+      tag = TagProxy.new(tag)
+    end
+    
+    html = %{<li class="tag-type-#{tag.tag_type}">}
+
+    if CONFIG["enable_artists"] && tag.tag_type == "artist"
+      html << %{<a href="/artist/show?name=#{u(tag.name)}">?</a> }
+    else
+      html << %{<a href="/wiki/show?title=#{u(tag.name)}">?</a> }
+    end
+
+    if @current_user.is_privileged_or_higher?
+      html << %{<a href="/post/index?tags=#{u(tag.name)}+#{u(params[:tags])}">+</a> }
+      html << %{<a href="/post/index?tags=-#{u(tag.name)}+#{u(params[:tags])}">&ndash;</a> }
+    end
+
+    html << %{<a href="/post/index?tags=#{u(tag.name)}">#{h(tag.name.tr("_", " "))}</a> }
+    html << %{<span class="post-count">#{tag.post_count}</span> }
+    html << '</li>'
+    return html
+  end
+  
+  def print_tag_sidebar(query)
+    if query.is_a?(Post)
+      cache_key = "tag_sidebar:post_id:#{query.id}"
+    else
+      cache_key = "tag_sidebar:" + @current_user.is_privileged_or_higher?.to_s + ":" + Digest::MD5.hexdigest(query.to_s)
+    end
+
+    Cache.get(cache_key) do
+      if query.is_a?(Post)
+        tags = {:include => query.cached_tags.split(/ /)}
+      elsif !query.blank?
+        tags = Tag.parse_query(query)
+      else
+        tags = {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
+      end
+      
+      html = ['<div>', '<h5>Tags</h5>', '<ul id="tag-sidebar">']
+
+      if tags[:exclude]
+        tags[:exclude].each do |tag|
+          html << print_tag_sidebar_helper(tag[1..-1])
+        end
+      end
+
+      if tags[:include]
+        tags[:include].each do |tag|
+          tag.sub!(/^~/, "")
+          html << print_tag_sidebar_helper(tag)
+        end
+      end
+    
+      if tags[:related]
+        tags[:related].each do |tag|
+          html << print_tag_sidebar_helper(tag)
+        end
+      end
+
+      html += ['</ul>', '</div>']
+      html.join("\n")
+    end
+  end
 end

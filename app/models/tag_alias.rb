@@ -1,21 +1,35 @@
 class TagAlias < ActiveRecord::Base
   before_create :normalize
   before_create :validate_uniqueness
+  after_destroy :expire_cache
 
   # Maps tags to their preferred names. Returns an array of strings.
   #
   # === Parameters
-  # * :tags<Array<String>>:: list of tags to transform.
-  def self.to_aliased(tags)
-    Array(tags).inject([]) do |aliased_tags, tag_name|
-      aliased_tags << to_aliased_helper(tag_name)
+  # * :tag_names<Array<String>>:: list of tags to transform.
+  def self.to_aliased(tag_names, options = {})
+    tag_names.map {|x| to_aliased_single(x)}
+  end
+  
+  def self.to_aliased_single(tag_name, options = {})
+    hit = Cache.get("tag_alias:#{tag_name}")
+    
+    if hit.nil?
+      tag = select_value_sql("SELECT tags.name FROM tags JOIN tag_aliases ON tag_aliases.alias_id = tags.id WHERE tag_aliases.name = ? AND tag_aliases.is_pending = FALSE", tag_name)
+      
+      if tag
+        Cache.put("tag_alias:#{tag_name}", tag)
+        return tag
+      else
+        return tag_name
+      end
+    else
+      hit
     end
   end
   
-  def self.to_aliased_helper(tag_name)
-    # TODO: add memcached support
-    tag = find(:first, :select => "tags.name AS name", :joins => "JOIN tags ON tags.id = tag_aliases.alias_id", :conditions => ["tag_aliases.name = ? AND tag_aliases.is_pending = FALSE", tag_name])
-    tag ? tag.name : tag_name    
+  def expire_cache
+    Cache.delete("tag_alias:#{name}")
   end
   
   # Destroys the alias and sends a message to the alias's creator.

@@ -4,14 +4,8 @@ class PostController < ApplicationController
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :janitor_only, :only => [:moderate, :undelete]
-  after_filter :save_tags_to_cookie, :only => [:update, :create]
-  if CONFIG["load_average_threshold"]
-    before_filter :check_load_average, :only => [:index, :popular_by_day, :popular_by_week, :popular_by_month, :random, :atom, :piclens]
-  end
-  
-  if CONFIG["enable_caching"]
-    around_filter :cache_action, :only => [:index, :atom, :piclens]
-  end
+  after_filter :save_tags_to_cookie, :only => [:update, :create]  
+  around_filter :cache_action, :only => [:index, :atom, :piclens]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisement
 
@@ -163,17 +157,17 @@ class PostController < ApplicationController
 
   def index
     tags = params[:tags].to_s
-    split_tags = QueryParser.parse(tags)
+    @split_tags = QueryParser.parse(tags)
     page = params[:page].to_i
     limit = params[:limit].to_i
     limit = 20 if limit == 0
     limit = 1000 if limit > 1000
     count = 0
     
-    if @current_user.is_member_or_lower? && split_tags.size > 2
+    if @current_user.is_member_or_lower? && @split_tags.size > 2
       respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
       return
-    elsif split_tags.size > 6
+    elsif @split_tags.size > 6
       respond_to_error("You can only search up to six tags at once", :action => "error")
       return
     end
@@ -187,31 +181,19 @@ class PostController < ApplicationController
 
     set_title "/" + tags.tr("_", " ")
 
-    if count < 20 && split_tags.size == 1
+    if count < 20 && @split_tags.size == 1
       @tag_suggestions = Tag.find_suggestions(tags)
     end
     
-    @ambiguous_tags = Tag.select_ambiguous(split_tags)
+    @ambiguous_tags = Tag.select_ambiguous(@split_tags)
     
     @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
 
     respond_to do |fmt|
-      fmt.html do        
-        if split_tags.any?
-          @tags = Tag.parse_query(tags)
-        elsif CONFIG["enable_caching"]
-          @tags = Cache.get("$poptags", 1.hour) do
-            {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
-          end
-        else
-          @tags = {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
-        end
-      end
-      fmt.xml do
-        render :layout => false
-      end
+      fmt.html
+      fmt.xml {render :layout => false}
       fmt.json {render :json => @posts.to_json}
     end
   end

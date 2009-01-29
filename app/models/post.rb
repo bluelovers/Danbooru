@@ -15,8 +15,8 @@ class Post < ActiveRecord::Base
   include PostVoteMethods
   include PostTagMethods
   include PostCountMethods
-  include PostCacheMethods if CONFIG["enable_caching"]
-  include PostParentMethods if CONFIG["enable_parent_posts"]
+  include PostCacheMethods
+  include PostParentMethods
   include PostFileMethods
   include PostChangeSequenceMethods
   include PostRatingMethods

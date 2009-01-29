@@ -50,13 +50,8 @@ CONFIG["amazon_s3_access_key_id"] = ""
 CONFIG["amazon_s3_secret_access_key"] = ""
 CONFIG["amazon_s3_bucket_name"] = ""
 
-# This enables various caching mechanisms. You must have memcache (and the memcache-client ruby gem) installed in order for caching to work.
+# Enable usage of memcache to cache some actions.
 CONFIG["enable_caching"] = false
-
-# Enabling this will cause Danbooru to cache things longer:
-# - On post/index, any page after the first 10 will be cached for 3-7 days.
-# - post/show is cached
-CONFIG["enable_aggressive_caching"] = false
 
 # The server and port where the memcache client can be accessed. Only relevant if you enable caching.
 CONFIG["memcache_servers"] = ["localhost:4000"]

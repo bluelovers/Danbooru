@@ -100,13 +100,11 @@
       <dt>order:fav</dt>
       <dd>Order by when the post was favorited (only valid when doing a fav search)</dd>
       
-      <% if CONFIG["enable_parent_posts"] %>
-        <dt>parent:1234</dt>
-        <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
-        
-        <dt>parent:none</dt>
-        <dd>Search for posts that have no parent.</dd>
-      <% end %>
+      <dt>parent:1234</dt>
+      <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
+      
+      <dt>parent:none</dt>
+      <dd>Search for posts that have no parent.</dd>
       
       <dt class="bad">gun* dress</dt>
       <dd>Pattern searches do not work well with other tags.</dd>

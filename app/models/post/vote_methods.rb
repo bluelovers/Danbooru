@@ -18,14 +18,14 @@ module PostVoteMethods
       raise AlreadyVotedError.new
     end
     
-    if CONFIG["enable_caching"] && RAILS_ENV != "test" && Cache.get("vote:#{ip_addr}:#{id}")
+    if RAILS_ENV != "test" && Cache.get("vote:#{ip_addr}:#{id}")
       raise AlreadyVotedError.new
     end
 
     self.score += score
     execute_sql("UPDATE posts SET score = ?, last_voter_ip = ? WHERE id = ?", self.score, ip_addr, id)
     
-    if CONFIG["enable_caching"] && RAILS_ENV != "test"
+    if RAILS_ENV != "test"
       Cache.put("vote:#{ip_addr}:#{id}", 1)
     end
   end

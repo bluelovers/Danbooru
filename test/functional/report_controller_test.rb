@@ -19,27 +19,35 @@ class ReportControllerTest < ActionController::TestCase
     WikiPage.create({:title => "hoge", :user_id => 1, :body => "hoge", :ip_addr => "127.0.0.1", :is_locked => false}.merge(params))
   end
   
-  def test_tag_changes
+  def test_tag_updates
     p1 = create_post("hoge", 1)
     update_post(p1, :tags => "moge")
     
-    get :tag_changes, {}, {}
+    get :tag_updates, {}, {}
     assert_response :success
   end
   
-  def test_note_changes
+  def test_note_updates
     n1 = create_note(:body => "hoge")
     n1.update_attributes(:body => "moge")
     
-    get :note_changes, {}, {}
+    get :note_updates, {}, {}
     assert_response :success
   end
   
-  def test_wiki_changes
+  def test_wiki_updates
     w1 = create_wiki
     w1.update_attributes(:body => "moge")
     
-    get :wiki_changes, {}, {}
+    get :wiki_updates, {}, {}
+    assert_response :success
+  end
+  
+  def test_post_uploads
+    p1 = create_post("hoge", 1)
+    update_post(p1, :tags => "moge")
+    
+    get :post_uploads, {}, {}
     assert_response :success
   end
 end

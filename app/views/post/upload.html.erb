@@ -85,12 +85,10 @@
               <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %>
             </td>
           </tr>
-          <% if CONFIG["enable_parent_posts"] %>
-            <tr>
-              <th><label for="post_parent_id">Parent</label></th>
-              <td><%= text_field "post", "parent_id", :size => 5, :tabindex => 4 %></td>
-            </tr>
-          <% end %>
+          <tr>
+            <th><label for="post_parent_id">Parent</label></th>
+            <td><%= text_field "post", "parent_id", :size => 5, :tabindex => 4 %></td>
+          </tr>
           <tr>
             <th>
               <label for="post_rating_questionable">Rating</label>

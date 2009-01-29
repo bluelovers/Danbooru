@@ -2,14 +2,14 @@ Dir["#{RAILS_ROOT}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
 
 class Tag < ActiveRecord::Base
   include TagTypeMethods
-  include TagCacheMethods if CONFIG["enable_caching"]
+  include TagCacheMethods
   include TagRelatedTagMethods
   include TagParseMethods
   include TagApiMethods
   
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50
-    counts = select_all_sql("SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name FROM posts p, posts_tags pt, tags t WHERE p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id GROUP BY pt.tag_id ORDER BY post_count DESC LIMIT ?", start, stop, options[:limit])
+    counts = select_all_sql("SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name, t.tag_type AS tag_type FROM posts p, posts_tags pt, tags t WHERE p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id GROUP BY pt.tag_id, t.tag_type ORDER BY post_count DESC LIMIT ?", start, stop, options[:limit]).map {|x| TagProxy.new(x['name'], x['post_count'], x['tag_type'])}
   end
 
   def self.find_or_create_by_name(name)

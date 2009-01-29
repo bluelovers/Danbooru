@@ -1,54 +1,11 @@
 module TagHelper
-  def tag_links(tags, options = {})
-    return "" if tags.blank?
-    prefix = options[:prefix] || ""
-    
-    html = ""
-    
-    case tags[0]
-    when String
-      tags = Tag.find(:all, :conditions => ["name in (?)", tags], :select => "name, post_count").inject({}) {|all, x| all[x.name] = x.post_count; all}.to_a.sort {|a, b| a[0] <=> b[0]}
-
-    when Hash
-      tags = tags.map {|x| [x["name"], x["post_count"]]}
-      
-    when Tag
-      tags = tags.map {|x| [x.name, x.post_count]}
-    end
-
-    tags.each do |name, count|
-      name ||= "UNKNOWN"
-      
-      tag_type = Tag.type_name(name)
-      
-      html << %{<li class="tag-type-#{tag_type}">}
-      
-      if CONFIG["enable_artists"] && tag_type == "artist"
-        html << %{<a href="/artist/show?name=#{u(name)}">?</a> }
-      else
-        html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
-      end
-
-      if @current_user.is_privileged_or_higher?
-        html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}">+</a> }
-        html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}">&ndash;</a> }
-      end
-
-      html << %{<a href="/post/index?tags=#{u(name)}">#{h(name.tr("_", " "))}</a> }
-      html << %{<span class="post-count">#{count}</span> }
-      html << '</li>'
-    end
-
-    return html
-  end
-
   def cloud_view(tags, divisor = 6)
     html = ""
 
-    tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
-      size = Math.log(tag["post_count"].to_i) / divisor
+    tags.sort {|a, b| a.to_s <=> b.to_s}.each do |tag|
+      size = Math.log(tag.post_count) / divisor
       size = 0.8 if size < 0.8
-      html << %{<a href="/post/index?tags=#{u(tag["name"])}" style="font-size: #{size}em;" title="#{tag["post_count"]} posts">#{h(tag["name"])}</a> }
+      html << %{<a href="/post/index?tags=#{u(tag.name)}" style="font-size: #{size}em;" title="#{tag.post_count} posts">#{h(tag.name)}</a> }
     end
 
     return html

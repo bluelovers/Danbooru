@@ -1,7 +1,7 @@
 module TagRelatedTagMethods
   module ClassMethods
     def calculate_related_by_type(tag, type, limit = 25)
-      if CONFIG["enable_caching"] && tag.size < 230
+      if tag.size < 230
         results = Cache.get("reltagsbytype/#{type}/#{tag}")
         
         if results
@@ -23,7 +23,7 @@ module TagRelatedTagMethods
 
       results = select_all_sql(sql, tag, type, limit)
       
-      if CONFIG["enable_caching"] && tag.size < 230
+      if tag.size < 230
         post_count = (Tag.find_by_name(tag).post_count rescue 0) / 3
         post_count = 12 if post_count < 12
         post_count = 200 if post_count > 200

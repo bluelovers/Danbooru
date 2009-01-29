@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class TagAliasTest < ActiveSupport::TestCase
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      MEMCACHE.flush_all
     end
     
     @alias = TagAlias.create(:name => "tag2", :alias => "tag1", :is_pending => false, :reason => "none", :creator_id => 1)
