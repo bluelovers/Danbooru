@@ -17,13 +17,13 @@ class TagProxy
   
   def post_count
     if @count.nil?
-      Cache.get("post_count:#{@name}") do
+      @count = Cache.get("post_count:#{@name}", 4.hours) do
         tag = Tag.find(:first, :conditions => ["name = ?", @name], :select => "id, post_count")
       
         if tag
-          @count = tag.post_count
+          tag.post_count
         else
-          @count = 0
+          0
         end
       end
     end

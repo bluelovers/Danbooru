@@ -78,17 +78,16 @@ module PostHelper
 
       if tags[:exclude]
         tags[:exclude].each do |tag|
-          html << print_tag_sidebar_helper(tag[1..-1])
+          html << print_tag_sidebar_helper(tag)
         end
       end
 
       if tags[:include]
         tags[:include].each do |tag|
-          tag.sub!(/^~/, "")
           html << print_tag_sidebar_helper(tag)
         end
       end
-    
+      
       if tags[:related]
         Tag.find_related(tags[:related]).map {|x| TagProxy.new(x[0], x[1])}.each do |tag|
           html << print_tag_sidebar_helper(tag)

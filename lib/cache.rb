@@ -36,7 +36,7 @@ module Cache
       ActiveRecord::Base.logger.debug('MemCache Get (%0.6f)  %s' % [elapsed, key])
       if value.nil? and block_given? then
         value = yield
-        MEMCACHE.add key, value, expiry
+        MEMCACHE.set key, value, expiry
       end
       value
     rescue MemCache::MemCacheError => err

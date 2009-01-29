@@ -12,19 +12,14 @@ class TagAlias < ActiveRecord::Base
   end
   
   def self.to_aliased_single(tag_name, options = {})
-    hit = Cache.get("tag_alias:#{tag_name}")
-    
-    if hit.nil?
+    Cache.get("tag_alias:#{tag_name}") do
       tag = select_value_sql("SELECT tags.name FROM tags JOIN tag_aliases ON tag_aliases.alias_id = tags.id WHERE tag_aliases.name = ? AND tag_aliases.is_pending = FALSE", tag_name)
       
       if tag
-        Cache.put("tag_alias:#{tag_name}", tag)
-        return tag
+        tag
       else
-        return tag_name
+        tag_name
       end
-    else
-      hit
     end
   end
   
