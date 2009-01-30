@@ -2,6 +2,7 @@ class TagAlias < ActiveRecord::Base
   before_create :normalize
   before_create :validate_uniqueness
   after_destroy :expire_cache
+  after_create :expire_cache
 
   # Maps tags to their preferred names. Returns an array of strings.
   #

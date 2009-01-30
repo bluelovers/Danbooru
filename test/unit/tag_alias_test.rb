@@ -40,7 +40,7 @@ class TagAliasTest < ActiveSupport::TestCase
     # Try to prevent cycles from being formed
     hoge = TagAlias.create(:name => "tag1", :alias => "tag3", :is_pending => false, :reason => "none", :creator_id => 1)
     assert_equal(["tag1 is already aliased to something"], hoge.errors.full_messages)
-
+  
     hoge = TagAlias.create(:name => "tag2", :alias => "tag3", :is_pending => false, :reason => "none", :creator_id => 1)
     assert_equal(["tag2 is already aliased to something"], hoge.errors.full_messages)
   end
