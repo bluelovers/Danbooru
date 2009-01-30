@@ -69,7 +69,7 @@ Cookie = {
 
     if ($("my-favorites")) {
       if (this.get("login") != "") {
-        $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login") + "%20order%3Afav"
+        $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login")
         $("my-subscriptions").href = "/post/index?tags=sub%3A" + Cookie.get("login")
       } else {
         $("my-favorites-container").hide()

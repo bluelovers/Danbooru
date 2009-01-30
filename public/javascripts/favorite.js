@@ -6,7 +6,7 @@ Favorite = {
     if ((split_users.size() == 1) && (split_users[0] == "")) {
       return "no one"
     } else {
-       html = split_users.slice(0, 6).map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '+order%3Afav">' + x + '</a>'}).join(", ")
+       html = split_users.slice(0, 6).map(function(x) {return '<a href="/post/index?tags=fav%3A' + encodeURIComponent(x) + '">' + x + '</a>'}).join(", ")
       
       if (split_users.size() > 6) {
         html += '<span id="remaining-favs" style="display: none;">' + split_users.slice(6, -1).map(function(x) {return '<a href="/user/show?name=' + encodeURIComponent(x) + '">' + x + '</a>'}).join(", ") + '</span> <span id="remaining-favs-link">(<a href="#" onclick="$(\'remaining-favs\').show(); $(\'remaining-favs-link\').hide(); return false;">' + (split_users.size() - 6) + ' more</a>)</span>'

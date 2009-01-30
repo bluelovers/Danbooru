@@ -1,7 +1,7 @@
 <h3>Favorited by</h3>
 <ul>
 <%- @users.each do |u| %>
-  <li><%= link_to h(u.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{u.name} order:fav" %></li>
+  <li><%= link_to h(u.pretty_name), :controller => "post", :action => "index", :tags => "fav:#{u.name}" %></li>
 <%- end %>
 </ul>
 

@@ -94,6 +94,7 @@ module PostSqlMethods
         joins << "JOIN favorites f ON f.post_id = p.id JOIN users fu ON f.user_id = fu.id"
         conds << "lower(fu.name) = lower(?)"
         cond_params << q[:fav]
+        q[:order] = "fav" unless q[:order]
       end
 
       if q[:user].is_a?(String)
@@ -194,35 +195,33 @@ module PostSqlMethods
           sql << " ORDER BY p.id DESC"
       
         when "score"
-          sql << " ORDER BY p.score DESC"
+          sql << " ORDER BY p.score DESC, p.id DESC"
       
         when "score_asc"
-          sql << " ORDER BY p.score"
+          sql << " ORDER BY p.score, p.id DESC"
       
         when "mpixels"
           # Use "w*h/1000000", even though "w*h" would give the same result, so this can use
           # the posts_mpixels index.
-          sql << " ORDER BY width*height/1000000.0 DESC"
+          sql << " ORDER BY width*height/1000000.0 DESC, p.id DESC"
 
         when "mpixels_asc"
-          sql << " ORDER BY width*height/1000000.0"
+          sql << " ORDER BY width*height/1000000.0, p.id DESC"
 
         when "portrait"
-          sql << " ORDER BY 1.0*width/GREATEST(1, height)"
+          sql << " ORDER BY 1.0*width/GREATEST(1, height), p.id DESC"
 
         when "landscape"
-          sql << " ORDER BY 1.0*width/GREATEST(1, height) DESC"
+          sql << " ORDER BY 1.0*width/GREATEST(1, height) DESC, p.id DESC"
 
         when "change", "change_asc"
-          sql << " ORDER BY change_seq"
+          sql << " ORDER BY change_seq, p.id DESC"
 
         when "change_desc"
-          sql << " ORDER BY change_seq DESC"
+          sql << " ORDER BY change_seq DESC, p.id DESC"
 
         when "fav"
-          if q[:fav].is_a?(String)
-            sql << " ORDER BY f.id DESC"
-          end
+          sql << " ORDER BY f.id DESC"
 
         else
           sql << " ORDER BY p.id DESC"
