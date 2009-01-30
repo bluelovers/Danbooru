@@ -100,8 +100,17 @@ class CommentController < ApplicationController
   
   def search
     if params[:query]
-      query = params[:query].scan(/\S+/).join(" & ")
-      @comments = Comment.paginate :order => "id desc", :per_page => 30, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
+      if params[:query] =~ /^user:(.+)$/
+        user = User.find_by_name($1)
+        if user
+          @comments = Comment.paginate :order => "id desc", :per_page => 30, :conditions => ["user_id = ?", user.id], :page => params[:page]
+        else
+          @comments = Comment.paginate :per_page => 30, :page => params[:page], :conditions => "false"
+        end
+      else
+        query = params[:query].scan(/\S+/).join(" & ")
+        @comments = Comment.paginate :order => "id desc", :per_page => 30, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
+      end
     else
       @comments = Comment.paginate :per_page => 30, :conditions => "FALSE", :page => params[:page]
     end
