@@ -43,6 +43,8 @@ class PostControllerTest < ActionController::TestCase
     p3 = create_post("moge", 3)
     
     p2.flag!("sage", 1)
+    p2.reload
+    assert_not_nil(p2.flag_detail)
 
     get :moderate, {}, {:user_id => 1}
     assert_response :success

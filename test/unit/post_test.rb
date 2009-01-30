@@ -109,6 +109,11 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(8, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(2, Post.fast_count("tag2"))
+
+    post4 = create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"), :status => "deleted")
+    assert_equal(1, Post.fast_deleted_count)
+    assert_equal(0, Post.fast_deleted_count("tag1"))
+    assert_equal(1, Post.fast_deleted_count("tag2"))
     
     # These tests currently fail. This is because a deleted post won't decrement the tag's post count
     # until the post is deleted from the database (which then activates the database triggers which correct

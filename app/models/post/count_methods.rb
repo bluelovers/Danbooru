@@ -16,7 +16,7 @@ module PostCountMethods
       end
     end
     
-    def fast_deleted_count(tags)
+    def fast_deleted_count(tags = nil)
       if tags.blank?
         Cache.get("deleted_count", 24.hours) do
           select_value_sql("SELECT COUNT(*) FROM posts WHERE status = 'deleted'")
