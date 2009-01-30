@@ -112,8 +112,7 @@ CONFIG["tag_types"] = {
 
 # Determine who can see a post. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_post"] = lambda do |user, post|
-  # By default, only deleted posts are hidden.
-  post.status != 'deleted'
+  true
   
   # Some examples:
   #

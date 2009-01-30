@@ -56,9 +56,10 @@ module PostSqlMethods
         conds << "p.md5 IN (?)"
         cond_params << q[:md5].split(/,/)
       end
-  
-      if q[:deleted_only] == true
-        conds << "p.status = 'deleted'"
+      
+      if q[:status].is_a?(String)
+        conds << "p.status = ?"
+        cond_params << q[:status]
       else
         conds << "p.status <> 'deleted'"
       end
@@ -163,14 +164,6 @@ module PostSqlMethods
 
       if q[:unlocked_rating] == true
         conds << "p.is_rating_locked = FALSE"
-      end
-
-      if options[:pending]
-        conds << "p.status = 'pending'"
-      end
-  
-      if options[:flagged]
-        conds << "p.status = 'flagged'"
       end
 
       sql = "SELECT "

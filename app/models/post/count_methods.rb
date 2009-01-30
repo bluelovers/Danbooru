@@ -6,10 +6,27 @@ module PostCountMethods
       else
         c = select_value_sql("SELECT post_count FROM tags WHERE name = ?", tags).to_i
         if c == 0
-          return Post.count_by_sql(Post.generate_sql(tags, :count => true))
+          key = Digest::MD5.hexdigest(tags)
+          Cache.get("post_count:#{key}", 24.hours) do
+            Post.count_by_sql(Post.generate_sql(tags, :count => true))
+          end.to_i
         else
           return c
         end
+      end
+    end
+    
+    def fast_deleted_count(tags)
+      if tags.blank?
+        Cache.get("deleted_count", 24.hours) do
+          select_value_sql("SELECT COUNT(*) FROM posts WHERE status = 'deleted'")
+        end.to_i
+      else
+        key = Digest::MD5.hexdigest(tags)
+        
+        Cache.get("deleted_count:#{key}", 24.hours) do
+          Post.count_by_sql(Post.generate_sql("#{tags} status:deleted", :count => true))
+        end.to_i
       end
     end
 

@@ -22,6 +22,15 @@ class TagSubscription < ActiveRecord::Base
       user_name = subscription_name
       sub_group = nil
     end
+    
+    user = User.find_by_name(user_name)
+    if user
+      if sub_group
+        find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user.id, sub_group]).map {|x| x.tag_query.split(/ /)}.flatten
+      else
+        find(:all, :conditions => ["user_id = ?", user.id]).map {|x| x.tag_query.split(/ /)}.flatten
+      end
+    end        
   end
   
   def self.find_post_ids(user_id, name = nil, limit = CONFIG["tag_subscription_post_limit"])
