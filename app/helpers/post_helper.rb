@@ -60,7 +60,7 @@ module PostHelper
 
   def print_tag_sidebar(query)
     if query.is_a?(Post)
-      cache_key = "tag_sidebar:post_id:#{query.id}"
+      cache_key = "tag_sidebar:post:" + @current_user.is_privileged_or_higher?.to_s + ":" + query.id.to_s
     else
       cache_key = "tag_sidebar:" + @current_user.is_privileged_or_higher?.to_s + ":" + Digest::MD5.hexdigest(query.to_s)
     end
@@ -96,7 +96,7 @@ module PostHelper
 
       html += ['</ul>', '</div>']
       
-      unless query.is_a?(Post) && @current_user.is_privileged_or_higher?
+      if !query.is_a?(Post) && @current_user.is_privileged_or_higher?
         if tags[:subscriptions].is_a?(String)
           html += ['<div>', '<h5>Subscribed Tags</h5>', '<ul id="tag-subs-sidebar">']
           subs = TagSubscription.find_tags(tags[:subscriptions])
