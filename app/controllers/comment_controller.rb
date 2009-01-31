@@ -72,7 +72,7 @@ class CommentController < ApplicationController
   def moderate
     set_title "Moderate Comments"
 
-    if request.post?
+    if request.post? && params["c"]
       ids = params["c"].keys
       coms = Comment.find(:all, :conditions => ["id IN (?)", ids])
 

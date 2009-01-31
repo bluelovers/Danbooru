@@ -214,7 +214,11 @@ module PostSqlMethods
           sql << " ORDER BY change_seq DESC, p.id DESC"
 
         when "fav"
-          sql << " ORDER BY f.id DESC"
+          if q[:fav].is_a?(String)
+            sql << " ORDER BY f.id DESC"
+          else
+            sql << " ORDER BY p.id DESC"
+          end
 
         else
           sql << " ORDER BY p.id DESC"
