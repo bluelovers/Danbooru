@@ -3,4 +3,4 @@
 require 'rubygems'
 require 'daemons'
 
-Daemons.run(File.dirname(__FILE__) + "/job_task_processor.rb", :log_output => true, :dir => "../../log", :force_kill_wait => 120)
+Daemons.run(File.dirname(__FILE__) + "/job_task_processor.rb", :log_output => true, :dir => "../../log", :force_kill_wait => 60 * 15)

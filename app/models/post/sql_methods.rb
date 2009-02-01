@@ -95,7 +95,7 @@ module PostSqlMethods
         joins << "JOIN favorites f ON f.post_id = p.id JOIN users fu ON f.user_id = fu.id"
         conds << "lower(fu.name) = lower(?)"
         cond_params << q[:fav]
-        q[:order] = "fav" unless q[:order]
+        q[:order] = "fav" unless q[:order].is_a?(String)
       end
 
       if q[:user].is_a?(String)
