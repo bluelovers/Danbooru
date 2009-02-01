@@ -95,17 +95,4 @@ class JobTask < ActiveRecord::Base
       sleep 1
     end
   end
-  
-  def self.execute_all
-    $job_task_daemon_active = true
-
-    Signal.trap("TERM") do
-      $job_task_daemon_active = false
-    end
-
-    while $job_task_daemon_active
-      execute_once
-      60.times {sleep 1 if $job_task_daemon_active}
-    end
-  end  
 end
