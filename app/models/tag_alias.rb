@@ -71,12 +71,17 @@ class TagAlias < ActiveRecord::Base
   end
 
   def approve(user_id, ip_addr)
+    key = name.tr(" ", "_")
     execute_sql("UPDATE tag_aliases SET is_pending = FALSE WHERE id = ?", id)
+    Cache.delete("tag_alias:#{key}")
     
     Post.find(:all, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = (SELECT id FROM tags WHERE name = ?))", name]).each do |post|
       post.reload
       post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end
+
+    Cache.delete("post_count:#{key}")
+    Cache.delete("post_count:#{Tag.find(alias_id).name}")
   end
   
   def api_attributes
