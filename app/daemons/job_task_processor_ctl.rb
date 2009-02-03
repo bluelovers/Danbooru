@@ -21,6 +21,8 @@ if ARGV[0] == "start"
     current.each do |pid|
       `kill -SIGKILL #{pid}`
     end
+
+    `psql danbooru -c "update job_tasks set status = 'pending' where task_type = 'calculate_tag_subscriptions'"`
   end
 end
 
