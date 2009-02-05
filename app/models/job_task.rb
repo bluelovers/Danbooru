@@ -60,9 +60,11 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_calculate_tag_subscriptions
-    return if Cache.get("delay-tag-sub-calc", 15.minutes) {1}
-    TagSubscription.process_all
-    update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
+    last_run = Time.parse(data["last_run"])
+    if last_run.nil? || last_run < 15.minutes.ago
+      TagSubscription.process_all
+      update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
+    end
   end
   
   def pretty_data

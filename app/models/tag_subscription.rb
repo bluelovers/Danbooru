@@ -54,14 +54,17 @@ class TagSubscription < ActiveRecord::Base
             post_ids = []
             tags.each do |tag|
               post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
+              sleep 1
             end
             tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
           end
         rescue Exception => x
           # fail silently
         end
-        sleep 1
       end
+
     end
+
+    sleep 1
   end
 end

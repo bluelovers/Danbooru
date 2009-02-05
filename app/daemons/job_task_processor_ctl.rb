@@ -21,9 +21,9 @@ if ARGV[0] == "start"
     current.each do |pid|
       `kill -SIGKILL #{pid}`
     end
-
-    `psql danbooru -c "update job_tasks set status = 'pending' where task_type = 'calculate_tag_subscriptions'"`
   end
+
+  `psql danbooru -c "update job_tasks set status = 'pending' where task_type = 'calculate_tag_subscriptions'"`
 end
 
 Daemons.run(File.dirname(__FILE__) + "/job_task_processor.rb", :log_output => true, :dir => "../../log")
