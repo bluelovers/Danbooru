@@ -6,7 +6,7 @@ require 'daemons'
 if ARGV[0] == "start"
   current = []
   
-  240.times do
+  120.times do
     current = `pgrep -f job_task_processor.rb`.scan(/\d+/)
     next if current.size == 0
     
@@ -14,7 +14,7 @@ if ARGV[0] == "start"
       `kill -SIGTERM #{pid}`
     end
     
-    sleep 5
+    sleep 1
   end
 
   if current.size > 0
@@ -23,7 +23,7 @@ if ARGV[0] == "start"
     end
   end
 
-  `psql danbooru -c "update job_tasks set status = 'pending' where task_type = 'calculate_tag_subscriptions'"`
+  `psql danbooru -c "update job_tasks set status = 'pending' where status IN ('processing', 'error')"`
 end
 
 Daemons.run(File.dirname(__FILE__) + "/job_task_processor.rb", :log_output => true, :dir => "../../log")
