@@ -61,9 +61,9 @@ Cookie = {
       $("block-reason").update(this.get("block_reason")).show()
     }
 
-		if (this.get("hide-upgrade-account") == "1") {
+		if (this.get("hide-upgrade-account") != "1") {
       if ($("upgrade-account")) {
-   	    $("upgrade-account").hide()
+   	    $("upgrade-account").show()
       }
 		}
 

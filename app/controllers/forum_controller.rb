@@ -28,11 +28,11 @@ class ForumController < ApplicationController
     @forum_post = ForumPost.new
     
     if params[:type] == "alias"
-      @forum_post.title = "Tag Alias: "
-      @forum_post.body = "Aliasing ___ to ___.\n\nReason: "
+      @forum_post.title = "Tag Alias: ___ -> ___ "
+      @forum_post.body = "Aliasing ___ -> ___.\n\nReason: "
     elsif params[:type] == "impl"
-      @forum_post.title = "Tag Implication: "
-      @forum_post.body = "Implicating ___ to ___.\n\nReason: "
+      @forum_post.title = "Tag Implication: ___ -> ___"
+      @forum_post.body = "Implicating ___ -> ___.\n\nReason: "
     end
   end
 

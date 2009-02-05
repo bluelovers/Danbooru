@@ -140,7 +140,7 @@ class ForumPost < ActiveRecord::Base
     
     return true
   end
-    
+  
   def initialize_last_updated_by
     if is_parent?
       update_attribute(:last_updated_by, creator_id)

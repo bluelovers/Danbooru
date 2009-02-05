@@ -62,7 +62,7 @@
   </div>
 
   <% if @current_user.is_member_or_lower? %>
-    <div id="upgrade-account">
+    <div id="upgrade-account" style="display: none;">
       <a href="/help/users">Upgrade your account for only $20</a>
       <%= link_to_function "No thanks", "$('upgrade-account').hide(); Cookie.put('hide-upgrade-account', '1', 7)", :id => "hide-upgrade-account-link" %>
     </div>

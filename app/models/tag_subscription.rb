@@ -2,6 +2,7 @@ class TagSubscription < ActiveRecord::Base
   belongs_to :user
   before_create :initialize_post_ids
   before_save :normalize_name
+  before_save :limit_tag_count
   named_scope :visible, :conditions => "is_visible_on_profile = TRUE"
 
   def normalize_name
@@ -12,6 +13,10 @@ class TagSubscription < ActiveRecord::Base
     if user.is_privileged_or_higher?
       self.cached_post_ids = Post.find_by_tags(tag_query, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id).uniq.join(",")
     end
+  end
+  
+  def limit_tag_count
+    self.tag_query = tag_query.scan(/\S+/).slice(0, 20).join(" ")
   end
   
   def self.find_tags(subscription_name)
