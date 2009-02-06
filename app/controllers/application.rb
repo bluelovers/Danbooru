@@ -197,6 +197,15 @@ protected
       cookies["recent_tags"] = tags.slice(0, 20).join(" ")
     end
   end
+
+  def check_load_average
+    current_load = Sys::CPU.load_avg[1]
+
+    if request.get? &&current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
+      render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
+      return false
+    end
+  end
   
   def set_cache_headers
     response.headers["Cache-Control"] = "max-age=300"
