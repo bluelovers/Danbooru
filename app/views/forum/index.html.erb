@@ -35,7 +35,7 @@
             <% end %>
           </td>
           <td><%= h fp.author.tr("_", " ") %></td>
-          <td><%= h fp.last_updater %></td>
+          <td><%= h fp.last_updater.tr("_", " ") %></td>
           <td><%= time_ago_in_words(fp.updated_at) %> ago</td>
           <td><%= fp.response_count %></td>
         <% end %>

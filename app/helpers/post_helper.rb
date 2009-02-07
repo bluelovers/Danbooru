@@ -65,7 +65,7 @@ module PostHelper
       cache_key = "tag_sidebar:" + @current_user.is_privileged_or_higher?.to_s + ":" + Digest::MD5.hexdigest(query.to_s)
     end
 
-    Cache.get(cache_key, 4.hours) do
+#    Cache.get(cache_key, 4.hours) do
       if query.is_a?(Post)
         tags = {:include => query.cached_tags.split(/ /)}
       elsif !query.blank?
@@ -106,15 +106,15 @@ module PostHelper
           html += ['</ul>', '</div>']
         end
         
-        deleted_count = Post.fast_deleted_count(query)
-        if deleted_count > 0
-          html += ['<div>', '<h5>Tag Statistics</h5>', '<ul id="tag-stats-sidebar">']
-          html << %{<li><a href="/post/index?tags=#{u(query)}+status%3Adeleted">deleted:#{deleted_count}</a></li>}
-          html += ['</ul>', '</div>']        
-        end
+#        deleted_count = Post.fast_deleted_count(query)
+#        if deleted_count > 0
+#          html += ['<div>', '<h5>Tag Statistics</h5>', '<ul id="tag-stats-sidebar">']
+#          html << %{<li><a href="/post/index?tags=#{u(query)}+status%3Adeleted">deleted:#{deleted_count}</a></li>}
+#          html += ['</ul>', '</div>']        
+#        end
       end
       
       html.join("\n")
-    end
+#    end
   end
 end

@@ -6,7 +6,7 @@ require 'daemons'
 if ARGV[0] == "start"
   current = []
   
-  120.times do
+  30.times do
     current = `pgrep -f job_task_processor.rb`.scan(/\d+/)
     next if current.size == 0
     

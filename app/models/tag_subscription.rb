@@ -52,20 +52,20 @@ class TagSubscription < ActiveRecord::Base
   
   def self.process_all
     find(:all).each do |tag_subscription|
-      if $job_task_daemon_active != false
-        if tag_subscription.user.is_privileged_or_higher?
-          begin
-            TagSubscription.transaction do
-              tags = tag_subscription.tag_query.scan(/\S+/)
-              post_ids = []
-              tags.each do |tag|
-                post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
-              end
-              tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
+      if $job_task_daemon_active != false && tag_subscription.user.is_privileged_or_higher?
+        begin
+          sleep 1
+
+          TagSubscription.transaction do
+            tags = tag_subscription.tag_query.scan(/\S+/)
+            post_ids = []
+            tags.each do |tag|
+              post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
             end
-          rescue Exception => x
-            # fail silently
+            tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
           end
+        rescue Exception => x
+          # fail silently
         end
       end
     end
