@@ -130,9 +130,13 @@ class User < ActiveRecord::Base
       end
 
       def find_name(user_id)
-        @cache ||= {}
-        @cache.clear if @cache.size > 30
-        return @cache[user_id] if @cache[user_id]
+        if RAILS_ENV == "test"
+          @cache = {}
+        else
+          @cache ||= {}
+          @cache.clear if @cache.size > 30
+          return @cache[user_id] if @cache[user_id]
+        end
         
         @cache[user_id] = Cache.get("user_name:#{user_id}") do
           find_name_helper(user_id)

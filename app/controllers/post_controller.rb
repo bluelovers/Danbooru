@@ -162,7 +162,7 @@ class PostController < ApplicationController
     page = params[:page].to_i
     page = 1 if page == 0
     limit = params[:limit].to_i
-    limit = 100 if limit == 0
+    limit = 60 if limit == 0
     limit = 1000 if limit > 1000
     count = 0
     
@@ -196,7 +196,7 @@ class PostController < ApplicationController
           @render_start_time = Time.now
           @content_for_subnavbar = nil
           @posts = WillPaginate::Collection.create(params[:page], 20, count) do |pager|
-            pager.replace(post_group)
+            pager.replace(post_group.compact)
           end
 
           key, expiry = get_cache_key(controller_name, action_name, params[:page], params, :user => @current_user)
@@ -214,10 +214,18 @@ class PostController < ApplicationController
         render :text => first_page
       end
       fmt.xml do
-        @posts = posts
+        @posts = WillPaginate::Collection.create(params[:page], limit, count) do |pager|
+          pager.replace(posts)
+        end
         render :layout => false
       end
-      fmt.json {render :json => @posts.to_json}
+      fmt.json do
+        @posts = WillPaginate::Collection.create(params[:page], limit, count) do |pager|
+          pager.replace(posts)
+        end
+        
+        render :json => @posts.to_json
+      end
     end
   end
 

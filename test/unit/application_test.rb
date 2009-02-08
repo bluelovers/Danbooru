@@ -15,7 +15,7 @@ class ApplicationTest < ActiveSupport::TestCase
     searches.each do |search|
       result = Post.find_by_sql(Post.generate_sql(search, :order => "p.id DESC"))
       params = { :tags => search }
-      key = get_cache_key("post", "index", params)[0]
+      key = get_cache_key("post", "index", 1, params)[0]
 
       ret[search] = key
     end
@@ -97,8 +97,8 @@ class ApplicationTest < ActiveSupport::TestCase
   def test_cache_key_limit
     assert_equal(true, CONFIG["enable_caching"], "Can't test caching with caching disabled")
 
-    limit1 = get_cache_key("post", "index", {:tags => "", :limit => "100"})[0]
-    limit2 = get_cache_key("post", "index", {:tags => "", :limit => ""})[0]
+    limit1 = get_cache_key("post", "index", 1, {:tags => "", :limit => "100"})[0]
+    limit2 = get_cache_key("post", "index", 1, {:tags => "", :limit => ""})[0]
     assert_not_equal(limit1, limit2)
   end
 end

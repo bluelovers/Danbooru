@@ -213,9 +213,9 @@ protected
 
   def check_load_average
     if CONFIG["load_average_threshold"]
-      current_load = Sys::CPU.load_avg[1]
+      current_load = Sys::CPU.load_avg[0]
 
-      if request.get? &&current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
+      if request.get? && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
         render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
         return false
       end
