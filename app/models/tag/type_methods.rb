@@ -27,9 +27,9 @@ module TagTypeMethods
     def type_name(tag_name)
       tag_name = tag_name.gsub(/\s/, "_")
       
-      Cache.get("tag_type:#{tag_name}") do
+#      Cache.get("tag_type:#{tag_name}") do
         type_name_helper(tag_name)
-      end
+#      end
     end
   end
 

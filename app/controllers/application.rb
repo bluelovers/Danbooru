@@ -1,3 +1,5 @@
+require 'ruby-prof'
+
 class ApplicationController < ActionController::Base
   include ExceptionNotifiable
 
@@ -181,11 +183,22 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
+  around_filter :run_profile
   
   protected :build_cache_key
   protected :get_cache_key
 
 protected
+  def run_profile
+    return yield if params[:profile].nil?
+    result = RubyProf.profile {yield}
+    printer = RubyProf::GraphPrinter.new(result)
+    out = StringIO.new
+    printer.print(out, 0)
+    response.body.replace(out.string)
+    response.content_type = "text/plain"
+  end
+
   def set_title(title = CONFIG["app_name"])
     @page_title = CGI.escapeHTML(title)
   end

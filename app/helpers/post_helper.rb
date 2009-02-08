@@ -59,11 +59,11 @@ module PostHelper
   end
 
   def print_tag_sidebar(query)
-    if query.is_a?(Post)
-      cache_key = "tag_sidebar:post:" + @current_user.is_privileged_or_higher?.to_s + ":" + query.id.to_s
-    else
-      cache_key = "tag_sidebar:" + @current_user.is_privileged_or_higher?.to_s + ":" + Digest::MD5.hexdigest(query.to_s)
-    end
+#    if query.is_a?(Post)
+#      cache_key = "tag_sidebar:post:#{@current_user.is_privileged_or_higher?}:#{query.id}"
+#    else
+#      cache_key = "tag_sidebar:#{@current_user.is_privileged_or_higher?}:" + query.tr(" ", "+")
+#    end
 
 #    Cache.get(cache_key, 4.hours) do
       if query.is_a?(Post)
@@ -71,7 +71,9 @@ module PostHelper
       elsif !query.blank?
         tags = Tag.parse_query(query)
       else
-        tags = {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
+        tags = Cache.get("$popular_tags", 4.hours) do
+          {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
+        end
       end
       
       html = ['<div>', '<h5>Tags</h5>', '<ul id="tag-sidebar">']
