@@ -26,9 +26,6 @@ class ApplicationTest < ActiveSupport::TestCase
   def test_cache_key_expiration
     assert_equal(true, CONFIG["enable_caching"], "Can't test caching with caching disabled")
 
-    # Aggressive caching allows stale cache pages to be used; test with it disabled.
-    CONFIG["enable_aggressive_caching"] = false
-
     pool_id = Pool.create({:name => "dummy", :user_id => 1}).id
 
     tests = [
@@ -39,7 +36,7 @@ class ApplicationTest < ActiveSupport::TestCase
           { :tags => "abcd efgh" },         # tag addition
           { :tags => "efgh" },              # tag removal
         ],
-        :affected_searches => ["abcd", "ab*", "-abcd", "id:1", "pool:#{pool_id}"]
+        :affected_searches => ["abcd", "ab*", "id:1", "pool:#{pool_id}"]
       },
       {
         # s -> e -> s

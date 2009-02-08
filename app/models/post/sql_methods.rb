@@ -114,26 +114,26 @@ module PostSqlMethods
         cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
       end
 
-      if q.has_key?(:include)
-        joins << "JOIN posts_tags ipt ON ipt.post_id = p.id"
-        conds << "ipt.tag_id IN (SELECT id FROM tags WHERE name IN (?))"
-        cond_params << (q[:include] + q[:related])
-      elsif q[:related].any?
-        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:related].size > CONFIG["tag_query_limit"]
-    
-        q[:related].each_with_index do |rtag, i|
-          joins << "JOIN posts_tags rpt#{i} ON rpt#{i}.post_id = p.id AND rpt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
-          join_params << rtag
-        end
+      if q[:include].any?
+        conds << "tags_index @@ to_tsquery('danbooru', ?)"
+        cond_params << q[:include].join(" | ")
+      end
+      
+      if q[:related].any?
+        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
+        conds << "tags_index @@ to_tsquery('danbooru', ?)"
+        cond_params << q[:related].join(" & ")
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        q[:exclude].each_with_index do |etag, i|
-          joins << "LEFT JOIN posts_tags ept#{i} ON p.id = ept#{i}.post_id AND ept#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
-          conds << "ept#{i}.tag_id IS NULL"
-          join_params << etag
+        
+        if q[:include].empty? && q[:related].empty?
+          raise "You must search for at least one other tag when excluding a tag"
         end
+        
+        conds << "tags_index @@ !! to_tsquery('danbooru', ?)"
+        cond_params << q[:exclude]
       end
 
       if q[:rating].is_a?(String)

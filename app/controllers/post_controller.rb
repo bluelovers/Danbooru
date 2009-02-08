@@ -159,11 +159,8 @@ class PostController < ApplicationController
   def index
     tags = params[:tags].to_s
     @split_tags = QueryParser.parse(tags)
-    page = params[:page].to_i
-    page = 1 if page == 0
-    limit = params[:limit].to_i
-    limit = 60 if limit == 0
-    limit = 1000 if limit > 1000
+    page = params[:page].to_i; page = 1 if page == 0
+    limit = params[:limit].to_i; limit = 20 if limit == 0; limit = 1000 if limit > 1000
     count = 0
     
     if @current_user.is_member_or_lower? && @split_tags.size > 2
@@ -175,55 +172,23 @@ class PostController < ApplicationController
     end
     
     db_start_time = Time.now
-    count = Post.fast_count(tags)
+    post_count = Post.fast_count(tags)
     set_title "/" + tags.tr("_", " ")
-    posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => ((page - 1) * limit), :limit => limit))
     @db_delta_time = Time.now - db_start_time
+    @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
+      pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
+    end
     
     respond_to do |fmt|
       fmt.html do
-        if count < 20 && @split_tags.size == 1
-          @tag_suggestions = Tag.find_suggestions(tags)
-        end
-
+        @tag_suggestions = Tag.find_suggestions(tags) if count < 20 && @split_tags.size == 1
         @ambiguous_tags = Tag.select_ambiguous(@split_tags)
-        @page_pregenerated = false
-
-        params[:page] = page
-        first_page = ""
-        
-        posts.in_groups_of(20).each do |post_group|
-          @render_start_time = Time.now
-          @content_for_subnavbar = nil
-          @posts = WillPaginate::Collection.create(params[:page], 20, count) do |pager|
-            pager.replace(post_group.compact)
-          end
-
-          key, expiry = get_cache_key(controller_name, action_name, params[:page], params, :user => @current_user)
-
-          rendered_page = Cache.get(key, expiry) do
-            render_to_string
-          end
-          
-          first_page = rendered_page if first_page == ""
-          params[:page] += 1
-          @db_delta_time = 0
-          @page_pregenerated = true
-        end
-        
-        render :text => first_page
+        @render_start_time = Time.now
       end
       fmt.xml do
-        @posts = WillPaginate::Collection.create(params[:page], limit, count) do |pager|
-          pager.replace(posts)
-        end
         render :layout => false
       end
       fmt.json do
-        @posts = WillPaginate::Collection.create(params[:page], limit, count) do |pager|
-          pager.replace(posts)
-        end
-        
         render :json => @posts.to_json
       end
     end
