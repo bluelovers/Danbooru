@@ -1,4 +1,4 @@
-require 'ruby-prof'
+# require 'ruby-prof'
 
 class ApplicationController < ActionController::Base
   include ExceptionNotifiable
@@ -183,26 +183,26 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
-  around_filter :run_profile
+  # around_filter :run_profile
   
   protected :build_cache_key
   protected :get_cache_key
 
 protected
-  def run_profile
-    return yield if params[:profile].nil?
-    result = RubyProf.profile {yield}
-    printer = RubyProf::GraphPrinter.new(result)
-    out = StringIO.new
-    printer.print(out, 0)
-    response.body.replace(out.string)
-    response.content_type = "text/plain"
-  end
+  # def run_profile
+  #   return yield if params[:profile].nil?
+  #   result = RubyProf.profile {yield}
+  #   printer = RubyProf::GraphPrinter.new(result)
+  #   out = StringIO.new
+  #   printer.print(out, 0)
+  #   response.body.replace(out.string)
+  #   response.content_type = "text/plain"
+  # end
 
   def set_title(title = CONFIG["app_name"])
     @page_title = CGI.escapeHTML(title)
   end
-
+  
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = Tag.scan_tags(params[:tags] || params[:post][:tags])
@@ -212,11 +212,13 @@ protected
   end
 
   def check_load_average
-    current_load = Sys::CPU.load_avg[1]
+    if CONFIG["load_average_threshold"]
+      current_load = Sys::CPU.load_avg[1]
 
-    if request.get? &&current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
-      render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
-      return false
+      if request.get? &&current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
+        render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
+        return false
+      end
     end
   end
   
@@ -226,7 +228,7 @@ protected
   
   def cache_action
     if request.method == :get && request.env !~ /Googlebot/ && params[:format] != "xml" && params[:format] != "json"
-      key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
+      key, expiry = get_cache_key(controller_name, action_name, params[:page], params, :user => @current_user)
       
       if key && key.size < 200
         cached = Cache.get(key)

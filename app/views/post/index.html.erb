@@ -110,3 +110,7 @@
 <% end %>
 
 <%= render :partial => "footer" %>
+
+<div style="clear: both;">
+  <em>Total: <%= Time.now - @render_start_time + @db_delta_time %>s; DB: <%= @db_delta_time %>s; Page: <%= Time.now - @render_start_time %>s; Pregenerated: <%= @page_pregenerated %></em>
+</div>

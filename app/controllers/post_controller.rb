@@ -160,8 +160,9 @@ class PostController < ApplicationController
     tags = params[:tags].to_s
     @split_tags = QueryParser.parse(tags)
     page = params[:page].to_i
+    page = 1 if page == 0
     limit = params[:limit].to_i
-    limit = 20 if limit == 0
+    limit = 100 if limit == 0
     limit = 1000 if limit > 1000
     count = 0
     
@@ -173,28 +174,49 @@ class PostController < ApplicationController
       return
     end
     
-    begin
-      count = Post.fast_count(tags)
-    rescue => x
-      respond_to_error("Error: #{x}", :action => "error")
-      return
-    end
-
+    db_start_time = Time.now
+    count = Post.fast_count(tags)
     set_title "/" + tags.tr("_", " ")
-
-    if count < 20 && @split_tags.size == 1
-      @tag_suggestions = Tag.find_suggestions(tags)
-    end
+    posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => ((page - 1) * limit), :limit => limit))
+    @db_delta_time = Time.now - db_start_time
     
-    @ambiguous_tags = Tag.select_ambiguous(@split_tags)
-    
-    @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
-      pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
-    end
-
     respond_to do |fmt|
-      fmt.html
-      fmt.xml {render :layout => false}
+      fmt.html do
+        if count < 20 && @split_tags.size == 1
+          @tag_suggestions = Tag.find_suggestions(tags)
+        end
+
+        @ambiguous_tags = Tag.select_ambiguous(@split_tags)
+        @page_pregenerated = false
+
+        params[:page] = page
+        first_page = ""
+        
+        posts.in_groups_of(20).each do |post_group|
+          @render_start_time = Time.now
+          @content_for_subnavbar = nil
+          @posts = WillPaginate::Collection.create(params[:page], 20, count) do |pager|
+            pager.replace(post_group)
+          end
+
+          key, expiry = get_cache_key(controller_name, action_name, params[:page], params, :user => @current_user)
+
+          rendered_page = Cache.get(key, expiry) do
+            render_to_string
+          end
+          
+          first_page = rendered_page if first_page == ""
+          params[:page] += 1
+          @db_delta_time = 0
+          @page_pregenerated = true
+        end
+        
+        render :text => first_page
+      end
+      fmt.xml do
+        @posts = posts
+        render :layout => false
+      end
       fmt.json {render :json => @posts.to_json}
     end
   end

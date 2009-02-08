@@ -22,16 +22,16 @@ module CacheHelper
     ["#{base}/v=#{version}&t=#{tags}&p=#{page}&ul=#{user_level}&l=#{limit}", 0]
   end
 
-  def get_cache_key(controller_name, action_name, params, options = {})
+  def get_cache_key(controller_name, action_name, page, params, options = {})
     case "#{controller_name}/#{action_name}"
     when "post/index"
-      build_cache_key("p/i", params[:tags], params[:page], params[:limit], options)
+      build_cache_key("p/i", params[:tags], page, params[:limit], options)
       
     when "post/atom"
       build_cache_key("p/a", params[:tags], 1, "", options)
 
     when "post/piclens"
-      build_cache_key("p/p", params[:tags], params[:page], params[:limit], options)
+      build_cache_key("p/p", params[:tags], page, params[:limit], options)
       
     else
       nil
