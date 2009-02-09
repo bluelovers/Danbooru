@@ -31,6 +31,13 @@ module PostSqlMethods
         # do nothing
       end
     end
+    
+    def geneate_sql_escape_helper(array)
+      array.map do |token|
+        escaped_token = token.gsub(/\\|'/, '\0\0\0\0')
+        "''" + escaped_token + "''"
+      end
+    end
 
     def generate_sql(q, options = {})
       original_query = q
@@ -114,26 +121,25 @@ module PostSqlMethods
         cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
       end
 
+      tags_index_query = []
+
       if q[:include].any?
-        conds << "tags_index @@ to_tsquery('danbooru', ?)"
-        cond_params << q[:include].join(" | ")
+        tags_index_query << "(" + geneate_sql_escape_helper(q[:include]).join(" | ") + ")"
       end
       
       if q[:related].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        conds << "tags_index @@ to_tsquery('danbooru', ?)"
-        cond_params << q[:related].join(" & ")
+        tags_index_query << "(" + geneate_sql_escape_helper(q[:related]).join(" & ") + ")"
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
         
-        if q[:include].empty? && q[:related].empty?
-          raise "You must search for at least one other tag when excluding a tag"
-        end
-        
-        conds << "tags_index @@ !! to_tsquery('danbooru', ?)"
-        cond_params << q[:exclude]
+        tags_index_query << "!(" + geneate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
+      end
+
+      if tags_index_query.any?
+        conds << "tags_index @@ to_tsquery('danbooru', E'" + tags_index_query.join(" & ") + "')"
       end
 
       if q[:rating].is_a?(String)
@@ -234,8 +240,9 @@ module PostSqlMethods
       if options[:offset]
         sql << " OFFSET " + options[:offset].to_s
       end
-
+      
       params = join_params + cond_params
+
       return Post.sanitize_sql([sql, *params])
     end
   end

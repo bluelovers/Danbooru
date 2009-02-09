@@ -462,7 +462,8 @@ class PostTest < ActiveSupport::TestCase
     p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
     p6 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
 
-    assert_raise(RuntimeError) { search_posts("-tag3") }
+    matches = search_posts("-tag3")
+    assert_equal(3, matches.size)
     
     matches = search_posts("tag1 -tag3")
     assert_equal(2, matches.size)
@@ -497,6 +498,14 @@ class PostTest < ActiveSupport::TestCase
     
     matches = search_posts("jaoooo*")
     assert_equal(0, matches.size)
+  end
+  
+  def test_special_characters
+    p1 = create_post(:tags => "\\a", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
+    p1 = create_post(:tags => "'a", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    
+    assert_equal(1, search_posts("\\a").size)
+    assert_equal(1, search_posts("'a").size)
   end
   
   # TODO: additional search tests
