@@ -1,5 +1,6 @@
 class AddFullTextIndexOnPostTags < ActiveRecord::Migration
   def self.up
+    execute "SET statement_timeout = 0"
     execute "SET search_path = public"
 
     execute "CREATE OR REPLACE FUNCTION testprs_start(internal, int4)

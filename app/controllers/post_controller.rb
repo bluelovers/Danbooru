@@ -161,7 +161,6 @@ class PostController < ApplicationController
     @split_tags = QueryParser.parse(tags)
     page = params[:page].to_i; page = 1 if page == 0
     limit = params[:limit].to_i; limit = 20 if limit == 0; limit = 1000 if limit > 1000
-    count = 0
     
     if @current_user.is_member_or_lower? && @split_tags.size > 2
       respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
@@ -175,13 +174,13 @@ class PostController < ApplicationController
     post_count = Post.fast_count(tags)
     set_title "/" + tags.tr("_", " ")
     @db_delta_time = Time.now - db_start_time
-    @posts = WillPaginate::Collection.create(page, limit, count) do |pager|
+    @posts = WillPaginate::Collection.create(page, limit, post_count) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     
     respond_to do |fmt|
       fmt.html do
-        @tag_suggestions = Tag.find_suggestions(tags) if count < 20 && @split_tags.size == 1
+        @tag_suggestions = Tag.find_suggestions(tags) if post_count < 20 && @split_tags.size == 1
         @ambiguous_tags = Tag.select_ambiguous(@split_tags)
         @render_start_time = Time.now
       end

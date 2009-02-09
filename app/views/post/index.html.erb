@@ -112,5 +112,5 @@
 <%= render :partial => "footer" %>
 
 <div style="clear: both; color: #CCC;">
-  <em>Total: <%= Time.now - @render_start_time + @db_delta_time %>s; DB: <%= @db_delta_time %>s; Page: <%= Time.now - @render_start_time %>s; Pregenerated: <%= @page_pregenerated %><% if CONFIG["load_average_threshold"] %>; Load: <%= Sys::CPU.load_avg.join(", ") %><% end %>; Created <%= Time.now.strftime("%H:%M") %></em>
+  <em>Total: <%= Time.now - @render_start_time + @db_delta_time %>s; DB: <%= @db_delta_time %>s; Page: <%= Time.now - @render_start_time %>s; <% if CONFIG["load_average_threshold"] %>; Load: <%= Sys::CPU.load_avg.join(", ") %><% end %>; Created <%= Time.now.strftime("%H:%M") %></em>
 </div>
