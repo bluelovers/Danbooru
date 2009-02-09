@@ -34,7 +34,7 @@ module PostSqlMethods
     
     def geneate_sql_escape_helper(array)
       array.map do |token|
-        escaped_token = token.gsub(/\\|'/, '\0\0\0\0')
+        escaped_token = token.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77")
         "''" + escaped_token + "''"
       end
     end

@@ -502,10 +502,12 @@ class PostTest < ActiveSupport::TestCase
   
   def test_special_characters
     p1 = create_post(:tags => "\\a", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
-    p1 = create_post(:tags => "'a", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    p2 = create_post(:tags => "'a", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    p3 = create_post(:tags => "?a", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
     
     assert_equal(1, search_posts("\\a").size)
     assert_equal(1, search_posts("'a").size)
+    assert_equal(1, search_posts("?a").size)
   end
   
   # TODO: additional search tests
