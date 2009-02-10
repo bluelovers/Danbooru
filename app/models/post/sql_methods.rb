@@ -64,7 +64,7 @@ module PostSqlMethods
         cond_params << q[:md5].split(/,/)
       end
       
-      if q[:status].is_a?(String)
+      if q[:status].is_a?(String) and Post::STATUSES.member?(q[:status])
         conds << "p.status = ?"
         cond_params << q[:status]
       else
@@ -109,16 +109,16 @@ module PostSqlMethods
         joins << "JOIN users u ON p.user_id = u.id"
         conds << "lower(u.name) = lower(?)"
         cond_params << q[:user]
-      elsif q[:pool].is_a?(Integer)
-        joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
-        conds << "pools.id = ?"
-        cond_params << q[:pool]
       end
 
       if q[:pool].is_a?(String)
         joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
         conds << "pools.name ILIKE ? ESCAPE E'\\\\'"
         cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
+      elsif q[:pool].is_a?(Integer)
+        joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
+        conds << "pools.id = ?"
+        cond_params << q[:pool]
       end
 
       tags_index_query = []
