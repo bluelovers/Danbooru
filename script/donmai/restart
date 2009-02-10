@@ -1,10 +1,11 @@
 #!/bin/sh
 
 script/donmai/downbooru
-mongrel_rails cluster::stop
+#mongrel_rails cluster::stop
 app/daemons/job_task_processor_ctl.rb stop
 sleep 10
+touch tmp/restart.txt
 app/daemons/job_task_processor_ctl.rb start
-mongrel_rails cluster::start
-sleep 15
+#mongrel_rails cluster::start
+sleep 10
 script/donmai/upbooru

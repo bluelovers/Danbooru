@@ -211,6 +211,7 @@ protected
     end
   end
 
+=begin
   def check_load_average
     if CONFIG["load_average_threshold"]
       current_load = Sys::CPU.load_avg[0]
@@ -221,6 +222,7 @@ protected
       end
     end
   end
+=end
   
   def set_cache_headers
     response.headers["Cache-Control"] = "max-age=300"
