@@ -22,7 +22,7 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= radio_button_tag "from", wiki_page.version, i==1, :id => "from_#{wiki_page.version}" %></td>
             <td><%= radio_button_tag "to", wiki_page.version, i==0, :id => "to_#{wiki_page.version}" %></td>
-            <td><%= link_to wiki_page.updated_at.strftime("%m/%d %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %> by <%= h wiki_page.author %></td>
+            <td><%= link_to wiki_page.updated_at.strftime("%m/%d/%Y %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %> by <%= h wiki_page.author %></td>
           </tr>
         <% end %>       
       </tbody>
