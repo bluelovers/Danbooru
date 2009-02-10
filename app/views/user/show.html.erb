@@ -35,7 +35,7 @@
     </tr>
     <tr>
       <td><strong>Comments</strong></td>
-      <td><%= Comment.count(:all, :conditions => "user_id = #{@user.id}") %></td>
+      <td><%= link_to Comment.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Tag Edits</strong></td>
@@ -51,7 +51,7 @@
     </tr>
     <tr>
       <td><strong>Forum Posts</strong></td>
-      <td><%= ForumPost.count(:all, :conditions => "creator_id = #{@user.id}") %></td>
+      <td><%= link_to ForumPost.count(:all, :conditions => "creator_id = #{@user.id}"), :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <% if @user.invited_by %>
       <tr>
