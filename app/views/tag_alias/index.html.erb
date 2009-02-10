@@ -86,6 +86,6 @@
 
 <% content_for("subnavbar") do %>
   <li><%= link_to "List", :controller => "tag_alias", :action => "index" %></li>
-  <li><%= link_to "Add", :controller => "forum", :action => "new", :type => "alias" %></li>
+  <li><%= link_to "Add", :controller => "tag_alias", :action => "new" %></li>
   <li><%= link_to "Help", :controller => "help", :action => "tag_aliases" %></li>
 <% end %>

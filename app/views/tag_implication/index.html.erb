@@ -89,7 +89,7 @@
 
 <% content_for("subnavbar") do %>
   <li><%= link_to "List", :controller => "tag_implication", :action => "index" %></li>
-  <li><%= link_to "Add", :controller => "forum", :action => "new", :type => "impl" %></li>
+  <li><%= link_to "Add", :controller => "tag_implication", :action => "new" %></li>
   <li><%= link_to "Help", :controller => "help", :action => "tag_implications" %></li>
 <% end %>
 

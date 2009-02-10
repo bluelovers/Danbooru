@@ -24,19 +24,16 @@ class ForumController < ApplicationController
     end
   end
   
-  def new
-    @forum_post = ForumPost.new
-    
-    if params[:type] == "alias"
-      @forum_post.title = "Tag Alias: ___ -> ___ "
-      @forum_post.body = "Aliasing ___ -> ___.\n\nReason: "
-    elsif params[:type] == "impl"
-      @forum_post.title = "Tag Implication: ___ -> ___"
-      @forum_post.body = "Implicating ___ -> ___.\n\nReason: "
-    end
-  end
-
   def create
+    params[:forum_post] ||= {}
+    if params[:tag_alias]
+      params[:forum_post][:title] = "Tag Alias: #{params[:tag_alias][:name]} -> #{params[:tag_alias][:alias]} "
+      params[:forum_post][:body] = "Aliasing [[#{params[:tag_alias][:name]}]] -> [[#{params[:tag_alias][:alias]}]].\n\nReason: #{params[:tag_alias][:reason]}"
+    elsif params[:tag_implication]
+      params[:forum_post][:title] = "Tag Implication: #{params[:tag_implication][:predicate]} -> #{params[:tag_implication][:consequent]} "
+      params[:forum_post][:body] = "Implicating [[#{params[:tag_implication][:predicate]}]] -> [[#{params[:tag_implication][:consequent]}]].\n\nReason: #{params[:tag_implication][:reason]}"
+    end
+
     @forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
 
     if @forum_post.errors.empty?
