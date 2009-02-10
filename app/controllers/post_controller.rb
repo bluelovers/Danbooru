@@ -8,7 +8,6 @@ class PostController < ApplicationController
   around_filter :cache_action, :only => [:index, :atom, :piclens]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisement
-#  before_filter :check_load_average, :only => [:index, :atom, :piclens]
 
   def verify_action(options)
     redirect_to_proc = false

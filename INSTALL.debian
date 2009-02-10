@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "This script is out of date; please read the INSTALL document"
+exit 1
+
 if [ $USER != root ] ; then
   echo "You must run this script as root"
   exit 1
@@ -30,7 +33,7 @@ if [ -z $sitename ] ; then
 fi
 
 # Install packages
-apt-get -y install sudo gcc g++ make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev bzip2 postgresql-8.3 libpq-dev ruby ruby1.8-dev ri irb rdoc rubygems ragel memcached libmemcache-dev subversion nginx rake libopenssl-ruby mongrel
+apt-get -y install sudo gcc g++ make libreadline5-dev zlib1g-dev flex bison libgd2-noxpm libgd2-noxpm-dev bzip2 postgresql-8.3 postgresql-contrib-8.3 libpq-dev ruby ruby1.8-dev ri irb rdoc rubygems ragel memcached libmemcache-dev subversion nginx rake libopenssl-ruby mongrel
 
 # Install Ruby gems
 for i in postgres diff-lcs html5 mongrel mongrel_cluster memcache-client aws-s3 gchartrb json ; do gem install $i ; done
