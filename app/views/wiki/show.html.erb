@@ -41,10 +41,10 @@
   <% content_for("footer") do %>
     <li>|</li>
     <% if @page.nil? %>
-      <li><%= link_to "Posts", :controller => "post", :action => "index", :tags => params[:title] %></li>
+      <li><%= link_to "Posts (#{Post.fast_count(params[:title])})", :controller => "post", :action => "index", :tags => params[:title] %></li>
       <li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params[:title] %></li>
     <% else %>
-      <li><%= link_to "Posts", :controller => "post", :action => "index", :tags => @page.title %></li>
+      <li><%= link_to "Posts (#{Post.fast_count(params[:title])})", :controller => "post", :action => "index", :tags => @page.title %></li>
       <li><%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %></li>
       <% if not @page.is_locked? %>
         <li><%= link_to "Edit", :controller => "wiki", :action => "edit", :title => @page.title, :version => @page.version %></li>
