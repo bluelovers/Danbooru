@@ -145,6 +145,15 @@ class WikiPage < ActiveRecord::Base
       execute_sql("UPDATE wiki_page_versions SET title = ? WHERE wiki_page_id = ?", new_title, self.id)
     end
   end
+  
+  def tag_type
+    tag = Tag.find_by_name(title)
+    if tag
+      Tag.type_name_from_value(tag.tag_type)
+    else
+      "General"
+    end
+  end
 
   def to_xml(options = {})
     {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_xml(options.merge(:root => "wiki_page"))
