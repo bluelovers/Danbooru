@@ -120,6 +120,9 @@ class PostControllerTest < ActionController::TestCase
     
     get :index, {:format => "xml"}, {:user_id => 3}
     assert_response :success
+    
+    get :index, {:tags => "-tag1"}, {:user_id => 3}
+    assert_redirected_to :action => "error"
   end
   
   def test_atom

@@ -74,8 +74,8 @@ class TagAlias < ActiveRecord::Base
     key = name.tr(" ", "_")
     execute_sql("UPDATE tag_aliases SET is_pending = FALSE WHERE id = ?", id)
     Cache.delete("tag_alias:#{key}")
-    
-    Post.find(:all, :conditions => ["tags_index @@ ?", name]).each do |post|
+
+    Post.find(:all, :conditions => "tags_index @@ to_tsquery('danbooru', E'#{Post.generate_sql_escape_helper(name)}')").each do |post|
       post.reload
       post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end

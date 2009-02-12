@@ -169,26 +169,30 @@ class PostController < ApplicationController
       return
     end
     
-    db_start_time = Time.now
-    post_count = Post.fast_count(tags)
-    set_title "/" + tags.tr("_", " ")
-    @db_delta_time = Time.now - db_start_time
-    @posts = WillPaginate::Collection.create(page, limit, post_count) do |pager|
-      pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
-    end
+    begin
+      db_start_time = Time.now
+      post_count = Post.fast_count(tags)
+      set_title "/" + tags.tr("_", " ")
+      @db_delta_time = Time.now - db_start_time
+      @posts = WillPaginate::Collection.create(page, limit, post_count) do |pager|
+        pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
+      end
     
-    respond_to do |fmt|
-      fmt.html do
-        @tag_suggestions = Tag.find_suggestions(tags) if post_count < 20 && @split_tags.size == 1
-        @ambiguous_tags = Tag.select_ambiguous(@split_tags)
-        @render_start_time = Time.now
+      respond_to do |fmt|
+        fmt.html do
+          @tag_suggestions = Tag.find_suggestions(tags) if post_count < 20 && @split_tags.size == 1
+          @ambiguous_tags = Tag.select_ambiguous(@split_tags)
+          @render_start_time = Time.now
+        end
+        fmt.xml do
+          render :layout => false
+        end
+        fmt.json do
+          render :json => @posts.to_json
+        end
       end
-      fmt.xml do
-        render :layout => false
-      end
-      fmt.json do
-        render :json => @posts.to_json
-      end
+    rescue RuntimeError => e
+      respond_to_error(e.to_s, :action => "error")
     end
   end
 

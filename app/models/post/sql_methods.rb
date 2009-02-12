@@ -32,7 +32,7 @@ module PostSqlMethods
       end
     end
     
-    def geneate_sql_escape_helper(array)
+    def generate_sql_escape_helper(array)
       array.map do |token|
         escaped_token = token.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77").gsub("%", "\\\\37")
         "''" + escaped_token + "''"
@@ -124,18 +124,19 @@ module PostSqlMethods
       tags_index_query = []
 
       if q[:include].any?
-        tags_index_query << "(" + geneate_sql_escape_helper(q[:include]).join(" | ") + ")"
+        tags_index_query << "(" + generate_sql_escape_helper(q[:include]).join(" | ") + ")"
       end
       
       if q[:related].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        tags_index_query << "(" + geneate_sql_escape_helper(q[:related]).join(" & ") + ")"
+        tags_index_query << "(" + generate_sql_escape_helper(q[:related]).join(" & ") + ")"
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
+        raise "You cannot search for only excluded tags" if q[:related].empty?
         
-        tags_index_query << "!(" + geneate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
+        tags_index_query << "!(" + generate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
       end
 
       if tags_index_query.any?
