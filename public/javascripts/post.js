@@ -92,7 +92,7 @@ Post = {
   },
 
   vote: function(score, id) {
-    notice('Voting for post #' + id + '...');
+    Post.notice_update("inc")
 
     new Ajax.Request("/post/vote.json", {
       parameters: {
@@ -101,10 +101,10 @@ Post = {
       },
     
       onComplete: function(resp) {
+        Post.notice_update("dec")
         var resp = resp.responseJSON
 
         if (resp.success) {
-          notice("Vote saved for post #" + id);
           $("post-score-" + resp.post_id).update(resp.score)
         } else {
           notice("Error: " + resp.reason)

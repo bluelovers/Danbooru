@@ -23,13 +23,20 @@ class FavoriteController < ApplicationController
   
   def list_users
     @post = Post.find(params[:id])
-
+    
     respond_to do |fmt|
       fmt.json do
         render :json => {:favorited_users => @post.favorited_by.map(&:name).join(",")}.to_json
       end
       fmt.xml do
-        render :xml => {:favorited_users => @post.favorited_by.map(&:name)}.to_xml
+        builder = Builder::XmlMarkup.new(:indent => 2)
+        builder.instruct!
+        code = builder.favorites(:post_id => @post.id) do
+          @post.favorited_by.each do |user|
+            builder.user(:name => user.name)
+          end
+        end
+        render :xml => code
       end
     end
   end

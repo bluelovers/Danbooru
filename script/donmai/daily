@@ -17,6 +17,12 @@ script/donmai/prune_old_job_tasks
 script/donmai/prune_unactivated_users
 script/donmai/prune_backup_dbs
 script/donmai/send_moderator_report
+if [[ `date '+%d'` -eq '01' ]] ; then 
+  script/donmai/dump_related_tags
+fi
+if [[ `date '+%d'` -eq '01' ]] ; then
+  script/donmai/dump_tags
+fi
 app/daemons/job_task_processor_ctl.rb start
 #mongrel_rails cluster::start
 sleep 5

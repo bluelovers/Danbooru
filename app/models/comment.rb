@@ -32,7 +32,7 @@ class Comment < ActiveRecord::Base
   def api_attributes
     return {
       :id => id, 
-      :created_at => created_at, 
+      :created_at => created_at.strftime("%Y-%m-%d %H:%M"), 
       :post_id => post_id, 
       :creator => author, 
       :creator_id => user_id, 

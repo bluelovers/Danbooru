@@ -1,10 +1,10 @@
 class PostTagHistoryController < ApplicationController
   layout 'default'
-  before_filter :member_only
+  before_filter :member_only, :only => [:revert, :undo]
   verify :method => :post, :only => [:undo]
   
   def index
-    @changes = PostTagHistory.paginate(PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 20, :select => "post_tag_histories.*", :page => params[:page]))
+    @changes = PostTagHistory.paginate(PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 20, :select => "post_tag_histories.*", :page => params[:page]))    
     @change_list = @changes.map do |c|
       { :change => c }.merge(c.tag_changes(c.previous))
     end
@@ -24,7 +24,7 @@ class PostTagHistoryController < ApplicationController
 
       redirect_to :controller => "post", :action => "show", :id => @post.id
     end
-  end  
+  end
 
   def undo
     ids = params[:id].split(/,/)

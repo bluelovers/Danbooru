@@ -55,7 +55,7 @@ class Post < ActiveRecord::Base
   def favorited_by
     # Cache results
     if @favorited_by.nil?
-      @favorited_by = User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id", :conditions => ["f.post_id = ?", id], :order => "f.id DESC")
+      @favorited_by = User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id, users.created_at, users.level", :conditions => ["f.post_id = ?", id], :order => "f.id DESC")
     end
 
     return @favorited_by
