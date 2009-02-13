@@ -197,8 +197,13 @@ class PostController < ApplicationController
   end
 
   def atom
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
-    headers["Content-Type"] = "application/atom+xml"
+    begin
+      @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
+      headers["Content-Type"] = "application/atom+xml"
+    rescue RuntimeError => e
+      @posts = []
+    end
+    
     render :layout => false
   end
 
