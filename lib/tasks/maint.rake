@@ -24,4 +24,9 @@ namespace :maint do
   task :purge_tags => :environment do
     Tag.purge_tags
   end
+  
+  desc 'Prune the mod queue posts table'
+  task :prune_mod_queue_posts => :environment do
+    ModQueuePost.prune!
+  end
 end
