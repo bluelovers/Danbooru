@@ -22,6 +22,7 @@ class Post < ActiveRecord::Base
   include PostRatingMethods
   include PostStatusMethods
   include PostApiMethods
+  include PostModerationMethods
   
   def self.destroy_with_reason(id, reason, current_user)
     post = Post.find(id)

@@ -75,32 +75,29 @@ class PostController < ApplicationController
 
   def moderate
     if request.post?
-      Post.transaction do
-        if params[:ids]
-          params[:ids].keys.each do |post_id|
-            if params[:commit] == "Approve"
-              post = Post.find(post_id)
-              post.approve!(@current_user.id)
-            elsif params[:commit] == "Delete"
-              Post.destroy_with_reason(post_id, params[:reason] || params[:reason2], @current_user)
-            end
-          end
-        end
-      end
-
-      if params[:commit] == "Approve"
+      post = Post.find(params[:id])
+      
+      if params[:commit] == "Hide"
+        post.mod_hide!(@current_user.id)
+        respond_to_success("Post hidden", {:action => "moderate"})
+      elsif params[:commit] == "Approve"
+        post.approve!(@current_user.id)
         respond_to_success("Post approved", {:action => "moderate"})
       elsif params[:commit] == "Delete"
+        Post.destroy_with_reason(post.id, params[:reason], @current_user)
         respond_to_success("Post deleted", {:action => "moderate"})
       end
     else
       if params[:query]
-        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending", :order => "id desc"))
-        @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:flagged", :order => "id desc"))
+        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending", :order => "id"))
+        @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:flagged", :order => "id"))
       else
         @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id desc")
         @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id desc")
       end
+
+      @pending_posts = ModQueuePost.reject_hidden(@pending_posts, @current_user)
+      @flagged_posts = ModQueuePost.reject_hidden(@flagged_posts, @current_user)
     end
   end
 

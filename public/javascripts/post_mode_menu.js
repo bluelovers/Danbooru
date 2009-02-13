@@ -102,7 +102,7 @@ PostModeMenu = {
     } else if (s.value == 'flag') {
       Post.flag(post_id)
     } else if (s.value == "approve") {
-      Post.approve(post_id)
+      Post.moderate(post_id, "Approve")
     } else if (s.value == 'add-to-pool') {
       Pool.add_post(post_id, 0)
     } else if (s.value == "apply-tag-script") {

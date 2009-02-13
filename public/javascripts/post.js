@@ -1,5 +1,21 @@
 Post = {
   posts: new Hash(),
+  pending_update_count: 0,
+  
+  notice_update: function(increase_or_decrease) {
+    if (increase_or_decrease == "inc") {
+      Post.pending_update_count += 1
+      notice("Updating posts (" + Post.pending_update_count + " pending)...")
+    } else {
+      Post.pending_update_count -= 1
+      
+      if (Post.pending_update_count == 0) {
+        notice("Posts updated")
+      } else {
+        notice("Updating posts (" + Post.pending_update_count + " pending)...")        
+      }
+    }
+  },
 
 	find_similar: function() {
 		var old_source_name = $("post_source").name
@@ -20,22 +36,29 @@ Post = {
 		$("edit-form").action = old_action
 	},
 
-  approve: function(post_id) {
-    notice("Approving post #" + post_id)
+  moderate: function(post_id, action) {
+    Post.notice_update("inc")
     var params = {}
-    params["ids[" + post_id + "]"] = "1"
-    params["commit"] = "Approve"
+    params["id"] = post_id
+    params["commit"] = action
+    
+    if (action == "Delete") {
+      params["reason"] = prompt("Enter a reason")
+    }
     
     new Ajax.Request("/post/moderate.json", {
       parameters: params,
       
       onComplete: function(resp) {
         var resp = resp.responseJSON
+        Post.notice_update("dec")
         
         if (resp.success) {
-          notice("Post approved")
           if ($("p" + post_id)) {
             $("p" + post_id).down("img").removeClassName("pending")
+          }
+          if ($("mod-row-" + post_id)) {
+            $("mod-row-" + post_id).hide()
           }
           if ($("pending-notice")) {
             $("pending-notice").hide()
@@ -48,18 +71,17 @@ Post = {
   },
 
   update: function(post_id, params) {
-    notice('Updating post #' + post_id)
+    Post.notice_update("inc")
     params["id"] = post_id
 
     new Ajax.Request('/post/update.json', {
       parameters: params,
 
       onComplete: function(resp) {
+        Post.notice_update("dec")
         var resp = resp.responseJSON
 
         if (resp.success) {
-          notice('Post updated')
-
           // Update the stored post.
           Post.register(resp.post)
         } else {
