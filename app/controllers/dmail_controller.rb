@@ -30,7 +30,7 @@ class DmailController < ApplicationController
   
   def inbox
     @dmails = Dmail.paginate :conditions => ["to_id = ? or from_id = ?", @current_user.id, @current_user.id], :order => "created_at desc", :per_page => 25, :page => params[:page]
-    render_to_list("dmails")
+    respond_to_list("dmails")
   end
   
   def show

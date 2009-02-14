@@ -26,6 +26,6 @@ require 'json'
 require 'json/add/core'
 require 'json/add/rails'
 require 'download'
-#require 'sys/cpu' if CONFIG["load_average_threshold"]
+require 'sys/cpu' if CONFIG["load_average_threshold"]
 require 'fileutils'
 require 'dtext'

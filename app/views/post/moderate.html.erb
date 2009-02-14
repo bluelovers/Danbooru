@@ -15,21 +15,17 @@
     <tbody>
       <% @pending_posts.each do |p| %>
         <tr id="mod-row-<%= p.id %>" class="<% if p.cached_tags =~ /(^| )duplicate($| )/ %>dupe<% elsif p.score > 2 %>good<% elsif p.score < -2 %>bad<% else %><%= cycle 'even', 'odd' %><% end %>">
-          <td>
-            <%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %>
-            | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %>
-            | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %>
-          </td>
-          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
+          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), p.sample_url, :rel => "lightbox" %></td>
           <td>
             <ul>
-              <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+              <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
               <li>Rating: <%= p.pretty_rating %></li>
               <% if p.parent_id %>
                 <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
               <% end %>
               <li>Tags: <%= h p.cached_tags %></li>
               <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
+              <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
             </ul>
           </td>
         </tr>
@@ -44,15 +40,10 @@
     <tbody>
       <% @flagged_posts.each do |p| %>
         <tr class="<%= cycle 'even', 'odd' %>">
-          <td>
-            <%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %>
-            | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %>
-            | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %>
-          </td>
-          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
+          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), p.sample_url, :rel => "lightbox" %></td>
           <td>
             <ul>
-              <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+              <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
               <li>Rating: <%= p.pretty_rating %></li>
               <% if p.parent_id %>
                 <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
@@ -60,6 +51,7 @@
               <li>Tags: <%= h p.cached_tags %></li>
               <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
               <li>Reason: <%= h p.flag_detail.reason %> (<%= h p.flag_detail.author %>)</li>
+              <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
             </ul>
           </td>
         </tr>
@@ -69,3 +61,8 @@
 </div>
 
 <%= render :partial => "footer" %>
+
+<% content_for("html_header") do %>
+  <script type="text/javascript" src="/javascripts/scriptaculous.js?load=effects,builder"></script>
+  <script type="text/javascript" src="/javascripts/lightbox.js"></script>
+<% end %>

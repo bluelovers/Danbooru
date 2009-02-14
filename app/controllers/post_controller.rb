@@ -2,12 +2,20 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
+  before_filter :check_load_average, :only => [:index, :atom, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]  
   around_filter :cache_action, :only => [:index, :atom, :piclens]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisement
+
+  def check_load_average
+    if CONFIG["load_average_threshold"] && @current_user.is_member_or_lower? && Sys::CPU.load_avg[0] > CONFIG["load_average_threshold"]
+      render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
+      return false
+    end
+  end
 
   def verify_action(options)
     redirect_to_proc = false
@@ -92,8 +100,8 @@ class PostController < ApplicationController
         @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending", :order => "id"))
         @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:flagged", :order => "id"))
       else
-        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id desc")
-        @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id desc")
+        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id")
+        @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id")
       end
 
       @pending_posts = ModQueuePost.reject_hidden(@pending_posts, @current_user)

@@ -1,7 +1,8 @@
 class ModQueuePost < ActiveRecord::Base
   def self.reject_hidden(posts, user)
     hidden = ModQueuePost.find(:all, :conditions => "user_id = #{user.id}").map(&:post_id)
-    posts.reject {|x| hidden.include?(x.id)}
+    h, v = posts.partition {|x| hidden.include?(x.id)}
+    v + h
   end
   
   def self.prune!
