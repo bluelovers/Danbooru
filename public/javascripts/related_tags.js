@@ -30,6 +30,7 @@ RelatedTags = {
       field.value = tags.concat([tag]).join(" ") + " "
     }
 
+    field.selectionStart = field.value.length
     this.build_all(this.recent_search)
     return false
   },
@@ -83,8 +84,9 @@ RelatedTags = {
     $("related").update("<em>Fetching...</em>")
     var field = $(field)
 		var tags = null
+		var text_length = field.value.length
 		
-		if (field.selectionStart != field.textLength) {
+		if (field.selectionStart != text_length) {
 			var a = field.selectionStart
 			var b = field.selectionStart
 			
@@ -96,7 +98,7 @@ RelatedTags = {
 				a += 1
 			}
 			
-			while ((b < field.textLength) && field.value[b] != " ") {
+			while ((b < text_length) && field.value[b] != " ") {
 				b += 1
 			}
 			

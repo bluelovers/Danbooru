@@ -6,15 +6,15 @@ User = {
       },
 
       onComplete: function(resp) {
-  var resp = resp.responseJSON
+        var resp = resp.responseJSON
 
-  if (resp.success) {
-    $("resized_notice").hide();
-    $("samples_disabled").show();
-    Post.highres();
-  } else {
-    notice("Error: " + resp.reason)
-  }
+        if (resp.success) {
+          $("resized_notice").hide();
+          $("samples_disabled").show();
+          Post.highres();
+        } else {
+          notice("Error: " + resp.reason)
+        }
       }
     })
   },
