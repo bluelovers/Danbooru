@@ -45,6 +45,10 @@ Post = {
     if (action == "Delete") {
       params["reason"] = prompt("Enter a reason")
     }
+
+    if ($("mod-row-" + post_id)) {
+      $("mod-row-" + post_id).hide()
+    }
     
     new Ajax.Request("/post/moderate.json", {
       parameters: params,
@@ -56,9 +60,6 @@ Post = {
         if (resp.success) {
           if ($("p" + post_id)) {
             $("p" + post_id).down("img").removeClassName("pending")
-          }
-          if ($("mod-row-" + post_id)) {
-            $("mod-row-" + post_id).hide()
           }
           if ($("pending-notice")) {
             $("pending-notice").hide()

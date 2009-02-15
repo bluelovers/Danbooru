@@ -104,8 +104,8 @@ class PostController < ApplicationController
         @flagged_posts= Post.find(:all, :conditions => "status = 'flagged'", :order => "id")
       end
 
-      @pending_posts = ModQueuePost.reject_hidden(@pending_posts, @current_user)
-      @flagged_posts = ModQueuePost.reject_hidden(@flagged_posts, @current_user)
+      @pending_posts = ModQueuePost.reject_hidden(@pending_posts, @current_user, params[:hidden])
+      @flagged_posts = ModQueuePost.reject_hidden(@flagged_posts, @current_user, params[:hidden])
     end
   end
 

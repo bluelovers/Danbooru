@@ -9,13 +9,18 @@
   <div style="margin: 1em 0;">
     <h4>Deletion Guidelines</h4>
     <p>As a general rule, you should not delete posts. Only approve of posts that you personally like. Posts that are not approved in three days will be automatically deleted. Posts with score -3 or lower are marked red. Posts with score 3 or higher are marked green. Posts tagged as duplicate are marked yellow.</p>
+    <% if params[:hidden] %>
+      <p>Click <%= link_to "here", :action => "moderate", :query => params[:query], :hidden => nil %> to view all posts.</p>
+    <% else %>
+      <p>Click <%= link_to "here", :action => "moderate", :query => params[:query], :hidden => true %> to view hidden posts.</p>
+    <% end %>
   </div>
 
   <table width="100%">
     <tbody>
       <% @pending_posts.each do |p| %>
         <tr id="mod-row-<%= p.id %>" class="<% if p.cached_tags =~ /(^| )duplicate($| )/ %>dupe<% elsif p.score > 2 %>good<% elsif p.score < -2 %>bad<% else %><%= cycle 'even', 'odd' %><% end %>">
-          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), p.sample_url, :rel => "lightbox" %></td>
+          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), {:controller => "post", :action => "show", :id => p.id}, :target => "_blank" %></td>
           <td>
             <ul>
               <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
@@ -40,7 +45,7 @@
     <tbody>
       <% @flagged_posts.each do |p| %>
         <tr class="<%= cycle 'even', 'odd' %>">
-          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), p.sample_url, :rel => "lightbox" %></td>
+          <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), {:controller => "post", :action => "show", :id => p.id}, :target => "_blank" %></td>
           <td>
             <ul>
               <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
@@ -61,8 +66,3 @@
 </div>
 
 <%= render :partial => "footer" %>
-
-<% content_for("html_header") do %>
-  <script type="text/javascript" src="/javascripts/scriptaculous.js?load=effects,builder"></script>
-  <script type="text/javascript" src="/javascripts/lightbox.js"></script>
-<% end %>
