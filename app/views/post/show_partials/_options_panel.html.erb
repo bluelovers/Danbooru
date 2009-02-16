@@ -22,6 +22,7 @@
     <li id="remove-from-favs"><%= link_to_function "Remove from favorites", "Favorite.destroy(#{@post.id})" %></li>
     <% if @post.is_pending? && @current_user.is_janitor_or_higher? %>
       <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.moderate(#{@post.id}, 'Approve')}" %></li>
+      <li><%= link_to_function "Hide from mod queue", "Post.moderate(#{@post.id}, 'Hide')" %></li>
     <% end %>
     <% unless @post.is_deleted? %>
       <li id="add-to-pool"><%= link_to_remote "Add to pool", :update => "add-to-pool", :url => {:controller => "pool", :action => "select", :post_id => @post.id}, :method => "get" %></li>
