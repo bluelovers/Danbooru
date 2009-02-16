@@ -13,6 +13,8 @@ class TagController < ApplicationController
   def index
     # TODO: convert to nagato
     set_title "Tags"
+    conds = []
+    cond_params = []
 
     if params[:limit] == "0"
       limit = nil
@@ -35,9 +37,10 @@ class TagController < ApplicationController
     else
       order = "name"
     end
-
-    conds = ["true"]
-    cond_params = []
+    
+    if params[:show_empty_tags].blank?
+      conds << "post_count > 0"
+    end
 
     unless params[:name].blank?
       conds << "name LIKE ? ESCAPE E'\\\\'"

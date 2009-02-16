@@ -11,13 +11,15 @@
         </tr>
         <tr>
           <th><label for="type">Type</label></th>
-          <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}],
-                                                          [(params[:type].blank?) && "" || params[:type].to_i()]) %></td>
+          <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}], [(params[:type].blank?) && "" || params[:type].to_i()]) %></td>
         </tr>
         <tr>
           <th><label for="order">Order</label></th>
-          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]],
-                                                         [params[:order] || ""]) %></td>
+          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]], [params[:order] || ""]) %></td>
+        </tr>
+        <tr>
+          <th><label for="show_empty_tags">Show empty tags</label></th>
+          <td><%= check_box_tag "show_empty_tags", "1", params[:show_empty_tags] %></td>
         </tr>
       </tbody>
       <tfoot>
@@ -42,10 +44,10 @@
     <% @tags.each do |tag| %>
       <tr class="<%= cycle 'even', 'odd' %>">
         <td align="right"><%= tag['post_count'] %></td>
-	<td class="tag-type-<%= tag.type_name %>">
-	  <a href="/wiki/show?title=<%= u tag["name"] %>">?</a>
-	  <a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a>
-	</td>
+      	<td class="tag-type-<%= tag.type_name %>">
+      	  <a href="/wiki/show?title=<%= u tag["name"] %>">?</a>
+      	  <a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a>
+      	</td>
         <td>
         <%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %>
         (<%= link_to "edit", :action => "edit", :name => tag['name'] %>)
