@@ -133,7 +133,7 @@ class TagTest < ActiveSupport::TestCase
     p2 = create_post('tag1 tag2 tag3')
     
     t = Tag.find_by_name("tag1")
-    related = t.related.sort {|a, b| a[0] <=> b[0]}
+    related = t.related(true).sort {|a, b| a[0] <=> b[0]}
     assert_equal(["tag1", "2"], related[0])
     assert_equal(["tag2", "2"], related[1])
     assert_equal(["tag3", "1"], related[2])
@@ -141,7 +141,7 @@ class TagTest < ActiveSupport::TestCase
     # Make sure the related tags are cached
     p3 = create_post("tag1 tag4")
     t.reload
-    related = t.related.sort {|a, b| a[0] <=> b[0]}
+    related = t.related(true).sort {|a, b| a[0] <=> b[0]}
     assert_equal(3, related.size)
     assert_equal(["tag1", "2"], related[0])
     assert_equal(["tag2", "2"], related[1])
@@ -150,7 +150,7 @@ class TagTest < ActiveSupport::TestCase
     # Make sure related tags are properly updated with the cache is expired
     t.update_attributes(:cached_related_expires_on => 5.days.ago)
     t.reload
-    related = t.related.sort {|a, b| a[0] <=> b[0]}
+    related = t.related(true).sort {|a, b| a[0] <=> b[0]}
     assert_equal(4, related.size)
     assert_equal(["tag1", "3"], related[0])
     assert_equal(["tag2", "2"], related[1])

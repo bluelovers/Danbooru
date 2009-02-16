@@ -1,41 +1,28 @@
 module TagRelatedTagMethods
   module ClassMethods
+    def cache_duration(count)
+      duration = count / 3
+      duration = 12 if duration < 12
+      duration = 200 if duration > 200
+      duration.hours.to_i
+    end
+    
     def calculate_related_by_type(tag, type, limit = 25)
-      if tag.size < 230
-        results = Cache.get("reltagsbytype/#{type}/#{tag}")
-        
-        if results
-          return JSON.parse(results)
+      duration = cache_duration(Tag.find_or_create_by_name(tag).post_count)
+      
+      json = Cache.get(Digest::MD5.hexdigest("reltagsbytype/#{type}/#{tag}"), duration) do
+        begin
+          results = select_all_sql("SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name, COUNT(pt0.tag_id) AS post_count FROM posts_tags pt0, posts_tags pt1 WHERE pt0.post_id = pt1.post_id AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?) AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?) GROUP BY pt0.tag_id ORDER BY post_count DESC LIMIT ?", tag, type, limit)
+        rescue Exception
+          results = []
         end
-      end
-      
-      sql = <<-EOS
-        SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name,
-        COUNT(pt0.tag_id) AS post_count
-        FROM posts_tags pt0, posts_tags pt1
-        WHERE pt0.post_id = pt1.post_id
-        AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?)
-        AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?)
-        GROUP BY pt0.tag_id
-        ORDER BY post_count DESC
-        LIMIT ?
-      EOS
 
-      begin
-        results = select_all_sql(sql, tag, type, limit)
-      rescue Exception
-        results = []
+        results.map do |x|
+          {"name" => x["name"], "post_count" => x["post_count"]}
+        end.to_json
       end
       
-      if tag.size < 230
-        post_count = (Tag.find_by_name(tag).post_count rescue 0) / 3
-        post_count = 12 if post_count < 12
-        post_count = 200 if post_count > 200
-        
-        Cache.put("reltagsbytype/#{type}/#{tag}", results.map {|x| {"name" => x["name"], "post_count" => x["post_count"]}}.to_json, post_count.hours)
-      end
-      
-      return results
+      JSON.parse(json)
     end
 
     def calculate_related(tags)
@@ -79,19 +66,24 @@ module TagRelatedTagMethods
       end
     end
   end
-
+  
   def self.included(m)
     m.extend(ClassMethods)
   end
-
-  def related
+  
+  def commit_related(related_tags)
+    duration = Tag.cache_duration(post_count)
+    execute_sql("UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = ?", related_tags.flatten.join(","), duration.from_now, id)
+    reload
+  end
+  
+  def related(force_immediate_recalculation = false)
     if Time.now > cached_related_expires_on
-      length = post_count / 3
-      length = 12 if length < 12
-      length = 8760 if length > 8760
-
-      execute_sql("UPDATE tags SET cached_related = ?, cached_related_expires_on = ? WHERE id = ?", self.class.calculate_related(name).flatten.join(","), length.hours.from_now, id)
-      reload
+      if force_immediate_recalculation
+        commit_related(Tag.calculate_related(name))
+      else
+        JobTask.create(:task_type => "calculate_related_tags", :status => "pending", :data => {"id" => id})
+      end
     end
 
     return cached_related.split(/,/).in_groups_of(2)

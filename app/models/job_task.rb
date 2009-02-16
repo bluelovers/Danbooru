@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -67,6 +67,14 @@ class JobTask < ActiveRecord::Base
     end
   end
   
+  def execute_calculate_related_tags
+    tag_id = data["tag_id"].to_i
+    tag = Tag.find_by_id(tag_id)
+    if tag
+      tag.commit_related(Tag.calculate_related(tag.name))      
+    end
+  end
+  
   def pretty_data
     case task_type
     when "mass_tag_edit"
@@ -87,6 +95,14 @@ class JobTask < ActiveRecord::Base
     when "calculate_tag_subscriptions"
       last_run = data["last_run"]
       "last run:#{last_run}"
+
+    when "calculate_related_tags"
+      tag = Tag.find_by_id(data["id"])
+      if tag
+        "tag:#{tag.name}"
+      else
+        "tag:UNKNOWN"
+      end
     end
   end
   
