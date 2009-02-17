@@ -10,13 +10,20 @@ class TagSubscription < ActiveRecord::Base
   end
   
   def initialize_post_ids
-    if user.is_privileged_or_higher?
-      self.cached_post_ids = Post.find_by_tags(tag_query, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id).uniq.join(",")
-    end
+    process
   end
   
   def limit_tag_count
     self.tag_query = tag_query.scan(/\S+/).slice(0, 20).join(" ")
+  end
+  
+  def process
+    tags = tag_query.scan(/\S+/)
+    post_ids = []
+    tags.each do |tag|
+      post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
+    end
+    self.cached_post_ids = post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(",")
   end
   
   def self.find_tags(subscription_name)
@@ -54,16 +61,9 @@ class TagSubscription < ActiveRecord::Base
     find(:all).each do |tag_subscription|
       if $job_task_daemon_active != false && tag_subscription.user.is_privileged_or_higher?
         begin
+          tag_subscription.process
+          tag_subscription.save
           sleep 1
-
-          TagSubscription.transaction do
-            tags = tag_subscription.tag_query.scan(/\S+/)
-            post_ids = []
-            tags.each do |tag|
-              post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
-            end
-            tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
-          end
         rescue Exception => x
           # fail silently
         end
