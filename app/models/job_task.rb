@@ -68,7 +68,7 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_calculate_related_tags
-    tag_id = data["tag_id"].to_i
+    tag_id = data["id"].to_i
     tag = Tag.find_by_id(tag_id)
     if tag
       tag.commit_related(Tag.calculate_related(tag.name))      
