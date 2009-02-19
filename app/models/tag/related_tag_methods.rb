@@ -79,7 +79,7 @@ module TagRelatedTagMethods
   
   def related(force_immediate_recalculation = false)
     if Time.now > cached_related_expires_on
-      if force_immediate_recalculation || post_count < 100
+      if force_immediate_recalculation || post_count < 1000
         commit_related(Tag.calculate_related(name))
       elsif !JobTask.exists?(["task_type = 'calculate_related_tags' AND data_as_json = '{\"id\":#{id}}'"])
         JobTask.create(:task_type => "calculate_related_tags", :status => "pending", :data => {"id" => id})
