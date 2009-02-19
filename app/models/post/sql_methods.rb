@@ -138,7 +138,7 @@ module PostSqlMethods
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        raise "You cannot search for only excluded tags" if q[:related].empty?
+        raise "You cannot search for only excluded tags" if q[:related].empty? && q[:include].empty?
         
         tags_index_query << "!(" + generate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
       end

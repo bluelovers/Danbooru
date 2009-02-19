@@ -6,3 +6,7 @@
     <p>Hidden tags become visible when you become a <a href="/help/users">privileged member</a>.</p>
   </div>
 </div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>
