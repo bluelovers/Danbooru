@@ -5,7 +5,8 @@ class PoolController < ApplicationController
   
   def index
     if params[:query]
-      @pools = Pool.paginate :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + params[:query].to_escaped_for_sql_like + "%"], :per_page => 20, :page => params[:page]
+      query = params[:query].tr(" ", "_").downcase
+      @pools = Pool.paginate :order => "updated_at desc", :conditions => ["lower(name) like ?", "%" + query.to_escaped_for_sql_like + "%"], :per_page => 20, :page => params[:page]
     else
       @pools = Pool.paginate :order => "updated_at desc", :per_page => 20, :page => params[:page]
     end
