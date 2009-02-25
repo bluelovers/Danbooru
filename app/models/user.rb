@@ -357,6 +357,9 @@ class User < ActiveRecord::Base
       end
       
       transaction do
+        Post.find(:all, :conditions => ["user_id = ? AND status = 'pending'", id]).each do |post|
+          post.approve!
+        end
         invitee.level = level
         invitee.invited_by = id
         invitee.save
