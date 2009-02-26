@@ -8,7 +8,7 @@ class DmailController < ApplicationController
   end
   
   def show_previous_messages
-    @dmails = Dmail.find(:all, :conditions => ["parent_id = ? and id < ?", params[:parent_id], params[:id]], :order => "id asc")
+    @dmails = Dmail.find(:all, :conditions => ["(to_id = ? or from_id = ?) and parent_id = ? and id < ?", @current_user.id, @current_user.id, params[:parent_id], params[:id]], :order => "id asc")
     render :layout => false
   end
   
