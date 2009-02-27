@@ -1,6 +1,6 @@
 class TagImplicationController < ApplicationController
   layout "default"
-  before_filter :member_only, :only => [:create]
+  before_filter :admin_only, :only => [:create, :update]
   verify :method => :post, :only => [:create, :update]
 
   def create
@@ -20,30 +20,22 @@ class TagImplicationController < ApplicationController
 
     case params[:commit]
     when "Delete"
-      if @current_user.is_admin? || ids.all? {|x| ti = TagImplication.find(x) ; ti.is_pending? && ti.creator_id == @current_user.id}      
-        ids.each {|x| TagImplication.find(x).destroy_and_notify(@current_user, params[:reason])}
+      ids.each {|x| TagImplication.find(x).destroy_and_notify(@current_user, params[:reason])}
       
-        flash[:notice] = "Tag implications deleted"
-        redirect_to :action => "index"
-      else
-        access_denied
-      end
+      flash[:notice] = "Tag implications deleted"
+      redirect_to :action => "index"
 
     when "Approve"
-      if @current_user.is_admin?
-        ids.each do |x|
-          if CONFIG["enable_asynchronous_tasks"]
-            JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
-          else
-            TagImplication.find(x).approve(@current_user.id, request.remote_ip)
-          end
-        end
-        
-        flash[:notice] = "Tag implication approval jobs created"
-        redirect_to :controller => "job_task", :action => "index"
-      else
-        access_denied
+      ids.each do |x|
+	if CONFIG["enable_asynchronous_tasks"]
+	  JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
+	else
+	  TagImplication.find(x).approve(@current_user.id, request.remote_ip)
+	end
       end
+      
+      flash[:notice] = "Tag implication approval jobs created"
+      redirect_to :controller => "job_task", :action => "index"
     end
   end
 
