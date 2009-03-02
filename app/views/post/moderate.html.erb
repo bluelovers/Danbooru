@@ -25,6 +25,7 @@
             <ul>
               <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
               <li>Rating: <%= p.pretty_rating %></li>
+              <li>Hidden: <%= p.mod_hidden_count %></li>
               <% if p.parent_id %>
                 <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
               <% end %>
@@ -50,6 +51,7 @@
             <ul>
               <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
               <li>Rating: <%= p.pretty_rating %></li>
+              <li>Hidden: <%= p.mod_hidden_count %></li>
               <% if p.parent_id %>
                 <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
               <% end %>
