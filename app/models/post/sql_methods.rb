@@ -231,12 +231,13 @@ module PostSqlMethods
           else
             sql << " ORDER BY p.id DESC"
           end
+          
+        when "favcount"
+          sql << " ORDER BY p.fav_count DESC"
 
         else
           sql << " ORDER BY p.id DESC"
         end
-      elsif options[:order]
-        sql << " ORDER BY " + options[:order]
       end
 
       if options[:limit]
