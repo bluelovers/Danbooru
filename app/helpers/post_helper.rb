@@ -108,12 +108,12 @@ module PostHelper
           html += ['</ul>', '</div>']
         end
         
-#        deleted_count = Post.fast_deleted_count(query)
-#        if deleted_count > 0
-#          html += ['<div>', '<h5>Tag Statistics</h5>', '<ul id="tag-stats-sidebar">']
-#          html << %{<li><a href="/post/index?tags=#{u(query)}+status%3Adeleted">deleted:#{deleted_count}</a></li>}
-#          html += ['</ul>', '</div>']        
-#        end
+       deleted_count = Post.fast_deleted_count(query)
+       if deleted_count > 0
+         html += ['<div>', '<h5>Tag Statistics</h5>', '<ul id="tag-stats-sidebar">']
+         html << %{<li><a href="/post/index?tags=#{u(query)}+status%3Adeleted">deleted:#{deleted_count}</a></li>}
+         html += ['</ul>', '</div>']        
+       end
       end
       
       html.join("\n")

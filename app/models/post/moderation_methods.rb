@@ -4,4 +4,8 @@ module PostModerationMethods
       ModQueuePost.create(:user_id => user_id, :post_id => id)
     end
   end
+  
+  def mod_hidden_count
+    ModQueuePost.count(:conditions => ["post_id = ?", id])
+  end
 end
