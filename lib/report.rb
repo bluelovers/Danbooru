@@ -1,20 +1,25 @@
 module Report
-  def usage_by_user(table_name, start, stop, limit = 29)
-    conds = ["created_at BETWEEN ? AND ?"]
+  def usage_by_user(table_name, start, stop, limit, level)
+    conds = ["#{table_name}.created_at BETWEEN ? AND ?"]
     params = [start, stop]
-
-    users = ActiveRecord::Base.select_all_sql("SELECT user_id, COUNT(*) as change_count FROM #{table_name} WHERE " + conds.join(" AND ") + " GROUP BY user_id ORDER BY change_count DESC LIMIT #{limit}", *params)
-
-    conds << "user_id NOT IN (?)"
-    params << users.map {|x| x["user_id"]}
-
-    other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql(["SELECT COUNT(*) FROM #{table_name} WHERE " + conds.join(" AND "), *params]))
     
-    users << {"user_id" => nil, "change_count" => other_count}
+    if level && level != 0
+      conds << "users.level = ?"
+      params << level
+    end
+
+    users = ActiveRecord::Base.select_all_sql("SELECT users.id, COUNT(*) as change_count FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND ") + " GROUP BY users.id ORDER BY change_count DESC LIMIT #{limit}", *params)
+
+    conds << "users.id NOT IN (?)"
+    params << users.map {|x| x["id"]}
+
+    other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql(["SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params]))
+    
+    users << {"id" => nil, "change_count" => other_count}
     
     users.each do |user|
-      if user["user_id"]
-        user["name"] = User.find_name(user["user_id"])
+      if user["id"]
+        user["name"] = User.find_name(user["id"])
       else
         user["name"] = "Other"
       end
@@ -24,8 +29,8 @@ module Report
     return add_sum(users)
   end
   
-  def tag_updates(start, stop, limit)
-    users = usage_by_user("post_tag_histories", start, stop, limit)
+  def tag_updates(start, stop, limit, level)
+    users = usage_by_user("post_tag_histories", start, stop, limit, level)
     users.each do |user|
       user["change_count"] = user["change_count"] - Post.count(:all, :conditions => ["created_at BETWEEN ? AND ? AND user_id =?", start, stop, user["user_id"]])
     end
@@ -35,16 +40,16 @@ module Report
     users
   end
   
-  def post_uploads(start, stop, limit)
-    usage_by_user("posts", start, stop, limit)
+  def post_uploads(start, stop, limit, level)
+    usage_by_user("posts", start, stop, limit, level)
   end
   
-  def wiki_updates(start, stop, limit)
-    usage_by_user("wiki_page_versions", start, stop, limit)
+  def wiki_updates(start, stop, limit, level)
+    usage_by_user("wiki_page_versions", start, stop, limit, level)
   end
   
-  def note_updates(start, stop, limit)
-    usage_by_user("note_versions", start, stop, limit)
+  def note_updates(start, stop, limit, level)
+    usage_by_user("note_versions", start, stop, limit, level)
   end
   
   def add_sum(users)
