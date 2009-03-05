@@ -12,11 +12,11 @@
 <body>
   <% if flash[:notice] %>
     <div id="notice">
-      <%= flash[:notice] %>
+      <%= h flash[:notice] %>
     </div>
   <% else %>
     <div id="notice" style="display: none;">
-      <%= flash[:notice] %>
+      <%= h flash[:notice] %>
     </div>
   <% end %>
   <div id="content">
