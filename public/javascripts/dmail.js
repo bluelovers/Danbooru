@@ -1,6 +1,5 @@
 Dmail = {
   respond: function(to) {
-    console.log("responding to %o", to)
     $("dmail_to_name").value = to
     var stripped_body = $("dmail_body").value.replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, "")
     $("dmail_body").value = "[quote]You said:\n" + stripped_body + "\n[/quote]\n\n"
