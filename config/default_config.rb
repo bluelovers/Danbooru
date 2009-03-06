@@ -50,14 +50,8 @@ CONFIG["amazon_s3_access_key_id"] = ""
 CONFIG["amazon_s3_secret_access_key"] = ""
 CONFIG["amazon_s3_bucket_name"] = ""
 
-# Enable usage of memcache to cache some actions.
-CONFIG["enable_caching"] = false
-
 # The server and port where the memcache client can be accessed. Only relevant if you enable caching.
 CONFIG["memcache_servers"] = ["localhost:4000"]
-
-# Any post rated safe or questionable that has one of the following tags will automatically be rated explicit.
-CONFIG["explicit_tags"] = %w(pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape asshole footjob handjob blowjob cunnilingus anal_sex)
 
 # After a post receives this many posts, new comments will no longer bump the post in comment/index.
 CONFIG["comment_threshold"] = 40
@@ -67,20 +61,6 @@ CONFIG["member_post_limit"] = 16
 
 # Members cannot post more than X comments in an hour.
 CONFIG["member_comment_limit"] = 2
-
-# This allows posts to have parent-child relationships. However, this requires manually updating the post counts stored in table_data by periodically running the script/maintenance script.
-CONFIG["enable_parent_posts"] = false
-
-# Show only the first page of post/index to visitors.
-CONFIG["show_only_first_page"] = false
-
-CONFIG["enable_reporting"] = false
-
-# Enable some web server specific optimizations. Possible values include: apache, nginx, lighttpd.
-CONFIG["web_server"] = "apache"
-
-# Show a link to Trac.
-CONFIG["enable_trac"] = true
 
 # Defines the various user levels. You should not remove any of the default ones. When Danbooru starts up, the User model will have several methods automatically defined based on what this config contains. For this reason you should only use letters, numbers, and spaces (spaces will be replaced with underscores). Example: is_member?, is_member_or_lower?, is_member_or_higher?
 CONFIG["user_levels"] = {
@@ -137,9 +117,6 @@ CONFIG["default_blacklists"] = [
 #  "rating:e loli",
 #  "rating:e shota",
 ]
-
-# Enable the artists interface.
-CONFIG["enable_artists"] = true
 
 # This is required for Rails 2.0.
 CONFIG["session_secret_key"] = "This should be at least 30 characters long"
