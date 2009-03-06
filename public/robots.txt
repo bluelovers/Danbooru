@@ -21,6 +21,7 @@ Disallow: /wiki/revert
 Disallow: /wiki/history
 Disallow: /wiki/rename
 Disallow: /user
+Disallow: /job_task
 
 User-agent: HTTrack
 Disallow: /post
