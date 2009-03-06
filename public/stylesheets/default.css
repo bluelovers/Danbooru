@@ -801,6 +801,23 @@ div.sidebar li {
   margin: 0;
 }
 
+div#site-notice {
+  text-align: center;
+  font-size: 80%;
+  padding: 2px 4px;
+  margin-bottom: 1em;
+  background-color: #006;
+  color: #DDD;
+}
+
+div#site-notice p {
+  margin: 0;
+}
+
+div#site-notice a {
+  color: #DDD;
+}
+
 a.original-file-changed#highres {
   color: #0030fa;
   font-weight: bold;
