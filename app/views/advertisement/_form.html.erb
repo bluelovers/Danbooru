@@ -1,0 +1,34 @@
+<table width="100%">
+  <tfoot>
+    <tr>
+      <td></td>
+      <td><%= submit_tag "Submit" %></td>
+    </tr>
+  </tfoot>
+  <tbody>
+    <tr>
+      <th width="15%"><label>Image URL</label></th>
+      <td width="85%"><%= text_field "ad", "image_url" %></td>
+    </tr>
+    <tr>
+      <th><label>Referral URL</label></th>
+      <td><%= text_field "ad", "referral_url" %></td>
+    </tr>
+    <tr>
+      <th><label>Ad Type</label></th>
+      <td><%= select "ad", "ad_type", ["vertical", "horizontal"] %></td>
+    </tr>
+    <tr>
+      <th><label>Status</label></th>
+      <td><%= select "ad", "status", ["active", "inactive"] %></td>
+    </tr>
+    <tr>
+      <th><label>Width</label></th>
+      <td><%= text_field "ad", "width" %></td>
+    </tr>
+    <tr>
+      <th><label>Height</label></th>
+      <td><%= text_field "ad", "height" %></td>
+    </tr>
+  </tbody>
+</table>
