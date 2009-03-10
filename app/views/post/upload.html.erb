@@ -65,9 +65,7 @@
             </th>
             <td>
               <%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %>
-              <% if CONFIG["enable_artists"] %>
-                <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
-              <% end %>
+              <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
             </td>
           </tr>
           <tr>

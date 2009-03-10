@@ -41,7 +41,7 @@ module PostHelper
     
     html = %{<li class="tag-type-#{tag.tag_type}">}
 
-    if CONFIG["enable_artists"] && tag.tag_type == "artist"
+    if tag.tag_type == "artist"
       html << %{<a href="/artist/show?name=#{u(tag.name)}">?</a> }
     else
       html << %{<a href="/wiki/show?title=#{u(tag.name)}">?</a> }
