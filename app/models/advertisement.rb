@@ -7,6 +7,6 @@ class Advertisement < ActiveRecord::Base
   end
 
   def hit_sum(start_date, end_date)
-    AdvertisementHit.count(:conditions => ["created_at BETWEEN ? AND ?", start_date, end_date])
+    AdvertisementHit.count(:conditions => ["advertisement_id = ? AND created_at BETWEEN ? AND ?", id, start_date, end_date])
   end
 end

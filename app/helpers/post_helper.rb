@@ -72,7 +72,7 @@ module PostHelper
         tags = Tag.parse_query(query)
       else
         tags = Cache.get("$popular_tags", 4.hours) do
-          {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
+          {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25).map(&:name)}
         end
       end
       

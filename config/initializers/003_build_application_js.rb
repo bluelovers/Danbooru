@@ -1,1 +1,1 @@
-`cd #{RAILS_ROOT} ; script/donmai/build_application_js`
+`cd #{RAILS_ROOT} ; script/build_application_js`

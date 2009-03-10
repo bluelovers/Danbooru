@@ -9,16 +9,23 @@ end
 
 ActionController::Base.session = {:session_key => CONFIG["app_name"], :secret => CONFIG["session_secret_key"]}
 
-# Vendor libraries
+require 'base64'
+require 'diff/lcs/array'
 require 'image_size'
-require 'json/add/core'
-require 'json/add/rails'
-require 'memcache_util'
-
-# Custom libraries
+require 'ipaddr'
+require 'open-uri'
+require 'socket'
+require 'time'
+require 'uri'
+require 'net/http'
+require 'aws/s3' if [:amazon_s3, :local_flat_with_amazon_s3_backup].include?(CONFIG["image_store"])
 require 'danbooru_image_resizer/danbooru_image_resizer'
 require 'html_4_tags'
 require 'core_extensions'
+require 'json'
+require 'json/add/core'
+require 'json/add/rails'
 require 'download'
+require 'sys/cpu' if CONFIG["load_average_threshold"]
+require 'fileutils'
 require 'dtext'
-require 'cache'
