@@ -2,7 +2,7 @@ module PostSqlMethods
   module ClassMethods
     def find_by_tag_join(tag, options = {})
       tag = tag.downcase.tr(" ", "_")
-      find(:all, :conditions => ["tags.name = ?", tag], :select => "posts.*", :joins => "JOIN posts_tags ON posts_tags.post_id = posts.id JOIN tags ON tags.id = posts_tags.tag_id", :limit => options[:limit], :offset => options[:offset], :order => (options[:order] || "posts.id DESC"))
+      find(:all, :conditions => ["tags.name = ? AND posts.status <> 'deleted'", tag], :select => "posts.*", :joins => "JOIN posts_tags ON posts_tags.post_id = posts.id JOIN tags ON tags.id = posts_tags.tag_id", :limit => options[:limit], :offset => options[:offset], :order => (options[:order] || "posts.id DESC"))
     end
     
     def generate_sql_range_helper(arr, field, c, p)
