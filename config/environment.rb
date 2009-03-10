@@ -26,4 +26,12 @@ Rails::Initializer.run do |config|
   # Use Active Record's schema dumper instead of SQL when creating the test database
   # (enables use of different database adapters for development and test environments)
   config.active_record.schema_format = :sql
+  
+  config.gem "postgres"
+  config.gem "diff-lcs", :lib => "diff/lcs/array"
+  config.gem "html5"
+  config.gem "memcache-client", :lib => "memcache"
+  config.gem "aws-s3", :lib => "aws/s3"
+  config.gem "json"
+  config.gem "sys-cpu", :lib => "sys/cpu"
 end
