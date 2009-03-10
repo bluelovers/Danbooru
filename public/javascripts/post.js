@@ -44,6 +44,10 @@ Post = {
     
     if (action == "Delete") {
       params["reason"] = prompt("Enter a reason")
+      
+      if (params["reason"] == null) {
+        return
+      }
     }
 
     if ($("mod-row-" + post_id)) {
