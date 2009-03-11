@@ -801,6 +801,10 @@ div.sidebar li {
   margin: 0;
 }
 
+div.sidebar ul {
+  margin: 0;
+}
+
 div#site-notice {
   text-align: center;
   font-size: 80%;
