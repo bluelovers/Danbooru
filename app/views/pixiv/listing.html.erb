@@ -1,0 +1,7 @@
+<h2>Pixiv Proxy</h2>
+
+<%= render :partial => "header" %>
+
+<% @results.each do |result| %>
+  <%= link_to(image_tag(result[0]), "http://www.pixiv.net/" + result[2]) %>
+<% end %>

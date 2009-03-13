@@ -34,4 +34,5 @@ Rails::Initializer.run do |config|
   config.gem "aws-s3", :lib => "aws/s3"
   config.gem "json"
   config.gem "sys-cpu", :lib => "sys/cpu"
+	config.gem "mechanize"
 end

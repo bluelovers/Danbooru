@@ -1,0 +1,10 @@
+<h2>Pixiv Proxy</h2>
+
+<%= render :partial => "header" %>
+
+<div>
+  <ul>
+    <li><strong>Artist:</strong> <%= h @results[:artist] %></li>
+    <li><strong>Listing:</strong> <%= link_to(h(@results[:listing_url]), "http://www.pixiv.net" + @results[:listing_url]) %></li>
+  </ul>
+</div>

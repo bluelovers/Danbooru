@@ -1,0 +1,6 @@
+<div style="margin-bottom: 1em;">
+  <% form_tag({:action => "index"}, :method => :get) do %>
+    <label for="url">Enter a Pixiv URL:</label> <%= text_field_tag "url", params[:url], :size => 50 %>
+    <%= submit_tag "Search" %>
+  <% end %>  
+</div>

@@ -1,7 +1,7 @@
 CONFIG = {}
 
 # The version of this Danbooru.
-CONFIG["version"] = "1.16.0"
+CONFIG["version"] = "1.17.0"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"
@@ -137,3 +137,7 @@ CONFIG["tag_subscription_post_limit"] = 200
 CONFIG["max_tag_subscriptions"] = 5
 
 CONFIG["load_average_threshold"] = nil
+
+# Set to nil to disable the Pixiv interface
+CONFIG["pixiv_login"] = nil
+CONFIG["pixiv_password"] = nil
