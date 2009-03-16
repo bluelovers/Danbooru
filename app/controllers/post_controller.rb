@@ -33,9 +33,6 @@ class PostController < ApplicationController
 	  
     return result
   end
-  
-  def upload_problem
-  end
 
   def upload
     if params[:url]
@@ -59,7 +56,12 @@ class PostController < ApplicationController
       status = "pending"
     end
 
-    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :status => status))
+		begin
+    	@post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :status => status))
+		rescue Errno::ENOENT
+			respond_to_error("Internal error. Try uploading again.", {:controller => "post", :action => "error"})
+			return
+		end
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -238,12 +240,17 @@ class PostController < ApplicationController
   end
 
   def popular_by_day
-    if params[:year] && params[:month] && params[:day]
-      @day = Time.gm(params[:year].to_i, params[:month], params[:day])
-    else
-      @day = Time.new.getgm.at_beginning_of_day
-    end
-
+		begin
+	    if params[:year] && params[:month] && params[:day]
+	      @day = Time.gm(params[:year].to_i, params[:month], params[:day])
+	    else
+	      @day = Time.new.getgm.at_beginning_of_day
+	    end
+		rescue ArgumentError
+			respond_to_error("Date out of range", :controller => "post", :action => "error")
+			return
+		end
+		
     set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
     @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20)
@@ -252,11 +259,16 @@ class PostController < ApplicationController
   end
 
   def popular_by_week
-    if params[:year] && params[:month] && params[:day]
-      @start = Time.gm(params[:year].to_i, params[:month], params[:day]).beginning_of_week
-    else
-      @start = Time.new.getgm.beginning_of_week
-    end
+		begin
+	    if params[:year] && params[:month] && params[:day]
+	      @start = Time.gm(params[:year].to_i, params[:month], params[:day]).beginning_of_week
+	    else
+	      @start = Time.new.getgm.beginning_of_week
+	    end
+		rescue ArgumentError
+			respond_to_error("Date out of range", :controller => "post", :action => "error")
+			return
+		end
 
     @end = @start.next_week
 
@@ -268,11 +280,16 @@ class PostController < ApplicationController
   end
 
   def popular_by_month
-    if params[:year] && params[:month]
-      @start = Time.gm(params[:year].to_i, params[:month], 1)
-    else
-      @start = Time.new.getgm.beginning_of_month
-    end
+		begin
+	    if params[:year] && params[:month]
+	      @start = Time.gm(params[:year].to_i, params[:month], 1)
+	    else
+	      @start = Time.new.getgm.beginning_of_month
+	    end
+		rescue ArgumentError
+			respond_to_error("Date out of range", :controller => "post", :action => "error")
+			return
+		end
 
     @end = @start.next_month
 
