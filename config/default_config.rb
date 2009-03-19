@@ -138,6 +138,5 @@ CONFIG["max_tag_subscriptions"] = 5
 
 CONFIG["load_average_threshold"] = nil
 
-# Set to nil to disable the Pixiv interface
-CONFIG["pixiv_login"] = nil
-CONFIG["pixiv_password"] = nil
+# Enable kanji->romaji support, requires chasen
+CONFIG["enable_romakan"] = false
