@@ -1,10 +1,14 @@
 <h2>Japanese to Romaji</h2>
 
-<p>
-  <strong><%= h @result %></strong>
-</p>
+<div style="margin-bottom: 1em;">
+  <% form_tag({:action => "romakan_test"}, :method => :get) do %>
+    <%= text_area_tag "query", params[:query], :size => "50x10" %>
+    <%= submit_tag "Submit" %>
+  <% end %>  
+</div>
 
-<% form_tag({:action => "romakan_test"}, :method => :get) do %>
-  <%= text_field_tag "query", params[:query] %>
-  <%= submit_tag "Submit" %>
-<% end %>
+<div>
+  <p>
+    <%= h @result %>
+  </p>  
+</div>
