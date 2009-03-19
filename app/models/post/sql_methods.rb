@@ -5,6 +5,12 @@ module PostSqlMethods
       find(:all, :conditions => ["tags.name = ? AND posts.status <> 'deleted'", tag], :select => "posts.*", :joins => "JOIN posts_tags ON posts_tags.post_id = posts.id JOIN tags ON tags.id = posts_tags.tag_id", :limit => options[:limit], :offset => options[:offset], :order => (options[:order] || "posts.id DESC"))
     end
     
+    def generate_sql_post_count_helper(tags)
+      tags.inject(0) do |sum, tag|
+        sum + Post.fast_count(tag)
+      end
+    end
+    
     def generate_sql_range_helper(arr, field, c, p)
       case arr[0]
       when :eq
@@ -133,15 +139,24 @@ module PostSqlMethods
       end
       
       if q[:related].any?
-        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
+        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:related].size > CONFIG["tag_query_limit"]
         tags_index_query << "(" + generate_sql_escape_helper(q[:related]).join(" & ") + ")"
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        raise "You cannot search for only excluded tags" if q[:related].empty? && q[:include].empty?
-        
-        tags_index_query << "!(" + generate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
+
+        if q[:related].any? || q[:include].any?
+          tags_index_query << "!(" + generate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
+        elsif options[:user] && options[:user].is_member_or_lower?
+          raise "You cannot search for only excluded tags"
+        else
+          q[:exclude].each_with_index do |etag, i|
+            joins << "LEFT JOIN posts_tags ept#{i} ON p.id = ept#{i}.post_id AND ept#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
+            conds << "ept#{i}.tag_id IS NULL"
+            join_params << etag
+          end
+        end
       end
 
       if tags_index_query.any?

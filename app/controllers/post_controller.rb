@@ -178,7 +178,7 @@ class PostController < ApplicationController
     
     begin
       db_start_time = Time.now
-      post_count = Post.fast_count(tags)
+      post_count = Post.fast_count(tags, :user => @current_user)
       set_title "/" + tags.tr("_", " ")
       @db_delta_time = Time.now - db_start_time
       @posts = WillPaginate::Collection.create(page, limit, post_count) do |pager|
@@ -205,7 +205,7 @@ class PostController < ApplicationController
 
   def atom
     begin
-      @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
+      @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :user => @current_user, :limit => 20, :order => "p.id DESC"))
       headers["Content-Type"] = "application/atom+xml"
     rescue RuntimeError => e
       @posts = []
@@ -216,7 +216,7 @@ class PostController < ApplicationController
 
   def piclens
     @posts = WillPaginate::Collection.create(params[:page], 20, Post.fast_count(params[:tags])) do |pager|
-      pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
+      pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :user => @current_user, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     
     headers["Content-Type"] = "application/rss+xml"

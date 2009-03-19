@@ -31,9 +31,6 @@
   <%= @content_for_html_header %>
 </head>
 <body>
-  <div id="site-notice">
-    <p>Worksafe Danbooru now available at <%= link_to "http://safebooru.donmai.us", "http://safebooru.donmai.us" %></p>
-  </div>
   <div id="header">
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_header(h(params[:tags])) %></h2>
     <ul class="flat-list" id="navbar">

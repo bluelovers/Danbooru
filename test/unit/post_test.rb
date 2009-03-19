@@ -15,8 +15,8 @@ class PostTest < ActiveSupport::TestCase
     CONFIG["sample_ratio"] = 1.25
   end
   
-  def search_posts(tags)
-    Post.find_by_sql(Post.generate_sql(tags)).sort {|a, b| a.id <=> b.id}
+  def search_posts(tags, options = {})
+    Post.find_by_sql(Post.generate_sql(tags, options)).sort {|a, b| a.id <=> b.id}
   end
   
   def create_pool(name, params = {})
@@ -462,10 +462,16 @@ class PostTest < ActiveSupport::TestCase
     p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
     p6 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
 
-    assert_raise(RuntimeError) {
-      search_posts("-tag3")
-    }
+    matches = search_posts("-tag3", :user => User.find(1))
+    assert_equal(3, matches.size)
+    assert_equal(p2.id, matches[0].id)
+    assert_equal(p4.id, matches[1].id)
+    assert_equal(p5.id, matches[2].id)
     
+    assert_raises(RuntimeError) do
+      search_posts("-tag3", :user => AnonymousUser.new)
+    end
+
     matches = search_posts("tag1 -tag3")
     assert_equal(2, matches.size)
     assert_equal(p2.id, matches[0].id)

@@ -128,7 +128,7 @@ class PostControllerTest < ActionController::TestCase
     assert_response :success
     
     get :index, {:tags => "-tag1"}, {:user_id => 3}
-    assert_redirected_to :action => "error"
+    assert_response :success
   end
   
   def test_atom

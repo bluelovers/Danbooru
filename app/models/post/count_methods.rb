@@ -1,6 +1,6 @@
 module PostCountMethods
   module ClassMethods
-    def fast_count(tags = nil)
+    def fast_count(tags = nil, options = {})
       if tags.blank?
         return select_value_sql("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
       else
@@ -8,7 +8,7 @@ module PostCountMethods
         if c == 0
           key = Digest::MD5.hexdigest(tags)
           Cache.get("post_count:#{key}", 24.hours) do
-            Post.count_by_sql(Post.generate_sql(tags, :count => true))
+            Post.count_by_sql(Post.generate_sql(tags, options.merge(:count => true)))
           end.to_i
         else
           return c
