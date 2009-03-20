@@ -2,10 +2,10 @@
   <table class="form">
     <tr>
       <th width="15%"><label for="tag_name">Name</label></th>
-      <td width="85%"><%= text_field_with_auto_complete "tag", "name", {}, :min_chars => 3, :url => {:controller => "tag", :action => "auto_complete_for_tag_name"} %></td>
+      <td width="85%"><%= text_field "tag", "name" %></td>
     </tr>
     <tr>
-      <th><label for="tag_type">Type</label></th>
+      <th><label for="tag_tag_type">Type</label></th>
       <td><%= select "tag", "tag_type", CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]} %></td>
     </tr>
     <tr>

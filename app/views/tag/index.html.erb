@@ -1,6 +1,12 @@
 <div>
   <% form_tag({:action => "index"}, :method => :get) do %>
     <table class="form">
+      <tfoot>
+        <tr>
+          <td><%= submit_tag "Search" %></td>
+          <td></td>
+        </tr>
+      </tfoot>
       <tbody>
         <tr>
           <th width="15%">
@@ -22,12 +28,6 @@
           <td><%= check_box_tag "show_empty_tags", "1", params[:show_empty_tags] %></td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <td><%= submit_tag "Search" %></td>
-          <td></td>
-        </tr>
-      </tfoot>
     </table>
   <% end %>
 </div>

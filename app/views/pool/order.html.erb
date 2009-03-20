@@ -34,6 +34,11 @@
         <th>Order</th>
       </tr>
     </thead>
+    <tfoot>
+      <tr>
+        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Auto Order", "orderAutoFill()" %> <%= button_to_function "Reverse", "orderReverse()" %> <%= button_to_function "Cancel", "history.back()" %></td>
+      </tr>
+    </tfoot>
     <tbody>
       <% @pool_posts.each do |pp| %>
         <tr>
@@ -46,10 +51,5 @@
         </tr>
       <% end %>
     </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Auto Order", "orderAutoFill()" %> <%= button_to_function "Reverse", "orderReverse()" %> <%= button_to_function "Cancel", "history.back()" %></td>
-      </tr>
-    </tfoot>
   </table>
 <% end %>
