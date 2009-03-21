@@ -6,7 +6,7 @@ class TagController < ApplicationController
 
   def romakan_test
     if params[:query]
-      @result = Kakasi.kakasi("-oeuc -s -U -Ja -Ha", params[:query])
+      @result = Kakasi.utf8_kakasi(params[:query])
     end
   end
 
