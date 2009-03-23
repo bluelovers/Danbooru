@@ -28,6 +28,10 @@ class AnonymousUser
     true
   end
 
+  def tag_subscriptions
+    []
+  end
+
   CONFIG["user_levels"].each do |name, value|
     normalized_name = name.downcase.gsub(/ /, "_")
 
