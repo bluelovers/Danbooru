@@ -4,12 +4,6 @@ class TagController < ApplicationController
   before_filter :mod_only, :only => [:mass_edit, :edit_preview]
   before_filter :member_only, :only => [:update, :edit]
 
-  def romakan_test
-    if params[:query]
-      @result = Kakasi.utf8_kakasi(params[:query])
-    end
-  end
-
   def cloud
     set_title "Tags"
 
