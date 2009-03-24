@@ -2,18 +2,40 @@ RelatedTags = {
   user_tags: [],
   recent_tags: [],
   recent_search: {},
-
-  init: function(user_tags, artist_url) {
-    this.user_tags = (user_tags.match(/\S+/g) || []).sort()
-    this.recent_tags = Cookie.get("recent_tags").match(/\S+/g)
-    if (this.recent_tags) {
-      this.recent_tags = this.recent_tags.sort().uniq(true)
-    } else {
-      this.recent_tags = []
+  
+  upgrade_to_1_17: function() {
+    if ((Cookie.get("recent_tags") != "") && (Cookie.get("recent_tags")[0] != "[")) {
+      var s = Cookie.get("recent_tags").match(/\S+/g).sort().map(function(x) {
+        return "['" + x.replace("\\", "\\\\").replace("'", "\\'") + "',0,0]"
+      }).join(",")
+      Cookie.put("recent_tags", "[" + s + "]")
     }
 
-    if ((artist_url != null) && (artist_url.match(/^http/))) {
-      this.find_artist($F("post_source"))
+    if ((Cookie.get("my_tags") != "") && (Cookie.get("my_tags")[0] != "[")) {
+      var s = Cookie.get("my_tags").match(/\S+/g).sort().map(function(x) {
+        return "['" + x.replace("\\", "\\\\").replace("'", "\\'") + "',0,0]"
+      }).join(",")
+      Cookie.put("my_tags", "[" + s + "]")
+    }
+  },
+
+  init: function(artist_tags) {
+    this.upgrade_to_1_17()
+    
+    if (Cookie.get("my_tags") == "") {
+      this.user_tags = []
+    } else {
+      this.user_tags = eval("(" + Cookie.get("my_tags") + ")")
+    }
+    
+    if (Cookie.get("recent_tags") == "") {
+      this.recent_tags = []
+    } else {
+      this.recent_tags = eval("(" + Cookie.get("recent_tags") + ")")
+    }
+
+    if (artist_tags) {
+      this.build_all({"Artists": artist_tags})      
     } else {
       this.build_all({})
     }
@@ -48,13 +70,13 @@ RelatedTags = {
   
     for (var i=0; i<tags.size(); ++i) {
       var tag = tags[i]
-      html += ('<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
+      html += ('<a class="tag-type-' + tag[2] + '" href="/post/index?tags=' + encodeURIComponent(tag[0]) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
     
-      if (current.include(tag)) {
+      if (current.include(tag[0])) {
         html += ' style="background: rgb(0, 111, 250); color: white;"'
       }
     
-      html += '>' + tag.escapeHTML().replace(/_/g, " ") + '</a><br> '
+      html += '>' + tag[0].escapeHTML().replace(/_/g, " ") + '</a><br> '
     }
     html += '</div>'
 
@@ -127,7 +149,7 @@ RelatedTags = {
     var converted = {}
   
     for (k in resp) {
-      var tags = resp[k].map(function(x) {return x[0]}).sort()
+      var tags = resp[k].sortBy(function(x) {return x[0]})
       converted[k] = tags
     }
 
@@ -144,7 +166,7 @@ RelatedTags = {
         },
         onComplete: function(resp) {
           var resp = resp.responseJSON
-          this.build_all({"Artist": resp.map(function(x) {return x.name})})
+          this.build_all({"Artist": resp.map(function(x) {return [x.name,0,1]})})
         }.bind(this)
       })
     }

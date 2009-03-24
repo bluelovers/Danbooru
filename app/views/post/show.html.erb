@@ -35,7 +35,7 @@
           }
         <% end %>
 
-        RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
+        RelatedTags.init()
         if (Cookie.get('resize_image') == '1') {
           Post.resize_image()
         }

@@ -361,27 +361,33 @@ ul.link-page > li {
 }
 
 .tag-type-artist > a,
-a.tag-type-artist {
+a.tag-type-artist,
+a.tag-type-1 {
   color: #A00;
 }
 
-.tag-type-artist > a:hover {
+.tag-type-artist > a:hover,
+a.tag-type-1:hover {
   color: #9093FF;
 }
 
-.tag-type-character > a {
+.tag-type-character > a,
+a.tag-type-4 {
   color: #0A0;
 }
 
-.tag-type-character > a:hover {
+.tag-type-character > a:hover,
+a.tag-type-4:hover {
   color: #9093FF;
 }
 
-.tag-type-copyright > a {
+.tag-type-copyright > a,
+a.tag-type-3 {
   color: #A0A;
 }
 
-.tag-type-copyright > a:hover {
+.tag-type-copyright > a:hover,
+a.tag-type-3:hover {
   color: #9093FF;
 }
 

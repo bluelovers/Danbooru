@@ -37,6 +37,9 @@ class PostController < ApplicationController
   def upload
     if params[:url]
       @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
+      @artists = Artist.find_all_by_url(params[:url]).map do |artist|
+        [artist.name, 0, CONFIG["tag_types"]["artist"]]
+      end
     end
     
     if @post.nil?

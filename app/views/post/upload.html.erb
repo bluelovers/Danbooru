@@ -123,7 +123,7 @@
 
 <% content_for("post_cookie_javascripts") do %>
   <script type="text/javascript">
-    RelatedTags.init(Cookie.unescape(Cookie.get('my_tags')), '<%= params[:ref] || params[:url] %>')
+    RelatedTags.init(<%= @artists.to_json %>)
   </script>
 <% end %>
 

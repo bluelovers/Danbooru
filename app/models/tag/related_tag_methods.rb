@@ -12,13 +12,29 @@ module TagRelatedTagMethods
       
       json = Cache.get(Digest::MD5.hexdigest("reltagsbytype/#{type}/#{tag}"), duration) do
         begin
-          results = select_all_sql("SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name, COUNT(pt0.tag_id) AS post_count FROM posts_tags pt0, posts_tags pt1 WHERE pt0.post_id = pt1.post_id AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?) AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?) GROUP BY pt0.tag_id ORDER BY post_count DESC LIMIT ?", tag, type, limit)
+          sql = <<-EOS
+            SELECT 
+              (SELECT tags.name FROM tags WHERE tags.id = pt0.tag_id) AS name,
+              (SELECT tags.tag_type FROM tags WHERE tags.id = pt0.tag_id) AS tag_type,
+              COUNT(*) AS post_count
+            FROM 
+              posts_tags pt0, 
+              posts_tags pt1
+            WHERE 
+              pt0.post_id = pt1.post_id 
+              AND pt1.tag_id = (SELECT id FROM tags WHERE name = ?) 
+              AND pt0.tag_id IN (SELECT id FROM tags WHERE tag_type = ?) 
+            GROUP BY pt0.tag_id
+            ORDER BY post_count DESC 
+            LIMIT ?
+          EOS
+          results = select_all_sql(sql, tag, type, limit)
         rescue Exception
           results = []
         end
 
         results.map do |x|
-          {"name" => x["name"], "post_count" => x["post_count"]}
+          [x["name"], x["post_count"], x["tag_type"]]
         end.to_json
       end
       
@@ -34,20 +50,22 @@ module TagRelatedTagMethods
       sql = ""
 
       # Ignore deleted posts in pt0, so the count excludes them.
-      cond << "(SELECT TRUE FROM POSTS p0 WHERE p0.id = pt0.post_id AND p0.status <> 'deleted')"
+      cond << "EXISTS (SELECT TRUE FROM POSTS p0 WHERE p0.id = pt0.post_id AND p0.status <> 'deleted' LIMIT 1)"
 
       (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
       (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
       (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
 
-      sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
+      sql << "SELECT (SELECT tags.name FROM tags WHERE tags.id = pt0.tag_id) AS name, (SELECT tags.tag_type FROM tags WHERE tags.id = pt0.tag_id) AS tag_type, COUNT(*) AS post_count"
       sql << " FROM " << from.join(", ")
       sql << " WHERE " << cond.join(" AND ")
       sql << " GROUP BY pt0.tag_id"
-      sql << " ORDER BY tag_count DESC LIMIT 25"
+      sql << " ORDER BY post_count DESC LIMIT 25"
 
       begin
-        select_all_sql(sql, *tags).map {|x| [x["tag"], x["tag_count"]]}
+        select_all_sql(sql, *tags).map do |x| 
+          [x["name"], x["post_count"], x["tag_type"]]
+        end
       rescue Exception
         []
       end
@@ -78,15 +96,19 @@ module TagRelatedTagMethods
   end
   
   def related(force_immediate_recalculation = false)
-    if Time.now > cached_related_expires_on
-      if force_immediate_recalculation || post_count < 1000
+    split_tags = cached_related.split(/,/)
+    
+    # This mod 3 stuff is to migrate old related tags to the new format
+    if Time.now > cached_related_expires_on || split_tags.size % 3 == 2
+      if force_immediate_recalculation || post_count < 1000 || split_tags.size % 3 == 2
         commit_related(Tag.calculate_related(name))
+        split_tags = cached_related.split(/,/)
       elsif !JobTask.exists?(["task_type = 'calculate_related_tags' AND data_as_json = '{\"id\":#{id}}'"])
         JobTask.create(:task_type => "calculate_related_tags", :status => "pending", :data => {"id" => id})
       end
     end
 
-    return cached_related.split(/,/).in_groups_of(2)
+    split_tags.in_groups_of(3)
   end
 end
 
