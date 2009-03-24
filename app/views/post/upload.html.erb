@@ -45,25 +45,23 @@
       
       <% if PixivProxy.is_pixiv?(params[:url]) %>
         <div style="margin-bottom: 1em;">
-          <% unless session[:always_fetch_pixiv] %>
+          <% if session[:always_fetch_pixiv] %>
+            <div id="pixiv" style="margin-bottom: 1em;">
+              <%= render :partial => "pixiv/upload_info", :locals => {:results => PixivProxy.get(params[:url])} %>
+            </div>
+          <% else %>
             <div style="margin-bottom: 1em;">
               <p>
                 This looks like a Pixiv upload. 
                 Click <%= link_to_remote "here", :method => :get, :loading => "$('pixiv').show()", :update => "pixiv", :url => {:controller => "pixiv", :action => "upload_info", :url => params[:url]} %> to fetch information from the Pixiv page. 
-                <% unless session[:always_fetch_pixiv] %>
-                  <span id="always-fetch">Click <%= link_to_remote "here", :url => {:controller => "pixiv", :action => "always_fetch"}, :success => "$('always-fetch').remove()" %> to always fetch Pixiv information.</span>
-                <% end %>
+                <span id="always-fetch">Click <%= link_to_remote "here", :url => {:controller => "pixiv", :action => "always_fetch"}, :success => "$('always-fetch').remove()" %> to always fetch Pixiv information.</span>
               </p>
             </div>
-          <% end %>
-          
-          <div id="pixiv" style="<% unless session[:always_fetch_pixiv] %>display: none; <% end %>margin-bottom: 1em;">
-            <% if session[:always_fetch_pixiv] %>
-              <%= render :partial => "pixiv/upload_info", :locals => {:results => PixivProxy.get(params[:url])} %>
-            <% else %>
+            
+            <div id="pixiv" style="display: none; margin-bottom: 1em;">
               <em>Loading...</em>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
       <% end %>
       
