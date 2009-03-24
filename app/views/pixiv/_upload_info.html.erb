@@ -11,7 +11,7 @@
   <% end %>
   <% if results[:jp_tags] %>
     <li>
-      <strong>Pixiv Tags</strong>: <%= results[:jp_tags].map {|x| link_to(h(x[0]), "http://www.pixiv.net/#{x[1]}", :target => "_blank")}.join(" ") %>
+      <strong>Pixiv Tags</strong>: <%= results[:jp_tags].map {|x| link_to(h(x[0]), "http://www.pixiv.net/#{x[1]}", :target => "_blank")}.join(", ") %>
     </li>
   <% end %>  
 </ul>
