@@ -483,7 +483,7 @@ class User < ActiveRecord::Base
 
       when "notes"
         builder.order "(SELECT count(*) FROM note_versions WHERE user_id = users.id) DESC"
-
+        
       else
         builder.order "id DESC"
       end

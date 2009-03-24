@@ -1,20 +1,11 @@
 class PixivController < ApplicationController
-	layout "default"
-	
-	def index
-		if params[:url]
-			page_type, @results = PixivProxy.get(params[:url])
-			
-			case page_type
-			when "single"
-				render :action => "single"
-				
-			when "listing"
-				render :action => "listing"
-				
-			when "profile"
-				render :action => "profile"
-			end
-		end
+	def upload_info
+		@results = PixivProxy.get(params[:url])
+		@artist = Artist.find_by_name(@results[:artist]) if @results[:artist]
 	end
+	
+	def always_fetch
+	  session[:always_fetch_pixiv] = true
+	  render :nothing => true
+  end
 end

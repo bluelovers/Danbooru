@@ -39,7 +39,7 @@ class Artist < ActiveRecord::Base
     end
 
     def urls
-      artist_urls.map {|x| x.url}.join("\n")
+      @urls || artist_urls.map {|x| x.url}.join("\n")
     end
   end
   
@@ -82,6 +82,22 @@ class Artist < ActiveRecord::Base
       m.after_save :commit_aliases
     end
     
+    def canonical_name
+      if alias_id
+        alias_name
+      else
+        name
+      end
+    end
+    
+    def canonical_id
+      if alias_id
+        alias_id
+      else
+        id
+      end
+    end
+    
     def commit_aliases
       transaction do
         connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{id}")
@@ -100,7 +116,7 @@ class Artist < ActiveRecord::Base
     end
     
     def alias_names
-      aliases.map(&:name).join(", ")
+      @alias_names || aliases.map(&:name).join(", ")
     end
 
     def aliases

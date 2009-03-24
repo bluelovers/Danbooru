@@ -1,13 +1,20 @@
 class PixivProxy < ActiveRecord::Base
+  def self.is_pixiv?(url)
+    url =~ /pixiv\.net/
+  end
+  
 	def self.get(url)
-		if url =~ /member_illust\.php/ && url =~ /illust_id=/
+	  if url =~ /\/(\d+)(_m)?\.(jpg|jpeg|png|gif)/i
+	    url = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{$1}"
+	    get_single(url)
+		elsif url =~ /member_illust\.php/ && url =~ /illust_id=/
 			get_single(url)
-		elsif url =~ /member_illust\.php/ && url =~ /id=/
-			get_listing(url)
-		elsif url =~ /member\.php/ && url =~ /id=/
-			get_profile(url)
+    # elsif url =~ /member_illust\.php/ && url =~ /id=/
+      # get_listing(url)
+    # elsif url =~ /member\.php/ && url =~ /id=/
+      # get_profile(url)
 		else
-			"unknown"
+      {}
 		end
 	end
 	
@@ -19,7 +26,7 @@ class PixivProxy < ActiveRecord::Base
 			hash[:artist] = page.search("div#profile/div/a/img").attr("alt")
 			hash[:listing_url] = "/member_illust.php?id=" + url[/id=(\d+)/, 1]
 		end
-		["profile", hash]
+		hash
 	end
 	
 	def self.get_single(url)
@@ -34,7 +41,7 @@ class PixivProxy < ActiveRecord::Base
 				[node.inner_text, node.attribute("href").to_s]
 			end
 		end
-		["single", hash]
+	  hash
 	end
 	
 	def self.get_listing(url)
@@ -62,7 +69,7 @@ class PixivProxy < ActiveRecord::Base
 			end
 		end
 		
-		["listing", images]
+		images
 	end
 
 	def self.create_mechanize

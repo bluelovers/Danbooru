@@ -24,21 +24,47 @@
         <%= image_tag(params["url"], :title => "Preview", :id => "image") %>
         <p id="scale"></p>
         <script type="text/javascript">
-        document.observe("dom:loaded", function() {
-          if ($("image").height > 400) {
-            var width = $("image").width
-            var height = $("image").height
-            var ratio = 400.0 / height
-            $("image").width = width * ratio
-            $("image").height = height * ratio
-            $("scale").innerHTML = "Scaled " + parseInt(100 * ratio) + "%"
-          }
-        })
+          document.observe("dom:loaded", function() {
+            if ($("image").height > 400) {
+              var width = $("image").width
+              var height = $("image").height
+              var ratio = 400.0 / height
+              $("image").width = width * ratio
+              $("image").height = height * ratio
+              $("scale").innerHTML = "Scaled " + parseInt(100 * ratio) + "%"
+            }
+          })
         </script>
       <% end %>
 
       <% unless @post.new_record? %>
-        <p>This post was already uploaded (<%= link_to "post ##{@post.id}", {:action => "show", :id => @post.id}, :target => "_blank" %>).</p>
+        <div style="margin-bottom: 1em;">
+          <p>This post was already uploaded (<%= link_to "post ##{@post.id}", {:action => "show", :id => @post.id}, :target => "_blank" %>).</p>
+        </div>        
+      <% end %>
+      
+      <% if PixivProxy.is_pixiv?(params[:url]) %>
+        <div style="margin-bottom: 1em;">
+          <% unless session[:always_fetch_pixiv] %>
+            <div style="margin-bottom: 1em;">
+              <p>
+                This looks like a Pixiv upload. 
+                Click <%= link_to_remote "here", :method => :get, :loading => "$('pixiv').show()", :update => "pixiv", :url => {:controller => "pixiv", :action => "upload_info", :url => params[:url]} %> to fetch information from the Pixiv page. 
+                <% unless session[:always_fetch_pixiv] %>
+                  <span id="always-fetch">Click <%= link_to_remote "here", :url => {:controller => "pixiv", :action => "always_fetch"}, :success => "$('always-fetch').remove()" %> to always fetch Pixiv information.</span>
+                <% end %>
+              </p>
+            </div>
+          <% end %>
+          
+          <div id="pixiv" style="<% unless session[:always_fetch_pixiv] %>display: none; <% end %>margin-bottom: 1em;">
+            <% if session[:always_fetch_pixiv] %>
+              <%= render :partial => "pixiv/upload_info", :locals => {:results => PixivProxy.get(params[:url])} %>
+            <% else %>
+              <em>Loading...</em>
+            <% end %>
+          </div>
+        </div>
       <% end %>
       
       <table class="form">

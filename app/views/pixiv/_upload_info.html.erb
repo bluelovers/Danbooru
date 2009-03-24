@@ -1,0 +1,17 @@
+<ul>
+  <% if results[:artist] %>
+    <li>
+      <strong>Artist</strong>: <%= link_to h(results[:artist]), "http://www.pixiv.net/" + results[:profile_url] %>.
+      <% if @artist %>
+        This Pixiv artist has a Danbooru artist record: <%= link_to h(@artist.canonical_name), :controller => "artist", :action => "show", :id => @artist.canonical_id %>. Other URLs associated with this artist include: <%= @artist.urls.map {|x| link_to(h(x), x, :target => "_blank")}.join(", ") %>
+      <% else %>
+        This Pixiv artist does not have a Danbooru artist record. You can <%= link_to "create", {:controller => "artist", :action => "create", :alias_names => results[:artist], :urls => "http://www.pixiv.net/#{results[:profile_url]} #{results[:image_url]}"}, :target => "_blank" %> a new artist record.
+      <% end %>
+    </li>
+  <% end %>
+  <% if results[:jp_tags] %>
+    <li>
+      <strong>Tags</strong>: <%= results[:jp_tags].map {|x| link_to(h(x[0]), "http://www.pixiv.net/#{x[1]}", :target => "_blank")}.join(" ") %>
+    </li>
+  <% end %>  
+</ul>

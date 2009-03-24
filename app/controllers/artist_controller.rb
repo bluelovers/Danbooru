@@ -63,6 +63,14 @@ class ArtistController < ApplicationController
         end
       end
 
+      if params[:alias_names]
+        @artist.alias_names = params[:alias_names]
+      end
+      
+      if params[:urls]
+        @artist.urls = params[:urls]
+      end
+
       if params[:alias_id]
         @artist.alias_id = params[:alias_id]
       end
