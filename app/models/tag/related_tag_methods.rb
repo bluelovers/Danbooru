@@ -98,9 +98,8 @@ module TagRelatedTagMethods
   def related(force_immediate_recalculation = false)
     split_tags = cached_related.split(/,/)
     
-    # This mod 3 stuff is to migrate old related tags to the new format
-    if Time.now > cached_related_expires_on || split_tags.size % 3 == 2
-      if force_immediate_recalculation || post_count < 1000 || split_tags.size % 3 == 2
+    if Time.now > cached_related_expires_on || split_tags.empty?
+      if force_immediate_recalculation || post_count < 1000 || split_tags.empty?
         commit_related(Tag.calculate_related(name))
         split_tags = cached_related.split(/,/)
       elsif !JobTask.exists?(["task_type = 'calculate_related_tags' AND data_as_json = '{\"id\":#{id}}'"])
