@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -75,13 +75,16 @@ class JobTask < ActiveRecord::Base
     end
   end
   
+  def execute_calculate_post_count
+    Tag.recalculate_post_count(data["name"].to_i)
+  end
+  
   def pretty_data
     case task_type
     when "mass_tag_edit"
       start = data["start_tags"]
       result = data["result_tags"]
-      user = User.find_name(data["updater_id"])
-      
+      user = User.find_name(data["updater_id"])      
       "start:#{start} result:#{result} user:#{user}"
       
     when "approve_tag_alias"
@@ -100,6 +103,13 @@ class JobTask < ActiveRecord::Base
       tag = Tag.find_by_id(data["id"])
       if tag
         "tag:#{tag.name}"
+      else
+        "tag:UNKNOWN"
+      end
+      
+    when "calculate_post_count"
+      if tag
+        "tag:" + data["name"]
       else
         "tag:UNKNOWN"
       end

@@ -58,9 +58,16 @@ class Tag < ActiveRecord::Base
     execute_sql sql
   end
 
-  def self.recalculate_post_count
-    sql = "UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags pt, posts p WHERE pt.tag_id = tags.id AND pt.post_id = p.id AND p.status <> 'deleted')"
-    execute_sql sql
+  def self.recalculate_post_count(tag_name = nil)
+    if tag_name
+      cond_params = [tag_name]
+      cond = "WHERE tags.name = ?"
+    else
+      cond_params = []
+      cond = ""
+    end
+    
+    execute_sql "UPDATE tags SET post_count = (SELECT COUNT(*) FROM posts_tags pt, posts p WHERE pt.tag_id = tags.id AND pt.post_id = p.id AND p.status <> 'deleted') #{cond}", *cond_params
   end
   
   def self.mass_edit(start_tags, result_tags, updater_id, updater_ip_addr)

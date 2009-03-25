@@ -187,6 +187,11 @@ class PostController < ApplicationController
       @posts = WillPaginate::Collection.create(page, limit, post_count) do |pager|
         pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
       end
+
+      # If there are blank pages for this query, then fix the post count
+      if @posts.size == 0 && page > 1 && @split_tags.size == 1
+        JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @split_tags[0]})
+      end
     
       respond_to do |fmt|
         fmt.html do
