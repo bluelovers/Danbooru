@@ -34,9 +34,10 @@ class PixivProxy < ActiveRecord::Base
 		mech = create_mechanize
 		hash = {}
 		mech.get(url) do |page|
+		  puts page.content
 			hash[:artist] = page.search("div#profile/div/a/img").attr("alt")
+			hash[:image_url] = page.search("div#profile/div/a/img").attr("src").sub("_m.", ".")
 			hash[:profile_url] = page.search("div#profile/div/a").attr("href")
-			hash[:image_url] = page.search("img[border='0']").attr("src").sub("_m.", ".")
 			hash[:jp_tags] = page.search("div#tag_area/span#tags/a").map do |node|
 				[node.inner_text, node.attribute("href").to_s]
 			end
