@@ -24,7 +24,7 @@
 <script type="text/javascript">
   function removePost(id) {
     if ($("delete-mode").checked) {
-      $("posts[" + id + "]").remove()
+      $("posts_" + id).remove()
       $("p" + id).remove()
       return false;
     } else {
