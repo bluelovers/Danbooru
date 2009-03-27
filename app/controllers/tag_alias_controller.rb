@@ -45,11 +45,11 @@ class TagAliasController < ApplicationController
 
     when "Approve"
       ids.each do |x|
-	if CONFIG["enable_asynchronous_tasks"]
-	  JobTask.create(:task_type => "approve_tag_alias", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
-	else
-	  TagAlias.find(x).approve(@current_user.id, request.remote_ip)
-	end
+      	if CONFIG["enable_asynchronous_tasks"]
+      	  JobTask.create(:task_type => "approve_tag_alias", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
+      	else
+      	  TagAlias.find(x).approve(@current_user.id, request.remote_ip)
+      	end
       end
       
       flash[:notice] = "Tag alias approval jobs created"

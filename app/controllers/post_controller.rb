@@ -190,7 +190,7 @@ class PostController < ApplicationController
 
       # If there are blank pages for this query, then fix the post count
       if @posts.size == 0 && page > 1 && @split_tags.size == 1
-        JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @split_tags[0]})
+        JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @split_tags[0]}, :status => "pending")
       end
     
       respond_to do |fmt|
