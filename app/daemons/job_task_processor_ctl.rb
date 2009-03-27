@@ -4,8 +4,8 @@ require 'rubygems'
 require 'daemons'
 require 'postgres'
 
-dbhost = ENV["DB_HOST"] || "localhost"
-dbname = ENV["DB_NAME"] || "danbooru"
+db_host = ENV["DB_HOST"] || "localhost"
+db_name = ENV["DB_NAME"] || "danbooru"
 
 if ARGV[0] == "start"
   current = []
