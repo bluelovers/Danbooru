@@ -10,7 +10,7 @@ require "pp"
 `rm -f /var/www/danbooru/public/sqlite.db.gz`
 `rm -f /var/www/danbooru/public/sqlite.db`
 
-pg = PGconn.new("127.0.0.1", nil, nil, nil, "danbooru")
+pg = PGconn.new("dbserver", nil, nil, nil, "danbooru")
 sl = SQLite3::Database.new("/var/www/danbooru/public/sqlite.db")
 
 sl.transaction do |db|

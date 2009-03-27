@@ -20,7 +20,7 @@ For best performance, you will need at least 256MB of RAM for PostgreSQL and Rai
   - Create the database: "createdb danbooru"
   - Load the schema: "psql danbooru < db/postgres.sql"
   - Run the migrations: "RAILS_ENV=production rake db:migrate"
-  - Start the job daemon: "app/daemons/job_task_processor_ctl.rb"
+  - Start the job daemon: "RAILS_ENV=production app/daemons/job_task_processor_ctl.rb start"
   - You now need a way of managing the Rails process. The preferred method is using the Phusion Passenger module (see section below). Alternatively you can use Mongrel or fastcgi, there are several examples on the web.
 - You should now be able to connect to your Danbooru instance. The first account you create will automatically become the administrator, so you should do this first.
 
@@ -41,3 +41,15 @@ Installing Passenger on Debian is relatively painless; you can follow the instru
 REE is a special version of the Ruby interpreter that, among other things, uses a more intelligent malloc routine and performs copy-on-write garbage collection. The end result is better memory usage, up to 30% in ideal cases.
 
 It is fairly straightforward to install and won't override your existing Ruby installation. Find out more here: http://www.rubyenterpriseedition.com
+
+=== Troubleshooting
+
+These instructions won't work for everyone. If your setup is not working, here are the steps I usually reccommend to people:
+
+1) Test the database. Make sure you can connect to it using psql. Make sure the tables exist. If this fails, you need to work on correctly installing PostgreSQL, importing the initial schema, and running the migrations.
+
+2) Test the Rails database connection by using ruby script/console. Run Post.count to make sure Rails can connect to the database. If this fails, you need to make sure your Danbooru configuration files are correct.
+
+3) If you're using Mongrel, test connecting directly to the Mongrel process by running elinks http://localhost:PORT. If this fails, you need to debug your Mongrel configuration file.
+
+4) Test Apache to make sure it's proxying requests correctly. If this fails, you need to debug your Apache configuration file.
