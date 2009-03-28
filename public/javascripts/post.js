@@ -50,12 +50,6 @@ Post = {
       }
     }
 
-    if ($("mod-row-" + post_id)) {
-      $("mod-row-" + post_id).hide()
-    } else if (window.opener && !window.opener.closed && window.opener.$("mod-row-" + post_id)) {
-      window.opener.$("mod-row-" + post_id).hide()
-    }
-    
     new Ajax.Request("/post/moderate.json", {
       parameters: params,
       
@@ -75,6 +69,12 @@ Post = {
         }
       }
     })
+
+    if ($("mod-row-" + post_id)) {
+      $("mod-row-" + post_id).hide()
+    } else if (window.opener && !window.opener.closed && window.opener.$("mod-row-" + post_id)) {
+      window.opener.$("mod-row-" + post_id).hide()
+    }
   },
 
   update: function(post_id, params) {
