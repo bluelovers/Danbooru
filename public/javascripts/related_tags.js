@@ -3,35 +3,27 @@ RelatedTags = {
   recent_tags: [],
   recent_search: {},
   
-  upgrade_to_1_17: function() {
-    if ((Cookie.get("recent_tags") != "") && (Cookie.get("recent_tags")[0] != "[")) {
-      var s = Cookie.get("recent_tags").match(/\S+/g).sort().map(function(x) {
-        return "['" + x.replace("\\", "\\\\").replace("'", "\\'") + "',0,0]"
-      }).join(",")
-      Cookie.put("recent_tags", "[" + s + "]")
+  convert_flat_tag_list: function(tags) {
+    if (tags == "" || tags == null) {
+      return []
     }
 
-    if ((Cookie.get("my_tags") != "") && (Cookie.get("my_tags")[0] != "[")) {
-      var s = Cookie.get("my_tags").match(/\S+/g).sort().map(function(x) {
-        return "['" + x.replace("\\", "\\\\").replace("'", "\\'") + "',0,0]"
-      }).join(",")
-      Cookie.put("my_tags", "[" + s + "]")
-    }
+    return tags.match(/\S+/g).sort().map(function(x) {
+      return [x, 0, 0]
+    })
   },
 
   init: function(artist_tags) {
-    this.upgrade_to_1_17()
-    
     if (Cookie.get("my_tags") == "") {
       this.user_tags = []
     } else {
-      this.user_tags = eval("(" + Cookie.get("my_tags") + ")")
+      this.user_tags = this.convert_flat_tag_list(Cookie.get("my_tags"))
     }
     
     if (Cookie.get("recent_tags") == "") {
       this.recent_tags = []
     } else {
-      this.recent_tags = eval("(" + Cookie.get("recent_tags") + ")")
+      this.recent_tags = this.convert_flat_tag_list(Cookie.get("recent_tags"))
     }
 
     if (artist_tags) {

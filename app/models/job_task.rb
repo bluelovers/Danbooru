@@ -76,7 +76,7 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_calculate_post_count
-    Tag.recalculate_post_count(data["name"].to_i)
+    Tag.recalculate_post_count(data["tag_name"])
   end
   
   def pretty_data
@@ -108,11 +108,7 @@ class JobTask < ActiveRecord::Base
       end
       
     when "calculate_post_count"
-      if tag
-        "tag:" + data["name"]
-      else
-        "tag:UNKNOWN"
-      end
+      "tag:" + data["tag_name"]
     end
   end
   
