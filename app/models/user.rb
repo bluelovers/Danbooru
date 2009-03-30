@@ -431,6 +431,31 @@ class User < ActiveRecord::Base
     self.class.find_name(invited_by)
   end
   
+  def favorite_tags(tag_type)
+    sql = <<-EOS
+      SELECT 
+        t.name
+      FROM
+        favorites f,
+        users u,
+        posts p,
+        posts_tags pt,
+        tags t
+      WHERE
+        u.id = f.user_id
+        AND f.post_id = p.id
+        AND p.id = pt.post_id
+        AND u.id = ?
+        AND pt.tag_id = t.id
+        AND t.tag_type = ?
+      GROUP BY t.name
+      ORDER BY COUNT(*) DESC
+      LIMIT 15
+    EOS
+    
+    return select_values_sql(sql, id, tag_type)
+  end
+  
   def similar_users
     # This uses a naive cosine distance formula that is very expensive to calculate.
     # TODO: look into alternatives, like SVD.
