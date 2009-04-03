@@ -49,7 +49,7 @@ class PostController < ApplicationController
 
   def create
     unless @current_user.can_upload?
-      respond_to_error("Daily limit exceeded", {:action => "error"}, :status => 421)
+      respond_to_error("Daily limit exceeded", {:controller => "user", :action => "upload_limit"}, :status => 421)
       return
     end
 
