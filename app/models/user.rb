@@ -398,6 +398,50 @@ class User < ActiveRecord::Base
     end
   end
   
+  module UserUploadLimitMethods
+    def can_upload?
+      if is_contributor_or_higher?
+        true
+      elsif created_at > 1.week.ago
+        false
+      elsif upload_limit <= 0
+        false
+      else
+        true
+      end
+    end
+    
+    def can_comment?
+      if created_at > 1.week.ago
+        false
+      elsif is_privileged_or_higher?
+        true
+      elsif Comment.count(:conditions => ["user_id = ? AND created_at > ?", id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
+        false
+      else
+        true
+      end      
+    end
+    
+    def upload_limit
+      deleted_count = Post.count(:conditions => ["status = ? AND user_id = ?", "deleted", id])
+      unapproved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "pending", id])
+      approved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "active", id])
+      
+      limit = 5 + (approved_count / 10) - (deleted_count / 3) - unapproved_count
+      
+      if limit > 20
+        limit = 20
+      end
+      
+      if limit < 0
+        limit = 0
+      end
+      
+      limit
+    end
+  end
+  
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
@@ -415,6 +459,7 @@ class User < ActiveRecord::Base
   include UserLevelMethods
   include UserInviteMethods
   include UserTagSubscriptionMethods
+  include UserUploadLimitMethods
 
   @salt = CONFIG["user_password_salt"]
   

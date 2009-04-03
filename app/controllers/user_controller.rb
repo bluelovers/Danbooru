@@ -205,6 +205,12 @@ class UserController < ApplicationController
     @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
   end  
   
+  def upload_limit
+    @pending_count = Post.count(:conditions => ["user_id = ? AND status = ?", @current_user.id, "pending"])
+    @approved_count = Post.count(:conditions => ["user_id = ? AND status = ?", @current_user.id, "active"])
+    @deleted_count = Post.count(:conditions => ["user_id = ? AND status = ?", @current_user.id, "deleted"])
+  end
+  
   if CONFIG["enable_account_email_activation"]
     def resend_confirmation
       if request.post?
