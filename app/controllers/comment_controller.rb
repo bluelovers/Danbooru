@@ -30,7 +30,7 @@ class CommentController < ApplicationController
   end
 
   def create
-    if @current_user.can_comment?
+    unless @current_user.can_comment?
       respond_to_error("Hourly limit exceeded", {:controller => "post", :action => "show", :id => params[:comment][:post_id]}, :status => 421)
       return
     end

@@ -37,6 +37,7 @@ class CommentControllerTest < ActionController::TestCase
   
   def test_create_simple
     post :create, {:comment => {:post_id => 1, :body => "hoge"}}, {:user_id => 1}
+    assert_redirected_to :controller => "comment", :action => "index"
     post = Post.find(1)
     assert_equal(1, post.comments.size)
     assert_equal("hoge", post.comments[0].body)
@@ -57,6 +58,7 @@ class CommentControllerTest < ActionController::TestCase
   
   def test_create_do_not_bump_post
     post :create, {:comment => {:post_id => 1, :body => "hoge"}, :commit => "Post without bumping"}, {:user_id => 1}
+    assert_redirected_to :controller => "comment", :action => "index"
     post = Post.find(1)
     assert_equal(1, post.comments.size)
     assert_nil(post.last_commented_at)
