@@ -1,9 +1,15 @@
 <% content_for("subnavbar") do %>
   <li><%= link_to "List", :controller => "post", :action => "index" %></li>
   <li><%= link_to "Upload", :controller => "post", :action => "upload" %></li>
-  <li id="my-favorites-container"><%= link_to "Favorites", "/", :id => "my-favorites" %></li>
   <% if @current_user.is_privileged_or_higher? %>
-    <li id="my-subscriptions-container"><%= link_to "Subscriptions", "/", :id => "my-subscriptions" %></li>
+    <li><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "fav:#{@current_user.name}" %></li>
+  <% else %>
+    <li><%= link_to "Favorites", :controller => "help", :action => "favorites" %></li>
+  <% end %>
+  <% if @current_user.is_privileged_or_higher? %>
+    <li><%= link_to "Subscriptions", :controller => "post", :action => "index", :tags => "sub:#{@current_user.name}" %></li>
+  <% else %>
+    <li><%= link_to "Subscriptions", :controller => "help", :action => "tag_subscriptions" %></li>
   <% end %>
   <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day" %></li>
   <li><%= link_to "Recent changes", :controller => "post_tag_history", :action => "index" %></li>

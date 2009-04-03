@@ -42,7 +42,7 @@
       <%= navbar_link_to("Tags", :controller => "tag", :action => "index", :order => "date") %>
       <%= navbar_link_to("Pools", :controller => "pool", :action => "index") %>
       <%= navbar_link_to("Wiki", :controller => "wiki", :action => "show", :title => "help:home") %>
-      <%= navbar_link_to("Forum", {:controller => "forum", :action => "index"}, :id => "forum-link") %>
+      <%= navbar_link_to("Forum", {:controller => "forum", :action => "index"}, :class => (@current_user.has_forum_been_updated? ? "forum-update" : nil)) %>
       <%= navbar_link_to("&raquo;", :controller => "static", :action => "more") %>
     </ul>
     <% if @content_for_subnavbar %>
@@ -57,9 +57,11 @@
     <div id="notice" style="display: none;"></div>
   <% end %>
   
-  <div class="has-mail" id="has-mail-notice" style="display: none;">
-    <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
-  </div>
+  <% if @current_user.has_mail? %>
+    <div class="has-mail" id="has-mail-notice" style="display: none;">
+      <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
+    </div>
+  <% end %>
 
   <% if @current_user.is_member_or_lower? %>
     <div id="upgrade-account" style="display: none;">
@@ -68,8 +70,17 @@
     </div>
   <% end %>
   
-  <div class="blocked" id="block-reason" style="display: none;">
-  </div>
+  <% if @current_user.is_blocked? %>
+    <div class="blocked" id="block-reason" style="display: none;">
+      <p>
+        You have been blocked. 
+        <% if @current_user.ban %>
+          Reason: <%= h @current_user.ban.reason %>. 
+          Expires: <%= @current_user.ban.expires_at.strftime('%Y-%m-%d') %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
 
   <div id="content">
     <%= @content_for_layout %>

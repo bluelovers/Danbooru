@@ -205,39 +205,11 @@ protected
   end
   
   def init_cookies
-    unless @current_user.is_anonymous?
-      if @current_user.has_mail?
-        cookies["has_mail"] = "1"
-      else
-        cookies["has_mail"] = "0"
-      end
-
-      if @current_user.is_privileged_or_higher? && ForumPost.updated?(@current_user)
-        cookies["forum_updated"] = "1"
-      else
-        cookies["forum_updated"] = "0"
-      end
-
-      if @current_user.is_blocked?
-        if @current_user.ban
-          cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime('%Y-%m-%d')}"
-        else
-          cookies["block_reason"] = "You have been blocked."
-        end
-      else
-        cookies["block_reason"] = ""
-      end
-      
-      if @current_user.always_resize_images?
-        cookies["resize_image"] = "1"
-      else
-        cookies["resize_image"] = "0"
-      end
-      
+    if @current_user.is_anonymous?      
+      cookies["blacklisted_tags"] = CONFIG["default_blacklists"]
+    else
       cookies["my_tags"] = @current_user.my_tags      
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array
-    else
-      cookies["blacklisted_tags"] = CONFIG["default_blacklists"]
     end
   end
 end

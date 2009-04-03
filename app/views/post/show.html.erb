@@ -36,9 +36,9 @@
         <% end %>
 
         RelatedTags.init()
-        if (Cookie.get('resize_image') == '1') {
+        <% if @current_user.always_resize_images? %>
           Post.resize_image()
-        }
+        <% end %>
       </script>
     <% end %>
   <% end %>

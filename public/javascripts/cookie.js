@@ -49,32 +49,10 @@ Cookie = {
       return
     }
     
-    if (this.get("has_mail") == "1") {
-      $("has-mail-notice").show()
-    }
-  
-    if (this.get("forum_updated") == "1") {
-      $("forum-link").addClassName("forum-update")
-    }
-  
-    if (this.get("block_reason") != "") {
-      $("block-reason").update(this.get("block_reason")).show()
-    }
-
 		if (this.get("hide-upgrade-account") != "1") {
       if ($("upgrade-account")) {
    	    $("upgrade-account").show()
       }
 		}
-
-    if ($("my-favorites")) {
-      if (this.get("login") != "") {
-        $("my-favorites").href = "/post/index?tags=fav%3A" + Cookie.get("login")
-        $("my-subscriptions").href = "/post/index?tags=sub%3A" + Cookie.get("login")
-      } else {
-        $("my-favorites-container").hide()
-        $("my-subscriptions-container").hide()
-      }
-    }
   }
 }

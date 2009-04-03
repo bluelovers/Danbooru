@@ -442,6 +442,12 @@ class User < ActiveRecord::Base
     end
   end
   
+  module UserForumMethods
+    def has_forum_been_updated?
+      is_privileged_or_higher? && ForumPost.updated?(self)
+    end
+  end
+  
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]

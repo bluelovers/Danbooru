@@ -19,11 +19,27 @@ class AnonymousUser
   def is_anonymous?
     true
   end
+  
+  def has_mail?
+    false
+  end
+  
+  def has_forum_been_updated?
+    false
+  end
 
   def has_permission?(obj, foreign_key = :user_id)
     false
   end
 
+  def ban
+    false
+  end
+  
+  def always_resize_images?
+    false
+  end
+  
   def show_samples?
     true
   end
