@@ -256,6 +256,14 @@ class User < ActiveRecord::Base
     def favorite_post_count(options = {})
       Post.count_by_sql("SELECT COUNT(p.id) FROM posts p, favorites f WHERE p.id = f.post_id AND f.user_id = #{id}")
     end
+
+    def positive_scoring_post_count
+      @positive_post_count ||= Post.count(:conditions => ["user_id = ? AND status = 'active' and score > 1", id])
+    end
+    
+    def negative_scoring_post_count
+      @negative_post_count ||= Post.count(:conditions => ["user_id = ? AND status = 'active' and score < -1", id])
+    end
     
     def post_count
       @post_count ||= Post.count(:conditions => ["user_id = ? AND status = 'active'", id])
