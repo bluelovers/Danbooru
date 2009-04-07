@@ -474,6 +474,7 @@ class User < ActiveRecord::Base
   include UserInviteMethods
   include UserTagSubscriptionMethods
   include UserUploadLimitMethods
+  include UserForumMethods
 
   @salt = CONFIG["user_password_salt"]
   
