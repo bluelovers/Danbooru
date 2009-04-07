@@ -30,16 +30,14 @@ class CommentController < ApplicationController
   end
 
   def create
-    unless @current_user.can_comment?
-      respond_to_error("Hourly limit exceeded", {:controller => "post", :action => "show", :id => params[:comment][:post_id]}, :status => 421)
-      return
-    end
-
     user_id = session[:user_id]
 
     comment = Comment.new(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if params[:commit] == "Post without bumping"
       comment.do_not_bump_post = true
+    elsif !@current_user.can_comment?
+      respond_to_error("Hourly limit exceeded", {:controller => "post", :action => "show", :id => params[:comment][:post_id]}, :status => 421)
+      return
     end
     
     if comment.save

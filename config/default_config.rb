@@ -56,9 +56,6 @@ CONFIG["memcache_servers"] = ["localhost:4000"]
 # After a post receives this many posts, new comments will no longer bump the post in comment/index.
 CONFIG["comment_threshold"] = 40
 
-# Members cannot post more than X posts in a day.
-CONFIG["member_post_limit"] = 16
-
 # Members cannot post more than X comments in an hour.
 CONFIG["member_comment_limit"] = 2
 
