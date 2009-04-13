@@ -436,7 +436,7 @@ class User < ActiveRecord::Base
       unapproved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "pending", id])
       approved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "active", id])
       
-      limit = 5 + (approved_count / 10) - (deleted_count / 3) - unapproved_count
+      limit = 10 + (approved_count / 10) - (deleted_count / 4) - unapproved_count
       
       if limit > 20
         limit = 20

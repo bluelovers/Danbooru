@@ -7,7 +7,7 @@
     <li>Approved: <%= @approved_count %></li>
     <li>Deleted: <%= @deleted_count %></li>
     <li>Pending: <%= @pending_count %></li>
-    <li>Formula: 5 + (<%= @approved_count %> / 10) - (<%= @deleted_count %> / 3) - <%= @pending_count %></li>
+    <li>Formula: 10 + (<%= @approved_count %> / 10) - (<%= @deleted_count %> / 5) - <%= @pending_count %></li>
   </ul>
 
   <p>The limit is clamped between a range of 0 and 20. You cannot upload anything within the first week of registration. You can appeal deletions by posting in the appeal topic in the forum.</p>  
