@@ -166,10 +166,10 @@ class UserTest < ActiveSupport::TestCase
     member.save
     member.reload
     assert_equal(5, member.base_upload_limit)
-    member.attributes = {:post_upload_limit => 10, :name => "bob"}
+    member.attributes = {:base_upload_limit => 10, :name => "bob"}
     member.save
     member.reload
-    assert_equal("bob", member.base_upload_limit)
+    assert_equal("bob", member.name)
     assert_equal(5, member.base_upload_limit)
   end
 end

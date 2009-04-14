@@ -7,6 +7,18 @@ class Pool < ActiveRecord::Base
   class AccessDeniedError < Exception
   end
   
+  module UpdateMethods
+    def self.included(m)
+      m.has_many :updates, :class_name => "PoolUpdate", :order => "pool_updates.id DESC"
+      m.__send__ :attr_accessor, :updater_user_id, :updater_ip_addr
+      m.after_save :create_update
+      
+      def create_update
+        PoolUpdate.create(:pool_id => id, :user_id => updater_user_id, :ip_addr => updater_ip_addr, :post_ids => pool_posts(true).map(&:post_id).join(" "))
+      end
+    end
+  end
+  
   module PostMethods
     def self.included(m)
       m.has_many :pool_posts, :class_name => "PoolPost", :order => "sequence"
@@ -130,6 +142,7 @@ class Pool < ActiveRecord::Base
   include PostMethods
   include ApiMethods
   include NameMethods
+  include UpdateMethods
 end
 
 class PoolPost < ActiveRecord::Base

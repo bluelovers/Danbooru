@@ -1,0 +1,32 @@
+<div>
+  <h4>Pool History: <%= h(@pool.pretty_name) %></h4>  
+  <table width="100%">
+    <thead>
+      <tr>
+        <th>Posts</th>
+        <th>Updater</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pool.updates.each do |update| %>
+        <tr>
+          <td><%= update.post_ids %></td>
+          <td><%= update.updater_name %></td>
+          <td><%= update.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% content_for("footer") do %>
+  <li>|</li>
+  <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
+  <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>
+  <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
+  <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
+  <li><%= link_to "History", :action => "history", :id => params[:id] %></li>
+<% end %>
+
+<%= render :partial => "footer" %>

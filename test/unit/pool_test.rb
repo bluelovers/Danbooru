@@ -10,7 +10,7 @@ class PoolTest < ActiveSupport::TestCase
   end
   
   def create_pool(params = {})
-    Pool.create({:user_id => 1, :name => "my pool", :post_count => 0, :is_public => false, :description => "pools"}.merge(params))
+    Pool.create({:user_id => 1, :name => "my pool", :post_count => 0, :is_public => false, :description => "pools", :updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
   end
   
   def find_post(pool, post_id)
@@ -21,7 +21,24 @@ class PoolTest < ActiveSupport::TestCase
     pool.add_post(1)
     pool.add_post(2)
     pool.add_post(3)
-    pool.add_post(4)
+    pool.add_post(4)    
+  end
+  
+  def test_updates
+    pool = create_pool
+    add_posts(pool)
+    updates = PoolUpdate.find(:all, :conditions => ["pool_id = ?", pool.id], :order => "id")
+    assert_equal(5, updates.size)
+    assert_equal("", updates[0].post_ids)
+    assert_equal("1", updates[1].post_ids)
+    assert_equal("1 2", updates[2].post_ids)
+    assert_equal("1 2 3", updates[3].post_ids)
+    assert_equal("1 2 3 4", updates[4].post_ids)
+    
+    pool.remove_post(2)
+    updates = PoolUpdate.find(:all, :conditions => ["pool_id = ?", pool.id], :order => "id")
+    assert_equal(6, updates.size)
+    assert_equal("1 3 4", updates[5].post_ids)
   end
   
   def test_normalize

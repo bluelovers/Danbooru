@@ -45,14 +45,14 @@ class PoolController < ApplicationController
     end
 
     if request.post?
-      @pool.update_attributes(params[:pool])
+      @pool.update_attributes(updater_params)
       respond_to_success("Pool updated", :action => "show", :id => params[:id])
     end
   end
   
   def create
     if request.post?
-      @pool = Pool.create(params[:pool].merge(:user_id => @current_user.id))
+      @pool = Pool.create(updater_params.merge(:user_id => @current_user.id))
       
       if @pool.errors.empty?
         respond_to_success("Pool created", :action => "show", :id => @pool.id)
@@ -89,6 +89,8 @@ class PoolController < ApplicationController
       end
       
       begin
+        @pool.updater_user_id = @current_user.id
+        @pool.updater_ip_addr = request.remote_ip
         @pool.add_post(params[:post_id], :sequence => sequence, :user => @current_user)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Pool::PostAlreadyExistsError
@@ -112,6 +114,8 @@ class PoolController < ApplicationController
   def remove_post
     if request.post?
       @pool = Pool.find(params[:pool_id])
+      @pool.updater_user_id = @current_user.id
+      @pool.updater_ip_addr = request.remote_ip
       
       begin
         @pool.remove_post(params[:post_id], :user => @current_user)
@@ -130,6 +134,8 @@ class PoolController < ApplicationController
   
   def order
     @pool = Pool.find(params[:id])
+    @pool.updater_user_id = @current_user.id
+    @pool.updater_ip_addr = request.remote_ip
 
     unless @pool.can_be_updated_by?(@current_user)
       access_denied()
@@ -155,6 +161,8 @@ class PoolController < ApplicationController
   
   def import
     @pool = Pool.find(params[:id])
+    @pool.updater_user_id = @current_user.id
+    @pool.updater_ip_addr = request.remote_ip
     
     unless @pool.can_be_updated_by?(@current_user)
       access_denied()
@@ -197,5 +205,14 @@ class PoolController < ApplicationController
     end
     
     render :layout => false
+  end
+  
+  def history
+    @pool = Pool.find(params[:id])
+  end
+  
+private
+  def updater_params
+    params[:pool].merge(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id)
   end
 end
