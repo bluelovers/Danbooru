@@ -1,0 +1,5 @@
+<h4>50 Random Posts From <%= h @user.name %></h4>
+
+<div>
+  <%= render :partial => "post/posts", :locals => {:posts => @posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
+</div>

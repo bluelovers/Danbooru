@@ -1,0 +1,6 @@
+<h4>Edit Upload Limit</h4>
+<% form_tag(:action => "update_upload_limit") do %>
+  <%= hidden_field_tag "id", @user.id %>
+  <p>Change upload limit for <%= h @user.name %>: <%= text_field "user", "base_upload_limit" %></p>
+  <%= submit_tag "Save" %>
+<% end %>
