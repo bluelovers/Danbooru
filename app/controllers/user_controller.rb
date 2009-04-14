@@ -224,6 +224,11 @@ class UserController < ApplicationController
     redirect_to :action => "show", :id => @user.id
   end
   
+  def random
+    @user = User.find(params[:id])
+    @posts = Post.find(:all, :conditions => ["user_id = ?", @user.id], :order => "random()", :limit => 50)
+  end
+  
   if CONFIG["enable_account_email_activation"]
     def resend_confirmation
       if request.post?

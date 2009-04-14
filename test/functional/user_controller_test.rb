@@ -151,4 +151,9 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action => "show", :id => 4
     assert_equal(6, User.find(4).base_upload_limit)
   end
+  
+  def test_random
+    get :random, {:id => 1}
+    assert_response :success
+  end
 end
