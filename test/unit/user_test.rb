@@ -158,4 +158,18 @@ class UserTest < ActiveSupport::TestCase
     assert(!mod.is_member?)
     assert(mod.is_mod?)
   end
+  
+  def test_upload_limit
+    member = User.find(4)
+    assert_equal(10, member.base_upload_limit)
+    member.base_upload_limit = 5
+    member.save
+    member.reload
+    assert_equal(5, member.base_upload_limit)
+    member.attributes = {:post_upload_limit => 10, :name => "bob"}
+    member.save
+    member.reload
+    assert_equal("bob", member.base_upload_limit)
+    assert_equal(5, member.base_upload_limit)
+  end
 end

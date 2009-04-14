@@ -137,4 +137,18 @@ class UserControllerTest < ActionController::TestCase
     banned.reload
     assert_equal(CONFIG["user_levels"]["Member"], banned.level)
   end
+  
+  def test_upload_limit
+    get :upload_limit, {:id => 4}
+    assert_response :success
+  end
+  
+  def test_update_upload_limit
+    get :edit_upload_limit, {:id => 4}, {:user_id => 1}
+    assert_response :success
+    
+    post :update_upload_limit, {:id => 4, :user => {:base_upload_limit => 6}}, {:user_id => 1}
+    assert_redirected_to :action => "show", :id => 4
+    assert_equal(6, User.find(4).base_upload_limit)
+  end
 end

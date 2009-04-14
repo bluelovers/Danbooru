@@ -42,6 +42,8 @@ class TagSubscription < ActiveRecord::Base
       else
         find(:all, :conditions => ["user_id = ?", user.id]).map {|x| x.tag_query.split(/ /)}.flatten
       end
+    else
+      []
     end        
   end
   

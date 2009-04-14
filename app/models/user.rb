@@ -407,6 +407,19 @@ class User < ActiveRecord::Base
   end
   
   module UserUploadLimitMethods
+    def self.included(m)
+      m.attr_protected :base_upload_limit
+    end
+    
+    def base_upload_limit
+      bul = read_attribute(:base_upload_limit)
+      if bul.nil?
+        10
+      else
+        bul
+      end
+    end
+    
     def can_upload?
       if is_contributor_or_higher?
         true
@@ -436,7 +449,7 @@ class User < ActiveRecord::Base
       unapproved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "pending", id])
       approved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "active", id])
       
-      limit = 10 + (approved_count / 10) - (deleted_count / 4) - unapproved_count
+      limit = base_upload_limit + (approved_count / 10) - (deleted_count / 4) - unapproved_count
       
       if limit > 20
         limit = 20

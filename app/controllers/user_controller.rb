@@ -6,6 +6,7 @@ class UserController < ApplicationController
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
+  before_filter :admin_only, :only => [:edit_upload_limit, :update_upload_limit]
   helper :post, :tag_subscription
   filter_parameter_logging :password
   auto_complete_for :user, :name
@@ -209,6 +210,18 @@ class UserController < ApplicationController
     @pending_count = Post.count(:conditions => ["user_id = ? AND status = ?", @current_user.id, "pending"])
     @approved_count = Post.count(:conditions => ["user_id = ? AND status = ?", @current_user.id, "active"])
     @deleted_count = Post.count(:conditions => ["user_id = ? AND status = ?", @current_user.id, "deleted"])
+  end
+  
+  def edit_upload_limit
+    @user = User.find(params[:id])
+  end
+  
+  def update_upload_limit
+    @user = User.find(params[:id])
+    @user.base_upload_limit = params[:user][:base_upload_limit]
+    @user.save
+    flash[:notice] = "User updated"
+    redirect_to :action => "show", :id => @user.id
   end
   
   if CONFIG["enable_account_email_activation"]

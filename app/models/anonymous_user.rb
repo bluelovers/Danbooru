@@ -51,6 +51,10 @@ class AnonymousUser
   def upload_limit
     0
   end
+  
+  def base_upload_limit
+    0
+  end
 
   CONFIG["user_levels"].each do |name, value|
     normalized_name = name.downcase.gsub(/ /, "_")
