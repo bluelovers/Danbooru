@@ -317,16 +317,20 @@ class PostController < ApplicationController
   end
 
   def vote
-    p = Post.find(params[:id])
-    score = params[:score].to_i
+    if @current_user.is_privileged_or_higher?
+      p = Post.find(params[:id])
+      score = params[:score].to_i
     
-    begin
-      p.vote!(@current_user, score, request.remote_ip)
-      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
-    rescue PostVoteMethods::InvalidScoreError
-      respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
-    rescue PostVoteMethods::AlreadyVotedError
-      respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
+      begin
+        p.vote!(@current_user, score, request.remote_ip)
+        respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:score => p.score, :post_id => p.id})
+      rescue PostVoteMethods::InvalidScoreError
+        respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
+      rescue PostVoteMethods::AlreadyVotedError
+        respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
+      end
+    else
+      respond_to_error("Only privileged members can vote", {:action => "error"})
     end
   end
 

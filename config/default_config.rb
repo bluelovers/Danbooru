@@ -134,6 +134,3 @@ CONFIG["tag_subscription_post_limit"] = 200
 CONFIG["max_tag_subscriptions"] = 5
 
 CONFIG["load_average_threshold"] = nil
-
-# Enable kanji->romaji support, requires chasen
-CONFIG["enable_romakan"] = false
