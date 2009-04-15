@@ -2,5 +2,5 @@
 
 <script type="text/javascript" charset="utf-8">
   var tags = <%= (@current_user.favorite_tags + " " + @current_user.recent_tags).scan(/\S+/).uniq.to_json %>
-  new Autocompleter.Local("post_tags", "post-tags-autocomplete", tags, {tokens: [" "]})
+  new Autocompleter.Local("post_tags", "post-tags-autocomplete", tags, {tokens: [" ", "\n"]})
 </script>
