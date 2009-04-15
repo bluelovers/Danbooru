@@ -1,5 +1,5 @@
 RelatedTags = {
-  user_tags: [],
+  favorite_tags: [],
   recent_tags: [],
   recent_search: {},
   
@@ -13,21 +13,12 @@ RelatedTags = {
     })
   },
 
-  init: function(artist_tags) {
-    if (Cookie.get("my_tags") == "") {
-      this.user_tags = []
-    } else {
-      this.user_tags = this.convert_flat_tag_list(Cookie.get("my_tags"))
-    }
-    
-    if (Cookie.get("recent_tags") == "") {
-      this.recent_tags = []
-    } else {
-      this.recent_tags = this.convert_flat_tag_list(Cookie.get("recent_tags"))
-    }
+  init: function(favorite_tags, recent_tags, artist_tags) {
+    this.favorite_tags = this.convert_flat_tag_list(favorite_tags)
+    this.recent_tags = this.convert_flat_tag_list(recent_tags)
 
     if (artist_tags) {
-      this.build_all({"Artists": artist_tags})      
+      this.build_all({"Artists": artist_tags})
     } else {
       this.build_all({})
     }
@@ -78,7 +69,7 @@ RelatedTags = {
   build_all: function(tags) {
     this.recent_search = tags
   
-    var html = this.build_html("My Tags", this.user_tags) + this.build_html("Recent Tags", this.recent_tags)
+    var html = this.build_html("Favorite Tags", this.favorite_tags) + this.build_html("Recent Tags", this.recent_tags)
     var keys = []
 
     for (key in tags) {

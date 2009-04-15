@@ -155,14 +155,6 @@ protected
   def set_title(title = CONFIG["app_name"])
     @page_title = CGI.escapeHTML(title)
   end
-  
-  def save_tags_to_cookie
-    if params[:tags] || (params[:post] && params[:post][:tags])
-      tags = Tag.scan_tags(params[:tags] || params[:post][:tags])
-      tags = TagAlias.to_aliased(tags) + Tag.scan_tags(cookies["recent_tags"])
-      cookies["recent_tags"] = tags.slice(0, 20).uniq.join(" ")
-    end
-  end
 
 =begin
   def check_load_average

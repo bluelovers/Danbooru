@@ -5,7 +5,7 @@ class PostController < ApplicationController
   before_filter :check_load_average, :only => [:index, :atom, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :janitor_only, :only => [:moderate, :undelete]
-  after_filter :save_tags_to_cookie, :only => [:update, :create]  
+  after_filter :save_recent_tags, :only => [:update, :create]  
   # around_filter :cache_action, :only => [:index, :atom, :piclens]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisement
@@ -368,5 +368,14 @@ class PostController < ApplicationController
   
   def exception
     raise "error"
+  end
+  
+private
+  def save_recent_tags
+    if params[:tags] || (params[:post] && params[:post][:tags])
+      tags = Tag.scan_tags(params[:tags] || params[:post][:tags])
+      tags = Tag.scan_tags(@current_user.recent_tags) + TagAlias.to_aliased(tags)
+      @current_user.update_attribute(:recent_tags, tags.slice(0, 50).uniq.join(" "))
+    end
   end
 end

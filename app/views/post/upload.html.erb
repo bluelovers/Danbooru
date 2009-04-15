@@ -140,7 +140,7 @@
 
 <% content_for("post_cookie_javascripts") do %>
   <script type="text/javascript">
-    RelatedTags.init(<%= @artists.to_json %>)
+    RelatedTags.init(<%= @current_user.favorite_tags.to_json %>, <%= @current_user.recent_tags.to_json %>, <%= @artists.to_json %>)
   </script>
   
   <% if @current_user.enable_autocomplete? %>
