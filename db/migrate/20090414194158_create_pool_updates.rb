@@ -5,7 +5,7 @@ class CreatePoolUpdates < ActiveRecord::Migration
       t.column "post_ids", :text, :null => false, :default => ""
       t.column "user_id", :integer
       t.column "ip_addr", "inet"
-      t.timestamp
+      t.timestamps
     end
     
     add_index "pool_updates", "pool_id"
