@@ -160,7 +160,7 @@ protected
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = Tag.scan_tags(params[:tags] || params[:post][:tags])
       tags = TagAlias.to_aliased(tags) + Tag.scan_tags(cookies["recent_tags"])
-      cookies["recent_tags"] = tags.slice(0, 20).join(" ")
+      cookies["recent_tags"] = tags.slice(0, 20).uniq.join(" ")
     end
   end
 
