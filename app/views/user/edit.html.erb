@@ -41,11 +41,11 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_my_tags">Edit Tags</label>
-            <p>These will be accessible when you <a href="/post/upload">upload</a> or edit a post.</p>
+            <label class="block" for="user_favorite_tags">Favorite Tags</label>
           </th>
           <td>
-            <%= text_area "user", "my_tags", :size => "40x5" %>
+            <%= text_area "user", "favorite_tags", :size => "60x8" %>
+            <%= link_to "Calculate", :action => "calculate_favorite_tags" %>
           </td>
         </tr>
         <tr>
@@ -67,16 +67,25 @@
           </td>
         </tr>
         <% if CONFIG["image_samples"] && !CONFIG["force_image_samples"] %>
+          <tr>
+            <th>
+              <label class="block" for="user_show_samples">Show Image Samples</label>
+              <p>Show reduced large-resolution images.</p>
+            </th>
+            <td>
+              <%= check_box "user", "show_samples" %>
+            </td>
+          </tr>
+        <% end %>
         <tr>
           <th>
-            <label class="block" for="user_show_samples">Show Image Samples</label>
-            <p>Show reduced large-resolution images.</p>
+            <label class="block" for="user_enable_autocomplete">Enable Auto-complete</label>
+            <p>Enable tag auto-complete when uploading or editing tags.</p>
           </th>
           <td>
-            <%= check_box "user", "show_samples" %>
+            <%= check_box "user", "enable_autocomplete" %>
           </td>
         </tr>
-        <% end %>
       </tbody>
     </table>
   <% end %>

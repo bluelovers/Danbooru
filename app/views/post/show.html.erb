@@ -23,8 +23,6 @@
 
     <% content_for("post_cookie_javascripts") do %>
       <script type="text/javascript">
-        Post.observe_text_area("post_tags")
-
         <% if @post %>
           var current_user = Cookie.get("login")
           var favorited_by = <%= @post.favorited_by.map {|x| x.name}.to_json %>
@@ -40,6 +38,10 @@
           Post.resize_image()
         <% end %>
       </script>
+      
+      <% if @current_user.enable_autocomplete? %>
+        <%= render :partial => "tag_autocomplete" %>
+      <% end %>
     <% end %>
   <% end %>
 </div>

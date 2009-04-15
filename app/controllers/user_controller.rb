@@ -229,6 +229,16 @@ class UserController < ApplicationController
     @posts = Post.find(:all, :conditions => ["user_id = ?", @user.id], :order => "random()", :limit => 50)
   end
   
+  def calculate_favorite_tags
+    if request.post?
+      if params[:commit] == "Yes"
+        JobTask.create(:task_type => "calculate_favorite_tags", :data => {"id" => @current_user.id}, :status => "pending")
+        flash[:notice] = "Favorite tags are being calculated. Please check back in 5-10 minutes."
+      end
+      redirect_to :action => "show", :id => @current_user.id
+    end
+  end
+  
   if CONFIG["enable_account_email_activation"]
     def resend_confirmation
       if request.post?

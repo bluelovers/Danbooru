@@ -135,18 +135,17 @@
 
       <div id="related"><em>None</em></div>
     </div>
-  <% end %>
-  
+  <% end %>  
 </div>
-
-<script type="text/javascript">
-  Post.observe_text_area("post_tags")
-</script>
 
 <% content_for("post_cookie_javascripts") do %>
   <script type="text/javascript">
     RelatedTags.init(<%= @artists.to_json %>)
   </script>
+  
+  <% if @current_user.enable_autocomplete? %>
+    <%= render :partial => "tag_autocomplete" %>
+  <% end %>
 <% end %>
 
 <%= render :partial => "footer" %>

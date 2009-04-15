@@ -56,6 +56,18 @@ class AnonymousUser
     0
   end
 
+  def favorite_tags
+    ""
+  end
+  
+  def recent_tags
+    ""
+  end
+  
+  def enable_autocomplete?
+    false
+  end
+  
   CONFIG["user_levels"].each do |name, value|
     normalized_name = name.downcase.gsub(/ /, "_")
 

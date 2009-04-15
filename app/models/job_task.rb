@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count calculate_favorite_tags)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -79,6 +79,16 @@ class JobTask < ActiveRecord::Base
     Tag.recalculate_post_count(data["tag_name"])
   end
   
+  def execute_calculate_favorite_tags
+    tags = []
+    user = User.find(data["id"])
+    CONFIG["tag_types"].values.uniq.each do |tag_type|
+      tags += user.calculate_favorite_tags(tag_type)
+    end
+    
+    user.update_attribute(:favorite_tags, tags.join("\n"))
+  end
+  
   def pretty_data
     begin
       case task_type
@@ -110,6 +120,9 @@ class JobTask < ActiveRecord::Base
     
       when "calculate_post_count"
         "tag:" + data["tag_name"]
+        
+      when "calculate_favorite_tags"
+        "user:" + data["id"]
       end
     rescue Exception
       "ERROR"

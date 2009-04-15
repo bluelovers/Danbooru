@@ -504,7 +504,7 @@ class User < ActiveRecord::Base
     self.class.find_name(invited_by)
   end
   
-  def favorite_tags(tag_type)
+  def calculate_favorite_tags(tag_type)
     sql = <<-EOS
       SELECT 
         t.name
@@ -523,7 +523,7 @@ class User < ActiveRecord::Base
         AND t.tag_type = ?
       GROUP BY t.name
       ORDER BY COUNT(*) DESC
-      LIMIT 15
+      LIMIT 10
     EOS
     
     return select_values_sql(sql, id, tag_type)

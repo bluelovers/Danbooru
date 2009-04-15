@@ -16,6 +16,10 @@
       </td>
     </tr>
     <tr>
+      <td><strong>Favorite Tags</strong></td>
+      <td><%= @current_user.favorite_tags.scan(/\S+/).map {|x| link_to(h(x), :controller => "post", :action => "index", :tags => x)}.join(" ") %></td>
+    </tr>
+    <tr>
       <td><strong>Tag Subscriptions</strong></td>
       <td class="large-text">
         <%= render :partial => "tag_subscription/user_listing", :locals => {:user => @user} %>

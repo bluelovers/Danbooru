@@ -140,15 +140,6 @@ Post = {
     })
   },
 
-  observe_text_area: function(field_id) {
-    $(field_id).observe("keydown", function(e) {
-      if (e.keyCode == Event.KEY_RETURN) {
-        this.up("form").submit()
-        e.stop()
-      }
-    })
-  },
-
   register: function(post) {
     post.tags = post.tags.match(/\S+/g)
     post.match_tags = post.tags.clone()

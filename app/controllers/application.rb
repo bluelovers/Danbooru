@@ -208,7 +208,7 @@ protected
     if @current_user.is_anonymous?      
       cookies["blacklisted_tags"] = CONFIG["default_blacklists"]
     else
-      cookies["my_tags"] = @current_user.my_tags      
+      cookies["favorite_tags"] = @current_user.favorite_tags
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array
     end
   end
