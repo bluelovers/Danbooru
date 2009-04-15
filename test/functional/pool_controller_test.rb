@@ -90,7 +90,10 @@ class PoolControllerTest < ActionController::TestCase
     
     post :add_post, {:post_id => 1, :pool_id => pool.id, :pool => {}}, {:user_id => 4}
     assert_redirected_to :controller => "post", :action => "show", :id => 1
-    assert_equal(1, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))    
+    assert_equal(1, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
+    
+    get :history, {:id => pool.id}
+    assert_response :success
   end
   
   def test_add_post_to_private_pool
