@@ -179,10 +179,18 @@ class PostControllerTest < ActionController::TestCase
     post :vote, {:id => p1.id, :score => 1}, {:user_id => 3}
     p1.reload
     assert_equal(1, p1.score)
+
+    post :vote, {:id => p1.id, :score => 1}, {:user_id => 3}
+    p1.reload
+    assert_equal(1, p1.score)
     
     p2 = create_post("tag2", 2)
 
     post :vote, {:id => p2.id, :score => 5}, {:user_id => 3}
+    p2.reload
+    assert_equal(0, p2.score)
+    
+    post :vote, {:id => p2.id, :score => 1}, {:user_id => 4}
     p2.reload
     assert_equal(0, p2.score)
   end

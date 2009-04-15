@@ -17,12 +17,12 @@
             <option value="edit">Edit posts</option>
             <option value="add-fav">Add to favorites</option>
             <option value="remove-fav">Remove from favorites</option>
-            <option value="vote-up">Vote up</option>
-            <option value="vote-down">Vote down</option>
             <option value="rating-s">Rate safe</option>
             <option value="rating-q">Rate questionable</option>
             <option value="rating-e">Rate explicit</option>
             <% if @current_user.is_privileged_or_higher? %>
+              <option value="vote-up">Vote up</option>
+              <option value="vote-down">Vote down</option>
               <option value="lock-rating">Lock rating</option>
               <option value="lock-note">Lock notes</option>
             <% end %>

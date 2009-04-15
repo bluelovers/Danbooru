@@ -5,28 +5,34 @@ module PostVoteMethods
   class AlreadyVotedError < Exception
   end
   
-  def vote!(current_user, score, ip_addr)
+  class PrivilegeError < Exception
+  end
+
+  def self.included(m)
+    m.has_many :votes, :class_name => "PostVote"
+  end
+  
+  def vote!(current_user, score)
     unless [1, -1].include?(score)
-      raise InvalidScoreError.new
+      raise InvalidScoreError
     end
     
     if current_user.is_mod_or_higher? && score < 0
       score *= 5
     end
     
-    if last_voter_ip == ip_addr
-      raise AlreadyVotedError.new
+    if current_user.is_member_or_lower?
+      raise PrivilegeError
     end
     
-    if RAILS_ENV != "test" && Cache.get("vote:#{ip_addr}:#{id}")
-      raise AlreadyVotedError.new
+    if PostVote.exists?(["user_id = ? AND post_id = ?", current_user.id, id])
+      raise AlreadyVotedError
     end
 
     self.score += score
-    execute_sql("UPDATE posts SET score = ?, last_voter_ip = ? WHERE id = ?", self.score, ip_addr, id)
-    
-    if RAILS_ENV != "test"
-      Cache.put("vote:#{ip_addr}:#{id}", 1)
+    transaction do
+      execute_sql("UPDATE posts SET score = ? WHERE id = ?", self.score, id)
+      votes.create(:user_id => current_user.id)
     end
   end
 end
