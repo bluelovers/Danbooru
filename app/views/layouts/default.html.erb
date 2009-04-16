@@ -58,7 +58,7 @@
   <% end %>
   
   <% if @current_user.has_mail? %>
-    <div class="has-mail" id="has-mail-notice" style="display: none;">
+    <div class="has-mail" id="has-mail-notice">
       <%= link_to "You have mail", :controller => "dmail", :action => "inbox" %>
     </div>
   <% end %>
