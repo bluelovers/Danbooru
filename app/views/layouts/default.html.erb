@@ -71,7 +71,7 @@
   <% end %>
   
   <% if @current_user.is_blocked? %>
-    <div class="blocked" id="block-reason" style="display: none;">
+    <div class="blocked" id="block-reason">
       <p>
         You have been blocked. 
         <% if @current_user.ban %>
