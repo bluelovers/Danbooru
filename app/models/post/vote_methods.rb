@@ -32,7 +32,7 @@ module PostVoteMethods
     self.score += score
     transaction do
       execute_sql("UPDATE posts SET score = ? WHERE id = ?", self.score, id)
-      votes.create(:user_id => current_user.id)
+      votes.create(:user_id => current_user.id, :score => score)
     end
   end
 end
