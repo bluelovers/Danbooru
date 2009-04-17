@@ -42,10 +42,10 @@
         <tr>
           <th>
             <label class="block" for="user_favorite_tags">Favorite Tags</label>
+            <p>Danbooru can <%= link_to "calculate", :action => "calculate_favorite_tags" %> these automatically for you.</p>
           </th>
           <td>
             <%= text_area "user", "favorite_tags", :size => "60x8" %>
-            <%= link_to "Calculate", :action => "calculate_favorite_tags" %>
           </td>
         </tr>
         <tr>
@@ -59,7 +59,7 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_receive_dmails">Receive Mails</label>
+            <label class="block" for="user_receive_dmails">Receive Emails</label>
             <p>Receive emails when someone sends you a message.</p>
           </th>
           <td>
