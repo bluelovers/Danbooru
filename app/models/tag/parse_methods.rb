@@ -56,7 +56,7 @@ module TagParseMethods
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change|status):(.+)$/
+        if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change|status|voteup|votedown):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "fav"
@@ -104,6 +104,10 @@ module TagParseMethods
             q[:change] = parse_helper($2)
           elsif $1 == "status"
             q[:status] = $2
+          elsif $1 == "voteup"
+            q[:voteup] = $2
+          elsif $1 == "votedown"
+            q[:votedown] = $2
           end
         elsif token[0] == ?- && token.size > 1
           q[:exclude] << token[1..-1]
