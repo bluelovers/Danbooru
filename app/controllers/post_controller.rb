@@ -380,8 +380,8 @@ private
   def save_recent_tags
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = Tag.scan_tags(params[:tags] || params[:post][:tags])
-      tags = Tag.scan_tags(@current_user.recent_tags) + TagAlias.to_aliased(tags)
-      @current_user.update_attribute(:recent_tags, tags.slice(0, 25).uniq.join(" "))
+      tags = TagAlias.to_aliased(tags) + Tag.scan_tags(@current_user.recent_tags)
+      @current_user.update_attribute(:recent_tags, tags.uniq.slice(0, 25).join(" "))
     end
   end
 end
