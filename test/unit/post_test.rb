@@ -183,7 +183,7 @@ class PostTest < ActiveSupport::TestCase
     assert(p2.has_children?, "Parent should have children")
     
     # Parent should be updated when all children are deleted
-    c1.destroy
+    c1.delete!
     p2.reload
     assert(!p2.has_children?, "Parent should not have children")
 
@@ -208,9 +208,9 @@ class PostTest < ActiveSupport::TestCase
     assert_equal("q", post.rating)
   end
 
-  def test_destroy
+  def test_delete
     post = create_post("tag1 tag2")
-    post.destroy
+    post.delete!
     assert_not_nil(Post.find_by_id(post.id))
     post.reload
     assert_equal("deleted", post.status)

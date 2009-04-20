@@ -30,7 +30,7 @@ class Post < ActiveRecord::Base
     Post.transaction do
       post.flag!(reason, current_user)
       post.reload
-      post.destroy
+      post.delete!
     end
   end
   
