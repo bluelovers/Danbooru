@@ -18,8 +18,6 @@
               <strong>Score</strong> <span id="post-score-<%= post.id %>"><%= post.score %></span> 
               <% if @current_user.is_privileged_or_higher? %>
                 (vote <%= link_to_function "up", "Post.vote(1, #{post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{post.id})" %>)
-              <% else %>
-                (<%= link_to "upgrade", :controller => "help", :action => "users" %> to vote)
               <% end %>
             </span>
             <% if post.comments.size > 6 %>
