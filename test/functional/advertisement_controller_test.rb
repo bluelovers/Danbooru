@@ -36,7 +36,11 @@ class AdvertisementControllerTest < ActionController::TestCase
   end
   
   def test_redirect
+    assert_equal(0, AdvertisementHit.count)
     get :redirect_ad, {:id => 1}
     assert_redirected_to "referral url"
+    assert_equal(1, AdvertisementHit.count)
+    assert_equal(1, AdvertisementHit.first.advertisement_id)
+    assert_equal("0.0.0.0", AdvertisementHit.first.ip_addr)
   end
 end
