@@ -9,14 +9,6 @@ class UserControllerTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
   end
   
-  def create_user(name, params = {})
-    user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "a@b.net"}.merge(params))
-    user.name = name
-    user.level = CONFIG["user_levels"]["Member"]
-    user.save
-    user
-  end
-  
   def test_show
     get :show, {:id => 1}
     assert_response :success

@@ -13,19 +13,6 @@ class TagImplicationTest < ActiveSupport::TestCase
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
   end
-  
-  def create_post(tags, params = {})
-    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
-    p.user_id = params[:user_id] || 1
-    p.score = params[:score] || 0
-    p.width = params[:width] || 100
-    p.height = params[:height] || 100
-    p.ip_addr = params[:ip_addr] || "127.0.0.1"
-    p.status = params[:status] || "active"
-    p.save
-    @test_number += 1
-    p
-  end
 
   def test_api
     assert_nothing_raised {@impl.to_json}

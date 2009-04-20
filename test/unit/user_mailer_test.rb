@@ -11,14 +11,6 @@ class UserMailerTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries = []
   end
   
-  def create_user(name, params = {})
-    user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com"}.merge(params))
-    user.name = name
-    user.level = CONFIG["user_levels"]["Member"]
-    user.save
-    user
-  end
-  
   # def test_confirmation_email
   #   user = create_user("bob")
   #   assert_nothing_raised {UserMailer.deliver_confirmation_email(user)}

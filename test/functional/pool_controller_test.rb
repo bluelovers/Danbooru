@@ -6,29 +6,9 @@ class PoolControllerTest < ActionController::TestCase
   def setup
     @test_number = 1
   end
-  
-  def create_pool(name, params = {})
-    pool = Pool.new({:name => name, :post_count => 0, :is_public => false, :description => "pools", :updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-    pool.user_id = params[:user_id] || 1
-    pool.save
-    pool
-  end
-  
-  def create_post(tags, user_id, params = {})
-    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
-    p.user_id = user_id
-    p.score = params[:score] || 0
-    p.width = params[:width] || 100
-    p.height = params[:height] || 100
-    p.ip_addr = params[:ip_addr] || "127.0.0.1"
-    p.status = params[:status] || "active"
-    p.save
-    @test_number += 1
-    p
-  end
-  
+
   def test_index
-    pool = create_pool("hoge")
+    pool = create_pool(:name => "hoge")
 
     get :index, {}, {:user_id => 1}
     assert_response :success
@@ -38,7 +18,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_show
-    pool = create_pool("hoge")
+    pool = create_pool(:name => "hoge")
     pool.add_post(1)
     pool.add_post(2)
     
@@ -47,7 +27,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_update
-    pool = create_pool("hoge")
+    pool = create_pool(:name => "hoge")
     
     get :update, {:id => pool.id}, {:user_id => 1}
     assert_response :success
@@ -73,7 +53,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_destroy
-    pool = create_pool("hoge")
+    pool = create_pool(:name => "hoge")
     
     get :destroy, {:id => pool.id}, {:user_id => 1}
     assert_response :success
@@ -84,14 +64,14 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_add_post_to_inactive_pool
-    pool = create_pool("hoge", :is_public => true, :user_id => 3, :is_active => false)
+    pool = create_pool(:name => "hoge", :is_public => true, :user_id => 3, :is_active => false)
     
     get :add_post, {:post_id => 1}
     assert_equal(false, assigns(:pools).any? {|x| x.name == "hoge"})
   end
   
   def test_add_post_to_public_pool
-    pool = create_pool("hoge", :is_public => true, :user_id => 3)
+    pool = create_pool(:name => "hoge", :is_public => true, :user_id => 3)
     
     # Test as anonymous
     get :add_post, {:post_id => 1}
@@ -113,7 +93,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_add_post_to_private_pool
-    pool = create_pool("hoge", :is_public => false, :user_id => 3)
+    pool = create_pool(:name => "hoge", :is_public => false, :user_id => 3)
     
     # Test as anonymous
     get :add_post, {:post_id => 1}
@@ -132,7 +112,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_remove_post_from_public_pool
-    pool = create_pool("hoge", :is_public => true, :user_id => 3)
+    pool = create_pool(:name => "hoge", :is_public => true, :user_id => 3)
     pool.add_post(1)
     
     # Don't have an HTML page for this
@@ -142,7 +122,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_remove_post_from_private_pool
-    pool = create_pool("hoge", :is_public => false, :user_id => 3)
+    pool = create_pool(:name => "hoge", :is_public => false, :user_id => 3)
     pool.add_post(1)
 
     # Don't have an HTML page for this
@@ -156,7 +136,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_order_public_pool
-    pool = create_pool("hoge", :is_public => true, :user_id => 3)
+    pool = create_pool(:name => "hoge", :is_public => true, :user_id => 3)
     pool.add_post(1)
     pool.add_post(2)
     
@@ -186,7 +166,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_order_private_pool
-    pool = create_pool("hoge", :is_public => false, :user_id => 3)
+    pool = create_pool(:name => "hoge", :is_public => false, :user_id => 3)
     pool.add_post(1)
     pool.add_post(2)
     
@@ -219,9 +199,9 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_import_to_private_pool
-    pool = create_pool("hoge", :is_public => false, :user_id => 4)
-    p1 = create_post("tag1", 1)
-    p2 = create_post("tag2", 2)
+    pool = create_pool(:name => "hoge", :is_public => false, :user_id => 4)
+    p1 = create_post("tag1", :user_id => 1)
+    p2 = create_post("tag2", :user_id => 2)
     
     get :import, {:id => pool.id}
     assert_redirected_to :controller => "user", :action => "login"
@@ -249,9 +229,9 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_import_to_public_pool
-    pool = create_pool("hoge", :is_public => true, :user_id => 4)
-    p1 = create_post("tag1", 1)
-    p2 = create_post("tag2", 2)
+    pool = create_pool(:name => "hoge", :is_public => true, :user_id => 4)
+    p1 = create_post("tag1", :user_id => 1)
+    p2 = create_post("tag2", :user_id => 2)
     
     get :import, {:id => pool.id, :format => "js"}
     assert_response :success
@@ -272,7 +252,7 @@ class PoolControllerTest < ActionController::TestCase
   end
   
   def test_select
-    pool = create_pool("hoge", :is_public => true, :user_id => 4)
+    pool = create_pool(:name => "hoge", :is_public => true, :user_id => 4)
     
     get :select, {:post_id => 1}
     assert_response :success

@@ -6,15 +6,7 @@ class WikiPageTest < ActiveSupport::TestCase
       MEMCACHE.flush_all
     end
   end
-  
-  def create_wiki(params = {})
-    WikiPage.create({:title => "hoge", :user_id => 1, :body => "hoge", :ip_addr => "127.0.0.1", :is_locked => false}.merge(params))
-  end
-  
-  def update_wiki(w1, params = {})
-    w1.update_attributes(params)
-  end
-  
+
   def test_normalize
     w1 = create_wiki(:title => "HOT POTATO")
     assert_equal("hot_potato", w1.title)

@@ -2,17 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class UserRecordTest < ActiveSupport::TestCase
   def setup
-    if CONFIG["enable_caching"]
-      MEMCACHE.flush_all
-    end
-  end
-  
-  def create_user(name, params = {})
-    user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com"}.merge(params))
-    user.name = name
-    user.level = CONFIG["user_levels"]["Member"]
-    user.save
-    user
+    MEMCACHE.flush_all
   end
 
   def test_all

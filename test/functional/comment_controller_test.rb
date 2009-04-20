@@ -6,19 +6,9 @@ class CommentControllerTest < ActionController::TestCase
   def setup
     @post_number = 1
   end
-  
-  def create_comment(post_id, body, params = {})
-    comm = Comment.new({:body => body}.merge(params))
-    comm.post_id = post_id
-    comm.user_id = params[:user_id] || 2
-    comm.ip_addr = params[:ip_addr] || "127.0.0.1"
-    comm.is_spam = params[:is_spam] || false
-    comm.save
-    comm
-  end
 
   def test_update
-    comment = create_comment(1, "hi there")
+    comment = create_comment(Post.find(1), :body => "hi there")
     
     get :edit, {:id => comment.id}
     assert_response :success
@@ -32,7 +22,7 @@ class CommentControllerTest < ActionController::TestCase
   end
   
   def test_destroy
-    comment = create_comment(1, "hi there")
+    comment = create_comment(Post.find(1), :body => "hi there")
 
     post :destroy, {:id => comment.id}, {:user_id => 1}
     assert_redirected_to :controller => "post", :action => "show", :id => 1
@@ -54,7 +44,7 @@ class CommentControllerTest < ActionController::TestCase
   def test_create_throttling
     old_member_comment_limit = CONFIG["member_comment_limit"]
     CONFIG["member_comment_limit"] = 1
-    create_comment(1, "c1", :user_id => 4)
+    create_comment(Post.find(1), :body => "c1", :user_id => 4)
     post :create, {:comment => {:post_id => 1, :body => "c2"}, :commit => "Post"}, {:user_id => 4}
     assert_redirected_to :controller => "post", :action => "show", :id => 1
     assert_equal(1, Post.find(1).comments.size)
@@ -71,33 +61,33 @@ class CommentControllerTest < ActionController::TestCase
   end
   
   def test_show
-    comment = create_comment(1, "hoge")
+    comment = create_comment(Post.find(1), :body => "hoge")
     get :show, {:id => comment.id}, {:user_id => 4}
     assert_response :success
   end
   
   def test_index
-    create_comment(1, "hoge")
-    create_comment(1, "moogle")
-    create_comment(3, "box")
-    create_comment(2, "tree")
+    create_comment(Post.find(1), :body => "hoge")
+    create_comment(Post.find(1), :body => "moogle")
+    create_comment(Post.find(3), :body => "box")
+    create_comment(Post.find(2), :body => "tree")
     get :index, {}, {:user_id => 4}
     assert_response :success
   end
   
   def test_mark_as_spam
     # TODO: allow janitors to mark spam
-    comment = create_comment(1, "hoge")
+    comment = create_comment(Post.find(1), :body => "hoge")
     post :mark_as_spam, {:id => comment.id}, {:user_id => 2}
     comment.reload
     assert(comment.is_spam?, "Comment not marked as spam")
   end
   
   def test_moderate
-    create_comment(1, "hoge")
-    create_comment(1, "moogle")
-    create_comment(3, "box")
-    create_comment(2, "tree")
+    create_comment(Post.find(1), :body => "hoge")
+    create_comment(Post.find(1), :body => "moogle")
+    create_comment(Post.find(3), :body => "box")
+    create_comment(Post.find(2), :body => "tree")
     get :moderate, {}, {:user_id => 2}
     assert_response :success
   end

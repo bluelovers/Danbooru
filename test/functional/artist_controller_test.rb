@@ -2,13 +2,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class ArtistControllerTest < ActionController::TestCase
   fixtures :users
-  
-  def create_artist(name, params = {})
-    Artist.create({:updater_id => 1, :updater_ip_addr => "127.0.0.1", :name => name}.merge(params))
-  end
 
   def test_destroy
-    artist = create_artist("bob")
+    artist = create_artist(:name => "bob")
     
     post :destroy, {:id => artist.id, :commit => "Yes"}, {:user_id => 1}
     assert_redirected_to :action => "index"
@@ -16,7 +12,7 @@ class ArtistControllerTest < ActionController::TestCase
   end
   
   def test_update
-    artist = create_artist("bob")
+    artist = create_artist(:name => "bob")
     
     get :update, {:id => artist.id}, {:user_id => 4}
     assert_response :success
@@ -62,15 +58,15 @@ class ArtistControllerTest < ActionController::TestCase
   end
   
   def test_show
-    monet = create_artist("monet")
+    monet = create_artist(:name => "monet")
     get :show, {:id => monet.id}
     assert_response :success
   end
   
   def test_index
-    create_artist("monet")
-    create_artist("pablo", :alias_name => "monet")
-    create_artist("hanaharu", :group_name => "monet")
+    create_artist(:name => "monet")
+    create_artist(:name => "pablo", :alias_name => "monet")
+    create_artist(:name => "hanaharu", :group_name => "monet")
     get :index
     assert_response :success
     

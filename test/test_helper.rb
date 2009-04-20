@@ -32,6 +32,49 @@ def upload_jpeg(path)
 	upload_file(path, "image/jpeg", File.basename(path))
 end
 
+
+def create_artist(params)
+  Artist.create({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
+end
+
+def update_artist(artist, params)
+  artist.update_attributes({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
+end
+
+def create_comment(post, params = {})
+  comm = Comment.new(params)
+  comm.post_id = post.id
+  comm.user_id = params[:user_id] || 1
+  comm.ip_addr = params[:ip_addr] || "127.0.0.1"
+  comm.is_spam = params[:is_spam] || false
+  comm.save
+  post.comments(true)
+  comm
+end
+
+def create_dmail(to_id, from_id, message, params = {})
+  Dmail.create({:to_id => to_id, :from_id => from_id, :title => message, :body => message}.merge(params))
+end
+
+def create_favorite(user_id, post_id)
+  Favorite.create(:user_id => user_id, :post_id => post_id)
+end
+
+def create_forum_post(msg, parent_id = nil, params = {})
+  ForumPost.create({:creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :is_locked => false, :parent_id => parent_id}.merge(params))
+end
+
+def create_note(params = {})
+  Note.create({:post_id => 1, :user_id => 1, :x => 0, :y => 0, :width => 100, :height => 100, :is_active => true, :ip_addr => "127.0.0.1"}.merge(params))
+end
+
+def create_pool(params = {})
+  pool = Pool.new({:name => "my pool", :post_count => 0, :is_public => false, :description => "pools", :updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
+  pool.user_id = params[:user_id] || 1
+  pool.save
+  pool
+end
+
 def create_post(tags = "tag1", params = {})
   p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
   p.user_id = params[:user_id] || 1
@@ -55,8 +98,25 @@ def update_post(post, params = {})
   post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
 end
 
-def create_note(params = {})
-  Note.create({:post_id => 1, :user_id => 1, :x => 0, :y => 0, :width => 100, :height => 100, :is_active => true, :ip_addr => "127.0.0.1"}.merge(params))
+def create_tag(params = {})
+  tag = Tag.new({:tag_type => 0, :is_ambiguous => false}.merge(params))
+  tag.cached_related = params[:cached_related] || ""
+  tag.cached_related_expires_on = params[:cached_related_expires_on] || Time.now
+  tag.post_count = params[:post_count] || 0
+  tag.save
+  tag
+end
+  
+def create_tag_subscription(tags, params = {})
+  TagSubscription.create({:tag_query => tags, :name => "General", :user_id => 1}.merge(params))
+end
+
+def create_user(name, params = {})
+  user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com"}.merge(params))
+  user.name = name
+  user.level = CONFIG["user_levels"]["Member"]
+  user.save
+  user
 end
 
 def create_wiki(params = {})
@@ -65,25 +125,11 @@ def create_wiki(params = {})
   wp.save
   wp
 end
-
-def create_artist(params)
-  Artist.create({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-end
-
-def update_artist(artist, params)
-  artist.update_attributes({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-end
-
-def create_pool(params = {})
-  pool = Pool.new({:name => "my pool", :post_count => 0, :is_public => false, :description => "pools", :updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-  pool.user_id = params[:user_id] || 1
-  pool.save
-  pool
-end
   
-def create_forum_post(msg, parent_id = nil, params = {})
-  ForumPost.create({:creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :is_locked => false, :parent_id => parent_id}.merge(params))
+def update_wiki(w1, params = {})
+  w1.update_attributes(params)
 end
+
 
 class Test::Unit::TestCase
   self.use_transactional_fixtures = true

@@ -8,18 +8,18 @@ class TagControllerTest < ActionController::TestCase
   end
   
   def test_cloud
-    default_create_post("hoge")
-    default_create_post("hoge moge")
-    default_create_post("lodge")
+    create_post("hoge")
+    create_post("hoge moge")
+    create_post("lodge")
     
     get :cloud, {}, {}
     assert_response :success
   end
   
   def test_index
-    default_create_post("hoge")
-    default_create_post("hoge moge")
-    default_create_post("lodge")
+    create_post("hoge")
+    create_post("hoge moge")
+    create_post("lodge")
 
     get :index, {}, {}
     assert_response :success
@@ -39,16 +39,16 @@ class TagControllerTest < ActionController::TestCase
   end
   
   def test_edit_preview
-    p1 = default_create_post("hoge")
-    p2 = default_create_post("hoge moge")
-    p3 = default_create_post("lodge")
+    p1 = create_post("hoge")
+    p2 = create_post("hoge moge")
+    p3 = create_post("lodge")
 
     get :edit_preview, {:tags => "hoge"}, {:user_id => 2}
     assert_response :success
   end
   
   def test_update
-    p1 = default_create_post("hoge")
+    p1 = create_post("hoge")
 
     get :edit, {:name => "hoge"}, {:user_id => 3}
     assert_response :success
@@ -58,18 +58,18 @@ class TagControllerTest < ActionController::TestCase
   end
   
   def test_related
-    p1 = default_create_post("hoge")
-    p2 = default_create_post("hoge moge")
-    p3 = default_create_post("lodge")
+    p1 = create_post("hoge")
+    p2 = create_post("hoge moge")
+    p3 = create_post("lodge")
     
     get :related, {:tags => "hoge", :format => "json"}, {}
     assert_response :success
   end
   
   def test_popular
-    p1 = default_create_post("hoge")
-    p2 = default_create_post("hoge moge")
-    p3 = default_create_post("lodge")
+    p1 = create_post("hoge")
+    p2 = create_post("hoge moge")
+    p3 = create_post("lodge")
 
     get :popular_by_day, {}, {}
     assert_response :success

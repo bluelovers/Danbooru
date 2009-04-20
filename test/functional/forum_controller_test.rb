@@ -2,13 +2,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class ForumControllerTest < ActionController::TestCase
   fixtures :users
-
-  def create_post(msg, parent_id = nil, params = {})
-    ForumPost.create({:creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :parent_id => parent_id, :is_locked => false}.merge(params))
-  end
-
+  
   def test_stick
-    p = create_post("parent")
+    p = create_forum_post("parent")
 
     post :stick, {:id => p.id}, {:user_id => 2}
     p.reload
@@ -20,7 +16,7 @@ class ForumControllerTest < ActionController::TestCase
   end
   
   def test_lock
-    p = create_post("parent")
+    p = create_forum_post("parent")
     
     post :lock, {:id => p.id}, {:user_id => 2}
     p.reload
@@ -51,8 +47,8 @@ class ForumControllerTest < ActionController::TestCase
   end
   
   def test_destroy
-    p1 = create_post("hello")
-    p2 = create_post("go away", p1.id)
+    p1 = create_forum_post("hello")
+    p2 = create_forum_post("go away", p1.id)
     
     post :destroy, {:id => p1.id}, {:user_id => 1}
     assert_nil(ForumPost.find_by_id(p1.id))
@@ -60,7 +56,7 @@ class ForumControllerTest < ActionController::TestCase
   end
   
   def test_update
-    p1 = create_post("hello")
+    p1 = create_forum_post("hello")
     
     get :edit, {:id => p1.id}, {:user_id => 1}
     assert_response :success
@@ -71,19 +67,19 @@ class ForumControllerTest < ActionController::TestCase
   end
   
   def test_show
-    p1 = create_post("hello")
+    p1 = create_forum_post("hello")
     get :show, {:id => p1.id}, {:user_id => 1}
     assert_response :success
   end
   
   def test_index
-    p1 = create_post("hello")
-    p2 = create_post("hello", p1.id)
-    p3 = create_post("hello", p1.id)
-    p4 = create_post("hello")
-    p5 = create_post("hello", p4.id)
-    p6 = create_post("hello", p4.id)
-    p7 = create_post("hello", p4.id)
+    p1 = create_forum_post("hello")
+    p2 = create_forum_post("hello", p1.id)
+    p3 = create_forum_post("hello", p1.id)
+    p4 = create_forum_post("hello")
+    p5 = create_forum_post("hello", p4.id)
+    p6 = create_forum_post("hello", p4.id)
+    p7 = create_forum_post("hello", p4.id)
     
     get :index, {}, {:user_id => 1}
     assert_response :success
@@ -93,13 +89,13 @@ class ForumControllerTest < ActionController::TestCase
   end
   
   def test_search
-    p1 = create_post("hello")
-    p2 = create_post("margery", p1.id)
-    p3 = create_post("daw", p1.id)
-    p4 = create_post("existential")
-    p5 = create_post("pie", p4.id)
-    p6 = create_post("moon", p4.id)
-    p7 = create_post("knife", p4.id)
+    p1 = create_forum_post("hello")
+    p2 = create_forum_post("margery", p1.id)
+    p3 = create_forum_post("daw", p1.id)
+    p4 = create_forum_post("existential")
+    p5 = create_forum_post("pie", p4.id)
+    p6 = create_forum_post("moon", p4.id)
+    p7 = create_forum_post("knife", p4.id)
     
     get :search, {}, {:user_id => 1}
     assert_response :success
@@ -109,13 +105,13 @@ class ForumControllerTest < ActionController::TestCase
   end
   
   def test_mark_all_read
-    p1 = create_post("hello")
-    p2 = create_post("margery", p1.id)
-    p3 = create_post("daw", p1.id)
-    p4 = create_post("existential")
-    p5 = create_post("pie", p4.id)
-    p6 = create_post("moon", p4.id)
-    p7 = create_post("knife", p4.id)
+    p1 = create_forum_post("hello")
+    p2 = create_forum_post("margery", p1.id)
+    p3 = create_forum_post("daw", p1.id)
+    p4 = create_forum_post("existential")
+    p5 = create_forum_post("pie", p4.id)
+    p6 = create_forum_post("moon", p4.id)
+    p7 = create_forum_post("knife", p4.id)
 
     post :mark_all_read, {}, {:user_id => 1}
     assert_response :success

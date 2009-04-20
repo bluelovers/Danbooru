@@ -8,10 +8,6 @@ ActionMailer::Base.deliveries = []
 class DmailControllerTest < ActionController::TestCase
   fixtures :users
   
-  def create_dmail(to_id, from_id, message, params = {})
-    Dmail.create({:to_id => to_id, :from_id => from_id, :title => message, :body => message}.merge(params))
-  end
-  
   def test_create
     get :compose, {}, {:user_id => 1}
     assert_response :success

@@ -3,23 +3,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 class NoteControllerTest < ActionController::TestCase
   fixtures :users
   
-  def create_post(tags, user_id = 1, params = {})
-    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
-    p.user_id = user_id
-    p.score = params[:score] || 0
-    p.width = params[:width] || 100
-    p.height = params[:height] || 100
-    p.ip_addr = params[:ip_addr] || "127.0.0.1"
-    p.status = params[:status] || "active"
-    p.save
-    @test_number += 1
-    p
-  end
-  
-  def create_note(body, post_id, params = {})
-    Note.create({:user_id => 1, :x => 0, :y => 0, :width => 100, :height => 100, :ip_addr => "127.0.0.1", :is_active => true, :post_id => post_id, :body => body}.merge(params))
-  end
-  
   def setup_test
     @test_number = 1
     @post1 = create_post("tag1")
@@ -42,7 +25,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_update
     setup_test
     
-    note = create_note("moogles", @post1.id)
+    note = create_note(:body => "moogles", :post_id => @post1.id)
     post :update, {:id => note.id, :note => {:body => "hoge"}}, {:user_id => 1}
     note.reload
     assert_equal("hoge", note.body)
@@ -52,7 +35,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_revert
     setup_test
     
-    note = create_note("hoge", @post1.id)
+    note = create_note(:body => "hoge", :post_id => @post1.id)
     note.update_attributes(:body => "mark ii")
     note.update_attributes(:body => "mark iii")
     
@@ -68,7 +51,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_history
     setup_test
     
-    note = create_note("hoge", @post1.id)
+    note = create_note(:body => "hoge", :post_id => @post1.id)
     
     get :history, {}, {:user_id => 1}
     assert_response :success
@@ -86,7 +69,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_index
     setup_test
         
-    note = create_note("hoge", @post1.id)
+    note = create_note(:body => "hoge", :post_id => @post1.id)
 
     get :index, {}, {:user_id => 1}
     assert_response :success
@@ -98,7 +81,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_search
     setup_test
         
-    note = create_note("hoge", @post1.id)
+    note = create_note(:body => "hoge", :post_id => @post1.id)
 
     get :search, {}, {:user_id => 1}
     assert_response :success
