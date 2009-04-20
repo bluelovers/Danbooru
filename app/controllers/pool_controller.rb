@@ -52,7 +52,9 @@ class PoolController < ApplicationController
   
   def create
     if request.post?
-      @pool = Pool.create(updater_params.merge(:user_id => @current_user.id))
+      @pool = Pool.new(updater_params)
+      @pool.user_id = @current_user.id
+      @pool.save
       
       if @pool.errors.empty?
         respond_to_success("Pool created", :action => "show", :id => @pool.id)

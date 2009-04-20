@@ -140,12 +140,10 @@
 
 <% content_for("post_cookie_javascripts") do %>
   <script type="text/javascript">
+    Post.observe_text_area("post_tags")
+  
     RelatedTags.init(<%= @current_user.favorite_tags.to_json %>, <%= @current_user.recent_tags.to_json %>, <%= @artists.to_json %>)
   </script>
-  
-  <% if @current_user.enable_autocomplete? %>
-    <%= render :partial => "tag_autocomplete" %>
-  <% end %>
 <% end %>
 
 <%= render :partial => "footer" %>

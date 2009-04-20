@@ -4,9 +4,16 @@ class NoteControllerTest < ActionController::TestCase
   fixtures :users
   
   def create_post(tags, user_id = 1, params = {})
-    post = Post.create({:user_id => user_id, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@post_number}.jpg")}.merge(params))
-    @post_number += 1
-    post
+    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    p.user_id = user_id
+    p.score = params[:score] || 0
+    p.width = params[:width] || 100
+    p.height = params[:height] || 100
+    p.ip_addr = params[:ip_addr] || "127.0.0.1"
+    p.status = params[:status] || "active"
+    p.save
+    @test_number += 1
+    p
   end
   
   def create_note(body, post_id, params = {})
@@ -14,7 +21,7 @@ class NoteControllerTest < ActionController::TestCase
   end
   
   def setup_test
-    @post_number = 1
+    @test_number = 1
     @post1 = create_post("tag1")
     @post2 = create_post("tag2")
   end

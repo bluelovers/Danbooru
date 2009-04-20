@@ -3,12 +3,28 @@ require File.dirname(__FILE__) + '/../test_helper'
 class PoolControllerTest < ActionController::TestCase
   fixtures :users, :posts
   
-  def create_pool(name, params = {})
-    Pool.create({:name => name, :user_id => 1, :is_public => false, :description => "hoge"}.merge(params))
+  def setup
+    @test_number = 1
   end
   
-  def create_post(tags, post_number, params = {})
-    Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg")}.merge(params))
+  def create_pool(name, params = {})
+    pool = Pool.new({:name => name, :post_count => 0, :is_public => false, :description => "pools", :updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
+    pool.user_id = params[:user_id] || 1
+    pool.save
+    pool
+  end
+  
+  def create_post(tags, user_id, params = {})
+    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    p.user_id = user_id
+    p.score = params[:score] || 0
+    p.width = params[:width] || 100
+    p.height = params[:height] || 100
+    p.ip_addr = params[:ip_addr] || "127.0.0.1"
+    p.status = params[:status] || "active"
+    p.save
+    @test_number += 1
+    p
   end
   
   def test_index
@@ -49,8 +65,8 @@ class PoolControllerTest < ActionController::TestCase
     
     post :create, {:pool => {:name => "moge", :is_public => "1", :description => "moge moge moge"}}, {:user_id => 1}
     pool = Pool.find_by_name("moge")
-    assert_redirected_to :action => "show", :id => pool.id
     assert_not_nil(pool)
+    assert_redirected_to :action => "show", :id => pool.id
     assert_equal(true, pool.is_public?)
     assert_equal("moge moge moge", pool.description)
     assert_equal(1, pool.user_id)

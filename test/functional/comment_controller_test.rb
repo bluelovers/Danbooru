@@ -8,7 +8,13 @@ class CommentControllerTest < ActionController::TestCase
   end
   
   def create_comment(post_id, body, params = {})
-    Comment.create({:post_id => post_id, :user_id => 2, :body => body, :ip_addr => "127.0.0.1", :is_spam => false}.merge(params))
+    comm = Comment.new({:body => body}.merge(params))
+    comm.post_id = post_id
+    comm.user_id = params[:user_id] || 2
+    comm.ip_addr = params[:ip_addr] || "127.0.0.1"
+    comm.is_spam = params[:is_spam] || false
+    comm.save
+    comm
   end
 
   def test_update

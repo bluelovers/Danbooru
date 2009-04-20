@@ -10,14 +10,22 @@ class CommentTest < ActiveSupport::TestCase
   end
   
   def test_simple
-    comment = Comment.create(:post_id => 1, :user_id => 1, :body => "hello world", :ip_addr => "127.0.0.1")
+    comment = Comment.new(:body => "hello world")
+    comment.post_id = 1
+    comment.user_id = 1
+    comment.ip_addr = "127.0.0.1"
+    comment.save
     assert_equal("admin", comment.author)
     assert_equal("hello world", comment.body)
     assert_equal(comment.created_at.to_s, Post.find(1).last_commented_at.to_s)
   end
   
   def test_no_bump
-    comment = Comment.create(:do_not_bump_post => "1", :post_id => 1, :user_id => 1, :body => "hello world", :ip_addr => "127.0.0.1")
+    comment = Comment.new(:do_not_bump_post => "1", :body => "hello world")
+    comment.post_id = 1
+    comment.user_id = 1
+    comment.ip_addr = "127.0.0.1"
+    comment.save
     assert_equal("admin", comment.author)
     assert_equal("hello world", comment.body)
     assert_nil(Post.find(1).last_commented_at)
@@ -27,16 +35,29 @@ class CommentTest < ActiveSupport::TestCase
     old_threshold = CONFIG["comment_threshold"]
     CONFIG["comment_threshold"] = 1
     
-    comment_a = Comment.create(:post_id => 1, :user_id => 1, :body => "mark 1", :ip_addr => "127.0.0.1")
+    comment_a = Comment.new(:body => "mark 1")
+    comment_a.post_id = 1
+    comment_a.user_id = 1
+    comment_a.ip_addr = "127.0.0.1"
+    comment_a.save
     sleep 1
-    comment_b = Comment.create(:post_id => 1, :user_id => 1, :body => "mark 2", :ip_addr => "127.0.0.1")
+    comment_b = Comment.new(:body => "mark 2")
+    comment_b.post_id = 1
+    comment_b.user_id = 1
+    comment_b.ip_addr = "127.0.0.1"
+    comment_b.save
     assert_equal(comment_a.created_at.to_s, Post.find(1).last_commented_at.to_s)
     
     CONFIG["comment_threshold"] = old_threshold
   end
   
   def test_api
-    comment = Comment.create(:post_id => 1, :user_id => 1, :body => "hello world", :ip_addr => "127.0.0.1")
+    comment = Comment.new(:body => "hello world")
+    comment.post_id = 1
+    comment.user_id = 1
+    comment.ip_addr = "127.0.0.1"
+    comment.save
+    
     assert_nothing_raised do
       comment.to_xml
     end

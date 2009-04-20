@@ -8,8 +8,9 @@ class FavoriteController < ApplicationController
     begin
       @post = Post.find(:first, :conditions => ["id = ?", params[:id]], :select => "posts.score, posts.id")
       @current_user.add_favorite(@post.id)
+      @post.reload
       
-      respond_to_success("Post added", {:controller => "post", :action => "show", :id => @post.id}, :api => {:score => @post.score + 1, :post_id => @post.id, :favorited_users => favorited_users_for_post(@post)})
+      respond_to_success("Post added", {:controller => "post", :action => "show", :id => @post.id}, :api => {:score => @post.score, :post_id => @post.id, :favorited_users => favorited_users_for_post(@post)})
     rescue User::AlreadyFavoritedError
       respond_to_error("Already favorited", {:controller => "post", :action => "show", :id => params[:id]}, :status => 423)
     end
@@ -18,7 +19,8 @@ class FavoriteController < ApplicationController
   def destroy
     @post = Post.find(:first, :conditions => ["id = ?", params[:id]], :select => "posts.score, posts.id")
     @current_user.delete_favorite(@post.id)
-    respond_to_success("Post removed", {:controller => "post", :action => "show", :id => @post.id}, :api => {:score => @post.score - 1, :post_id => @post.id, :favorited_users => favorited_users_for_post(@post)})
+    @post.reload
+    respond_to_success("Post removed", {:controller => "post", :action => "show", :id => @post.id}, :api => {:score => @post.score, :post_id => @post.id, :favorited_users => favorited_users_for_post(@post)})
   end
   
   def list_users

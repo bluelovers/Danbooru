@@ -30,9 +30,12 @@ class CommentController < ApplicationController
   end
 
   def create
-    user_id = session[:user_id]
+    comment = Comment.new(params[:comment])
+    comment.post_id = params[:comment][:post_id]
+    comment.user_id = @current_user.id
+    comment.is_spam = false
+    comment.ip_addr = request.remote_ip
 
-    comment = Comment.new(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if params[:commit] == "Post without bumping"
       comment.do_not_bump_post = true
     elsif !@current_user.can_comment?
@@ -91,7 +94,8 @@ class CommentController < ApplicationController
 
   def mark_as_spam
     @comment = Comment.find(params[:id])
-    @comment.update_attributes(:is_spam => true)
+    @comment.is_spam = true
+    @comment.save
     respond_to_success("Comment marked as spam", :action => "index")
   end
   

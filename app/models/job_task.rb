@@ -122,7 +122,7 @@ class JobTask < ActiveRecord::Base
         "tag:" + data["tag_name"]
         
       when "calculate_favorite_tags"
-        "user:" + data["id"]
+        "user:" + User.name(data["id"])
       end
     rescue Exception
       "ERROR"

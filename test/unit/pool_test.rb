@@ -9,10 +9,6 @@ class PoolTest < ActiveSupport::TestCase
     end
   end
   
-  def create_pool(params = {})
-    Pool.create({:user_id => 1, :name => "my pool", :post_count => 0, :is_public => false, :description => "pools", :updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-  end
-  
   def find_post(pool, post_id)
     PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post_id])
   end

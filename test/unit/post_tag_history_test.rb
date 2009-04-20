@@ -11,16 +11,6 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     @test_number = 1
   end
 
-  def create_post(params = {})
-    p = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
-    @test_number += 1
-    p
-  end
-  
-  def update_post(post, params = {})
-    post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
-  end
-
   def test_simple
     p1 = create_post
     update_post(p1, :tags => "tag2")
@@ -50,7 +40,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
   end
   
   def test_undo
-    p1 = create_post(:tags => "a")
+    p1 = create_post("a")
     update_post(p1, :tags => "a b")
 
     options = {:update_options => {:updater_ip_addr => "127.0.0.1", :updater_user_id => 3}}

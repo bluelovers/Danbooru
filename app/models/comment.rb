@@ -4,6 +4,7 @@ class Comment < ActiveRecord::Base
   belongs_to :user
   after_save :update_last_commented_at
   after_destroy :update_last_commented_at
+  attr_protected :post_id, :user_id, :is_spam, :text_search_index
   attr_accessor :do_not_bump_post
   
   def self.generate_sql(params)

@@ -11,7 +11,7 @@ class ModQueuePostTest < ActiveSupport::TestCase
   end
   
   def test_prune
-    Post.update(2, :status => "pending")
+    Post.find(2).update_attribute(:status, "pending")
     assert_equal(2, ModQueuePost.count)
     ModQueuePost.prune!
     assert_equal(1, ModQueuePost.count)

@@ -7,6 +7,8 @@ class Tag < ActiveRecord::Base
   include TagParseMethods
   include TagApiMethods
   
+  attr_protected :cached_related, :cached_related_expires_on, :post_count
+  
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50
     counts = select_all_sql("SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name, t.tag_type AS tag_type FROM posts p, posts_tags pt, tags t WHERE p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id GROUP BY pt.tag_id, t.tag_type ORDER BY post_count DESC LIMIT ?", start, stop, options[:limit]).map {|x| TagProxy.new(x['name'], x['post_count'], Tag.type_name_from_value(x['tag_type'].to_i))}
@@ -32,16 +34,19 @@ class Tag < ActiveRecord::Base
     
     if tag
       if tag_type
-        tag.update_attributes(:tag_type => tag_type)
+        tag.update_attribute(:tag_type, tag_type)
       end
       
       if ambiguous
-        tag.update_attributes(:is_ambiguous => ambiguous)
+        tag.update_attribute(:is_ambiguous, ambiguous)
       end
       
       return tag
     else
-      create(:name => name, :tag_type => tag_type || CONFIG["tag_types"]["General"], :cached_related_expires_on => Time.now, :is_ambiguous => ambiguous)
+      x = Tag.new(:name => name, :tag_type => tag_type || CONFIG["tag_types"]["General"], :is_ambiguous => ambiguous)
+      x.cached_related_expires_on = Time.now
+      x.save
+      x
     end
   end
 

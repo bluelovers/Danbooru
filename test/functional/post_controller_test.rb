@@ -4,10 +4,24 @@ class PostControllerTest < ActionController::TestCase
   fixtures :users
 
   def create_post(tags, post_number = 1, params = {})
-    Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg")}.merge(params))
+    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg")}.merge(params))
+    p.user_id = params[:user_id] || 1
+    p.score = params[:score] || 0
+    p.width = params[:width] || 100
+    p.height = params[:height] || 100
+    p.ip_addr = params[:ip_addr] || "127.0.0.1"
+    p.status = params[:status] || "active"
+    p.save
+    p
   end
   
   def update_post(post, params = {})
+    post.user_id = params[:user_id] if params[:user_id]
+    post.score = params[:score] if params[:score]
+    post.width = params[:width] if params[:width]
+    post.height = params[:height] if params[:height]
+    post.ip_addr = params[:ip_addr] if params[:ip_addr]
+    post.status = params[:status] if params[:status]
     post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
   end
   

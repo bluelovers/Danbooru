@@ -4,6 +4,7 @@ class WikiPage < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false
   validates_presence_of :body
+  attr_protected :text_search_index, :is_locked, :version
   
   TAG_DEL = '<del>'
   TAG_INS = '<ins>'

@@ -4,7 +4,11 @@ class WikiControllerTest < ActionController::TestCase
   fixtures :users
   
   def create_page(title, params = {})
-    WikiPage.create({:title => title, :body => title, :user_id => 1, :ip_addr => "127.0.0.1", :is_locked => false}.merge(params))
+    wp = WikiPage.new({:title => title, :body => title, :user_id => 1, :ip_addr => "127.0.0.1"}.merge(params))
+    wp.is_locked = params[:is_locked] || false
+    wp.version = params[:version] || 1
+    wp.save
+    wp
   end
   
   def test_destroy

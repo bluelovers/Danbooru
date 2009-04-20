@@ -8,6 +8,7 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :approver, :class_name => "User"
   attr_accessor :updater_ip_addr, :updater_user_id
+  attr_protected :user_id, :score, :md5, :width, :height, :cached_tags, :fav_count, :file_ext, :has_children, :status, :sample_width, :sample_height, :change_seq, :approver_id, :tags_index, :ip_addr
   
   include PostSqlMethods
   include PostCommentMethods
@@ -34,7 +35,7 @@ class Post < ActiveRecord::Base
   end
   
   def flag!(reason, creator_id)
-    update_attributes(:status => "flagged")
+    update_attribute(:status, "flagged")
     
     if flag_detail
       flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
@@ -48,7 +49,9 @@ class Post < ActiveRecord::Base
       flag_detail.update_attributes(:is_resolved => true)
     end
     
-    update_attributes(:status => "active", :approver_id => approver_id)
+    self.status = "active"
+    self.approver_id = approver_id
+    save
   end
   
   # TODO: refactor or eliminate

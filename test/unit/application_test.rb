@@ -5,10 +5,10 @@ class ApplicationTest < ActiveSupport::TestCase
   include CacheHelper
   include ApplicationHelper
 
-  def update_post(post, params = {})
-    post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
+  def setup
+    @test_number = 1
   end
-  
+
   def get_cache_keys(searches)
     ret = {}
     
@@ -26,7 +26,10 @@ class ApplicationTest < ActiveSupport::TestCase
   def test_cache_key_expiration
     assert_equal(true, CONFIG["enable_caching"], "Can't test caching with caching disabled")
 
-    pool_id = Pool.create({:name => "dummy", :user_id => 1}).id
+    pool = Pool.new(:name => "dummy")
+    pool.user_id = 1
+    pool.save
+    pool_id = pool.id
 
     tests = [
       {

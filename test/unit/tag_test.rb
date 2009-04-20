@@ -6,14 +6,36 @@ class TagTest < ActiveSupport::TestCase
     @test_number = 1
   end
 
+  # def create_tag(params = {})
+  #   Tag.create({:post_count => 0, :cached_related => "", :cached_related_expires_on => Time.now, :tag_type => 0, :is_ambiguous => false}.merge(params))
+  # end
+  
+  # def create_post(tags, params = {})
+  #   post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+  #   @test_number += 1
+  #   post
+  # end
+  
   def create_tag(params = {})
-    Tag.create({:post_count => 0, :cached_related => "", :cached_related_expires_on => Time.now, :tag_type => 0, :is_ambiguous => false}.merge(params))
+    tag = Tag.new({:tag_type => 0, :is_ambiguous => false}.merge(params))
+    tag.cached_related = params[:cached_related] || ""
+    tag.cached_related_expires_on = params[:cached_related_expires_on] || Time.now
+    tag.post_count = params[:post_count] || 0
+    tag.save
+    tag
   end
   
   def create_post(tags, params = {})
-    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    p = Post.new({:source => "", :rating => "s", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    p.user_id = params[:user_id] || 1
+    p.score = params[:score] || 0
+    p.width = params[:width] || 100
+    p.height = params[:height] || 100
+    p.ip_addr = params[:ip_addr] || "127.0.0.1"
+    p.status = params[:status] || "active"
+    p.save
     @test_number += 1
-    post
+    p
   end
   
   def test_api
@@ -145,7 +167,7 @@ class TagTest < ActiveSupport::TestCase
     assert_equal(["tag3", "1", "0"], related[2])
     
     # Make sure related tags are properly updated with the cache is expired
-    t.update_attributes(:cached_related_expires_on => 5.days.ago)
+    t.update_attribute(:cached_related_expires_on, 5.days.ago)
     t.reload
     related = t.related(true).sort {|a, b| a[0] <=> b[0]}
     assert_equal(4, related.size)

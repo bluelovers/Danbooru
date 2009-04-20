@@ -9,14 +9,6 @@ class ArtistTest < ActiveSupport::TestCase
     end
   end
   
-  def create_artist(params)
-    Artist.create({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-  end
-  
-  def update_artist(artist, params)
-    artist.update_attributes({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
-  end
-  
   def test_normalize
     artist = create_artist(:name => "pierre")
     assert_equal("pierre", artist.name)

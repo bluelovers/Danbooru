@@ -86,7 +86,9 @@ module PostTagMethods
             pool = Pool.find_by_name(name)
             
             if pool.nil? and name !~ /^\d+$/
-              pool = Pool.create(:name => name, :description => "This pool was automatically generated", :is_public => false, :user_id => updater_user_id)
+              pool = Pool.new(:name => name, :description => "This pool was automatically generated", :is_public => false)
+              pool.user_id = updater_user_id
+              pool.save
             end
 
             pool.add_post(id, :user => User.find(updater_user_id)) if pool

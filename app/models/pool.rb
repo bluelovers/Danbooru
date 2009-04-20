@@ -1,5 +1,6 @@
 class Pool < ActiveRecord::Base  
   belongs_to :user
+  attr_protected :user_id, :post_count
   
   class PostAlreadyExistsError < Exception
   end
@@ -40,7 +41,7 @@ class Pool < ActiveRecord::Base
         
         seq = options[:sequence] || next_sequence
         PoolPost.create(:pool_id => id, :post_id => post_id, :sequence => seq.to_i)
-        update_attribute(:post_count, PoolPost.count(:conditions => ["pool_id = ?", id]))
+        update_attribute :post_count, PoolPost.count(:conditions => ["pool_id = ?", id])
 
         unless options[:skip_update_pool_links]
           update_pool_links
@@ -56,7 +57,7 @@ class Pool < ActiveRecord::Base
         
         if PoolPost.exists?(["pool_id = ? and post_id = ?", id, post_id])
           PoolPost.destroy_all(["pool_id = ? and post_id = ?", id, post_id])
-          update_attribute(:post_count, PoolPost.count(:conditions => ["pool_id = ?", id]))
+          update_attribute :post_count, PoolPost.count(:conditions => ["pool_id = ?", id])
           update_pool_links
         end
       end

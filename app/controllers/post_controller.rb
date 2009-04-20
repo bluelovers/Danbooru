@@ -60,7 +60,11 @@ class PostController < ApplicationController
     end
 
 		begin
-    	@post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :status => status))
+    	@post = Post.new(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip))
+    	@post.user_id = @current_user.id
+    	@post.status = status
+    	@post.ip_addr = request.remote_ip
+    	@post.save
 		rescue Errno::ENOENT
 			respond_to_error("Internal error. Try uploading again.", {:controller => "post", :action => "error"})
 			return
@@ -116,9 +120,8 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-    user_id = @current_user.id
 
-    if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    if @post.update_attributes(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
@@ -378,7 +381,7 @@ private
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = Tag.scan_tags(params[:tags] || params[:post][:tags])
       tags = Tag.scan_tags(@current_user.recent_tags) + TagAlias.to_aliased(tags)
-      @current_user.update_attribute(:recent_tags, tags.slice(0, 50).uniq.join(" "))
+      @current_user.update_attribute(:recent_tags, tags.slice(0, 25).uniq.join(" "))
     end
   end
 end

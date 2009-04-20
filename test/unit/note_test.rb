@@ -9,10 +9,6 @@ class NoteTest < ActiveSupport::TestCase
     end
   end
   
-  def create_note(params)
-    Note.create({:post_id => 1, :user_id => 1, :x => 0, :y => 0, :width => 100, :height => 100, :is_active => true, :ip_addr => "127.0.0.1"}.merge(params))
-  end
-  
   def test_api
     note = create_note(:body => "hello")
     assert_nothing_raised do

@@ -98,6 +98,15 @@ Post = {
     })
   },
 
+  observe_text_area: function(field_id) {
+    $(field_id).observe("keydown", function(e) {
+      if (e.keyCode == Event.KEY_RETURN) {
+        this.up("form").submit()
+        e.stop()
+      }
+    })
+  },
+
   vote: function(score, id) {
     Post.notice_update("inc")
 

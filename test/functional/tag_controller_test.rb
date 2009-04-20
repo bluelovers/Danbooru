@@ -3,23 +3,23 @@ require File.dirname(__FILE__) + '/../test_helper'
 class TagControllerTest < ActionController::TestCase
   fixtures :users
   
-  def create_post(tags, post_number = 1, params = {})
-    Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg")}.merge(params))
+  def setup
+    @test_number = 1
   end
   
   def test_cloud
-    create_post("hoge", 1)
-    create_post("hoge moge", 2)
-    create_post("lodge", 3)
+    default_create_post("hoge")
+    default_create_post("hoge moge")
+    default_create_post("lodge")
     
     get :cloud, {}, {}
     assert_response :success
   end
   
   def test_index
-    create_post("hoge", 1)
-    create_post("hoge moge", 2)
-    create_post("lodge", 3)
+    default_create_post("hoge")
+    default_create_post("hoge moge")
+    default_create_post("lodge")
 
     get :index, {}, {}
     assert_response :success
@@ -39,16 +39,16 @@ class TagControllerTest < ActionController::TestCase
   end
   
   def test_edit_preview
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
+    p1 = default_create_post("hoge")
+    p2 = default_create_post("hoge moge")
+    p3 = default_create_post("lodge")
 
     get :edit_preview, {:tags => "hoge"}, {:user_id => 2}
     assert_response :success
   end
   
   def test_update
-    p1 = create_post("hoge", 1)
+    p1 = default_create_post("hoge")
 
     get :edit, {:name => "hoge"}, {:user_id => 3}
     assert_response :success
@@ -58,18 +58,18 @@ class TagControllerTest < ActionController::TestCase
   end
   
   def test_related
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
+    p1 = default_create_post("hoge")
+    p2 = default_create_post("hoge moge")
+    p3 = default_create_post("lodge")
     
     get :related, {:tags => "hoge", :format => "json"}, {}
     assert_response :success
   end
   
   def test_popular
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
+    p1 = default_create_post("hoge")
+    p2 = default_create_post("hoge moge")
+    p3 = default_create_post("lodge")
 
     get :popular_by_day, {}, {}
     assert_response :success
