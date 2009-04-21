@@ -116,16 +116,6 @@ module PostSqlMethods
         q[:order] = "fav" unless q[:order].is_a?(String)
       end
       
-      if q[:voteup].is_a?(String)
-        joins << "JOIN post_votes pv ON pv.post_id = p.id JOIN users vuu ON pv.user_id = vuu.id"
-        conds << "lower(vuu.name) = lower(?) AND pv.score >= 0"
-        cond_params << q[:voteup]
-      elsif q[:votedown].is_a?(String)
-        joins << "JOIN post_votes pv ON pv.post_id = p.id JOIN users vdu ON pv.user_id = vdu.id"
-        conds << "lower(vdu.name) = lower(?) AND pv.score < 0"
-        cond_params << q[:votedown]
-      end
-
       if q[:user].is_a?(String)
         joins << "JOIN users u ON p.user_id = u.id"
         conds << "lower(u.name) = lower(?)"
