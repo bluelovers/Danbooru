@@ -135,7 +135,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :set_title
   before_filter :set_current_user
-  before_filter :init_cookies
+  # before_filter :init_cookies
   # around_filter :run_profile
   
   protected :build_cache_key
