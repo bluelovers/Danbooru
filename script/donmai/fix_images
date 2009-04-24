@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/../../config/environment'
+
+Post.find(:all, :conditions => "pp.pool_id = 81", :select => "posts.*", :joins => "join pools_posts pp on pp.post_id = posts.id").each do |post|
+  if File.exists?(post.file_path)
+    begin
+      size = Danbooru.reduce_to({:width => post.width, :height => post.height}, {:width => 150, :height => 150})
+      path, ext = post.file_path, post.file_ext
+      Danbooru.resize(ext, path, post.preview_path, size, 95)
+      puts "Fixed #{post.id}"
+    rescue Exception => x
+      puts "Error #{post.id} #{x.class} #{x}"
+    end
+  end
+end
+
+Post.find(:all, :conditions => "pp.pool_id = 279", :select => "posts.*", :joins => "join pools_posts pp on pp.post_id = posts.id").each do |post|
+  post.sample_width = nil
+  post.sample_height = nil
+  post.regenerate_sample
+end
