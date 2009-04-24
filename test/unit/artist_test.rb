@@ -26,6 +26,12 @@ class ArtistTest < ActiveSupport::TestCase
     assert_equal("takashi_takeuchi", artist.name)
   end
   
+  def test_ambiguous_urls
+    bobross = create_artist(:name => "bob_ross", :urls => "http://artists.com/bobross/image.jpg")
+    bob = create_artist(:name => "bob", :urls => "http://artists.com/bob/image.jpg")
+    matches = Artist.find_all_by_url("http://artists.com/bob/")
+  end
+  
   def test_urls
     artist = create_artist(:name => "rembrandt", :urls => "http://rembrandt.com/test.jpg")
     artist.reload
