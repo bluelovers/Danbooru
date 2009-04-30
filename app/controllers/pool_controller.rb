@@ -1,6 +1,6 @@
 class PoolController < ApplicationController
   layout "default"
-  before_filter :member_only, :only => [:create, :destroy, :update]
+  before_filter :member_only, :except => [:index, :show]
   helper :post
   
   def index
