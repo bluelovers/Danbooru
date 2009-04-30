@@ -1,4 +1,5 @@
 Post = {
+  mod_queue: null,
   posts: new Hash(),
   pending_update_count: 0,
   
@@ -36,11 +37,35 @@ Post = {
 		$("edit-form").action = old_action
 	},
 
+  mass_moderate: function(action) {
+    Post.notice_update("inc")
+    
+    new Ajax.Request("/post/moderate.json", {
+      parameters: {"id": Post.mod_queue.join(","), "commit": action},
+      
+      onComplete: function(resp) {
+        Post.notice_update("dec")
+      }
+    })
+    
+    Post.mod_queue.each(function(x) {
+      if ($("mod-row-" + x)) {
+        $("mod-row-" + x).hide()
+      }      
+    })
+    
+    Post.mod_queue = $A([])
+  },
+
   moderate: function(post_id, action) {
     Post.notice_update("inc")
     var params = {}
     params["id"] = post_id
     params["commit"] = action
+
+    if (Post.mod_queue) {
+      Post.mod_queue = Post.mod_queue.without(post_id)      
+    }
     
     if (action == "Delete") {
       params["reason"] = prompt("Enter a reason")
@@ -49,7 +74,7 @@ Post = {
         return
       }
     }
-
+    
     new Ajax.Request("/post/moderate.json", {
       parameters: params,
       

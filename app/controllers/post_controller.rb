@@ -92,18 +92,19 @@ class PostController < ApplicationController
 
   def moderate
     if request.post?
-      post = Post.find(params[:id])
+      params[:id].split(/,/).each do |post_id|
+        post = Post.find(post_id)
       
-      if params[:commit] == "Hide"
-        post.mod_hide!(@current_user.id)
-        respond_to_success("Post hidden", {:action => "moderate"})
-      elsif params[:commit] == "Approve"
-        post.approve!(@current_user.id)
-        respond_to_success("Post approved", {:action => "moderate"})
-      elsif params[:commit] == "Delete"
-        Post.destroy_with_reason(post.id, params[:reason], @current_user)
-        respond_to_success("Post deleted", {:action => "moderate"})
+        if params[:commit] == "Hide"
+          post.mod_hide!(@current_user.id)
+        elsif params[:commit] == "Approve"
+          post.approve!(@current_user.id)
+        elsif params[:commit] == "Delete"
+          Post.destroy_with_reason(post.id, params[:reason], @current_user)
+        end
       end
+
+      respond_to_success("Post updated", {:action => "moderate"})
     else
       if params[:query]
         @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending", :order => "id"))
