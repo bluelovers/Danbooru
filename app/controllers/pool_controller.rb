@@ -70,7 +70,7 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
 
     if request.post?
-      if @pool.can_be_updated_by?(@current_user)
+      if @current_user.has_permission?(@pool)
         @pool.destroy
         respond_to_success("Pool deleted", :action => "index")
       else
