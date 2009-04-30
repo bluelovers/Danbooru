@@ -1,4 +1,10 @@
 <div id="comment-list">
+  <% if @current_user.is_privileged_or_lower? %>
+    <div style="margin-bottom: 1em;">
+      <h2>Before commenting, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
+    </div>
+  <% end %>
+  
   <% if @posts.empty? %>
     <h4>No comments.</h4>
   <% end %>

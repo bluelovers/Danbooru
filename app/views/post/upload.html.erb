@@ -1,21 +1,7 @@
 <div id="post-add">
-  <% unless @current_user.is_privileged_or_higher? %>
-    <div style="margin-bottom: 2em;">
-      <h4>Upload Guidelines</h4>
-      <p>Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.</p>
-      <ul>
-        <li>Do not upload <%= link_to "furry", :controller => "wiki", :action => "show", :title => "furry" %>, <%= link_to "yaoi", :controller => "wiki", :action => "show", :title => "yaoi" %>, <%= link_to "guro", :controller => "wiki", :action => "show", :title => "guro" %>, <%= link_to "toon", :controller => "wiki", :action => "show", :title => "toon" %>, or <%= link_to "poorly drawn", :controller => "wiki", :action => "show", :title => "poorly_drawn" %> art</li>
-        <li>Do not upload drawings with grotesquely large (two head sizes or more) breasts or penises</li>
-        <li>Do not upload manga or doujinshi chapters unless individual pages can stand on their own</li>
-        <li>Do not upload things with <%= link_to "compression artifacts", :controller => "wiki", :action => "show", :title => "compression_artifacts" %></li>
-        <li>Do not upload things with <%= link_to "obnoxious watermarks", :controller => "wiki", :action => "show", :title => "watermark" %></li>
-        <li>Read the <%= link_to "tagging guidelines", :controller => "help", :action => "tags" %></li>
-      </ul>
-      <p>You can only upload <%= pluralize @current_user.upload_limit, "post" %> currently. <%= link_to "Read explanation", :controller => "user", :action => "upload_limit" %>.</p>
-    </div>
-    
-    <div style="margin-bottom: 1em; width: 60em;">
-      <strong>NOTE: YOU CANNOT DELETE YOUR OWN UPLOADS!</strong> You will have to ask a janitor or a moderator to delete it for you, and they are not obligated to do so.
+  <% if @current_user.is_privileged_or_lower? %>
+    <div style="margin-bottom: 1em;">
+      <h2>Before uploading, read the <%= link_to "how to upload guide", :controller => "wiki", :action => "show", :title => "howto:upload" %>.</h2>      
     </div>
   <% end %>
   

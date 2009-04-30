@@ -1,9 +1,15 @@
 <h2>New Topic</h2>
 
 <div style="margin: 1em 0;">
+  <% if @current_user.is_privileged_or_lower? || true%>
+    <div style="margin-bottom: 1em;">
+      <h2>Before creating a new topic, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
+    </div>
+  <% end %>
+  
   <div id="preview" style="display: none; margin: 1em 0;">
   </div>
-
+  
   <div id="reply">
     <% form_tag({:action => "create"}) do %>
       <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>

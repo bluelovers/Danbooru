@@ -1,4 +1,9 @@
 <div id="edit" style="display: none;">
+  <% if @current_user.is_privileged_or_lower? %>
+    <div style="margin-bottom: 1em;">
+      <h2>Before editing, read the <%= link_to "how to tag guide", :controller => "wiki", :action => "show", :title => "howto:tag" %>.</h2>
+    </div>
+  <% end %>
   <% form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form") do %>
     <%= hidden_field_tag "post[old_tags]", @post.cached_tags %>
     <table class="form">
