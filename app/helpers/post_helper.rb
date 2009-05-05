@@ -71,8 +71,8 @@ module PostHelper
       elsif !query.blank?
         tags = Tag.parse_query(query)
       else
-        tags = Cache.get("$popular_tags", 4.hours) do
-          {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25)}
+        tags = Cache.get("$popular_tags", 6.hours) do
+          {:include => Tag.trending}
         end
       end
       

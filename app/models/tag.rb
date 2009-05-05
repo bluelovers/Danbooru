@@ -9,6 +9,19 @@ class Tag < ActiveRecord::Base
   
   attr_protected :cached_related, :cached_related_expires_on, :post_count
   
+  def self.trending
+    arr = []
+    tag_ids = select_values_sql("select pt.tag_id from posts_tags pt, posts p where pt.post_id = p.id and p.created_at >= ? group by pt.tag_id having count(*) > 10", 1.day.ago)
+
+    tag_ids.each do |tag_id|
+      tag = Tag.find(tag_id)
+      recent = Tag.count(:conditions => ["p.created_at >= ? AND tags.id = ?", 1.day.ago, tag.id], :joins => "JOIN posts_tags pt ON pt.tag_id = tags.id JOIN posts p ON p.id = pt.post_id")
+      arr << [tag, recent / tag.post_count.to_f, recent]
+    end
+
+    arr.sort_by {|x| -x[1]}.slice(0, 25).map {|x| TagProxy.new(x[0].name, x[2], Tag.type_name_from_value(x[0].tag_type))}
+  end
+  
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50
     counts = select_all_sql("SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name, t.tag_type AS tag_type FROM posts p, posts_tags pt, tags t WHERE p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id GROUP BY pt.tag_id, t.tag_type ORDER BY post_count DESC LIMIT ?", start, stop, options[:limit]).map {|x| TagProxy.new(x['name'], x['post_count'], Tag.type_name_from_value(x['tag_type'].to_i))}
