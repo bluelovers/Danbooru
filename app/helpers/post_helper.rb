@@ -30,26 +30,35 @@ module PostHelper
     }
   end
   
-  def print_tag_sidebar_helper(tag)
+  def print_tag_sidebar_helper(tag, swap_order = false)
+    puts tag.class
     if tag.is_a?(String)
-      tag = TagProxy.new(tag)
+      tag_name = tag
+      tag_type, post_count = Tag.type_and_count(tag_name)
+    elsif tag.is_a?(Array)
+      if swap_order
+        tag_name, post_count, tag_type = tag
+        tag_type = Tag.type_name_from_value(tag_type.to_i)
+      else
+        tag_name, tag_type, post_count = tag
+      end
     end
     
-    html = %{<li class="tag-type-#{tag.tag_type}">}
+    html = %{<li class="tag-type-#{tag_type}">}
 
-    if tag.tag_type == "artist"
-      html << %{<a href="/artist/show?name=#{u(tag.name)}">?</a> }
+    if tag_type == "artist"
+      html << %{<a href="/artist/show?name=#{u(tag_name)}">?</a> }
     else
-      html << %{<a href="/wiki/show?title=#{u(tag.name)}">?</a> }
+      html << %{<a href="/wiki/show?title=#{u(tag_name)}">?</a> }
     end
 
     if @current_user.is_privileged_or_higher?
-      html << %{<a href="/post/index?tags=#{u(tag.name)}+#{u(params[:tags])}">+</a> }
-      html << %{<a href="/post/index?tags=-#{u(tag.name)}+#{u(params[:tags])}">&ndash;</a> }
+      html << %{<a href="/post/index?tags=#{u(tag_name)}+#{u(params[:tags])}">+</a> }
+      html << %{<a href="/post/index?tags=-#{u(tag_name)}+#{u(params[:tags])}">&ndash;</a> }
     end
 
-    html << %{<a href="/post/index?tags=#{u(tag.name)}">#{h(tag.name.tr("_", " "))}</a> }
-    html << %{<span class="post-count">#{tag.post_count}</span> }
+    html << %{<a href="/post/index?tags=#{u(tag_name)}">#{h(tag_name.tr("_", " "))}</a> }
+    html << %{<span class="post-count">#{post_count}</span> }
     html << '</li>'
     return html
   end
@@ -91,15 +100,15 @@ module PostHelper
       end
       
       if tags[:related]
-        # start_time = Time.now
+        start_time = Time.now
         
         related = Tag.find_related(tags[:related])
         # print_delta(1, start_time)
-        mapped_related = related.map {|x| TagProxy.new(x[0], x[1])}
+        # mapped_related = related.map {|x| TagProxy.new(x[0], x[1])}
         # print_delta(2, start_time)
-        mapped_related.each do |tag|
+        related.each do |tag|
           # print_delta("3a", start_time)
-          html << print_tag_sidebar_helper(tag)
+          html << print_tag_sidebar_helper(tag, true)
           # print_delta("3b", start_time)
         end
       end
