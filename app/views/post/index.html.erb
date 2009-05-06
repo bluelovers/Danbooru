@@ -50,9 +50,8 @@
     
     <% if @wiki_page %>
       <div>
-        <h5>Wiki: <%= h params[:tags] %></h5>
+        <h5>Wiki: <%= fast_link_to h(params[:tags]), :controller => "wiki", :action => "show", :title => params[:tags] %></h5>
         <p><%= truncate(@wiki_page.body, :length => 250) %></p>
-        <p><%= fast_link_to "More...", :controller => "wiki", :action => "show", :title => params[:tags] %></p>
       </div>
     <% end %>
   </div>
