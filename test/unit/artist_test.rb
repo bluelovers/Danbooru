@@ -29,7 +29,9 @@ class ArtistTest < ActiveSupport::TestCase
   def test_ambiguous_urls
     bobross = create_artist(:name => "bob_ross", :urls => "http://artists.com/bobross/image.jpg")
     bob = create_artist(:name => "bob", :urls => "http://artists.com/bob/image.jpg")
-    matches = Artist.find_all_by_url("http://artists.com/bob/")
+    matches = Artist.find_all_by_url("http://artists.com/bob/test.jpg")
+    assert_equal(1, matches.size)
+    assert_equal("bob", matches.first.name)
   end
   
   def test_urls
