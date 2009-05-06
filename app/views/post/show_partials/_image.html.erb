@@ -18,7 +18,7 @@
         <embed src="<%= @post.file_url %>" width="<%= @post.width %>" height="<%= @post.height %>" allowScriptAccess="never"></embed>
       </object>
 
-      <p><%= link_to "Save this flash (right click and save)", @post.file_url %></p>
+      <p><%= fast_link_to "Save this flash (right click and save)", @post.file_url %></p>
     <% else %>
       <h2><a href="<%= @post.file_url %>">Download</a></h2>
       <p>You must download this file manually.</p>

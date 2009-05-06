@@ -1,16 +1,50 @@
 module ApplicationHelper
+  def fast_link_to(text, link_params, options = {})
+    if link_params.is_a?(Hash)
+      action = link_params.delete(:action)
+      controller = link_params.delete(:controller) || controller_name
+      id = link_params.delete(:id)
+      
+      if options
+        attributes = options.map {|k, v| "#{k}=\"#{u(v)}\""}.join(" ")
+      else
+        attributes = ""
+      end
+      
+      link_params = link_params.map {|k, v| "#{k}=#{u(v)}"}.join("&")
+      
+      if link_params.any?
+        link_params = "?#{link_params}"
+      end
+      
+      if id
+        url = "/#{controller}/#{action}/#{id}#{link_params}"
+      else
+        url = "/#{controller}/#{action}#{link_params}"
+      end
+    else
+      url = link_params
+    end
+    
+    %{<a href="#{url}">#{text}</a>}
+  end
+  
+  def fast_link_to_unless(cond, text, link_params, options = {})
+    if !cond
+      fast_link_to(text, link_params, options)
+    else
+      text
+    end
+  end
+  
   def navbar_link_to(text, options, html_options = nil)
-    if options[:controller] == params[:controller]
+    if options[:controller] == params[:controller] || (%w(tag_alias tag_implication).include?(params[:controller]) && options[:controller] == "tag")
       klass = "current-page"
     else
       klass = nil
     end
     
-    if %w(tag_alias tag_implication).include?(params[:controller]) && options[:controller] == "tag"
-      klass = "current-page"
-    end
-    
-    content_tag("li", link_to(text, options, html_options), :class => klass)
+    %{<li class="#{klass}">} + fast_link_to(text, options, html_options) + "</li>"
   end
 
   def format_text(text, options = {})
@@ -26,7 +60,7 @@ module ApplicationHelper
 
   def tag_header(tags)
     unless tags.blank?
-      '/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
+      '/' + Tag.scan_query(tags).map {|t| fast_link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
     end
   end
   

@@ -1,14 +1,14 @@
 <div>
   <h5>Related Posts</h5>
   <ul>
-    <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.id - 1 %></li>
-    <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.id + 1 %></li>
+    <li><%= fast_link_to "Previous", :controller => "post", :action => "show", :id => @post.id - 1 %></li>
+    <li><%= fast_link_to "Next", :controller => "post", :action => "show", :id => @post.id + 1 %></li>
     <% if @post.parent_id %>
-      <li><%= link_to "Parent", :controller => "post", :action => "show", :id => @post.parent_id %></li>
+      <li><%= fast_link_to "Parent", :controller => "post", :action => "show", :id => @post.parent_id %></li>
     <% end %>
-    <li><%= link_to "Random", :controller => "post", :action => "random" %></li>
+    <li><%= fast_link_to "Random", :controller => "post", :action => "random" %></li>
     <% unless @post.is_deleted? || !@post.image? %>
-      <li><%= link_to "Similar", "http://danbooru.iqdb.hanyuu.net/db-search.php?url=#{@post.preview_url}" %></li>
+      <li><%= fast_link_to "Similar", "http://danbooru.iqdb.hanyuu.net/db-search.php?url=#{@post.preview_url}" %></li>
     <% end %>
   </ul>
 </div>

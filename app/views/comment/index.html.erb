@@ -1,7 +1,7 @@
 <div id="comment-list">
   <% if @current_user.is_privileged_or_lower? %>
     <div style="margin-bottom: 1em;">
-      <h2>Before commenting, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
+      <h2>Before commenting, read the <%= fast_link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
     </div>
   <% end %>
   
@@ -12,13 +12,13 @@
   <% @posts.each do |post| %>
     <div class="post">
       <div class="col1">
-        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview", :id => "p%i" % post.id), :controller => "post", :action => "show", :id => post.id) %>
+        <%= fast_link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview", :id => "p%i" % post.id), :controller => "post", :action => "show", :id => post.id) %>
       </div>
       <div class="col2" id="comments-for-p<%= post.id %>">
         <div class="header">
           <div>
             <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
-            <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
+            <span class="info"><strong>User</strong> <%= fast_link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
             <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
             <span class="info">
               <strong>Score</strong> <span id="post-score-<%= post.id %>"><%= post.score %></span> 
@@ -27,14 +27,14 @@
               <% end %>
             </span>
             <% if post.comments.size > 6 %>
-              <span class="info"><strong>Hidden</strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
+              <span class="info"><strong>Hidden</strong> <%= fast_link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
             <% end %>
           </div>
           <div class="tags">
             <strong>Tags</strong>
             <% post.cached_tags.split(/ /).each do |name| %>
               <span class="tag-type-<%= Tag.type_name(name) %>">
-                <%= link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
+                <%= fast_link_to h(name.tr("_", " ")), :controller => "post", :action => "index", :tags => name %>
               </span>
             <% end %>
           </div>

@@ -1,7 +1,7 @@
 <div id="post-list">  
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
-      Maybe you meant: <%= @tag_suggestions.map {|x| link_to(h(x), :action => "index", :tags => x)}.to_sentence(:connector => "or") %>
+      Maybe you meant: <%= @tag_suggestions.map {|x| fast_link_to(h(x), :action => "index", :tags => x)}.to_sentence(:connector => "or") %>
     </div>
   <% end %>
 
@@ -52,7 +52,7 @@
     <%= print_advertisement("horizontal") %>      
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
-        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>
+        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| fast_link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>
       </div>
     <% end %>
     

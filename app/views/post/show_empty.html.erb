@@ -3,9 +3,9 @@
     <div>
       <h5>Related Posts</h5>
       <ul>
-        <li><%= link_to "Previous", :controller => "post", :action => "show", :id => params[:id].to_i - 1 %></li>
-        <li><%= link_to "Next", :controller => "post", :action => "show", :id => params[:id].to_i + 1 %></li>
-        <li><%= link_to "Random", :controller => "post", :action => "random" %></li>
+        <li><%= fast_link_to "Previous", :controller => "post", :action => "show", :id => params[:id].to_i - 1 %></li>
+        <li><%= fast_link_to "Next", :controller => "post", :action => "show", :id => params[:id].to_i + 1 %></li>
+        <li><%= fast_link_to "Random", :controller => "post", :action => "random" %></li>
       </ul>
     </div>
   </div>

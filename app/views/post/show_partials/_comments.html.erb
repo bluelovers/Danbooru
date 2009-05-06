@@ -1,7 +1,7 @@
 <div id="comments" style="margin-top: 1em;">
   <% if @current_user.is_privileged_or_lower? %>
     <div style="margin-bottom: 1em;">
-      <h2>Before commenting, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
+      <h2>Before commenting, read the <%= fast_link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
     </div>
   <% end %>
   <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>

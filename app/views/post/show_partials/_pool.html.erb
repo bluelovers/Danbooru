@@ -1,12 +1,12 @@
 <div class="status-notice" id="pool<%= pool.id %>">
   <div style="display: inline;">
-    <p>This post belongs to the <%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool.
+    <p>This post belongs to the <%= fast_link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool.
     
       <% if pool_post.prev_post_id %>
-        <%= link_to "Previous", :action => "show", :id => pool_post.prev_post_id %> |
+        <%= fast_link_to "Previous", :action => "show", :id => pool_post.prev_post_id %> |
       <% end %>
       <% if pool_post.next_post_id %>
-        <%= link_to "Next", :action => "show", :id => pool_post.next_post_id %> |
+        <%= fast_link_to "Next", :action => "show", :id => pool_post.next_post_id %> |
       <% end %>
       <%= link_to_function "Remove Post", "if (confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{@post.id}, #{pool.id})" %>
     </p>

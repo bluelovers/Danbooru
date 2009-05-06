@@ -2,7 +2,7 @@
   <h5>Statistics</h5>
   <ul>
     <li>Id: <%= @post.id %></li>
-    <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
+    <li>Posted: <%= fast_link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= fast_link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
     <% if @current_user.is_admin? && @post.approver %>
       <li>Approver: <%= @post.approver.name %></li>
     <% end %>
@@ -11,7 +11,7 @@
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[/^http/] %>
-        <li>Source: <%= link_to @post.source[7, 20] + "...", @post.normalized_source, :target => "_blank" %></li>
+        <li>Source: <%= fast_link_to @post.source[7, 20] + "...", @post.normalized_source, :target => "_blank" %></li>
       <% else %>
         <li>Source: <%= @post.source %></li>
       <% end %>
