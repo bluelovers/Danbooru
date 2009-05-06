@@ -53,6 +53,10 @@ module PostHelper
     html << '</li>'
     return html
   end
+  
+  def print_delta(index, start_time)
+    puts "#{index}: #{Time.now - start_time}"
+  end
 
   def print_tag_sidebar(query)
 #    if query.is_a?(Post)
@@ -87,13 +91,23 @@ module PostHelper
       end
       
       if tags[:related]
-        Tag.find_related(tags[:related]).map {|x| TagProxy.new(x[0], x[1])}.each do |tag|
+        # start_time = Time.now
+        
+        related = Tag.find_related(tags[:related])
+        # print_delta(1, start_time)
+        mapped_related = related.map {|x| TagProxy.new(x[0], x[1])}
+        # print_delta(2, start_time)
+        mapped_related.each do |tag|
+          # print_delta("3a", start_time)
           html << print_tag_sidebar_helper(tag)
+          # print_delta("3b", start_time)
         end
       end
 
+      # print_delta(4, start_time)
+
       html += ['</ul>', '</div>']
-      
+
       if !query.is_a?(Post) && @current_user.is_privileged_or_higher?
         if tags[:subscriptions].is_a?(String)
           html += ['<div style="margin-bottom: 1em;">', '<h5>Subscribed Tags</h5>', '<ul id="tag-subs-sidebar">']

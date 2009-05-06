@@ -96,6 +96,7 @@ module TagRelatedTagMethods
   end
   
   def related(force_immediate_recalculation = false)
+    start_time = Time.now
     split_tags = cached_related.split(/,/)
     
     if Time.now > cached_related_expires_on || split_tags.empty?
@@ -106,7 +107,7 @@ module TagRelatedTagMethods
         JobTask.create(:task_type => "calculate_related_tags", :status => "pending", :data => {"id" => id})
       end
     end
-
+    
     split_tags.in_groups_of(3)
   end
 end
