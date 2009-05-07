@@ -3,9 +3,11 @@ module TagHelper
     html = ""
 
     tags.sort {|a, b| a.to_s <=> b.to_s}.each do |tag|
-      size = Math.log(tag.post_count) / divisor
+      # tag = [name, count, type]
+      
+      size = Math.log(tag[1]) / divisor
       size = 0.8 if size < 0.8
-      html << %{<a href="/post/index?tags=#{u(tag.name)}" style="font-size: #{size}em;" title="#{tag.post_count} posts">#{h(tag.name)}</a> }
+      html << %{<a href="/post/index?tags=#{u(tag[0])}" style="font-size: #{size}em;" title="#{tag[1]} posts">#{h(tag[0])}</a> }
     end
 
     return html

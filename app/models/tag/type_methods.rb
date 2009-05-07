@@ -35,7 +35,7 @@ module TagTypeMethods
     def type_and_count(tag_name)
       results = select_all_sql("SELECT tag_type, post_count FROM tags WHERE name = ?", tag_name)
       if results.any?
-        [Tag.type_name_from_value(results[0]["tag_type"].to_i), results[0]["post_count"].to_i]
+        [results[0]["tag_type"].to_i, results[0]["post_count"].to_i]
       else
         ["General", 0]
       end

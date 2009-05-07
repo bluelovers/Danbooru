@@ -66,7 +66,7 @@ class PoolControllerTest < ActionController::TestCase
   def test_add_post_to_inactive_pool
     pool = create_pool(:name => "hoge", :is_public => true, :user_id => 3, :is_active => false)
     
-    get :add_post, {:post_id => 1}
+    get :add_post, {:post_id => 1}, {:user_id => 4}
     assert_equal(false, assigns(:pools).any? {|x| x.name == "hoge"})
   end
   
@@ -75,7 +75,7 @@ class PoolControllerTest < ActionController::TestCase
     
     # Test as anonymous
     get :add_post, {:post_id => 1}
-    assert_response :success
+    assert_redirected_to :controller => "user", :action => "login"
     
     get :add_post, {:post_id => 1}, {:user_id => 4}
     assert_response :success
@@ -88,7 +88,7 @@ class PoolControllerTest < ActionController::TestCase
     assert_redirected_to :controller => "post", :action => "show", :id => 1
     assert_equal(1, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
     
-    get :history, {:id => pool.id}
+    get :history, {:id => pool.id}, {:user_id => 4}
     assert_response :success
   end
   
@@ -97,7 +97,7 @@ class PoolControllerTest < ActionController::TestCase
     
     # Test as anonymous
     get :add_post, {:post_id => 1}
-    assert_response :success
+    assert_redirected_to :controller => "user", :action => "login"
     
     get :add_post, {:post_id => 1}, {:user_id => 4}
     assert_response :success
@@ -141,7 +141,7 @@ class PoolControllerTest < ActionController::TestCase
     pool.add_post(2)
     
     get :order, {:id => pool.id}
-    assert_response :success
+    assert_redirected_to :controller => "user", :action => "login"
     
     get :order, {:id => pool.id}, {:user_id => 4}
     assert_response :success
@@ -234,7 +234,7 @@ class PoolControllerTest < ActionController::TestCase
     p2 = create_post("tag2", :user_id => 2)
     
     get :import, {:id => pool.id, :format => "js"}
-    assert_response :success
+    assert_response 406
     
     get :import, {:id => pool.id, :format => "js"}, {:user_id => 3}
     assert_response :success
@@ -255,7 +255,7 @@ class PoolControllerTest < ActionController::TestCase
     pool = create_pool(:name => "hoge", :is_public => true, :user_id => 4)
     
     get :select, {:post_id => 1}
-    assert_response :success
+    assert_redirected_to :controller => "user", :action => "login"
     
     get :select, {:post_id => 1}, {:user_id => 4}
     assert_response :success

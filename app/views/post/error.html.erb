@@ -1,6 +1,0 @@
-<% n = 10_000 %>
-<p><%= Benchmark.measure {n.times {|i| link_to("test", :controller => "post", :action => "show", :id => i)}} %></p>
-<p><%= Benchmark.measure {n.times {|i| fast_link_to("test", :controller => "post", :action => "show", :id => i)}} %></p>
-<p><%= Benchmark.measure {n.times {|i| %{<a href="/post/show/#{i}">test</a>}}} %></p>
-<p><%= Benchmark.measure {n.times {|i| link_to_function("test", "#{i}")}} %></p>
-

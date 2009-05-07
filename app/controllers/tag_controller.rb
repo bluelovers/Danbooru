@@ -7,7 +7,7 @@ class TagController < ApplicationController
   def cloud
     set_title "Tags"
 
-    @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
+    @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).map {|x| [x.name, x.post_count, x.tag_type]}.sort {|a, b| a[1] <=> b[1]}
   end
 
   def index

@@ -18,14 +18,14 @@ class TagTest < ActiveSupport::TestCase
     p3 = create_post("tag1 tag2")
     
     results = Tag.count_by_period(3.days.ago, Time.now).sort {|a, b| a.to_s <=> b.to_s}
-    assert_equal("2", results[0].post_count)
-    assert_equal("tag1", results[0].name)
-    assert_equal("1", results[1].post_count)
-    assert_equal("tag2", results[1].name)
-
+    assert_equal("2", results[0][1])
+    assert_equal("tag1", results[0][0])
+    assert_equal("1", results[1][1])
+    assert_equal("tag2", results[1][0])
+  
     results = Tag.count_by_period(20.days.ago, 5.days.ago).sort {|a, b| a.to_s <=> b.to_s}
-    assert_equal("1", results[0].post_count)
-    assert_equal("tag1", results[0].name)
+    assert_equal("1", results[0][1])
+    assert_equal("tag1", results[0][0])
   end
   
   def test_find_or_create_by_name

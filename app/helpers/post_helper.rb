@@ -31,102 +31,86 @@ module PostHelper
   end
   
   def print_tag_sidebar_helper(tag)
+    # tag = [name, count, type]
+    
     if tag.is_a?(String)
-      tag = TagProxy.new(tag)
+      tag_name = tag
+      tag_type, tag_count = Tag.type_and_count(tag)
+      type_name = Tag.type_name_from_value(tag_type)
+    else
+      tag_name = tag[0]
+      tag_count = tag[1]
+      type_name = Tag.type_name_from_value(tag[2])
     end
     
-    html = %{<li class="tag-type-#{tag.tag_type}">}
+    html = %{<li class="tag-type-#{type_name}">}
 
-    if tag.tag_type == "artist"
-      html << %{<a href="/artist/show?name=#{u(tag.name)}">?</a> }
+    if type_name == "artist"
+      html << %{<a href="/artist/show?name=#{u(tag_name)}">?</a> }
     else
-      html << %{<a href="/wiki/show?title=#{u(tag.name)}">?</a> }
+      html << %{<a href="/wiki/show?title=#{u(tag_name)}">?</a> }
     end
 
     if @current_user.is_privileged_or_higher?
-      html << %{<a href="/post/index?tags=#{u(tag.name)}+#{u(params[:tags])}">+</a> }
-      html << %{<a href="/post/index?tags=-#{u(tag.name)}+#{u(params[:tags])}">&ndash;</a> }
+      html << %{<a href="/post/index?tags=#{u(tag_name)}+#{u(params[:tags])}">+</a> }
+      html << %{<a href="/post/index?tags=-#{u(tag_name)}+#{u(params[:tags])}">&ndash;</a> }
     end
 
-    html << %{<a href="/post/index?tags=#{u(tag.name)}">#{h(tag.name.tr("_", " "))}</a> }
-    html << %{<span class="post-count">#{tag.post_count}</span> }
+    html << %{<a href="/post/index?tags=#{u(tag_name)}">#{h(tag_name.tr("_", " "))}</a> }
+    html << %{<span class="post-count">#{tag_count}</span> }
     html << '</li>'
     return html
   end
   
-  def print_delta(index, start_time)
-    puts "#{index}: #{Time.now - start_time}"
-  end
-
   def print_tag_sidebar(query)
-#    if query.is_a?(Post)
-#      cache_key = "tag_sidebar:post:#{@current_user.is_privileged_or_higher?}:#{query.id}"
-#    else
-#      cache_key = "tag_sidebar:#{@current_user.is_privileged_or_higher?}:" + query.tr(" ", "+")
-#    end
+    if query.is_a?(Post)
+      tags = {:include => query.cached_tags.split(/ /)}
+    elsif !query.blank?
+      tags = Tag.parse_query(query)
+    else
+      tags = {:include => Tag.trending}
+    end
+    
+    html = ['<div style="margin-bottom: 1em;">', '<h5>Tags</h5>', '<ul id="tag-sidebar">']
 
-#    Cache.get(cache_key, 4.hours) do
-      if query.is_a?(Post)
-        tags = {:include => query.cached_tags.split(/ /)}
-      elsif !query.blank?
-        tags = Tag.parse_query(query)
-      else
-        tags = Cache.get("$popular_tags", 6.hours) do
-          {:include => Tag.trending}
+    if tags[:exclude]
+      tags[:exclude].each do |tag|
+        html << print_tag_sidebar_helper(tag)
+      end
+    end
+
+    if tags[:include]
+      tags[:include].each do |tag|
+        html << print_tag_sidebar_helper(tag)
+      end
+    end
+    
+    if tags[:related]
+      Tag.find_related(tags[:related]).each do |tag|
+        html << print_tag_sidebar_helper(tag)
+      end
+    end
+
+    html += ['</ul>', '</div>']
+
+    if !query.is_a?(Post) && @current_user.is_privileged_or_higher?
+      if tags[:subscriptions].is_a?(String)
+        html += ['<div style="margin-bottom: 1em;">', '<h5>Subscribed Tags</h5>', '<ul id="tag-subs-sidebar">']
+        subs = TagSubscription.find_tags(tags[:subscriptions])
+        subs.each do |sub|
+          html << print_tag_sidebar_helper(sub)
         end
+        html += ['</ul>', '</div>']
       end
       
-      html = ['<div style="margin-bottom: 1em;">', '<h5>Tags</h5>', '<ul id="tag-sidebar">']
-
-      if tags[:exclude]
-        tags[:exclude].each do |tag|
-          html << print_tag_sidebar_helper(tag)
-        end
+      deleted_count = Post.fast_deleted_count(query)
+      if deleted_count > 0
+        html += ['<div style="margin-bottom: 1em;">', '<h5>Tag Statistics</h5>', '<ul id="tag-stats-sidebar">']
+        html << %{<li><a href="/post/index?tags=#{u(query)}+status%3Adeleted">deleted:#{deleted_count}</a></li>}
+        html += ['</ul>', '</div>']        
       end
-
-      if tags[:include]
-        tags[:include].each do |tag|
-          html << print_tag_sidebar_helper(tag)
-        end
-      end
-      
-      if tags[:related]
-        # start_time = Time.now
-        
-        related = Tag.find_related(tags[:related])
-        # print_delta(1, start_time)
-        mapped_related = related.map {|x| TagProxy.new(x[0], x[1])}
-        # print_delta(2, start_time)
-        mapped_related.each do |tag|
-          # print_delta("3a", start_time)
-          html << print_tag_sidebar_helper(tag)
-          # print_delta("3b", start_time)
-        end
-      end
-
-      # print_delta(4, start_time)
-
-      html += ['</ul>', '</div>']
-
-      if !query.is_a?(Post) && @current_user.is_privileged_or_higher?
-        if tags[:subscriptions].is_a?(String)
-          html += ['<div style="margin-bottom: 1em;">', '<h5>Subscribed Tags</h5>', '<ul id="tag-subs-sidebar">']
-          subs = TagSubscription.find_tags(tags[:subscriptions])
-          subs.each do |sub|
-            html << print_tag_sidebar_helper(sub)
-          end
-          html += ['</ul>', '</div>']
-        end
-        
-       deleted_count = Post.fast_deleted_count(query)
-       if deleted_count > 0
-         html += ['<div style="margin-bottom: 1em;">', '<h5>Tag Statistics</h5>', '<ul id="tag-stats-sidebar">']
-         html << %{<li><a href="/post/index?tags=#{u(query)}+status%3Adeleted">deleted:#{deleted_count}</a></li>}
-         html += ['</ul>', '</div>']        
-       end
-      end
-      
-      html.join("\n")
-#    end
+    end
+    
+    html.join("\n")
   end
 end
