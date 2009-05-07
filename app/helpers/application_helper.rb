@@ -26,7 +26,7 @@ module ApplicationHelper
       url = link_params
     end
     
-    %{<a href="#{url}">#{text}</a>}
+    %{<a href="#{url}" #{attributes}>#{text}</a>}
   end
   
   def fast_link_to_unless(cond, text, link_params, options = {})
