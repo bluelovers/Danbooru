@@ -37,11 +37,11 @@ module PostHelper
     if tag.is_a?(String)
       tag_name = tag
       tag_type, tag_count = Tag.type_and_count(tag)
-      type_name = Tag.type_name_from_value(tag_type)
+      type_name = Tag.type_name_from_value(tag_type.to_i)
     else
       tag_name = tag[0]
       tag_count = tag[1]
-      type_name = Tag.type_name_from_value(tag[2])
+      type_name = Tag.type_name_from_value(tag[2].to_i)
     end
     
     html = %{<li class="tag-type-#{type_name}">}
