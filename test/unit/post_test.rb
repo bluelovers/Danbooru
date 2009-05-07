@@ -375,9 +375,6 @@ class PostTest < ActiveSupport::TestCase
     assert_raise(PostVoteMethods::AlreadyVotedError) {post.vote!(User.find(3), -1)}
     post.reload
     assert_equal(1, post.score)
-    assert_nothing_raised {post.vote!(User.find(1), -1)}
-    post.reload
-    assert_equal(-4, post.score)
   end
   
   def test_destroy_with_reason

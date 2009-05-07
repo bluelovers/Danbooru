@@ -20,11 +20,12 @@ module PostHelper
     width, height = post.preview_dimensions
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
+    title = "#{h(post.cached_tags)} rating:#{post.pretty_rating} score:#{post.score} user:#{h(post.author)}"
     
     %{
       <span class="thumb" id="p#{post.id}">
         <a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}>
-          <img #{image_id} class="preview #{'flagged' if post.is_flagged?} #{'pending' if post.is_pending?} #{'has-children' if post.has_children?} #{'has-parent' if post.parent_id}" src="#{post.preview_url}" alt="#{h(post.cached_tags)} rating:#{post.pretty_rating} score:#{post.score} user:#{h(post.author)}" width=#{width} height=#{height}>
+          <img #{image_id} class="preview #{'flagged' if post.is_flagged?} #{'pending' if post.is_pending?} #{'has-children' if post.has_children?} #{'has-parent' if post.parent_id}" src="#{post.preview_url}" title="#{title}" alt="#{title}" width=#{width} height=#{height}>
         </a>
       </span>
     }

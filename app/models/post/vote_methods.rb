@@ -16,11 +16,7 @@ module PostVoteMethods
     unless [1, -1].include?(score)
       raise InvalidScoreError
     end
-    
-    if current_user.is_mod_or_higher? && score < 0
-      score *= 5
-    end
-    
+
     if current_user.is_member_or_lower?
       raise PrivilegeError
     end
