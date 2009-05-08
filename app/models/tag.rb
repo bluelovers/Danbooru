@@ -21,7 +21,7 @@ class Tag < ActiveRecord::Base
       end
       
       # [name, count, type]
-      arr.sort_by {|x| -x[1]}.slice(0, 25).map {|x| [x[0].name, x[2], Tag.type_name_from_value(x[0].tag_type)]}
+      arr.sort_by {|x| -x[1]}.slice(0, 25).map {|x| [x[0].name, x[2], x[0].tag_type]}
     end
   end
   

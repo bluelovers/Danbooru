@@ -212,8 +212,10 @@ module PostFileMethods
       FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
       FileUtils.mv(tempfile_sample_path, sample_path)
       FileUtils.chmod(0775, sample_path)
+      puts "Fixed sample for #{id}"
       return true
     else
+      puts "Error generating sample for #{id}"
       return false
     end
   end
