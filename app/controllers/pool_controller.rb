@@ -62,7 +62,7 @@ class PoolController < ApplicationController
         respond_to_error(@pool, :action => "index")
       end
     else
-      @pool = Pool.new(:user_id => @current_user.id)
+      @pool = Pool.new(:user_id => @current_user.id, :is_public => true)
     end
   end
   
