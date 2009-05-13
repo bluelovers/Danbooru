@@ -11,8 +11,6 @@ module UserHelper
     deleted = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "deleted"])
     pending = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "pending"])
     total = base + (approved / 10) - (deleted / 4) - pending
-    total = 0 if total < 0
-    total = 20 if total > 20
     "#{base} + (#{approved} / 10) - (#{deleted} / 4) - #{pending} = #{total}"
   end
 end
