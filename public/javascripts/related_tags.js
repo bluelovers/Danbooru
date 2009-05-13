@@ -1,5 +1,5 @@
 RelatedTags = {
-  favorite_tags: [],
+  uploaded_tags: [],
   recent_tags: [],
   recent_search: {},
   
@@ -13,8 +13,8 @@ RelatedTags = {
     })
   },
 
-  init: function(favorite_tags, recent_tags, artist_tags) {
-    this.favorite_tags = this.convert_flat_tag_list(favorite_tags)
+  init: function(uploaded_tags, recent_tags, artist_tags) {
+    this.uploaded_tags = this.convert_flat_tag_list(uploaded_tags)
     this.recent_tags = this.convert_flat_tag_list(recent_tags)
 
     if (artist_tags) {
@@ -69,7 +69,7 @@ RelatedTags = {
   build_all: function(tags) {
     this.recent_search = tags
   
-    var html = this.build_html("Favorite Tags", this.favorite_tags) + this.build_html("Recent Tags", this.recent_tags)
+    var html = this.build_html("Favorite Tags", this.uploaded_tags) + this.build_html("Recent Tags", this.recent_tags)
     var keys = []
 
     for (key in tags) {

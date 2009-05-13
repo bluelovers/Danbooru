@@ -56,7 +56,7 @@ class AnonymousUser
     0
   end
 
-  def favorite_tags
+  def uploaded_tags
     ""
   end
   

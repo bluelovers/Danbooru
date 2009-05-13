@@ -508,21 +508,17 @@ class User < ActiveRecord::Base
     self.class.find_name(invited_by)
   end
   
-  def calculate_favorite_tags(tag_type)
+  def calculate_uploaded_tags(tag_type)
     sql = <<-EOS
       SELECT 
         t.name
       FROM
-        favorites f,
-        users u,
         posts p,
         posts_tags pt,
         tags t
       WHERE
-        u.id = f.user_id
-        AND f.post_id = p.id
+        p.user_id = ?
         AND p.id = pt.post_id
-        AND u.id = ?
         AND pt.tag_id = t.id
         AND t.tag_type = ?
       GROUP BY t.name

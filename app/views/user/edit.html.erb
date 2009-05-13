@@ -41,11 +41,11 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_favorite_tags">Favorite Tags</label>
-            <p>Danbooru can <%= link_to "calculate", :action => "calculate_favorite_tags" %> these automatically for you.</p>
+            <label class="block" for="user_uploaded_tags">Uploaded Tags</label>
+            <p>Danbooru can <%= link_to "calculate", :action => "calculate_uploaded_tags" %> these automatically for you.</p>
           </th>
           <td>
-            <%= text_area "user", "favorite_tags", :size => "60x8" %>
+            <%= text_area "user", "uploaded_tags", :size => "60x8" %>
           </td>
         </tr>
         <tr>

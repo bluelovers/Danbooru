@@ -229,11 +229,11 @@ class UserController < ApplicationController
     @posts = Post.find(:all, :conditions => ["user_id = ?", @user.id], :order => "random()", :limit => 50)
   end
   
-  def calculate_favorite_tags
+  def calculate_uploaded_tags
     if request.post?
       if params[:commit] == "Yes"
-        JobTask.create(:task_type => "calculate_favorite_tags", :data => {"id" => @current_user.id}, :status => "pending")
-        flash[:notice] = "Favorite tags are being calculated. Please check back in 5-10 minutes."
+        JobTask.create(:task_type => "calculate_uploaded_tags", :data => {"id" => @current_user.id}, :status => "pending")
+        flash[:notice] = "Uploaded tags are being calculated. Please check back in 5-10 minutes."
       end
       redirect_to :action => "show", :id => @current_user.id
     end

@@ -35,7 +35,7 @@
           }
         <% end %>
 
-        RelatedTags.init(<%= @current_user.favorite_tags.to_json %>, <%= @current_user.recent_tags.to_json %>)
+        RelatedTags.init(<%= @current_user.uploaded_tags.to_json %>, <%= @current_user.recent_tags.to_json %>)
 
         <% if @current_user.always_resize_images? %>
           Post.resize_image()

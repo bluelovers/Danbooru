@@ -1,0 +1,9 @@
+<h4>Calculate Uploaded Tags</h4>
+
+<p>Danbooru can try to automatically figure out your uploaded tags. It will take the ten most common tags for each tag type (general, copyright, character, and artist). You can fine-tune the list afterwards.</p>
+<p>Because it's an expensive operation, calculating your favorite tags will take some time. Do you wish to continue?</p>
+
+<% form_tag(:action => "calculate_uploaded_tags") do %>
+  <%= submit_tag "Yes" %>
+  <%= submit_tag "No" %>
+<% end %>

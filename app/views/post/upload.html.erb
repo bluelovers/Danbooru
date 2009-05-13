@@ -128,7 +128,7 @@
   <script type="text/javascript">
     Post.observe_text_area("post_tags")
   
-    RelatedTags.init(<%= @current_user.favorite_tags.to_json %>, <%= @current_user.recent_tags.to_json %>, <%= @artists.to_json %>)
+    RelatedTags.init(<%= @current_user.uploaded_tags.to_json %>, <%= @current_user.recent_tags.to_json %>, <%= @artists.to_json %>)
   </script>
 <% end %>
 

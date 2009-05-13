@@ -4,7 +4,7 @@ class JobTaskController < ApplicationController
   before_filter :admin_only, :only => [ :destroy, :restart ]
   
   def index
-    @job_tasks = JobTask.paginate(:per_page => 25, :order => "id DESC", :page => params[:page], :conditions => ["task_type NOT IN ('calculate_post_count', 'calculate_related_tags', 'calculate_favorite_tags')"])
+    @job_tasks = JobTask.paginate(:per_page => 25, :order => "id DESC", :page => params[:page], :conditions => ["task_type NOT IN ('calculate_post_count', 'calculate_related_tags', 'calculate_uploaded_tags')"])
   end
   
   def show
