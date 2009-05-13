@@ -1,15 +1,21 @@
 module ApplicationHelper
   def fast_link_to(text, link_params, options = {})
+    if options
+      attributes = options.map do |k, v| 
+        if k == :onclick
+          "#{k}=\"#{v}\""
+        else
+          "#{k}=\"#{u(v)}\""
+        end
+      end.join(" ")
+    else
+      attributes = ""
+    end
+    
     if link_params.is_a?(Hash)
       action = link_params.delete(:action)
       controller = link_params.delete(:controller) || controller_name
       id = link_params.delete(:id)
-      
-      if options
-        attributes = options.map {|k, v| "#{k}=\"#{u(v)}\""}.join(" ")
-      else
-        attributes = ""
-      end
       
       link_params = link_params.map {|k, v| "#{k}=#{u(v)}"}.join("&")
       
