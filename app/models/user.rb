@@ -196,6 +196,7 @@ class User < ActiveRecord::Base
   end
   
   module UserTagMethods
+=begin
     def uploaded_tags(options = {})
       type = options[:type]
 
@@ -242,6 +243,7 @@ class User < ActiveRecord::Base
 
       return uploaded_tags
     end
+=end
   end
   
   module UserPostMethods
