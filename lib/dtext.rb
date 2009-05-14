@@ -4,7 +4,9 @@ require 'cgi'
 
 module DText
   def parse_inline(str)
-    str = CGI.escapeHTML(str)
+    str = str.gsub(/&/, "&amp;")
+    str.gsub!(/</, "&lt;")
+    str.gsub!(/>/, "&gt;")
     str.gsub!(/\[\[.+?\]\]/m) do |tag|
       tag = tag[2..-3]
       if tag =~ /^(.+?)\|(.+)$/
@@ -27,8 +29,8 @@ module DText
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
     str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span class="spoiler">\1</span>')
-    str.gsub!(/(&quot;.+?&quot;:(http:\/\/|\/)\S+|http:\/\/\S+)/m) do |link|
-      if link =~ /^&quot;(.+?)&quot;:(.+)$/
+    str.gsub!(/("[^"]+":(http:\/\/|\/)\S+|http:\/\/\S+)/m) do |link|
+      if link =~ /^"([^"]+)":(.+)$/
         text = $1
         link = $2
       else

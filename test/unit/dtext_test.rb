@@ -35,6 +35,12 @@ class DTextTest < ActiveSupport::TestCase
     assert_equal('<p>a <a href="http://test.com">http://test.com</a>. b</p>', p('a http://test.com. b'))
     assert_equal('<p>a (<a href="http://test.com">http://test.com</a>) b</p>', p('a (http://test.com) b'))
   end
+  
+  def test_links
+    assert_equal('<p><a href="http://test.com">test</a></p>', p('"test":http://test.com'))
+    assert_equal('<p>"1" <a href="http://two.com">2</a></p>', p('"1" "2":http://two.com'))
+    assert_equal('<p>"1" <a href="http://three.com">2 &amp; 3</a></p>', p('"1" "2 & 3":http://three.com'))
+  end
 
   def test_aliased_urls
     assert_equal('<p>a <a href="http://test.com">bob</a>. b</p>', p('a "bob":http://test.com. b'))
