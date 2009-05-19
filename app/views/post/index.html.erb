@@ -51,7 +51,12 @@
     <% if @wiki_page %>
       <div>
         <h5>Wiki: <%= fast_link_to h(params[:tags]), :controller => "wiki", :action => "show", :title => params[:tags] %></h5>
-        <p><%= truncate(@wiki_page.body, :length => 250) %></p>
+        <p><%= DText.parse(@wiki_page.body, :inline => true) %></p>
+      </div>
+    <% elsif @split_tags.size == 1 %>
+      <div>
+        <h5>Wiki: <%= fast_link_to h(params[:tags]), :controller => "wiki", :action => "show", :title => params[:tags] %></h5>
+        <p>There is no wiki entry for this tag.</p>
       </div>
     <% end %>
   </div>

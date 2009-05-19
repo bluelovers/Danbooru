@@ -3,7 +3,7 @@
 require 'cgi'
 
 module DText
-  def parse_inline(str)
+  def parse_inline(str, options = {})
     str = str.gsub(/&/, "&amp;")
     str.gsub!(/</, "&lt;")
     str.gsub!(/>/, "&gt;")
@@ -48,8 +48,8 @@ module DText
     end
     str
   end
-
-  def parse_list(str)
+  
+  def parse_list(str, options = {})
     html = ""
     layout = []
     nest = 0
@@ -85,10 +85,14 @@ module DText
     html
   end
 
-  def parse(str)
+  def parse(str, options = {})
     # Make sure quote tags are surrounded by newlines
-    str.gsub!(/\s*\[quote\]\s*/m, "\n\n[quote]\n\n")
-    str.gsub!(/\s*\[\/quote\]\s*/m, "\n\n[/quote]\n\n")
+    
+    unless options[:inline]
+      str.gsub!(/\s*\[quote\]\s*/m, "\n\n[quote]\n\n")
+      str.gsub!(/\s*\[\/quote\]\s*/m, "\n\n[/quote]\n\n")
+    end
+    
     str.gsub!(/(?:\r?\n){3,}/, "\n\n")
     str.strip!
     blocks = str.split(/(?:\r?\n){2}/)
@@ -97,17 +101,30 @@ module DText
       case block
       when /^(h[1-6])\.\s*(.+)$/
         tag = $1
-        content = $2
-        "<#{tag}>" + parse_inline(content) + "</#{tag}>"
+        content = $2      
+          
+        if options[:inline]
+          "<h6>" + parse_inline(content, options) + "</h6>"
+        else
+          "<#{tag}>" + parse_inline(content, options) + "</#{tag}>"
+        end
 
       when /^\s*\*+ /
-        parse_list(block)
+        parse_list(block, options)
         
       when "[quote]"
-        '<blockquote>'
+        if options[:inline]
+          ""
+        else
+          '<blockquote>'
+        end
         
       when "[/quote]"
-        '</blockquote>'
+        if options[:inline]
+          ""
+        else
+          '</blockquote>'
+        end
 
       else
         '<p>' + parse_inline(block) + "</p>"
