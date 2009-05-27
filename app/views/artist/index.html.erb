@@ -32,7 +32,7 @@
               <% end %>             
             </td>
             <% if artist.updater_id %>
-              <td><%= h(User.find_name(artist.updater_id)) %></td>
+              <td><%= link_to h(artist.updater_name), :controller => "user", :action => "show", :id => artist.updater_id %></td>
             <% else %>
               <td></td>
             <% end %>

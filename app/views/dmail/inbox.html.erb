@@ -16,8 +16,8 @@
       <tbody>
         <% @dmails.each do |dmail| %>
           <tr class="<%= cycle 'even', 'odd' %>" id="row-<%= dmail.id %>">
-            <td><%= h dmail.from.name %></td>
-            <td><%= h dmail.to.name %></td>
+            <td><%= fast_link_to h(dmail.from_name), :controller => "user", :action => "show", :id => dmail.from_id %></td>
+            <td><%= fast_link_to h(dmail.to_name), :controller => "user", :action => "show", :id => dmail.to_id %></td>
             <td>
               <% if dmail.from_id == @current_user.id %>
                 <%= link_to(h(dmail.title), {:action => "show", :id => dmail.id}, :class => "sent") %>

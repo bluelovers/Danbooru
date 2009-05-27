@@ -19,7 +19,7 @@
       <% @pools.each do |p| %>
         <tr class="<%= cycle 'even', 'odd' %>">
           <td><%= link_to h(p.pretty_name), :action => "show", :id => p.id %></td>
-          <td><%= h(p.user.pretty_name) %></td>
+          <td><%= link_to h(p.user.pretty_name), :controller => "user", :action => "show", :id => p.user_id %></td>
           <td><%= p.post_count %></td>
           <td><%= p.is_public? ? "Yes" : "No" %></td>
         </tr>

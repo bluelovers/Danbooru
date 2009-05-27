@@ -34,8 +34,8 @@
               <span class="locked-topic">(locked)</span>
             <% end %>
           </td>
-          <td><%= h fp.author.tr("_", " ") %></td>
-          <td><%= h fp.last_updater.tr("_", " ") %></td>
+          <td><%= link_to h(fp.author.tr("_", " ")), :controller => "user", :action => "show", :id => fp.creator_id %></td>
+          <td><%= link_to h(fp.last_updater.tr("_", " ")), :controller => "user", :action => "show", :id => fp.last_updated_by %></td>
           <td><%= time_ago_in_words(fp.updated_at) %> ago</td>
           <td><%= fp.response_count %></td>
         <% end %>

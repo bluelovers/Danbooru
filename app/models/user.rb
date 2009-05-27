@@ -486,7 +486,7 @@ class User < ActiveRecord::Base
   include UserCountMethods
   include UserNameMethods
   include UserApiMethods
-  include UserTagMethods
+  # include UserTagMethods
   include UserPostMethods
   include UserFavoriteMethods
   include UserLevelMethods

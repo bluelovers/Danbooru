@@ -242,6 +242,10 @@ class Artist < ActiveRecord::Base
     return name
   end
   
+  def updater_name
+    User.find_name(updater_id).tr("_", " ")
+  end
+  
   def self.generate_sql(name)
     b = Nagato::Builder.new do |builder, cond|
       case name        

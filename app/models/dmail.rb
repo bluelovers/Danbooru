@@ -29,11 +29,11 @@ class Dmail < ActiveRecord::Base
   end
   
   def to_name
-    User.find_name(to_id)
+    User.find_name(to_id).tr("_", " ")
   end
   
   def from_name
-    User.find_name(from_id)
+    User.find_name(from_id).tr("_", " ")
   end
   
   def to_name=(name)

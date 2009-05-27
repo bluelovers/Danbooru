@@ -109,12 +109,10 @@ class UserTest < ActiveSupport::TestCase
     create_post("tag1")
     create_post("tag2")
     create_post("tag1", 2)
-    results = User.find(1).uploaded_tags.sort {|a, b| a["tag"] <=> b["tag"]}
+    results = User.find(1).calculate_uploaded_tags(0).sort
     assert_equal(2, results.size)
-    assert_equal("tag1", results[0]["tag"])
-    assert_equal("2", results[0]["count"])
-    assert_equal("tag2", results[1]["tag"])
-    assert_equal("1", results[1]["count"])
+    assert_equal("tag1", results[0])
+    assert_equal("tag2", results[1])
   end
   
   def test_uploaded_posts

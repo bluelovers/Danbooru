@@ -49,7 +49,7 @@ class WikiPage < ActiveRecord::Base
   end
 
   def author
-    return User.find_name(user_id)
+    User.find_name(user_id).tr("_", " ")
   end
 
   def pretty_title
