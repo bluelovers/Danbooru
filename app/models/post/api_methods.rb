@@ -21,7 +21,9 @@ module PostApiMethods
       :parent_id => parent_id, 
       :status => status,
       :width => width,
-      :height => height
+      :height => height,
+      :has_comments => !last_commented_at.nil?,
+      :has_notes => !last_noted_at.nil?
     }
   end
 
