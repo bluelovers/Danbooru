@@ -523,12 +523,13 @@ class User < ActiveRecord::Base
         AND p.id = pt.post_id
         AND pt.tag_id = t.id
         AND t.tag_type = ?
+        AND p.created_at >= ?
       GROUP BY t.name
       ORDER BY COUNT(*) DESC
       LIMIT 10
     EOS
     
-    return select_values_sql(sql, id, tag_type)
+    return select_values_sql(sql, id, tag_type, 1.month.ago)
   end
   
   def similar_users
