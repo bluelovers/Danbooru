@@ -1,6 +1,6 @@
 class WikiPageVersion < ActiveRecord::Base
   def author
-    return User.find_name(self.user_id)
+    User.find_name(self.user_id).tr("_", " ")
   end
 
   def pretty_title
