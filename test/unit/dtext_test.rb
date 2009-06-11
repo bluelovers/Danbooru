@@ -44,6 +44,7 @@ class DTextTest < ActiveSupport::TestCase
 
   def test_aliased_urls
     assert_equal('<p>a <a href="http://test.com">bob</a>. b</p>', p('a "bob":http://test.com. b'))
+    assert_equal('<p><em><a href="http://test.com">bob</a></em></p>', p('[i]"bob":http://test.com[/i]'))
   end
   
   def test_lists

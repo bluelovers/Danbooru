@@ -46,6 +46,14 @@ class DmailController < ApplicationController
       @dmail.mark_as_read!(@current_user)
     end
   end
+  
+  def preview
+    if params[:dmail]
+      render :inline => "<h4>Preview</h4><%= format_text(params[:dmail][:body]) %>"
+    else
+      render :text => ""
+    end
+  end
 
   def mark_all_read
     if request.post?

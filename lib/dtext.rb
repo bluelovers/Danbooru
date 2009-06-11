@@ -37,7 +37,7 @@ module DText
         text = link
       end
       
-      if link =~ /([;,.!?\)\]])$/
+      if link =~ /([;,.!?\)\]<>])$/
         link.chop!
         ch = $1
       else

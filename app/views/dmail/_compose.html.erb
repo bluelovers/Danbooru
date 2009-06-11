@@ -1,3 +1,6 @@
+<div id="preview" style="display: none; margin: 1em 0;">
+</div>
+
 <% form_tag(:action => "create") do %>
   <%= hidden_field_tag "dmail[parent_id]", @dmail.parent_id || @dmail.id, :id => "dmail_parent_id" %>
 
@@ -5,7 +8,7 @@
     <tfoot>
       <tr>
         <td></td>
-        <td><%= submit_tag "Send" %></td>
+        <td><%= submit_tag "Send" %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
       </tr>
     </tfoot>
     <tbody>
