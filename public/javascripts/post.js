@@ -155,11 +155,7 @@ Post = {
   },
 
   flag: function(id) {
-    var reason = prompt("Why should this post be flagged for deletion?")
-
-    if (!reason) {
-      return false
-    }
+    var reason = prompt("Why should this post be reconsidered for moderation?")
   
     new Ajax.Request("/post/flag.json", {
       parameters: {
@@ -167,9 +163,14 @@ Post = {
         "reason": reason
       },
     
-      onComplete: function(req) {
-        notice("Post was flagged for deletion")
-        $("p" + id).down("img").addClassName("flagged")
+      onComplete: function(resp) {
+        var resp = resp.responseJSON
+
+        if (resp.success) {
+          notice("Post was resent to moderation queue")
+        } else {
+          notice("Error: " + resp.reason)
+        }
       }
     })
   },

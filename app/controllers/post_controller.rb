@@ -121,7 +121,7 @@ class PostController < ApplicationController
       end
 
       @posts = ModQueuePost.reject_hidden(@posts, @current_user, params[:hidden])
-      @posts.sort_by! do |post|
+      @posts = @posts.sort_by do |post|
         if post.flag_detail
           post.flag_detail.created_at
         else
@@ -354,7 +354,12 @@ class PostController < ApplicationController
   def flag
     post = Post.find(params[:id])
     if post.status != "active"
-      respond_to_error("Can only flag active posts", :action => "show", :id => params[:id])
+      respond_to_error("Can only unapprove active posts", :action => "show", :id => params[:id])
+      return
+    end
+    
+    if post.flag_detail
+      respond_to_error("This post has been previously unapproved and cannot be unapproved again", :action => "show", :id => params[:id])
       return
     end
 

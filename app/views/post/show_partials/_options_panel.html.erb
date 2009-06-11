@@ -13,7 +13,7 @@
       <li><%= fast_link_to "Undelete", :action => "undelete", :id => @post.id %></li>
     <% end %>
     <% unless @post.is_flagged? || @post.is_deleted? %>
-      <li><%= link_to_function "Flag for deletion", "Post.flag(#{@post.id})" %></li>
+      <li><%= link_to_function "Unapprove", "Post.flag(#{@post.id})" %></li>
     <% end %>
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
       <li><%= link_to_function "Add translation", "Note.create(#{@post.id})" %></li>

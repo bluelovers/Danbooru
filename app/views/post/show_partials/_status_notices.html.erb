@@ -1,8 +1,4 @@
-<% if @post.is_flagged? %>
-  <div class="status-notice">
-    This post was flagged for deletion by <%= h @post.flag_detail.author %>. Reason: <%= h @post.flag_detail.reason %>
-  </div>
-<% elsif @post.is_pending? %>
+<% if @post.is_pending? %>
   <div class="status-notice" id="pending-notice">
     This post is pending moderator approval.
   </div>
