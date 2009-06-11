@@ -4,7 +4,7 @@
 </form>
 
 <script type="text/javascript" charset="utf-8">
-  Post.mod_queue = $A(<%= @pending_posts.map(&:id).to_json %>)
+  Post.mod_queue = $A(<%= @posts.map(&:id).to_json %>)
 </script>
 
 <div style="margin-bottom: 2em;">
@@ -19,7 +19,7 @@
 
   <table width="100%">
     <tbody>
-      <% @pending_posts.each do |p| %>
+      <% @posts.each do |p| %>
         <tr id="mod-row-<%= p.id %>" class="<% if p.cached_tags =~ /(^| )duplicate($| )/ %>dupe<% elsif p.score > 2 %>good<% elsif p.score < -2 %>bad<% else %><%= cycle 'even', 'odd' %><% end %>">
           <td width="10%"><%= fast_link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), {:controller => "post", :action => "show", :id => p.id}, :target => "_blank" %></td>
           <td width="90%">
@@ -32,33 +32,9 @@
               <% end %>
               <li>Tags: <%= h p.cached_tags %></li>
               <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
-              <li>Uploaded by <%= fast_link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= fast_link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
-            </ul>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
-
-<div>
-  <h2>Flagged</h2>
-  <table width="100%">
-    <tbody>
-      <% @flagged_posts.each do |p| %>
-        <tr class="<%= cycle 'even', 'odd' %>">
-          <td width="10%"><%= fast_link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), {:controller => "post", :action => "show", :id => p.id}, :target => "_blank" %></td>
-          <td width="90%">
-            <ul>
-              <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
-              <li>Rating: <%= p.pretty_rating %></li>
-              <li>Hidden: <%= p.mod_hidden_count %></li>
-              <% if p.parent_id %>
-                <li>Parent: <%= fast_link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+              <% if p.flag_detail && p.flag_detail.reason %>
+                <li>Flagged: <%= h p.flag_detail.reason %></li>
               <% end %>
-              <li>Tags: <%= h p.cached_tags %></li>
-              <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id})" %>)</li>
-              <li>Reason: <%= h p.flag_detail.reason %> (<%= h p.flag_detail.author %>)</li>
               <li>Uploaded by <%= fast_link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= fast_link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
             </ul>
           </td>

@@ -7,3 +7,9 @@ user = User.find(1)
 Post.find(:all, :conditions => ["status = 'pending' and created_at < ? ", 3.days.ago], :select => "id").each do |post|
   Post.destroy_with_reason(post.id, "Unapproved in three days", user.id)
 end
+
+Post.find(:all, :conditions => ["status = 'flagged'"]).each do |post|
+  if post.flag_detail && post.flag_detail.created_at < 3.days.ago
+    post.delete!
+  end
+end
