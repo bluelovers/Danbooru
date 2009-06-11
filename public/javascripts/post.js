@@ -156,7 +156,11 @@ Post = {
 
   flag: function(id) {
     var reason = prompt("Why should this post be reconsidered for moderation?")
-  
+    
+    if (reason == null) {
+      return false
+    }
+    
     new Ajax.Request("/post/flag.json", {
       parameters: {
         "id": id,
