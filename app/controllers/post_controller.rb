@@ -5,6 +5,7 @@ class PostController < ApplicationController
   # before_filter :check_load_average, :only => [:index, :atom, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :janitor_only, :only => [:moderate, :undelete]
+  before_filter :privileged_only, :only => [:flag]
   after_filter :save_recent_tags, :only => [:update, :create]  
   # around_filter :cache_action, :only => [:index, :atom, :piclens]
 
