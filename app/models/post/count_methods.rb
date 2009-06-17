@@ -31,7 +31,7 @@ module PostCountMethods
     end
 
     def recalculate_row_count
-      execute_sql("UPDATE table_data SET row_count = (SELECT COUNT(*) FROM posts WHERE parent_id IS NULL AND status <> 'deleted') WHERE name = 'posts'")
+      execute_sql("UPDATE table_data SET row_count = (SELECT COUNT(*) FROM posts WHERE status <> 'deleted') WHERE name = 'posts'")
     end
   end
 
