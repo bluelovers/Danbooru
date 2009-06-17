@@ -13,6 +13,13 @@ class TagAliasTest < ActiveSupport::TestCase
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
   end
+  
+  def test_implications
+    impl = TagImplication.create(:predicate => "tagb", :consequent => "tagc", :is_pending => false)
+    alia = TagAlias.create(:name => "tagb", :alias => "tag1", :is_pending => false, :reason => "none", :creator_id => 1)
+    impl.reload
+    assert_equal(impl.predicate_id, Tag.find_by_name("tag1").id)
+  end
 
   def test_to_aliased
     assert_equal(["tag1"], TagAlias.to_aliased(["tag2"]))

@@ -91,6 +91,8 @@ module PostTagMethods
               pool.save
             end
 
+            pool.updater_user_id = updater_user_id
+            pool.updater_ip_addr = updater_ip_addr
             pool.add_post(id, :user => User.find(updater_user_id)) if pool
           rescue Pool::PostAlreadyExistsError
           rescue Pool::AccessDeniedError

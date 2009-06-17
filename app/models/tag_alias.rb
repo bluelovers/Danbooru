@@ -3,6 +3,7 @@ class TagAlias < ActiveRecord::Base
   before_create :validate_uniqueness
   after_destroy :expire_cache
   after_create :expire_cache
+  after_create :update_implications
 
   # Maps tags to their preferred names. Returns an array of strings.
   #
@@ -21,6 +22,19 @@ class TagAlias < ActiveRecord::Base
       else
         tag_name
       end
+    end
+  end
+  
+  def update_implications
+    alias_predicate_id = Tag.find_or_create_by_name(name).id
+    alias_consequent_id = alias_id
+    
+    TagImplication.find(:all, :conditions => ["predicate_id = ?", alias_predicate_id]).each do |impl|
+      impl.update_attribute(:predicate_id, alias_consequent_id)
+    end
+
+    TagImplication.find(:all, :conditions => ["consequent_id = ?", alias_predicate_id]).each do |impl|
+      impl.update_attribute(:consequent_id, alias_consequent_id)
     end
   end
   
