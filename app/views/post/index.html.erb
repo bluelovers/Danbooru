@@ -1,7 +1,7 @@
 <div id="post-list">  
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
-      Maybe you meant: <%= @tag_suggestions.map {|x| fast_link_to(h(x), :action => "index", :tags => x)}.to_sentence(:connector => "or") %>
+      Maybe you meant: <%= @tag_suggestions.map {|x| fast_link_to(h(x), :action => "index", :tags => x)}.to_sentence(:connector => "or ") %>
     </div>
   <% end %>
 
