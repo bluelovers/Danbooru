@@ -23,7 +23,7 @@ class PostController < ApplicationController
       end
       
       bandwidth_used = Cache.get("db-bw")
-      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 400)
+      if @current_user.is_anonymous? && bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 400)
         render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
         return false
       end
