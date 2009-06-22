@@ -2,7 +2,7 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-  # before_filter :check_load_average, :only => [:index, :atom, :piclens]
+  before_filter :check_load_average, :only => [:index, :atom, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :janitor_only, :only => [:moderate, :undelete]
   before_filter :privileged_only, :only => [:flag]
@@ -20,7 +20,13 @@ class PostController < ApplicationController
       if load_avg > CONFIG["load_average_threshold"]
         render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
         return false
-      end      
+      end
+      
+      bandwidth_used = Cache.get("db-bw")
+      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 400)
+        render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
+        return false
+      end
     end
   end
 

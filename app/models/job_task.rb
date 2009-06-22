@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count calculate_uploaded_tags)
+  TASK_TYPES = %w(bandwidth_throttle mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count calculate_uploaded_tags)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -89,6 +89,17 @@ class JobTask < ActiveRecord::Base
     user.update_attribute(:uploaded_tags, tags.join("\n"))
   end
   
+  def execute_bandwidth_throttle
+    bw = File.read("/proc/net/dev").split(/\n/).grep(/eth1/).first.scan(/\S+/)[8].to_i
+    if $danbooru_bandwidth_previous
+      diff = bw - $danbooru_bandwidth_previous
+    else
+      diff = 0
+    end
+    $danbooru_bandwidth_previous = bw
+    Cache.put("db-bw", diff)
+  end
+  
   def pretty_data
     begin
       case task_type
@@ -123,6 +134,9 @@ class JobTask < ActiveRecord::Base
         
       when "calculate_uploaded_tags"
         "user:" + User.name(data["id"])
+        
+      when "bandwidth_throttle"
+        ""
       end
     rescue Exception
       "ERROR"
