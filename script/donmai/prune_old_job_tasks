@@ -2,8 +2,8 @@
 
 require File.dirname(__FILE__) + '/../../config/environment'
 
-JobTask.find(:all, :conditions => ["status = ? and created_at < ?", "finished", 1.day.ago]).each do |job|
+JobTask.find(:all, :conditions => ["status = ? and created_at < ? and task_type not in ('bandwidth_throttle', 'calculate_tag_subscriptions')", "finished", 1.day.ago]).each do |job|
   job.destroy
 end
 
-JobTask.update_all("status = 'pending', status_message = ''", "task_type = 'calculate_favorite_tags'")
+JobTask.update_all("status = 'pending', status_message = ''", "task_type IN ('bandwidth_throttle', 'calculate_favorite_tags')")
