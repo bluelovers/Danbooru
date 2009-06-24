@@ -361,6 +361,11 @@ class PostController < ApplicationController
   end
 
   def flag
+    if FlaggedPostDetail.count(:conditions => ["user_id = ? and created_at >= ?", @current_user.id, 1.day.ago]) >= 10
+      respond_to_error("Can only unapprove 10 posts a day", :action => "show", :id => params[:id])
+      return
+    end
+
     post = Post.find(params[:id])
     if post.status != "active"
       respond_to_error("Can only unapprove active posts", :action => "show", :id => params[:id])
