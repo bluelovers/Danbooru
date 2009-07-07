@@ -229,7 +229,7 @@ Post = {
 
   init_blacklisted: function(options) {
     Post.blacklist_options = Object.extend({replace:false}, options);  
-    var bl_entries = Cookie.raw_get("blacklisted_tags").split(/\&/)
+    var bl_entries = Cookie.raw_get("blacklisted_tags").split(/[&,]/)
     bl_entries.each(function(val) {
         var s = Cookie.unescape(val).replace(/(rating:[qes])\w+/, "$1")
         var tags = s.match(/\S+/g)
