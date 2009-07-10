@@ -12,7 +12,7 @@
     <% if @post.is_deleted? && @current_user.is_janitor_or_higher?%>
       <li><%= fast_link_to "Undelete", :action => "undelete", :id => @post.id %></li>
     <% end %>
-    <% unless @post.is_flagged? || @post.is_deleted? %>
+    <% if !@post.is_flagged? && !@post.is_deleted? && @post.flag_detail.nil? %>
       <li><%= link_to_function "Unapprove", "Post.flag(#{@post.id})" %></li>
     <% end %>
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
