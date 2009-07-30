@@ -55,4 +55,30 @@ class Dmail < ActiveRecord::Base
       return self[:title]
     end
   end
+  
+  def self.generate_sql(params, current_user)
+    b = Nagato::Builder.new do |builder, cond|
+      cond.add "(from_id = ? OR to_id = ?)", current_user.id, current_user.id
+      
+      if params[:from_name]
+        user = User.find_by_name(params[:from_name])
+        if user
+          cond.add "from_id = ?", user.id
+        end
+      end
+
+      if params[:to_name]
+        user = User.find_by_name(params[:to_name])
+        if user
+          cond.add "to_id = ?", user.id
+        end
+      end
+      
+      if params[:title]
+        cond.add "title ilike ?", "%#{params[:title]}%"
+      end
+    end
+
+    return b.to_hash
+  end
 end

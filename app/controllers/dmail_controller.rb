@@ -29,7 +29,7 @@ class DmailController < ApplicationController
   end
   
   def inbox
-    @dmails = Dmail.paginate :conditions => ["to_id = ? or from_id = ?", @current_user.id, @current_user.id], :order => "created_at desc", :per_page => 25, :page => params[:page]
+    @dmails = Dmail.paginate(Dmail.generate_sql(params, @current_user).merge(:order => "created_at desc", :per_page => 25, :page => params[:page]))
     respond_to_list("dmails")
   end
   

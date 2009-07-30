@@ -3,6 +3,32 @@
 <% if @dmails.empty? %>
   <p>You have no messages.</p>
 <% else %>
+  <div style="margin-bottom: 1em;">
+    <% form_tag({:action => "inbox"}, :method => :get) do %>
+      <table width="100%">
+        <tfoot>
+          <tr>
+            <td colspan="2"><%= submit_tag "Search" %></td>
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td width="15%"><label for="from_name">From</label></td>
+            <td width="85%"><%= text_field_tag "from_name", params[:from_name] %></td>
+          </tr>
+          <tr>
+            <td width="15%"><label for="to_name">To</label></td>
+            <td width="85%"><%= text_field_tag "to_name", params[:to_name] %></td>
+          </tr>
+          <tr>
+            <td width="15%"><label for="title">Title</label></td>
+            <td width="85%"><%= text_field_tag "title", params[:title] %></td>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+  
   <div class="mail">
     <table width="100%" class="highlightable">
       <thead>
