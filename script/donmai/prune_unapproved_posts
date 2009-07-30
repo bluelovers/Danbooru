@@ -10,6 +10,6 @@ end
 
 Post.find(:all, :conditions => ["status = 'flagged'"]).each do |post|
   if post.flag_detail && post.flag_detail.created_at < 3.days.ago
-    Post.destroy_with_reason(post.id, "Unapproved in three days", user.id)
+    Post.destroy_with_reason(post.id, "Unapproved in three days after returning to moderation queue", user.id)
   end
 end
