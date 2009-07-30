@@ -7,8 +7,7 @@ class NoteController < ApplicationController
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
-
+      @notes = Note.paginate(Note.generate_sql(params).merge(:order => "id desc", :per_page => 25, :page => params[:page]))
       respond_to_list("notes")
     end    
   end

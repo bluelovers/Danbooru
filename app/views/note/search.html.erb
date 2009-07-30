@@ -1,7 +1,23 @@
 <h4>Search</h4>
 
 <% form_tag({:action => "search"}, :method => :get) do %>
-  <%= text_field_tag "query", params[:query], :size => 40 %> <%= submit_tag "Search" %>
+  <table width="100%">
+    <tfoot>
+      <tr>
+        <td><%= submit_tag "Search" %></td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr>
+        <td width="15%"><label for="query">Body</label></td>
+        <td width="85%"><%= text_field_tag "query", params[:query], :size => 40 %></td>
+      </tr>
+      <tr>
+        <td><label for="status">Status</label></td>
+        <td><%= select_tag "status", options_for_select(["", "Deleted", "Active"], :selected => params[:status]) %></td>
+      </tr>
+    </tbody>
+  </table>
 <% end %>
 
 <% if @notes %>
@@ -12,7 +28,12 @@
           <%= link_to image_tag(note.post.preview_url), :controller => "post", :action => "show", :id => note.post_id %>
         </div>
         <div style="float: left;">
-          <%= hs note.formatted_body %>
+          <% if note.is_active? %>
+            <%= hs note.formatted_body %>
+          <% else %>
+            (deleted)
+          <% end %>
+          <div><span class="author">Edited by <%= note.author %> <%= time_ago_in_words(note.updated_at) %> ago</span></div>
         </div>
       </div>
     <% end %>

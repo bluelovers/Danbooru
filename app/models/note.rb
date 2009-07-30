@@ -79,4 +79,21 @@ class Note < ActiveRecord::Base
   def author
     User.find_name(user_id)
   end
+  
+  def self.generate_sql(params)
+    b = Nagato::Builder.new do |builder, cond|
+      if !params[:query].blank?
+        query = params[:query].scan(/\S+/).join(" & ")        
+        cond.add "text_search_index @@ plainto_tsquery(?)", query
+      end
+      
+      if params[:status] == "Active"
+        cond.add "is_active = true"
+      elsif params[:status] == "Deleted"
+        cond.add "is_active = false"
+      end
+    end
+
+    return b.to_hash
+  end
 end
