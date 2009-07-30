@@ -300,4 +300,8 @@ module PostFileMethods
       height
     end
   end
+  
+  def sample_percentage
+    100 * get_sample_width.to_f / width
+  end
 end
