@@ -46,9 +46,9 @@ module PostFileMethods
     "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}-preview.jpg"
   end
 
-  def file_size
-    File.size(file_path) rescue 0
-  end
+  # def file_size
+  #   File.size(file_path) rescue 0
+  # end
 
   # Generate an MD5 hash for the file.
   def generate_hash

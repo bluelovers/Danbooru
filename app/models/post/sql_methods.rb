@@ -69,6 +69,10 @@ module PostSqlMethods
       generate_sql_range_helper(q[:score], "p.score", conds, cond_params)
       generate_sql_range_helper(q[:date], "p.created_at::date", conds, cond_params)
       generate_sql_range_helper(q[:change], "p.change_seq", conds, cond_params)
+      generate_sql_range_helper(q[:general_tag_count], "p.general_tag_count", conds, cond_params)
+      generate_sql_range_helper(q[:artist_tag_count], "p.artist_tag_count", conds, cond_params)
+      generate_sql_range_helper(q[:copyright_tag_count], "p.copyright_tag_count", conds, cond_params)
+      generate_sql_range_helper(q[:character_tag_count], "p.character_tag_count", conds, cond_params)
 
       if q[:md5].is_a?(String)
         conds << "p.md5 IN (?)"

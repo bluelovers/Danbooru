@@ -56,7 +56,7 @@ module TagParseMethods
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change|status):(.+)$/
+        if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change|status|generaltagcount|artisttagcount|charactertagcount|copyrighttagcount):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "fav"
@@ -83,6 +83,14 @@ module TagParseMethods
             q[:source] = $2.to_escaped_for_sql_like + "%"
           elsif $1 == "date"
             q[:date] = parse_helper($2, :date)
+          elsif $1 == "generaltagcount"
+            q[:general_tag_count] = parse_helper($2)
+          elsif $1 == "artisttagcount"
+            q[:artist_tag_count] = parse_helper($2)
+          elsif $1 == "charactertagcount"
+            q[:character_tag_count] = parse_helper($2)
+          elsif $1 == "copyrighttagcount"
+            q[:copyright_tag_count] = parse_helper($2)
           elsif $1 == "pool"
             q[:pool] = $2
             if q[:pool] =~ /^(\d+)$/

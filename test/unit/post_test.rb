@@ -498,5 +498,21 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(1, search_posts("?a").size)
   end
   
+  def test_cached_tag_counts
+    p1 = create_post("art:artist copy:copyright char:character general", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
+    p1.reload
+    assert_equal(1, p1.general_tag_count)
+    assert_equal(1, p1.artist_tag_count)
+    assert_equal(1, p1.character_tag_count)
+    assert_equal(1, p1.copyright_tag_count)
+    
+    update_post(p1, :tags => "artist art:artist2 general2")
+    p1.reload
+    assert_equal(1, p1.general_tag_count)
+    assert_equal(2, p1.artist_tag_count)
+    assert_equal(0, p1.character_tag_count)
+    assert_equal(0, p1.copyright_tag_count)
+  end
+  
   # TODO: additional search tests
 end

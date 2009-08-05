@@ -126,10 +126,30 @@ module PostTagMethods
       self.new_tags << "tagme" if new_tags.empty?
       self.new_tags = TagAlias.to_aliased(new_tags)
       self.new_tags = TagImplication.with_implied(new_tags).uniq
-
+      self.general_tag_count = 0
+      self.artist_tag_count = 0
+      self.character_tag_count = 0
+      self.copyright_tag_count = 0      
+      
       # TODO: be more selective in deleting from the join table
       execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
       self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
+
+      self.new_tags.each do |t|
+        case t.tag_type
+        when CONFIG["tag_types"]["General"]
+          self.general_tag_count += 1
+
+        when CONFIG["tag_types"]["Artist"]
+          self.artist_tag_count += 1
+
+        when CONFIG["tag_types"]["Character"]
+          self.character_tag_count += 1
+
+        when CONFIG["tag_types"]["Copyright"]
+          self.copyright_tag_count += 1
+        end
+      end
 
       # Tricky: Postgresql's locking won't serialize this DELETE/INSERT, so it's
       # possible for two simultaneous updates to both delete all tags, then insert
@@ -158,6 +178,8 @@ module PostTagMethods
 
       PostTagHistory.create(:post_id => id, :rating => rating, :tags => cached_tags, :user_id => updater_user_id, :ip_addr => updater_ip_addr)
       self.new_tags = nil
+      
+      execute_sql("UPDATE posts SET general_tag_count = #{general_tag_count}, artist_tag_count = #{artist_tag_count}, character_tag_count = #{character_tag_count}, copyright_tag_count = #{copyright_tag_count} WHERE id = #{id}")
     end
   end
 end
