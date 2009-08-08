@@ -136,17 +136,16 @@ module PostTagMethods
       self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
 
       self.new_tags.each do |t|
-        case t.tag_type
-        when CONFIG["tag_types"]["General"]
+        if t.tag_type == CONFIG["tag_types"]["General"]
           self.general_tag_count += 1
 
-        when CONFIG["tag_types"]["Artist"]
+        elsif t.tag_type == CONFIG["tag_types"]["Artist"]
           self.artist_tag_count += 1
 
-        when CONFIG["tag_types"]["Character"]
+        elsif t.tag_type == CONFIG["tag_types"]["Character"]
           self.character_tag_count += 1
 
-        when CONFIG["tag_types"]["Copyright"]
+        elsif t.tag_type == CONFIG["tag_types"]["Copyright"]
           self.copyright_tag_count += 1
         end
       end
