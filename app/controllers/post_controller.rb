@@ -18,6 +18,7 @@ class PostController < ApplicationController
       end
       
       if load_avg > CONFIG["load_average_threshold"]
+#        send_file "#{RAILS_ROOT}/public/503.html", :type => "text/html", :x_sendfile => true, :status => 503
         render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
         return false
       end
@@ -25,6 +26,7 @@ class PostController < ApplicationController
       if @current_user.is_anonymous?
         bandwidth_used = Cache.get("db-bw")
         if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 450)
+#          send_file "#{RAILS_ROOT}/public/503-bw.html", :type => "text/html", :x_sendfile => true, :status => 503
           render :file => "#{RAILS_ROOT}/public/503-bw.html", :status => 503
           return false
         end
