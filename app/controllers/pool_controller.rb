@@ -213,6 +213,18 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
   end
   
+  def revert
+    @update = PoolUpdate.find(params[:id])
+    
+    if request.post?
+      if params[:commit] == "Yes"
+        @update.pool.revert_to(@update.id, @current_user.id, request.remote_ip)
+        flash[:notice] = "Pool was reverted"
+      end
+      redirect_to :action => "show", :id => @update.pool_id
+    end
+  end
+  
 private
   def updater_params
     params[:pool].merge(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id)

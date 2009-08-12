@@ -8,4 +8,8 @@ class PoolUpdate < ActiveRecord::Base
   def sanitized_ip_addr
     ip_addr.to_s.sub(/\d+\.\d+$/, "x.x")
   end
+  
+  def post_count
+    post_ids.split(" ").size / 2
+  end
 end

@@ -15,14 +15,29 @@ class Pool < ActiveRecord::Base
       m.after_save :create_update
       
       def create_update
-        PoolUpdate.create(:pool_id => id, :user_id => updater_user_id, :ip_addr => updater_ip_addr, :post_ids => pool_posts(true).map(&:post_id).join(" "))
+        PoolUpdate.create(:pool_id => id, :user_id => updater_user_id, :ip_addr => updater_ip_addr, :post_ids => pool_posts(true).map {|x| [x.post_id, x.sequence]}.flatten.join(" "))
+      end
+      
+      def revert_to(update_id, user_id, ip_addr)
+        self.updater_user_id = user_id
+        self.updater_ip_addr = ip_addr
+        
+        update = PoolUpdate.find(update_id)
+        Pool.transaction do
+          pool_posts.clear
+          update.post_ids.split(" ").in_groups_of(2).each do |post_id, sequence|
+            PoolPost.create(:pool_id => id, :post_id => post_id, :sequence => sequence)
+          end
+          update_attribute :post_count, PoolPost.count(:conditions => ["pool_id = ?", id])
+          update_pool_links
+        end
       end
     end
   end
   
   module PostMethods
     def self.included(m)
-      m.has_many :pool_posts, :class_name => "PoolPost", :order => "sequence"
+      m.has_many :pool_posts, :class_name => "PoolPost", :order => "sequence", :dependent => :delete_all
     end
     
     def can_be_updated_by?(user)

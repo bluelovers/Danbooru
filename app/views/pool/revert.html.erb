@@ -1,0 +1,9 @@
+<h4>Revert Pool</h4>
+
+<p>Do you wish to revert <%= h @update.pool.name %> to what it was on <%= @update.created_at.to_formatted_s(:db) %> (<%= pluralize @update.post_count, "post" %>)?</p>
+
+<% form_tag(:action => "revert") do %>
+  <%= hidden_field_tag "id", @update.id %>
+  <%= submit_tag "Yes" %>
+  <%= submit_tag "No" %>
+<% end %>
