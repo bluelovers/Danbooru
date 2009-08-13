@@ -26,9 +26,6 @@
                 (vote <%= link_to_function "up", "Post.vote(1, #{post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{post.id})" %>)
               <% end %>
             </span>
-            <% if post.comments.size > 6 %>
-              <span class="info"><strong>Hidden</strong> <%= fast_link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
-            <% end %>
           </div>
           <div class="tags">
             <strong>Tags</strong>
@@ -38,6 +35,11 @@
               </span>
             <% end %>
           </div>
+          <% if post.comments.size > 6 %>
+            <div style="margin-top: 1em;" id="hidden-comments-notice-for-<%= post.id %>">
+              <span class="info"><%= link_to_remote "#{pluralize post.comments.size - 6, 'comment'} hidden", :url => {:controller => "comment", :action => "index_hidden", :after_id => post.recent_comments.first.id, :post_id => post.id} %></span>
+            </div>            
+          <% end %>
         </div>
         <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>          
       </div>

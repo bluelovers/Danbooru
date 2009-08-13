@@ -439,10 +439,10 @@ class User < ActiveRecord::Base
     end
     
     def can_comment?
-      if created_at > 1.week.ago
-        false
-      elsif is_privileged_or_higher?
+      if is_privileged_or_higher?
         true
+      elsif created_at > 1.week.ago
+        false
       elsif Comment.count(:conditions => ["user_id = ? AND created_at > ?", id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
         false
       else

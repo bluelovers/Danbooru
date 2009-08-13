@@ -2,8 +2,13 @@
 
 require File.dirname(__FILE__) + '/../../config/environment'
 
-Pool.transaction do
-  Pool.find_each do |pool|
-    pool.save
+PoolUpdate.transaction do
+  PoolUpdate.find_each do |update|
+    i = 0
+    update.post_ids = update.post_ids.split(" ").map do |x|
+      "#{x} #{i}"
+      i += 1
+    end.join(" ")
+    update.save
   end
 end

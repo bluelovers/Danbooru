@@ -1,4 +1,4 @@
-<div class="response-list">
+<div class="response-list" id="response-list-for-<%= post_id %>">
   <% comments.each do |c| %>
     <%= render :partial => "comment/comment", :locals => {:comment => c} %>
   <% end %>

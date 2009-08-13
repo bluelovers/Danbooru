@@ -1,15 +1,13 @@
 <div class="status-notice" id="pool<%= pool.id %>">
-  <div style="display: inline;">
-    Pool: 
-    
-    <% if pool_post.prev_post_id %>
-      <%= fast_link_to "&lt;&lt;", :action => "show", :id => pool_post.prev_post_id %>
-    <% end %>
+  Pool: 
+  
+  <% if pool_post.prev_post_id %>
+    <%= fast_link_to "&lt;&lt;", :action => "show", :id => pool_post.prev_post_id %>
+  <% end %>
 
-    <%= fast_link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %>
-    
-    <% if pool_post.next_post_id %>
-      <%= fast_link_to "&gt;&gt;", :action => "show", :id => pool_post.next_post_id %>
-    <% end %>
-  </div>
+  <%= fast_link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %>
+  
+  <% if pool_post.next_post_id %>
+    <%= fast_link_to "&gt;&gt;", :action => "show", :id => pool_post.next_post_id %>
+  <% end %>
 </div>

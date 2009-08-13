@@ -1,0 +1,2 @@
+page.insert_html(:top, "response-list-for-#{params[:post_id]}", :partial => "comment", :collection => @comments)
+page.hide("hidden-comments-notice-for-#{params[:post_id]}")

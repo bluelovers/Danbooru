@@ -4,7 +4,7 @@ module PostCommentMethods
   end
   
   def recent_comments
-    Comment.find(:all, :conditions => ["post_id = ?", id], :order => "id desc", :limit => 6).reverse
+    @recent_comments ||= Comment.find(:all, :conditions => ["post_id = ?", id], :order => "id desc", :limit => 6).reverse
   end
 end
 

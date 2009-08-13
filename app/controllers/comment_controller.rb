@@ -57,6 +57,10 @@ class CommentController < ApplicationController
     respond_to_list("comment")
   end
   
+  def index_hidden
+    @comments = Comment.find(:all, :order => "id", :conditions => ["id < ? AND post_id = ?", params[:after_id], params[:post_id]])
+  end
+  
   def index
     set_title "Comments"
     
