@@ -450,6 +450,14 @@ class User < ActiveRecord::Base
       end      
     end
     
+    def can_remove_from_pools?
+      if created_at > 1.week.ago
+        false
+      else
+        true
+      end
+    end
+    
     def upload_limit
       deleted_count = Post.count(:conditions => ["status = ? AND user_id = ?", "deleted", id])
       unapproved_count = Post.count(:conditions => ["status = ? AND user_id = ?", "pending", id])

@@ -63,6 +63,18 @@ class AnonymousUser
   def recent_tags
     ""
   end
+
+  def can_upload?
+    false
+  end
+  
+  def can_comment?
+    false
+  end
+  
+  def can_remove_from_pools?
+    false
+  end
   
   CONFIG["user_levels"].each do |name, value|
     normalized_name = name.downcase.gsub(/ /, "_")

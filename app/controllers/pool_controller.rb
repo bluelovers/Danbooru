@@ -1,6 +1,7 @@
 class PoolController < ApplicationController
   layout "default"
   before_filter :member_only, :except => [:index, :show]
+  before_filter :privileged_only, :only => [:revert]
   helper :post
   
   def index
@@ -122,6 +123,11 @@ class PoolController < ApplicationController
   
   def remove_post
     if request.post?
+      if !@current_user.can_remove_from_pools?
+        respond_to_error("You cannot remove from pools within your first week of registering", :action => "show", :id => params[:pool_id])
+        return
+      end
+      
       @pool = Pool.find(params[:pool_id])
       @pool.updater_user_id = @current_user.id
       @pool.updater_ip_addr = request.remote_ip
