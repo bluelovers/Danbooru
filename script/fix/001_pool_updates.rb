@@ -6,9 +6,10 @@ PoolUpdate.transaction do
   PoolUpdate.find_each do |update|
     i = 0
     update.post_ids = update.post_ids.split(" ").map do |x|
-      "#{x} #{i}"
       i += 1
+      "#{x} #{i}"
     end.join(" ")
+
     update.save
   end
 end
