@@ -35,6 +35,13 @@ class PoolController < ApplicationController
       end
     end
   end
+  
+  def show_historical
+    @update = PoolUpdate.find(params[:id])
+    @pool = @update.pool
+    post_ids = @update.post_ids.scan(/(\d+) \d+/).flatten.map(&:to_i)
+    @posts = Post.paginate :per_page => 24, :conditions => ["id IN (?)", post_ids], :order => "posts.id", :page => params[:page]
+  end
 
   def update
     @pool = Pool.find(params[:id])

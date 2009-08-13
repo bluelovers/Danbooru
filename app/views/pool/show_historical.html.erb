@@ -1,0 +1,28 @@
+<div id="pool-show">
+  <h4>Pool: <%= h(@pool.pretty_name) %></h4>
+  <p>This is a historical version of the pool as it was <%= time_ago_in_words @update.created_at %> ago. The ordering was not preserved.</p>
+  
+  <% unless @pool.description.blank? %>
+    <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
+  <% end %>
+  <div style="margin-top: 1em;">
+    <% @posts.each do |post| %>
+      <%= print_preview(post, :user => @current_user) %>
+    <% end %>
+  </div>
+</div>
+
+<div id="paginator">
+  <%= will_paginate(@posts) %>
+</div>
+
+<% content_for("footer") do %>
+  <li>|</li>
+  <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
+  <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>
+  <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
+  <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
+  <li><%= link_to "History", :action => "history", :id => params[:id] %></li>
+<% end %>
+
+<%= render :partial => "footer" %>
