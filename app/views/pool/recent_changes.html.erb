@@ -1,17 +1,19 @@
 <div>
-  <h4>Pool History: <%= h(@pool.pretty_name) %></h4>  
+  <h4>Recent Changes</h4>  
   <table width="100%" class="highlightable">
     <thead>
       <tr>
-        <th>Post Count</th>
-        <th>Updater</th>
-        <th>Date</th>
-        <th></th>
+        <th width="55%">Pool</th>
+        <th width="10%">Post Count</th>
+        <th width="15%">Updater</th>
+        <th width="15%">Date</th>
+        <th width="5%"></th>
       </tr>
     </thead>
     <tbody>
-      <% @pool.updates.each do |update| %>
+      <% @updates.each do |update| %>
         <tr class="<%= cycle 'even', 'odd' %>">
+          <td><%= link_to h(update.pool.name), :action => "history", :id => update.pool_id %></td>
           <td><%= update.post_count %></td>
           <td><%= link_to update.updater_name, :controller => "user", :action => "show", :id => update.user_id %></td>
           <td><%= update.created_at.strftime("%Y-%m-%d %H:%M") %></td>
@@ -20,6 +22,10 @@
       <% end %>
     </tbody>
   </table>
+</div>
+
+<div id="paginator">
+  <%= will_paginate(@updates) %>
 </div>
 
 <% content_for("footer") do %>

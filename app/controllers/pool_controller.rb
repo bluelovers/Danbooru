@@ -213,6 +213,10 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
   end
   
+  def recent_changes
+    @updates = PoolUpdate.paginate :order => "created_at desc", :per_page => 20, :page => params[:page]
+  end
+  
   def revert
     @update = PoolUpdate.find(params[:id])
     
