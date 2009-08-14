@@ -7,7 +7,7 @@
       <li>Approver: <%= @post.approver.name %></li>
     <% end %>
     <% if @post.image? %>
-      <li>Size: <%= link_to "#{@post.width}x#{@post.height} (#{number_to_human_size(@post.file_size)})", @post.file_url %></li>
+      <li>Size: <%= link_to "#{@post.width}x#{@post.height} (#{number_to_human_size(@post.file_size)})", @post.file_url, :id => "highres", :onclick => "Post.highres()" %></li>
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[/^http/] %>
