@@ -684,6 +684,16 @@ div#paginator span {
   padding: 2px 6px;
 }
 
+div#pool-history del {
+  background: #FCC;
+  text-decoration: none;
+}
+
+div#pool-history ins {
+  background: #CFC;
+  text-decoration: none;
+}
+
 div#post-add p#scale {
   color: #999;
   font-style: italic;

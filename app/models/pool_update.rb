@@ -12,4 +12,8 @@ class PoolUpdate < ActiveRecord::Base
   def post_count
     post_ids.split(" ").size / 2
   end
+  
+  def post_ids_only
+    post_ids.scan(/(\d+) \d+/).flatten
+  end
 end

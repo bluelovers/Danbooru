@@ -224,10 +224,16 @@ class PoolController < ApplicationController
   
   def history
     @pool = Pool.find(params[:id])
+    @updates = PoolUpdate.paginate :order => "id desc", :per_page => 25, :page => params[:page], :conditions => ["pool_id = ?", @pool.id]
   end
   
   def recent_changes
-    @updates = PoolUpdate.paginate :order => "created_at desc", :per_page => 20, :page => params[:page]
+    if params[:user_id]
+      @updater_user = User.find(params[:user_id])
+      @updates = PoolUpdate.paginate :order => "id desc", :per_page => 50, :page => params[:page], :conditions => {:user_id => @updater_user.id}
+    else
+      @updates = PoolUpdate.paginate :order => "id desc", :per_page => 50, :page => params[:page]
+    end
   end
   
   def revert

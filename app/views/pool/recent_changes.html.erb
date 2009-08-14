@@ -1,20 +1,26 @@
-<div>
-  <h4>Recent Changes</h4>  
+<div id="pool-history">
+  <% if @updater_user %>
+    <h4>Recent Changes by <%= h @updater_user.name %></h4>
+  <% else %>
+    <h4>Recent Changes</h4>  
+  <% end %>
   <table width="100%" class="highlightable">
     <thead>
       <tr>
-        <th width="55%">Pool</th>
+        <th width="25%">Pool</th>
         <th width="10%">Post Count</th>
+        <th width="30%">Changes</th>
         <th width="15%">Updater</th>
         <th width="15%">Date</th>
         <th width="5%"></th>
       </tr>
     </thead>
     <tbody>
-      <% @updates.each do |update| %>
+      <% @updates.each_with_index do |update, i| %>
         <tr class="<%= cycle 'even', 'odd' %>">
-          <td><%= link_to h(update.pool.name), :action => "history", :id => update.pool_id %></td>
+          <td><%= link_to h(update.pool.pretty_name), :action => "history", :id => update.pool_id %></td>
           <td><%= update.post_count %></td>
+          <td><%= pool_update_diff(@updates, i) %></td>
           <td><%= link_to update.updater_name, :controller => "user", :action => "show", :id => update.user_id %></td>
           <td><%= update.created_at.strftime("%Y-%m-%d %H:%M") %></td>
           <td><%= link_to "Revert", :action => "revert", :id => update.id %></td>
