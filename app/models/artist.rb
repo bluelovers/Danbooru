@@ -223,11 +223,35 @@ class Artist < ActiveRecord::Base
     end
   end
   
+  module VersionMethods
+    def self.included(m)
+      m.after_save :create_version
+      m.has_many :versions, :class_name => "ArtistVersion", :order => "version desc"
+    end
+    
+    def create_version
+      cached_urls = artist_urls.map {|x| x.normalized_url}.join(" ")
+      
+      ArtistVersion.create(
+        :artist_id => id,
+        :version => version,
+        :alias_id => alias_id,
+        :group_id => group_id,
+        :name => name,
+        :updater_id => updater_id,
+        :cached_urls => cached_urls
+      )
+      
+      Artist.execute_sql "UPDATE artists SET version = version + 1 WHERE id = #{id}"
+    end
+  end
+  
   include UrlMethods
   include NoteMethods
   include AliasMethods
   include GroupMethods
   include ApiMethods
+  include VersionMethods
   
   before_validation :normalize
   validates_uniqueness_of :name

@@ -108,4 +108,18 @@ class ArtistController < ApplicationController
       redirect_to :action => "create", :name => params[:name]
     end
   end
+  
+  def history
+    @artist = Artist.find(params[:id])
+    @versions = ArtistVersion.paginate :order => "version desc", :per_page => 25, :page => params[:page], :conditions => ["artist_id = ?", @artist.id]
+  end
+  
+  def recent_changes
+    if params[:user_id]
+      @updater_user = User.find(params[:user_id])
+      @versions = ArtistVersion.paginate :order => "id desc", :per_page => 25, :page => params[:page], :conditions => ["user_id = ?", @updater_user.id]
+    else
+      @versions = ArtistVersion.paginate :order => "id desc", :per_page => 25, :page => params[:page]
+    end
+  end
 end
