@@ -19,7 +19,7 @@
           <td><%= version.alias_id %></td>
           <td><%= version.group_id %></td>
           <td><%= time_ago_in_words version.created_at %> ago</td>
-          <td><%= link_to version.updater.name, :controller => "user", :action => "show", :id => version.updater_id %></td>
+          <td><%= link_to version.updater_name, :controller => "user", :action => "show", :id => version.updater_id %></td>
           <td><%= version.urls.join(" ") %></td>
         </tr>
       <% end %>

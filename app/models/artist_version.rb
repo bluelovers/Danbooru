@@ -5,4 +5,8 @@ class ArtistVersion < ActiveRecord::Base
   def urls
     cached_urls.split(" ")
   end
+  
+  def updater_name
+    User.find_name(updater_id).tr("_", " ")
+  end
 end
