@@ -196,6 +196,25 @@ class User < ActiveRecord::Base
   end
   
   module UserTagMethods
+    def convert_flat_list_to_typed_list(list)
+      if is_privileged_or_higher?
+        list.scan(/\S+/).map do |x|
+          t, c = Tag.type_and_count(x)
+          [x, c, t]
+        end
+      else
+        list.scan(/\S+/).map {|x| [x, 0, 0]}
+      end
+    end
+    
+    def uploaded_tags_with_types
+      convert_flat_list_to_typed_list(uploaded_tags)
+    end
+    
+    def recent_tags_with_types
+      convert_flat_list_to_typed_list(recent_tags)
+    end
+    
 =begin
     def uploaded_tags(options = {})
       type = options[:type]
@@ -494,7 +513,7 @@ class User < ActiveRecord::Base
   include UserCountMethods
   include UserNameMethods
   include UserApiMethods
-  # include UserTagMethods
+  include UserTagMethods
   include UserPostMethods
   include UserFavoriteMethods
   include UserLevelMethods

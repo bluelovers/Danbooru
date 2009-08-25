@@ -8,15 +8,13 @@ RelatedTags = {
       return []
     }
 
-    return tags.match(/\S+/g).sort().map(function(x) {
-      return [x, 0, 0]
-    })
+    return tags
   },
 
   init: function(uploaded_tags, recent_tags, artist_tags) {
-    this.uploaded_tags = this.convert_flat_tag_list(uploaded_tags)
-    this.recent_tags = this.convert_flat_tag_list(recent_tags)
-
+    this.uploaded_tags = uploaded_tags
+    this.recent_tags = recent_tags
+    
     if (artist_tags) {
       this.build_all({"Artists": artist_tags})
     } else {

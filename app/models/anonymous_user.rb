@@ -60,8 +60,16 @@ class AnonymousUser
     ""
   end
   
+  def uploaded_tags_with_types
+    []
+  end
+  
   def recent_tags
     ""
+  end
+  
+  def recent_tags_with_types
+    []
   end
 
   def can_upload?

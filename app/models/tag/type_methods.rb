@@ -37,7 +37,7 @@ module TagTypeMethods
       if results.any?
         [results[0]["tag_type"].to_i, results[0]["post_count"].to_i]
       else
-        ["General", 0]
+        [0, 0]
       end
     end
   end
