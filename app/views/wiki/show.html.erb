@@ -30,9 +30,7 @@
       <div style="margin-bottom: 1em;">
         <h4>Recent Posts</h4>
         <div style="margin: 1em 0;">
-          <% @posts.each do |p| %>
-            <%= print_preview(p) %>
-          <% end %>
+          <%= render :partial => "post/posts", :locals => {:posts => @posts} %>
         </div>
       </div>
     <% end %>

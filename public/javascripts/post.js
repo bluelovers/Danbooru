@@ -184,6 +184,7 @@ Post = {
     post.match_tags = post.tags.clone()
     post.match_tags.push("rating:" + post.rating.charAt(0))
     post.match_tags.push("status:" + post.status)
+    post.match_tags.push("user:" + post.user)
     this.posts.set(post.id, post)
   },
 
