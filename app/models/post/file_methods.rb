@@ -98,6 +98,8 @@ module PostFileMethods
 
   # Automatically download from the source if it's a URL.
   def download_source
+    self.source = "" if source.nil?
+    
     return if source !~ /^http:\/\// || !file_ext.blank?
     
     begin
