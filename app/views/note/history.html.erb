@@ -18,7 +18,7 @@
         <td><%= link_to "#{note.note_id}.#{note.version}", :controller => "note", :action => "history", :id => note.note_id %></td>
         <td><%= h(note.body) %> <% unless note.is_active? %>(deleted)<% end %></td>
         <td><%= link_to h(note.author), :controller => "user", :action => "show", :id => note.user_id %></td>
-        <td><%= note.updated_at.strftime("%D") %></td>
+        <td><%= note.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
         <td><%= link_to "Revert", {:controller => "note", :action => "revert", :id => note.note_id, :version => note.version}, :method => :post, :confirm => "Do you really wish to revert to this note?" %></td>
       </tr>
     <% end %>    

@@ -46,7 +46,7 @@
           <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
             <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
             <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
-            <td><%= change[:change].created_at.strftime("%b %e") %></td>
+            <td><%= change[:change].created_at.strftime("%Y-%m-%d %H:%M") %></td>
             <td><%= link_to change[:change].author, :controller => "user", :action => "show", :id => change[:change].user_id %></td>
             <td><%= change[:change].rating %></td>
             <td>
