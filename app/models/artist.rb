@@ -284,7 +284,7 @@ class Artist < ActiveRecord::Base
         cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
         
       else
-        cond.add "name LIKE ? ESCAPE E'\\\\'", name.to_escaped_for_sql_like + "%"
+        cond.add "name LIKE ? ESCAPE E'\\\\'", name.strip.downcase.to_escaped_for_sql_like + "%"
       end
     end
     
