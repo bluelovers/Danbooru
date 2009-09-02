@@ -104,7 +104,7 @@ var Note = Class.create({
     html += '<textarea rows="7" id="edit-box-text" style="width: 350px; margin: 2px 2px 12px 2px;">' + this.textValue() + '</textarea>'
     html += '<input type="submit" value="Save" name="save" id="note-save-' + this.id + '">'
     html += '<input type="submit" value="Cancel" name="cancel" id="note-cancel-' + this.id + '">'
-    html += '<input type="submit" value="Remove" name="remove" id="note-remove-' + this.id + '">'
+    html += '<input type="submit" value="Delete" name="remove" id="note-remove-' + this.id + '">'
     html += '<input type="submit" value="History" name="history" id="note-history-' + this.id + '">'
     html += '</form>'
     html += '</div>'
@@ -526,8 +526,8 @@ var Note = Class.create({
 
   // Removes a note from the database
   remove: function(e) {
-    if (Note.debug) {
-      console.debug("Note#remove (id=%d)", this.id)
+    if (!confirm("Do you really want to delete this note?")) {
+      return
     }
     
     this.hideEditBox(e)

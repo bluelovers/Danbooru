@@ -103,21 +103,25 @@ class JobTask < ActiveRecord::Base
   def execute_s3_backup
     last_id = data["last_id"].to_i
     
-    Post.find(:all, :conditions => ["id > ?", last_id], :limit => 100, :order => "id").each do |post|
-      base64_md5 = Base64.encode64(post.md5.unpack("a2" * (post.md5.size / 2)).map {|x| x.hex.chr}.join)
-  
-      AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
-      AWS::S3::S3Object.store(post.file_name, open(post.file_path, "rb"), CONFIG["amazon_s3_bucket_name"], "Content-MD5" => base64_md5)
-  
-      if post.image?
-        AWS::S3::S3Object.store("preview/#{post.md5}.jpg", open(post.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"])
-      end
-
-      if File.exists?(post.sample_path)
-        AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{post.md5}.jpg", open(post.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"])
-      end
+    begin
+      Post.find(:all, :conditions => ["id > ?", last_id], :limit => 100, :order => "id").each do |post|
+        base64_md5 = Base64.encode64(post.md5.unpack("a2" * (post.md5.size / 2)).map {|x| x.hex.chr}.join)
       
-      update_attributes(:data => {:last_id => post.id})
+        AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
+        AWS::S3::S3Object.store(post.file_name, open(post.file_path, "rb"), CONFIG["amazon_s3_bucket_name"], "Content-MD5" => base64_md5)
+  
+        if post.image?
+          AWS::S3::S3Object.store("preview/#{post.md5}.jpg", open(post.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"])
+        end
+
+        if File.exists?(post.sample_path)
+          AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{post.md5}.jpg", open(post.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"])
+        end
+      
+        update_attributes(:data => {:last_id => post.id})
+      end
+    rescue Exception
+      # probably some network error, retry next time
     end
   end
   
