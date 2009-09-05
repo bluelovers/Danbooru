@@ -104,12 +104,12 @@ class JobTask < ActiveRecord::Base
     last_id = data["last_id"].to_i
     
     begin
-      Post.find(:all, :conditions => ["id > ?", last_id], :limit => 100, :order => "id").each do |post|
-        base64_md5 = Base64.encode64(post.md5.unpack("a2" * (post.md5.size / 2)).map {|x| x.hex.chr}.join)
-      
+      Post.find(:all, :conditions => ["id > ?", last_id], :limit => 200, :order => "id").each do |post|
+        base64_md5 = Base64.encode64(Digest::MD5.digest(File.read(post.file_path)))
+
         AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
         AWS::S3::S3Object.store(post.file_name, open(post.file_path, "rb"), CONFIG["amazon_s3_bucket_name"], "Content-MD5" => base64_md5)
-  
+
         if post.image?
           AWS::S3::S3Object.store("preview/#{post.md5}.jpg", open(post.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"])
         end
@@ -119,8 +119,13 @@ class JobTask < ActiveRecord::Base
         end
       
         update_attributes(:data => {:last_id => post.id})
+        base64_md5 = nil
       end
-    rescue Exception
+
+    rescue AWS::S3::BadDigest
+      raise
+
+    rescue Exception => x
       # probably some network error, retry next time
     end
   end

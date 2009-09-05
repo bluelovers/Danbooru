@@ -13,7 +13,12 @@ end
 
 while $job_task_daemon_active
   JobTask.execute_once
-  sleep 60
+
+  i = 60
+  while $job_task_daemon_active && i >= 0
+    sleep 1
+    i -= 1
+  end
 end
 
 log.info "exiting"
