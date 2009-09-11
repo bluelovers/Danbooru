@@ -25,7 +25,7 @@ end
 
 
 def create_ad(params = {})
-  Advertisement.create({:image_url => "1", :referral_url => "1", :ad_type => "horizontal", :status => "active", :hit_count => 0, :width => 100, :height => 200, :is_work_safe => true}.merge(params))
+  Advertisement.create({:created_at => "2001-01-01", :file_name => "1", :referral_url => "1", :ad_type => "horizontal", :status => "active", :hit_count => 0, :width => 100, :height => 200, :is_work_safe => true}.merge(params))
 end
 
 def create_artist(params)

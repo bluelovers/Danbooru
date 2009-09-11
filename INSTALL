@@ -4,7 +4,7 @@ It is recommended that you install Danbooru on a Debian-based system (Lenny or n
 
 For best performance, you will need at least 256MB of RAM for PostgreSQL and Rails. The memory requirement will grow as your database gets bigger; the main Danbooru database takes up around 1GB of memory by itself.
 
-- Danbooru has the following general dependencies: gcc, g++, make, readline, zlib, flex, bison, gd2, bzip2, postgresql-8.3, postgresql-contrib-8.3, ruby, rubygems, ragel, memcached, subversion, apache, and phusion passenger. Use your operating system's package management system whenever possible. This will simplify the process of installing init scripts, which will not always happen when compiling from source.
+- Danbooru has the following general dependencies: gcc, g++, make, readline, zlib, flex, bison, gd2, bzip2, postgresql-8.3, postgresql-contrib-8.3, ruby, rubygems, memcached, subversion, apache, and phusion passenger. Use your operating system's package management system whenever possible. This will simplify the process of installing init scripts, which will not always happen when compiling from source.
 - Please read the section below about PostgreSQL and test_parser before proceeding.
 - Danbooru has the following Ruby gem dependencies: postgres, diff-lcs, html5, memcache-client, aws-s3, json, rails (version 2.2.2)
   - You may need to specify the path to your PostgreSQL libraries and includes when building the postgres gem. The general format for this is: "gem install postgres -- --with-pgsql-dir=/usr/local/pgsql". Experiment with the other configure settings if this doesn't work.

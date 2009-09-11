@@ -17,10 +17,10 @@ class AdvertisementControllerTest < ActionController::TestCase
     get :new, {}, {:user_id => 1}
     assert_response :success
     
-    post :create, {:ad => {:image_url => "test", :referral_url => "test", :ad_type => "vertical", :status => "active", :width => "500", :height => "500", :is_work_safe => "1"}}, {:user_id => 1}
+    post :create, {:ad => {:file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :referral_url => "test", :ad_type => "vertical", :status => "active", :width => "500", :height => "500", :is_work_safe => "1"}}, {:user_id => 1}
     assert_equal(3, Advertisement.count)
     ad = Advertisement.find(:last)
-    assert_equal("test", ad.image_url)
+    assert_equal("/images/ads-#{Time.now.strftime('%Y%m%d')}/test1.jpg", ad.image_url)
   end
   
   def test_update
@@ -30,9 +30,9 @@ class AdvertisementControllerTest < ActionController::TestCase
     get :edit, {:id => 1}, {:user_id => 1}
     assert_response :success
     
-    post :update, {:id => 1, :ad => {:image_url => "test", :referral_url => "test", :ad_type => "vertical", :status => "active", :width => "500", :height => "500", :is_work_safe => "1"}}, {:user_id => 1}
+    post :update, {:id => 1, :ad => {:file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :referral_url => "test", :ad_type => "vertical", :status => "active", :width => "500", :height => "500", :is_work_safe => "1"}}, {:user_id => 1}
     ad = Advertisement.find(1)
-    assert_equal("test", ad.image_url)
+    assert_equal("/images/ads-20010101/test1.jpg", ad.image_url)
   end
   
   def test_redirect
