@@ -7,8 +7,8 @@
   </tfoot>
   <tbody>
     <tr>
-      <th width="15%"><label for="ad_image_url">Image URL</label></th>
-      <td width="85%"><%= text_field "ad", "image_url" %></td>
+      <th width="15%"><label for="ad_file">File</label></th>
+      <td width="85%"><%= file_field "ad", "file" %></td>
     </tr>
     <tr>
       <th><label for="ad_referral_url">Referral URL</label></th>
@@ -25,14 +25,6 @@
     <tr>
       <th><label for="ad_is_work_safe">Work Safe</label></th>
       <td><%= check_box "ad", "is_work_safe" %></td>
-    </tr>
-    <tr>
-      <th><label for="ad_width">Width</label></th>
-      <td><%= text_field "ad", "width" %></td>
-    </tr>
-    <tr>
-      <th><label for="ad_height">Height</label></th>
-      <td><%= text_field "ad", "height" %></td>
     </tr>
   </tbody>
 </table>

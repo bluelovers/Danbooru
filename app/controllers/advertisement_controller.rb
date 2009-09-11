@@ -1,5 +1,5 @@
 class AdvertisementController < ApplicationController
-	before_filter :admin_only, :only => [:create, :update, :new, :edit]
+	before_filter :janitor_only, :only => [:create, :update, :new, :edit]
   layout "default"
 
 	def redirect_ad

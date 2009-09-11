@@ -34,7 +34,7 @@
   <tbody>
     <% @ads.each do |ad| %>
       <tr>
-        <td><%= image_tag(ad.image_url) %></td>
+        <td><%= image_tag(ad.image_url, :width => ad.preview_width, :height => ad.preview_height) %></td>
         <td style="text-align: right;"><%= ad.hit_sum(@start_date, @end_date) %></td>
         <td><%= link_to "Edit", :action => "edit", :id => ad.id %></td>
       </tr>

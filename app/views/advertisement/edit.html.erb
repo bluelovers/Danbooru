@@ -1,4 +1,5 @@
 <% form_tag(:action => "update") do %>
+  <%= image_tag(@ad.image_url) %>
   <%= hidden_field_tag "id", params[:id] %>
   <%= render :partial => "form" %>
 <% end %>
