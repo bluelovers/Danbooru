@@ -9,9 +9,7 @@ module PostImageStoreMethods
     end
 
     def preview_path
-      if status == "deleted"
-        "#{RAILS_ROOT}/public/deleted-preview.png"
-      elsif image?
+      if image?
         "#{RAILS_ROOT}/public/data/preview/#{md5}.jpg"
       else
         "#{RAILS_ROOT}/public/download-preview.png"

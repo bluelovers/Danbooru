@@ -33,6 +33,8 @@ class Advertisement < ActiveRecord::Base
       else
         File.open(image_path, 'wb') {|nf| nf.write(f.read)}
       end
+
+      File.chmod(0644, image_path)
     
       imgsize = ImageSize.new(File.open(image_path, "rb"))
       self.width = imgsize.get_width
