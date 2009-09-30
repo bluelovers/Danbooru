@@ -111,7 +111,7 @@ module PostFileMethods
         end
       end
       
-      if source.to_s =~ /\/src\/\d{12,}|urnc\.yi\.org/
+      if source.to_s =~ /\/src\/\d{12,}|urnc\.yi\.org|yui\.cynthia\.bne\.jp/
         self.source = "Image board"
       end
       

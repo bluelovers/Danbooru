@@ -34,7 +34,11 @@
   <div id="header">
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_header(h(params[:tags])) %></h2>
     <ul class="flat-list" id="navbar">
-      <%= navbar_link_to("My Account", {:controller => "user", :action => "home"}, :id => "my-account") %>
+      <% if @current_user.is_member_or_higher? %>
+        <%= navbar_link_to("My Account", {:controller => "user", :action => "home"}) %>
+      <% else %>
+        <%= navbar_link_to("Login/Signup", {:controller => "user", :action => "login"}) %>
+      <% end %>
       <%= navbar_link_to("Posts", :controller => "post", :action => "index") %>
       <%= navbar_link_to("Comments", :controller => "comment", :action => "index") %>
       <%= navbar_link_to("Notes", :controller => "note", :action => "index") %>
