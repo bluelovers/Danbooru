@@ -9,6 +9,7 @@
         <th>Group</th>
         <th>Updated</th>
         <th>Updated by</th>
+        <th>Active</th>
         <th>URLs</th>
       </tr>
     </thead>
@@ -20,6 +21,7 @@
           <td><%= version.group_id %></td>
           <td><%= time_ago_in_words version.created_at %> ago</td>
           <td><%= link_to version.updater_name, :controller => "user", :action => "show", :id => version.updater_id %></td>
+          <td><%= version.is_active? %></td>
           <td><%= version.urls.join(" ") %></td>
         </tr>
       <% end %>

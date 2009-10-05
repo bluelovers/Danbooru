@@ -279,6 +279,8 @@ class Artist < ActiveRecord::Base
   
   def self.generate_sql(name)
     b = Nagato::Builder.new do |builder, cond|
+      cond.add "is_active = TRUE"
+      
       case name        
       when /^http/
         cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}

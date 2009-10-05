@@ -25,6 +25,10 @@
         <td><%= text_area "artist", "urls", :size => "80x6", :class => "no-block" %></td>
       </tr>
       <tr>
+        <th><label for="artist_is_active">Active</label></th>
+        <td><%= check_box "artist", "is_active" %></td>
+      </tr>
+      <tr>
         <th><label for="artist_notes">Notes</label></th>
         <td><%= text_area "artist", "notes", :size => "80x6", :class => "no-block", :disabled => @artist.notes_locked? %></td>
       </tr>

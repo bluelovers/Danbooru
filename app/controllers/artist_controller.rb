@@ -1,8 +1,7 @@
 class ArtistController < ApplicationController
   layout "default"
 
-  before_filter :member_only, :only => [:create, :update]
-  before_filter :janitor_only, :only => [:destroy]
+  before_filter :member_only, :only => [:create, :update, :destroy]
   helper :post, :wiki
 
   def preview
@@ -14,7 +13,7 @@ class ArtistController < ApplicationController
     
     if request.post?
       if params[:commit] == "Yes"
-        @artist.destroy
+        @artist.update_attribute(:is_active, false)
         respond_to_success("Artist deleted", :action => "index", :page => params[:page])
       else
         redirect_to :action => "index", :page => params[:page]
