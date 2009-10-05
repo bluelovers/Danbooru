@@ -89,8 +89,12 @@ class Post < ActiveRecord::Base
   
   def normalized_source
     if source =~ /pixiv\.net\/img\//
-      img_id = source[/(\d+(_m)?)\.\w+$/, 1]
-      "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{img_id}"
+      img_id = source[/(\d+)(_m|_p\d+)?\.\w+$/, 1]
+      if $2 =~ /_p/
+        "http://www.pixiv.net/member_illust.php?mode=manga&illust_id=#{img_id}"
+      else
+        "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{img_id}"
+      end
     else
       source
     end
