@@ -208,7 +208,10 @@ class Artist < ActiveRecord::Base
         :name => name, 
         :alias_id => alias_id, 
         :group_id => group_id,
-        :urls => artist_urls.map {|x| x.url}
+        :urls => artist_urls.map {|x| x.url},
+        :is_active => is_active,
+        :version => version,
+        :updater_id => updater_id
       }
     end
 
@@ -246,7 +249,8 @@ class Artist < ActiveRecord::Base
         :group_id => group_id,
         :name => name,
         :updater_id => updater_id,
-        :cached_urls => cached_urls
+        :cached_urls => cached_urls,
+        :is_active => is_active
       )
       
       Artist.execute_sql "UPDATE artists SET version = version + 1 WHERE id = #{id}"
