@@ -53,6 +53,10 @@ class ArtistTest < ActiveSupport::TestCase
     # Make sure duplicates are removed
     create_artist(:name => "warhol", :urls => "http://warhol.com/a/image.jpg\nhttp://warhol.com/b/image.jpg")
     assert_equal(["warhol"], Artist.find_all_by_url("http://warhol.com/test.jpg").map(&:name))
+    
+    # Make sure deleted artists are hidden
+    artist.update_attribute(:is_active, false)
+    assert_equal([], Artist.find_all_by_url("http://also.not.rembrandt.com/test.jpg").map(&:name))
   end
   
   def test_aliases_simple
