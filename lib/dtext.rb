@@ -44,6 +44,7 @@ module DText
         ch = ""
       end
 
+      link.gsub!(/"/, '&quot;')
       '<a href="' + link + '">' + text + '</a>' + ch
     end
     str

@@ -11,9 +11,9 @@
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[/^http/] %>
-        <li>Source: <%= fast_link_to @post.source[7, 20] + "...", @post.normalized_source, :target => "_blank" %></li>
+        <li>Source: <%= fast_link_to h(@post.source[7, 20] + "..."), @post.normalized_source, :target => "_blank" %></li>
       <% else %>
-        <li>Source: <%= @post.source %></li>
+        <li>Source: <%= h @post.source %></li>
       <% end %>
     <% end %>
     <li>Rating: <%= @post.pretty_rating %></li>

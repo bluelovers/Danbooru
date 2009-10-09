@@ -2,11 +2,7 @@ module ApplicationHelper
   def fast_link_to(text, link_params, options = {})
     if options
       attributes = options.map do |k, v| 
-        if k == :onclick
-          "#{k}=\"#{v}\""
-        else
-          "#{k}=\"#{u(v)}\""
-        end
+        %{#{k}="#{h(v)}"}
       end.join(" ")
     else
       attributes = ""
@@ -32,7 +28,7 @@ module ApplicationHelper
       url = link_params
     end
     
-    %{<a href="#{url}" #{attributes}>#{text}</a>}
+    %{<a href="#{h(url)}" #{attributes}>#{text}</a>}
   end
   
   def fast_link_to_unless(cond, text, link_params, options = {})
@@ -66,7 +62,7 @@ module ApplicationHelper
 
   def tag_header(tags)
     unless tags.blank?
-      '/' + Tag.scan_query(tags).map {|t| fast_link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
+      '/' + Tag.scan_query(tags).map {|t| fast_link_to(h(t.tr("_", " ")), :controller => "post", :action => "index", :tags => t)}.join("+")
     end
   end
   

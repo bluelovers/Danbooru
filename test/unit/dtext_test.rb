@@ -9,6 +9,11 @@ class DTextTest < ActiveSupport::TestCase
     assert_equal('<p>&lt;</p>', p("<"))
     assert_equal('<p>&gt;</p>', p(">"))
     assert_equal('<p>&amp;</p>', p("&"))
+
+    assert_equal(
+      '<p><a href="http://danbooru.donmai.us&quot;onmouseover=&quot;alert(document.cookie)">foo</a>)</p>',
+      p(%{"foo":http://danbooru.donmai.us"onmouseover="alert(document.cookie))})
+    )
   end
   
   def test_paragraphs
