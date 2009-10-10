@@ -7,7 +7,7 @@
     <% end %>
     <script type="text/javascript">
       <% posts.each do |post| %>
-        Post.register({"id":<%= post.id %>, "tags":"<%= escape_javascript(post.cached_tags) %>", "rating":"<%= post.rating %>", "status":"<%= post.status %>", "user":"<%= post.author %>"})
+        Post.register(<%= post.to_json %>)
       <% end %>
     </script>
   <% end %>

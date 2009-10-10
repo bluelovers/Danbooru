@@ -218,7 +218,7 @@ Post = {
 
       count += bld
       if (Post.blacklist_options.replace)
-        thumb.src = bld ? "/blacklisted-preview.png" : post.preview_url
+        thumb.down('img').src = bld ? "/blacklisted-preview.png" : post.preview_url
       else
         thumb.show(!bld)
     })
@@ -242,16 +242,22 @@ Post = {
         })
         Post.blacklists.push(b)
     })
+
+    var sidebar = $("blacklisted-sidebar")
+    if (!sidebar) {
+      Post.apply_blacklists();
+      return;
+    }
   
     var blacklist_count = $("blacklist-count")
     if (blacklist_count)
       Post.countText = blacklist_count.appendChild(document.createTextNode(""));
 
-    var sidebar = $("blacklisted-sidebar")
     if (!Post.apply_blacklists()) {
-      if (sidebar) sidebar.hide()
+      sidebar.hide()
       return
     }
+
     sidebar.show()
 
     /* Keep focus from going to the item on click. */
