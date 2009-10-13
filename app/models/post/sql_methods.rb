@@ -67,6 +67,7 @@ module PostSqlMethods
       generate_sql_range_helper(q[:width], "p.width", conds, cond_params)
       generate_sql_range_helper(q[:height], "p.height", conds, cond_params)
       generate_sql_range_helper(q[:score], "p.score", conds, cond_params)
+      generate_sql_range_helper(q[:filesize], "p.file_size", conds, cond_params)
       generate_sql_range_helper(q[:date], "p.created_at::date", conds, cond_params)
       generate_sql_range_helper(q[:change], "p.change_seq", conds, cond_params)
       generate_sql_range_helper(q[:general_tag_count], "p.general_tag_count", conds, cond_params)
@@ -212,19 +213,19 @@ module PostSqlMethods
 
       if q[:order] && !options[:count]
         case q[:order]
-        when "id"
+        when "id", "id_asc"
           sql << " ORDER BY p.id"
       
         when "id_desc"
           sql << " ORDER BY p.id DESC"
       
-        when "score"
+        when "score", "score_desc"
           sql << " ORDER BY p.score DESC, p.id DESC"
       
         when "score_asc"
           sql << " ORDER BY p.score, p.id DESC"
       
-        when "mpixels"
+        when "mpixels", "mpixels_desc"
           # Use "w*h/1000000", even though "w*h" would give the same result, so this can use
           # the posts_mpixels index.
           sql << " ORDER BY width*height/1000000.0 DESC, p.id DESC"
@@ -253,6 +254,12 @@ module PostSqlMethods
           
         when "favcount"
           sql << " ORDER BY p.fav_count DESC"
+	
+	when "filesize", "filesize_desc"
+	  sql << " ORDER BY p.file_size DESC"
+
+	when "filesize_asc"
+	  sql << " ORDER BY p.file_size ASC"
 
         else
           sql << " ORDER BY p.id DESC"

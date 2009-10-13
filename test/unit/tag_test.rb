@@ -64,6 +64,25 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
+  def test_parse_cast
+    assert_equal(42, Tag.parse_cast('42', :integer))
+    assert_equal(0.42, Tag.parse_cast('0.42', :float))
+
+    assert_equal(1024, Tag.parse_cast('1024',  :filesize))
+    assert_equal(1024, Tag.parse_cast('1024b', :filesize))
+    assert_equal(1024, Tag.parse_cast('1024B', :filesize))
+
+    assert_equal(1024, Tag.parse_cast('1k',    :filesize))
+    assert_equal(1024, Tag.parse_cast('1.K',   :filesize))
+    assert_equal(1024, Tag.parse_cast('1.0kb', :filesize))
+    assert_equal(1024, Tag.parse_cast('1.0kB', :filesize))
+    assert_equal(512,  Tag.parse_cast('0.5Kb', :filesize))
+    assert_equal(512,  Tag.parse_cast('.5KB',  :filesize))
+
+    assert_equal(1.5 * 1024 * 1024,  Tag.parse_cast('1.5m', :filesize))
+    assert_equal(1.5 * 1024 * 1024,  Tag.parse_cast('1.5M', :filesize))
+  end
+
   def test_parse_query
     results = Tag.parse_query("tag1 tag2")
     assert_equal(["tag1", "tag2"], results[:related])
@@ -97,6 +116,9 @@ class TagTest < ActiveSupport::TestCase
 
     results = Tag.parse_query("id:5..10")
     assert_equal([:between, 5, 10], results[:post_id])
+
+    results = Tag.parse_query("filesize:0.5k..1.0M")
+    assert_equal([:between, 512, 1024 * 1024], results[:filesize])
     
     # Test aliasing & implications
     tag_z = Tag.find_or_create_by_name("tag-z")

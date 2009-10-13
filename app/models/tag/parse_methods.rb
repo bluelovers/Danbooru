@@ -19,6 +19,22 @@ module TagParseMethods
         rescue Exception
           nil
         end
+      elsif type == :filesize
+        x =~ /^(\d+(?:\.\d*)?|\d*\.\d+)([kKmM]?)[bB]?$/
+
+	size = $1.to_f
+	unit = $2
+
+	conversion_factor = case unit
+	  when /m/i
+	    1024 * 1024
+	  when /k/i
+	    1024
+	  else
+	    1
+	end
+
+	(size * conversion_factor).to_i
       end
     end
     
@@ -56,7 +72,7 @@ module TagParseMethods
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|parent|order|change|status|generaltagcount|artisttagcount|charactertagcount|copyrighttagcount):(.+)$/
+        if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|filesize|source|id|date|pool|parent|order|change|status|generaltagcount|artisttagcount|charactertagcount|copyrighttagcount):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "fav"
@@ -79,6 +95,8 @@ module TagParseMethods
             q[:mpixels] = parse_helper($2, :float)
           elsif $1 == "score"
             q[:score] = parse_helper($2)
+	  elsif $1 == "filesize"
+	    q[:filesize] = parse_helper($2, :filesize)
           elsif $1 == "source"
             q[:source] = $2.to_escaped_for_sql_like + "%"
           elsif $1 == "date"
