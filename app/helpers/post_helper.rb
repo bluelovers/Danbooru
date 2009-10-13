@@ -1,4 +1,29 @@
 module PostHelper
+  def wiki_excerpt(artist, wiki_page, split_tags)
+    html = ""
+    
+    if artist || wiki_page || split_tags.size == 1
+      html << '<div>'
+      
+      if artist
+        html << %{<h5><a href="/artist/show/#{artist.id}">#{h(split_tags.to_s)}</a></h5>}
+        html << '<p>' + DText.parse(artist.notes, :inline => true) + '</p>'
+      elsif split_tags.size == 1
+        html << %{<h5><a href="/wiki/show?title=#{h(split_tags.to_s)}">#{h(split_tags.to_s)}</a></h5>}
+        
+        if wiki_page
+          html << '<p>' + DText.parse(wiki_page.body, :inline => true) + '</p>'
+        else
+          html << '<p>There is no wiki for this tag.</p>'
+        end
+      end
+      
+      html << '</div>'
+    end
+    
+    html
+  end
+  
   def auto_discovery_link_tag_with_id(type = :rss, url_options = {}, tag_options = {})
     tag(
       "link",

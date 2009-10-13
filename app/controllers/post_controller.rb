@@ -197,6 +197,7 @@ class PostController < ApplicationController
       respond_to_error("You can only search up to six tags at once", :action => "error")
       return
     elsif @split_tags.size == 1
+      @artist = Artist.find_by_name(@split_tags.first)
       @wiki_page = WikiPage.find_page(@split_tags.first)
     end
     
