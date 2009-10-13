@@ -1,7 +1,7 @@
 <% content_for("subnavbar") do %>
   <li><%= fast_link_to "List", :controller => "post", :action => "index" %></li>
   <li><%= fast_link_to "Upload", :controller => "post", :action => "upload" %></li>
-  <% if @current_user.is_privileged_or_higher? %>
+  <% if @current_user.is_member_or_higher? %>
     <li><%= fast_link_to "Favorites", :controller => "post", :action => "index", :tags => "fav:#{@current_user.name}" %></li>
   <% else %>
     <li><%= fast_link_to "Favorites", :controller => "help", :action => "favorites" %></li>
