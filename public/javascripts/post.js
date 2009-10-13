@@ -2,6 +2,7 @@ Post = {
   mod_queue: null,
   posts: new Hash(),
   pending_update_count: 0,
+  blacklist_options: { replace: true },
   
   notice_update: function(increase_or_decrease) {
     if (increase_or_decrease == "inc") {
@@ -217,10 +218,23 @@ Post = {
       bld = post.blacklisted.length > 0
 
       count += bld
-      if (Post.blacklist_options.replace)
-        thumb.down('img').src = bld ? "/blacklisted-preview.png" : post.preview_url
-      else
-        thumb.show(!bld)
+      if (Post.blacklist_options.replace) {
+        var img = thumb.down('img')
+        if (bld) {
+          img.src   = "/blacklisted-preview.png"
+          img.width = img.height = 150
+	} else {
+          img.src    = post.preview_url
+          img.width  = post.preview_width
+          img.height = post.preview_height
+	}
+        thumb.removeClassName('blacklisted');
+      } else {
+        if (bld)
+          thumb.addClassName('blacklisted');
+        else
+          thumb.removeClassName('blacklisted');
+      }
     })
 
     if (Post.countText)
@@ -229,7 +243,7 @@ Post = {
   },
 
   init_blacklisted: function(options) {
-    Post.blacklist_options = Object.extend({replace: true}, options);  
+    Post.blacklist_options = Object.extend(Post.blacklist_options, options)
     var bl_entries = Cookie.raw_get("blacklisted_tags").split(/[&,]/)
     bl_entries.each(function(val) {
         var s = Cookie.unescape(val).replace(/(rating:[qes])\w+/, "$1")

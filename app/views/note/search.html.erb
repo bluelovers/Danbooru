@@ -25,7 +25,7 @@
     <% @notes.each do |note| %>
       <div style="float: left; clear: both; margin-bottom: 2em;">
         <div style="float: left; width: 200px;">
-          <%= link_to image_tag(note.post.preview_url), :controller => "post", :action => "show", :id => note.post_id %>
+	  <%= print_preview(note.post) %>
         </div>
         <div style="float: left;">
           <% if note.is_active? %>
@@ -33,7 +33,7 @@
           <% else %>
             (deleted)
           <% end %>
-          <div><span class="author">Edited by <%= note.author %> <%= time_ago_in_words(note.updated_at) %> ago</span></div>
+          <div><span class="author">Edited by <%= h note.author %> <%= time_ago_in_words(note.updated_at) %> ago</span></div>
         </div>
       </div>
     <% end %>

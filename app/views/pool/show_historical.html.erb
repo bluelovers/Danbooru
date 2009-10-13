@@ -6,9 +6,7 @@
     <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
   <% end %>
   <div style="margin-top: 1em;">
-    <% @posts.each do |post| %>
-      <%= print_preview(post, :user => @current_user) %>
-    <% end %>
+    <%= render :partial => "post/posts", :locals => {:posts => @posts} %>
   </div>
 </div>
 

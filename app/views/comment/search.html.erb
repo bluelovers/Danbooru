@@ -18,7 +18,7 @@
     <tbody>
       <% @comments.each do |comment| %>
         <tr class="<%= cycle 'even', 'odd' %>">
-          <td><%= link_to image_tag(comment.post.preview_url, :width => comment.post.preview_dimensions[0], :height => comment.post.preview_dimensions[1], :title => comment.post.cached_tags), :controller => "post", :action => "show", :id => comment.post_id %></td>
+	  <td><%= print_preview(comment.post) %></td>
           <td><%= format_text(comment.body, :mode => :comment) %></td>
           <td><%= h comment.pretty_author %></td>
           <td><%= time_ago_in_words comment.created_at %> ago</td>

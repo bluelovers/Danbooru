@@ -49,13 +49,6 @@
   <div id="paginator">
     <%= will_paginate(@posts) %>
   </div>
-  
-  <script type="text/javascript">
-    <% @posts.each do |post| %>
-      Post.register(<%= post.to_json %>)
-    <% end %>
-    Post.init_blacklisted({replace: true})
-  </script>
 
   <%= render :partial => "footer" %>
 </div>

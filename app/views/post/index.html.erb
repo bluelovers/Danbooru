@@ -81,6 +81,10 @@
 
     <%= render :partial => "posts", :locals => {:posts => @posts} %>
 
+    <% content_for("blacklist") do %>
+      Post.blacklist_options = { replace: false };
+    <% end %>
+
     <div id="paginator">
       <%= will_paginate(@posts) %>
     </div>

@@ -1,8 +1,6 @@
 <h4>Delete Post</h4>
 
-<% if CONFIG["can_see_post"].call(@current_user, @post) %>
-  <%= image_tag @post.preview_url %>
-<% end %>
+<%= print_preview(@post, :blacklist => false) %>
 
 <% form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>

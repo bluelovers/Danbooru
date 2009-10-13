@@ -5,14 +5,5 @@
     <% posts.each do |post| %>
       <%= print_preview(post, :onclick => "return PostModeMenu.click(#{post.id})") %>
     <% end %>
-    <script type="text/javascript">
-      <% posts.each do |post| %>
-        Post.register(<%= post.to_json %>)
-      <% end %>
-    </script>
   <% end %>
-  
-  <script type="text/javascript">
-    Post.init_blacklisted()
-  </script>
 </div>
