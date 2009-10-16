@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class TagTest < ActiveSupport::TestCase
+  fixtures :users
+  
   def setup
     MEMCACHE.flush_all
     @test_number = 1
@@ -47,6 +49,13 @@ class TagTest < ActiveSupport::TestCase
     
     t = Tag.find_or_create_by_name("artist:mogemoge")
     t = Tag.find_by_name("mogemoge")
+    assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
+    
+    ta = TagAlias.create(:name => "moge", :alias => "soge", :is_pending => false, :reason => "none", :creator_id => 1)
+    t = Tag.find_or_create_by_name("artist:moge")
+    t = Tag.find_by_name("moge")
+    assert_equal(CONFIG["tag_types"]["General"], t.tag_type)
+    t = Tag.find_by_name("soge")
     assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
   end
   

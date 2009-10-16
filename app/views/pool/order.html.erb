@@ -43,7 +43,7 @@
       <% @pool_posts.each do |pp| %>
         <tr>
           <td>
-	    <%= print_preview(pp.post, :blacklist => false) %>
+            <%= print_preview(pp.post, :blacklist => false) %>
           </td>
           <td><%= text_field_tag "pool_post_sequence[#{pp.id}]", pp.sequence, :class => "pp", :size => 5 %></td>
         </tr>

@@ -38,16 +38,16 @@ class Tag < ActiveRecord::Base
     
     if name =~ /^ambiguous:(.+)/
       ambiguous = true
-      name = $1
+      name = TagAlias.to_aliased($1).first
     end
     
-    if name =~ /^(.+?):(.+)$/  && CONFIG["tag_types"][$1]
+    if name =~ /^(.+?):(.+)$/ && CONFIG["tag_types"][$1]
       tag_type = CONFIG["tag_types"][$1]
-      name = $2
+      name = TagAlias.to_aliased($2).first
     end
-
-    tag = find_by_name(name)
     
+    tag = find_by_name(name)
+
     if tag
       if tag_type
         tag.update_attribute(:tag_type, tag_type)
