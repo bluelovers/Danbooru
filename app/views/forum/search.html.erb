@@ -21,7 +21,7 @@
           <td><%= link_to(h(fp.root.title), :action => "show", :id => fp.root_id) %></td>
           <td><%= link_to(h(fp.body[0, 70]) + "...", :action => "show", :id => fp.id) %></td>
           <td><%= link_to h(fp.author), :controller => "user", :action => "show", :id => fp.creator_id %></td>
-          <td><%= time_ago_in_words(fp.updated_at) %> ago by <%= fp.last_updater %></td>
+          <td><%= time_ago_in_words(fp.updated_at) %> ago by <%= h fp.last_updater %></td>
         <% end %>
       <% end %>
     </tbody>
