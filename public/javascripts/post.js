@@ -185,7 +185,7 @@ Post = {
     post.match_tags = post.tags.clone()
     post.match_tags.push("rating:" + post.rating.charAt(0))
     post.match_tags.push("status:" + post.status)
-    post.match_tags.push("user:" + post.user)
+    post.match_tags.push("user:" + post.author)
     this.posts.set(post.id, post)
   },
 
@@ -204,8 +204,8 @@ Post = {
 
     var count = 0
     Post.posts.each(function(pair) {
-      var thumb = $("p" + pair.key)
-      if (!thumb) return
+      var thumbs = $$("#p" + pair.key)
+      if (thumbs.length == 0) return
       var post = pair.value
       var has_tag = post.match_tags.member.bind(post.match_tags)
       post.blacklisted = []
@@ -218,23 +218,25 @@ Post = {
       bld = post.blacklisted.length > 0
 
       count += bld
-      if (Post.blacklist_options.replace) {
-        var img = thumb.down('img')
-        if (bld) {
-          img.src   = "/blacklisted-preview.png"
-          img.width = img.height = 150
-	} else {
-          img.src    = post.preview_url
-          img.width  = post.preview_width
-          img.height = post.preview_height
-	}
-        thumb.removeClassName('blacklisted');
-      } else {
-        if (bld)
-          thumb.addClassName('blacklisted');
-        else
+      thumbs.each(function(thumb) {
+        if (Post.blacklist_options.replace) {
+          var img = thumb.down('img')
+          if (bld) {
+            img.src   = "/blacklisted-preview.png"
+            img.width = img.height = 150
+	  } else {
+            img.src    = post.preview_url
+            img.width  = post.preview_width
+            img.height = post.preview_height
+	  }
           thumb.removeClassName('blacklisted');
-      }
+        } else {
+          if (bld)
+            thumb.addClassName('blacklisted');
+          else
+            thumb.removeClassName('blacklisted');
+        }
+      });
     })
 
     if (Post.countText)
