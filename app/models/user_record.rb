@@ -10,7 +10,7 @@ class UserRecord < ActiveRecord::Base
   end
   
   def generate_dmail
-    body = "#{reporter.name} created a #{is_positive? ? 'positive' : 'negative'} record for your account."
+    body = %{#{reporter.name} created a "#{is_positive? ? 'positive' : 'negative'} record":/user_record/index?user_id=#{user_id} for your account.}
     
     Dmail.create(:from_id => reported_by, :to_id => user_id, :title => "Your user record has been updated", :body => body)
   end
