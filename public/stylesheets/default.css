@@ -10,7 +10,7 @@ h1, h2, h3, h4 {
 
 body {
   font-size: 80%;
-  padding: f0;
+  padding: 0;
   margin: 0;
 }
 
@@ -372,6 +372,7 @@ a.tag-type-1:hover {
 }
 
 .tag-type-character > a,
+a.tag-type-character,
 a.tag-type-4 {
   color: #0A0;
 }
@@ -382,6 +383,7 @@ a.tag-type-4:hover {
 }
 
 .tag-type-copyright > a,
+a.tag-type-copyright,
 a.tag-type-3 {
   color: #A0A;
 }

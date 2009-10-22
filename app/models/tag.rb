@@ -6,6 +6,7 @@ class Tag < ActiveRecord::Base
   include TagRelatedTagMethods
   include TagParseMethods
   include TagApiMethods
+  include TagReportMethods
   
   attr_protected :cached_related, :cached_related_expires_on, :post_count
   
@@ -108,6 +109,6 @@ class Tag < ActiveRecord::Base
       search_for = "%" + query.to_escaped_for_sql_like + "%"
     end
     
-    Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\' AND name <> ?", search_for, query], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
+    Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\' AND post_count > 0 AND name <> ?", search_for, query], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
   end
 end
