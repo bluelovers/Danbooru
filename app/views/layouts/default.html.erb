@@ -6,11 +6,11 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
   <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
-  <%= stylesheet_link_tag "default" %>
+  <%= stylesheet_link_tag "default-min" %>
   <script type="text/javascript">
     document.write('<style type="text/css">.blacklisted { display: none !important; }</style>');
   </script>
-  <%= javascript_include_tag "application.js" %>
+  <%= javascript_include_tag "application-min.js" %>
   <%= CONFIG["custom_html_headers"] %>
   <!--[if lt IE 7]>
     <style type="text/css">
