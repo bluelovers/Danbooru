@@ -5,7 +5,9 @@
     <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
       <li><%= link_to_function "Resize image", "Post.resize_image()" %></li>
     <% end %>
-    <li><%= fast_link_to "Delete", :action => "delete", :id => @post.id %></li>
+    <% if @current_user.is_janitor_or_higher?%>
+      <li><%= fast_link_to "Delete", :action => "delete", :id => @post.id %></li>
+    <% end %>
     <% if @post.is_deleted? && @current_user.is_janitor_or_higher?%>
       <li><%= fast_link_to "Undelete", :action => "undelete", :id => @post.id %></li>
     <% end %>

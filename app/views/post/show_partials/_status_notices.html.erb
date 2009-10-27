@@ -2,7 +2,7 @@
   <%= render :partial => "post/show_partials/pool", :locals => {:pool => pool, :pool_post => PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, @post.id])} %>
 <% end %>
 
-<% if !@post.is_deleted? && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user) %>
+<% if (!@post.is_deleted? || @current_user.is_janitor_or_higher?) && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user) %>
   <div class="status-notice" style="display: none;" id="resized_notice">
     This image is displayed at <%= number_to_percentage @post.sample_percentage, :precision => 0 %> of its original size. <%= link_to_function "View original", "Post.highres()" %>
     <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>

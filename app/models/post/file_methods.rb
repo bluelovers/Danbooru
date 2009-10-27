@@ -281,7 +281,7 @@ module PostFileMethods
   end
 
   def sample_url(user = nil)
-    if status != "deleted" && use_sample?(user)
+    if use_sample?(user)
       store_sample_url
     else
       file_url
