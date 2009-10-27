@@ -202,5 +202,35 @@ PostTagHistory = {
         }
       }
     })
-  }
+  },
+
+	revert: function() {
+		if (PostTagHistory.count_selected() == 0) {
+      return;
+    }
+    var list = []
+    for (i = 0; i < PostTagHistory.checked.length; ++i) {
+      if (!PostTagHistory.checked[i].on)
+        continue;
+      list.push(PostTagHistory.checked[i].id)
+    }
+
+		notice("Reverting...")
+		
+    new Ajax.Request("/post_tag_history/revert.json", {
+      parameters: {
+        "id": list.join(",")
+      },
+
+      onComplete: function(resp) {
+        var resp = resp.responseJSON
+
+        if (resp.success) {
+          notice("Changes reverted.");
+        } else {
+          notice("Error: " + resp.reason)
+        }
+      }
+    })
+	}
 }

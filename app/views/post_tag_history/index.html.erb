@@ -37,7 +37,7 @@
         <tr>
           <td colspan="6">
             <%= button_to_function "Undo", "PostTagHistory.undo()", :id => "undo" %>
-            <%= button_to_function "Revert to", "", :id => "revert" %>
+            <%= button_to_function "Revert to", "PostTagHistory.revert()", :id => "revert" %>
           </td>
         </tr>
       </tfoot>

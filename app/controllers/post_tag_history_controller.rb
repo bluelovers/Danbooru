@@ -17,12 +17,8 @@ class PostTagHistoryController < ApplicationController
     @post = Post.find(@change.post_id)
     
     if request.post?
-      if params[:commit] == "Yes"
-        @post.update_attributes(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id, :tags => @change.tags)      
-        flash[:notice] = "Tags reverted"
-      end
-
-      redirect_to :controller => "post", :action => "show", :id => @post.id
+      @post.update_attributes(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id, :tags => @change.tags)
+      respond_to_success("Tag changes reverted", :action => "idnex")
     end
   end
 
