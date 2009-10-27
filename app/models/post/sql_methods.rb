@@ -276,7 +276,7 @@ module PostSqlMethods
       
       params = join_params + cond_params
 
-      return Post.sanitize_sql([sql, *params])
+      return Post.sanitize_sql_array([sql, *params])
     end
   end
   

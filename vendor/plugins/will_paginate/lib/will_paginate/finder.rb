@@ -67,7 +67,7 @@ module WillPaginate
       # 
       def paginate_by_sql(sql, options)
         WillPaginate::Collection.create(*wp_parse_options!(options)) do |pager|
-          query = sanitize_sql(sql)
+          query = sanitize_sql_array(sql)
           options.update :offset => pager.offset, :limit => pager.per_page
           
           original_query = query.dup
