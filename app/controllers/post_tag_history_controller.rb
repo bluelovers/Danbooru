@@ -18,7 +18,7 @@ class PostTagHistoryController < ApplicationController
     
     if request.post?
       @post.update_attributes(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id, :tags => @change.tags)
-      respond_to_success("Tag changes reverted", :action => "idnex")
+      respond_to_success("Tag changes reverted", :action => "index")
     end
   end
 
