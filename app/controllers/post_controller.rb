@@ -136,6 +136,7 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
+    params[:post][:tags] ||= @post.cached_tags
 
     if @post.update_attributes(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in

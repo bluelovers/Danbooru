@@ -72,6 +72,10 @@ class PostControllerTest < ActionController::TestCase
     p1.reload
     assert_equal("moge", p1.cached_tags)
     assert_equal("e", p1.rating)
+    
+    assert_equal(2, p1.tag_history.size)
+    post :update, {:post => {:rating => "Safe"}, :id => p1.id}, {:user_id => 3}
+    assert_equal(3, p1.tag_history.size)
   end
   
   def test_destroy
