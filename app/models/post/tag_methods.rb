@@ -111,7 +111,9 @@ module PostTagMethods
 
         
         when /^rating:([qse])/
-          execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
+          if !self.is_rating_locked?
+            execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
+          end
 
 
         when /^parent:(\d*)/

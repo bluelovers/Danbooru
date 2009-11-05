@@ -76,6 +76,11 @@ class PostControllerTest < ActionController::TestCase
     assert_equal(2, p1.tag_history.size)
     post :update, {:post => {:rating => "Safe"}, :id => p1.id}, {:user_id => 3}
     assert_equal(3, p1.tag_history.size)
+    
+    p1.update_attribute(:is_rating_locked, true)
+    post :update, {:post => {:rating => "Questionable"}, :id => p1.id}, {:user_id => 3}
+    p1.reload
+    assert_equal("s", p1.rating)
   end
   
   def test_destroy
