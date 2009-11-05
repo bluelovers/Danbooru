@@ -4,15 +4,14 @@
     <p>You have not yet activated your account. Click <%= link_to "here", :action => "resend_confirmation" %> to resend your confirmation email to <%= h @current_user.email %>.</p>
   <% else %>
     <p>
-      <% unless @current_user.is_anonymous? %>
-        Click <%= link_to "here", :action => "reset_password" %> to reset your password.
-      <% end %>
       <% if @current_user.is_anonymous? %>
         <% if CONFIG["enable_signups"] %>
           You can register for an account <%= link_to "here", :action => "signup" %>.
         <% else %>
           Registration is currently disabled.
         <% end %>
+        
+        Click <%= link_to "here", :action => "reset_password" %> to reset your password.
       <% end %>
     </p>
   <% end %>
