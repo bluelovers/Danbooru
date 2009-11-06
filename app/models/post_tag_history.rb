@@ -4,8 +4,6 @@ class PostTagHistory < ActiveRecord::Base
 
   def self.undo_user_changes(user_id)
     posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.id", :conditions => ["pth.user_id = ?", user_id])
-    puts posts.size
-    p posts.map {|x| x.id}
 #    destroy_all(["user_id = ?", user_id])
 #    posts.each do |post|
 #      post.tags = post.tag_history.first.tags
@@ -35,6 +33,7 @@ class PostTagHistory < ActiveRecord::Base
       posts.each do |post|
         first = post.tag_history.first
         if first
+          post.rating = first.rating
           post.tags = first.tags
           post.updater_ip_addr = first.ip_addr
           post.updater_user_id = first.user_id
@@ -45,7 +44,7 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   # The contents of options[:posts] must be saved by the caller.  This allows
-  # undoing many tag changes across many posts; all †changes to a particular
+  # undoing many tag changes across many posts; all changes to a particular
   # post will be condensed into one change.
   def undo(options={})
     # TODO: refactor. modifying parameters is a bad habit.
@@ -62,7 +61,7 @@ class PostTagHistory < ActiveRecord::Base
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
     options[:update_options] ||= {}
-    post.attributes = {:tags => new_tags.join(" ")}.merge(options[:update_options])
+    post.attributes = {:tags => new_tags.join(" "), :rating => prev.rating}.merge(options[:update_options])
   end
 
   def author
