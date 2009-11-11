@@ -71,6 +71,12 @@ class PostTagHistory < ActiveRecord::Base
   def tag_changes(prev)
     new_tags = tags.scan(/\S+/)
     old_tags = (prev.tags rescue "").scan(/\S+/)
+    new_tags << "rating:#{rating}"
+    new_tags << "parent:#{parent_id}"
+    if prev
+      old_tags << "rating:#{prev.rating}"
+      old_tags << "parent:#{prev.parent_id}"
+    end
     latest = Post.find(post_id).cached_tags
     latest_tags = latest.scan(/\S+/)
 

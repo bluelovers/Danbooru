@@ -5,10 +5,8 @@ module PostTagHistoryHelper
     obsolete = options[:obsolete] || []
     
     html = ""
-    
-    tags = Tag.find(:all, :conditions => ["name in (?)", tags], :select => "name").inject([]) {|all, x| all << x.name; all}.to_a.sort {|a, b| a <=> b}
 
-    tags.each do |name|
+    tags.sort.each do |name|
       name ||= "UNKNOWN"
       
       tag_type = Tag.type_name(name)
