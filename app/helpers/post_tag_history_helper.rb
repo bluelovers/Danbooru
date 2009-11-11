@@ -13,7 +13,7 @@ module PostTagHistoryHelper
       
       tag_type = Tag.type_name(name)
       
-      obsolete_tag = ([name] & obsolete).empty? ?  "":" obsolete-tag-change"
+      obsolete_tag = ([name] & obsolete).empty? ?  "" : " obsolete-tag-change"
       html << %{<span class="tag-type-#{tag_type}#{obsolete_tag}">}
       
       html << %{#{prefix}<a href="/post/index?tags=#{u(name)}">#{h(name)}</a> }

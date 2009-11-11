@@ -6,7 +6,7 @@ class PostTagHistoryController < ApplicationController
   def index
     @changes = PostTagHistory.paginate(PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 20, :select => "post_tag_histories.*", :page => params[:page]))    
     @change_list = @changes.map do |c|
-      { :change => c }.merge(c.tag_changes(c.previous))
+      { :parent_id => c.parent_id, :change => c }.merge(c.tag_changes(c.previous))
     end
     
     respond_to_list("changes")
@@ -17,7 +17,7 @@ class PostTagHistoryController < ApplicationController
     @post = Post.find(@change.post_id)
     
     if request.post?
-      @post.update_attributes(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id, :tags => @change.tags, :rating => @change.rating)
+      @post.update_attributes(:updater_ip_addr => request.remote_ip, :updater_user_id => @current_user.id, :tags => @change.tags, :rating => @change.rating, :parent_id => @change.parent_id)
       respond_to_success("Tag changes reverted", :action => "index")
     end
   end
