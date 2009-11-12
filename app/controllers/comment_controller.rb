@@ -9,6 +9,10 @@ class CommentController < ApplicationController
     @comment = Comment.find(params[:id])
   end
   
+  def preview
+    render :inline => "<h5>Preview</h5><%= format_text(params[:body]) %>"
+  end
+  
   def update
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)

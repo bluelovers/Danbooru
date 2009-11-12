@@ -765,6 +765,13 @@ div#post-view > div#right-col > div#edit {
   padding: 1em;
 }
 
+div.preview {
+	border: 1px dashed #AAA; 
+	padding: 1em;
+	margin: 1em 0;
+	width: 40em;
+}
+
 div#related {
   margin: 0 3em 1em 0;
 }
