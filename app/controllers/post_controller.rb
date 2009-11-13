@@ -187,19 +187,19 @@ class PostController < ApplicationController
 
   def index
     tags = params[:tags].to_s
-    @split_tags = QueryParser.parse(tags)
+    @tags = QueryParser.parse(tags)
     page = params[:page].to_i; page = 1 if page == 0
     limit = params[:limit].to_i; limit = 20 if limit == 0; limit = 1000 if limit > 1000
     
-    if @current_user.is_member_or_lower? && @split_tags.size > 2
+    if @current_user.is_member_or_lower? && @tags.size > 2
       respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
       return
-    elsif @split_tags.size > 6
+    elsif @tags.size > 6
       respond_to_error("You can only search up to six tags at once", :action => "error")
       return
-    elsif @split_tags.size == 1
-      @artist = Artist.find_by_name(@split_tags.first)
-      @wiki_page = WikiPage.find_page(@split_tags.first)
+    elsif @tags.size == 1 && @tags.first !~ /(user|fav|sub):/
+      @artist = Artist.find_by_name(@tags.first)
+      @wiki_page = WikiPage.find_page(@tags.first)
     end
     
     begin
@@ -212,14 +212,14 @@ class PostController < ApplicationController
       end
 
       # If there are blank pages for this query, then fix the post count
-      if @posts.size == 0 && page > 1 && @split_tags.size == 1
-        JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @split_tags[0]}, :status => "pending")
+      if @posts.size == 0 && page > 1 && @tags.size == 1
+        JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @tags[0]}, :status => "pending")
       end
     
       respond_to do |fmt|
         fmt.html do
-          @tag_suggestions = Tag.find_suggestions(tags) if post_count < 20 && @split_tags.size == 1
-          @ambiguous_tags = Tag.select_ambiguous(@split_tags)
+          @tag_suggestions = Tag.find_suggestions(tags) if post_count < 20 && @tags.size == 1
+          @ambiguous_tags = Tag.select_ambiguous(@tags)
           @render_start_time = Time.now
         end
         fmt.xml do
