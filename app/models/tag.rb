@@ -1,12 +1,10 @@
-Dir["#{RAILS_ROOT}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
-
 class Tag < ActiveRecord::Base
-  include TagTypeMethods
-  include TagCacheMethods
-  include TagRelatedTagMethods
-  include TagParseMethods
-  include TagApiMethods
-  include TagReportMethods
+  include TagMethods::TypeMethods
+  include TagMethods::CacheMethods
+  include TagMethods::RelatedTagMethods
+  include TagMethods::ParseMethods
+  include TagMethods::ApiMethods
+  include TagMethods::ReportMethods
   
   attr_protected :cached_related, :cached_related_expires_on, :post_count
   

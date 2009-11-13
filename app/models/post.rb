@@ -1,5 +1,3 @@
-Dir["#{RAILS_ROOT}/app/models/post/**/*.rb"].each {|x| require_dependency x}
-
 class Post < ActiveRecord::Base
   STATUSES = %w(active pending flagged deleted)
   
@@ -10,29 +8,21 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_ip_addr, :updater_user_id
   attr_protected :user_id, :score, :md5, :width, :height, :cached_tags, :fav_count, :file_ext, :has_children, :status, :sample_width, :sample_height, :change_seq, :approver_id, :tags_index, :ip_addr
   
-  include PostSqlMethods
-  include PostCommentMethods
-  include PostImageStoreMethods
-  include PostVoteMethods
-  include PostTagMethods
-  include PostCountMethods
-  include PostCacheMethods
-  include PostParentMethods
-  include PostFileMethods
-  include PostChangeSequenceMethods
-  include PostRatingMethods
-  include PostStatusMethods
-  include PostApiMethods
-  include PostModerationMethods
-  
-  def self.destroy_with_reason(id, reason, current_user)
-    post = Post.find(id)
-    Post.transaction do
-      post.flag!(reason, current_user)
-      post.reload
-      post.delete!
-    end
-  end
+  include PostMethods::SqlMethods
+  include PostMethods::CommentMethods
+  include PostMethods::ImageStoreMethods
+  include PostMethods::VoteMethods
+  include PostMethods::TagMethods
+  include PostMethods::CountMethods
+  include PostMethods::CacheMethods
+  include PostMethods::ParentMethods
+  include PostMethods::FileMethods
+  include PostMethods::ChangeSequenceMethods
+  include PostMethods::RatingMethods
+  include PostMethods::StatusMethods
+  include PostMethods::ApiMethods
+  include PostMethods::ModerationMethods
+  include PostMethods::DeletionMethods
   
   def flag!(reason, creator_id)
     update_attribute(:status, "flagged")
@@ -42,16 +32,6 @@ class Post < ActiveRecord::Base
     else
       FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
     end
-  end
-  
-  def approve!(approver_id)
-    if flag_detail
-      flag_detail.update_attributes(:is_resolved => true)
-    end
-    
-    self.status = "active"
-    self.approver_id = approver_id
-    save
   end
   
   # TODO: refactor or eliminate
@@ -67,20 +47,9 @@ class Post < ActiveRecord::Base
   def author
     return User.find_name(user_id)
   end
-  
-  def delete_from_database
-    delete_file
-    execute_sql("DELETE FROM posts WHERE id = ?", id)
-  end
-  
+
   def active_notes
     notes.select {|x| x.is_active?}
-  end
-  
-  STATUSES.each do |x|
-    define_method("is_#{x}?") do
-      return status == x
-    end
   end
   
   def can_be_seen_by?(user)
