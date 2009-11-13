@@ -27,17 +27,18 @@ module TagMethods
         	unit = $2
 
         	conversion_factor = case unit
-    	  when /m/i
-    	    1024 * 1024
-    	  when /k/i
-    	    1024
-    	  else
-    	    1
-  	    end
+      	  when /m/i
+      	    1024 * 1024
+      	  when /k/i
+      	    1024
+      	  else
+      	    1
+    	    end
 
-  	    (size * conversion_factor).to_i
+    	    (size * conversion_factor).to_i
+        end
       end
-    
+      
       def parse_helper(range, type = :integer)
         # "1", "0.5", "5.", ".5":
         # (-?(\d+(\.\d*)?|\d*\.\d+))
