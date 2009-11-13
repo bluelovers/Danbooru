@@ -16,7 +16,7 @@
       <%= hidden_field_tag "comment[post_id]", post_id, :id => "comment_post_id_#{post_id}" %>
       <%= text_area "comment", "body", :size => "60x7", :id => "reply-text-#{post_id}"%>
       <%= submit_tag "Post" %>
-      <%= button_to_remote "Preview", :update => "comment-preview-#{post_id}", :url => {:controller => "comment", :action => "preview"}, :with => "'body=' + $F('reply-text-#{post_id}')", :method => :get, :success => "$('comment-preview-#{post_id}').show()" %>
+      <%= button_to_remote "Preview", :update => "comment-preview-#{post_id}", :url => {:controller => "comment", :action => "preview"}, :with => "'body=' + $F('reply-text-#{post_id}')", :success => "$('comment-preview-#{post_id}').show()" %>
       <%= submit_tag "Post without bumping" %>
     <% end %>
     <p style="margin-top: 1em; font-style: italic;">[spoiler]Hide spoiler text like this[/spoiler] (<%= fast_link_to "more", :controller => "help", :action => "comments" %>)</p>
