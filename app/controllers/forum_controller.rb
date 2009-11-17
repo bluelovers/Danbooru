@@ -18,7 +18,7 @@ class ForumController < ApplicationController
 
   def preview
     if params[:forum_post]
-      render :inline => "<h4>Preview</h4><%= format_text(params[:forum_post][:body]) %>"
+      render :inline => "<h5>Preview</h5><%= format_text(params[:forum_post][:body]) %>"
     else
       render :text => ""
     end

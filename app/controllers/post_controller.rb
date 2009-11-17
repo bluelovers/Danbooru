@@ -212,7 +212,7 @@ class PostController < ApplicationController
       end
 
       # If there are blank pages for this query, then fix the post count
-      if @posts.size == 0 && page > 1 && @tags.size == 1
+      if @posts.size == 0 && page > 1 && @tags.size == 1 && JobTask.pending_count("calculate_post_count") < 1000
         JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @tags[0]}, :status => "pending")
       end
     
@@ -347,11 +347,11 @@ class PostController < ApplicationController
     begin
       p.vote!(@current_user, score)
       respond_to_success("Vote saved", respond_to_params, :api => {:score => p.score, :post_id => p.id})
-    rescue PostVoteMethods::InvalidScoreError
+    rescue PostMethods::VoteMethods::InvalidScoreError
       respond_to_error("Invalid score", respond_to_params, :status => 424)
-    rescue PostVoteMethods::AlreadyVotedError
+    rescue PostMethods::VoteMethods::AlreadyVotedError
       respond_to_error("Already voted", respond_to_params, :status => 423)
-    rescue PostVoteMethods::PrivilegeError
+    rescue PostMethods::VoteMethods::PrivilegeError
       respond_to_error("Only privileged members can vote", respond_to_params, :status => 403)
     end
   end

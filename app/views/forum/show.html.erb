@@ -22,13 +22,19 @@
     </div>
 
     <div id="reply" style="display: none;">
-      <% form_tag({:action => "create"}) do %>
-        <%= hidden_field "forum_post", "title", :value => "" %>
-        <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
-        <%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %>
-        <%= submit_tag "Post" %>
-        <%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
-      <% end %>
+      <div style="float: left; width: 40em;">
+        <% form_tag({:action => "create"}) do %>
+          <%= hidden_field "forum_post", "title", :value => "" %>
+          <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
+          <%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %>
+          <%= submit_tag "Post" %>
+          <%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+        <% end %>        
+      </div>
+      
+      <div style="float: left; width: 30em;">
+        <%= render :partial => "static/dtext_reference" %>
+      </div>
     </div>    
   </div>
 <% end %>

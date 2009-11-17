@@ -366,13 +366,13 @@ class PostTest < ActiveSupport::TestCase
   
   def test_voting
     post = create_post("tag1 tag2")
-    assert_raise(PostVoteMethods::PrivilegeError) {post.vote!(User.find(4), 1)}
+    assert_raise(PostMethods::VoteMethods::PrivilegeError) {post.vote!(User.find(4), 1)}
     post.reload
     assert_equal(0, post.score)
     assert_nothing_raised {post.vote!(User.find(3), 1)}
     post.reload
     assert_equal(1, post.score)
-    assert_raise(PostVoteMethods::AlreadyVotedError) {post.vote!(User.find(3), -1)}
+    assert_raise(PostMethods::VoteMethods::AlreadyVotedError) {post.vote!(User.find(3), -1)}
     post.reload
     assert_equal(1, post.score)
   end

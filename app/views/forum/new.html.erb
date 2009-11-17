@@ -1,9 +1,9 @@
 <h2>New Topic</h2>
 
-<div style="margin: 1em 0;">
+<div style="margin: 1em 0; float: left; width: 50em;">
   <% if @current_user.is_privileged_or_lower? || true%>
     <div style="margin-bottom: 1em;">
-      <h2>Before creating a new topic, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
+      <h4>Before creating a new topic, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h4>
     </div>
   <% end %>
   
@@ -28,7 +28,10 @@
       </table>
     <% end %>
   </div>
-  
+</div>
+
+<div style="float: left; width: 30em;">
+  <%= render :partial => "static/dtext_reference" %>
 </div>
 
 <% content_for("subnavbar") do %>

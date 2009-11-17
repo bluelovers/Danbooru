@@ -175,6 +175,10 @@ class JobTask < ActiveRecord::Base
     end
   end
   
+  def self.pending_count(task_type)
+    JobTask.count(:conditions => ["task_type = ? and status = 'pending'", task_type])
+  end
+  
   def self.execute_once
     find(:all, :conditions => ["status = ?", "pending"], :order => "id desc").each do |task|
       task.execute!
