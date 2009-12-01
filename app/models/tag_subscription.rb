@@ -66,6 +66,7 @@ class TagSubscription < ActiveRecord::Base
           tag_subscription.process
           tag_subscription.save
         rescue Exception => x
+raise
           # fail silently
         end
       end
