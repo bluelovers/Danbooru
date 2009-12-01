@@ -78,6 +78,7 @@ def create_post(tags = "tag1", params = {})
   p.height = params[:height] || 100
   p.ip_addr = params[:ip_addr] || "127.0.0.1"
   p.status = params[:status] || "active"
+  p.rating = "q"
   p.save
   @test_number += 1
   p

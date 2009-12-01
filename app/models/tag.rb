@@ -29,7 +29,7 @@ class Tag < ActiveRecord::Base
     counts = select_all_sql("SELECT COUNT(pt.tag_id) AS post_count, (SELECT name FROM tags WHERE id = pt.tag_id) AS name, t.tag_type AS tag_type FROM posts p, posts_tags pt, tags t WHERE p.created_at BETWEEN ? AND ? AND p.id = pt.post_id AND pt.tag_id = t.id GROUP BY pt.tag_id, t.tag_type ORDER BY post_count DESC LIMIT ?", start, stop, options[:limit]).map {|x| [x['name'], x['post_count'], x['tag_type'].to_i]}
   end
   
-  def self.find_or_create_by_name(name)
+  def self.find_or_create_by_name(name, options = {})
     name = name.downcase.tr(" ", "_").gsub(/^[-~*]+/, "")
     
     ambiguous = false
@@ -48,7 +48,7 @@ class Tag < ActiveRecord::Base
     tag = find_by_name(name)
 
     if tag
-      if tag_type
+      if tag_type && !(options[:user] && options[:user].is_member_or_lower? && tag.post_count > 10)
         tag.update_attribute(:tag_type, tag_type)
       end
       

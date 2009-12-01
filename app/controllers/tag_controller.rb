@@ -2,7 +2,7 @@ class TagController < ApplicationController
   layout 'default'
   auto_complete_for :tag, :name
   before_filter :mod_only, :only => [:mass_edit, :edit_preview]
-  before_filter :member_only, :only => [:update, :edit]
+  before_filter :privileged_only, :only => [:update, :edit]
 
   def cloud
     set_title "Tags"

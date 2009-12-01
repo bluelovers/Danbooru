@@ -136,7 +136,7 @@ module PostMethods
       
         # TODO: be more selective in deleting from the join table
         execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
-        self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
+        self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x, :user => User.find(updater_user_id))}.uniq
 
         self.new_tags.each do |t|
           if t.tag_type == CONFIG["tag_types"]["General"]
