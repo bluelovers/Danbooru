@@ -399,6 +399,12 @@ class PostTest < ActiveSupport::TestCase
     assert(post.is_active?, "Post should be active")
     assert(post.flag_detail.is_resolved?, "Flag detail should be resolved")
     assert_equal(1, post.approver_id)
+    
+    User.find(1).update_attribute(:can_moderate, false)
+    post = create_post("tag3", :status => "pending")
+    assert_equal(false, post.approve!(1))
+    post.reload
+    assert_equal("pending", post.status)
   end
   
   # The following search methods assume Tag.parse_query works.

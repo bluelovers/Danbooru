@@ -96,8 +96,8 @@ module TagMethods
               q[:mpixels] = parse_helper($2, :float)
             elsif $1 == "score"
               q[:score] = parse_helper($2)
-  	  elsif $1 == "filesize"
-  	    q[:filesize] = parse_helper($2, :filesize)
+        	  elsif $1 == "filesize"
+        	    q[:filesize] = parse_helper($2, :filesize)
             elsif $1 == "source"
               q[:source] = $2.to_escaped_for_sql_like + "%"
             elsif $1 == "date"

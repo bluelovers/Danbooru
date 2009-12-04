@@ -5,7 +5,7 @@ class UserController < ApplicationController
   verify :method => :post, :only => [:authenticate, :update, :create, :add_favorite, :delete_favorite, :unban]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
   before_filter :janitor_only, :only => [:invites]
-  before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
+  before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users, :update_can_moderate_flag]
   before_filter :admin_only, :only => [:edit_upload_limit, :update_upload_limit]
   helper :post, :tag_subscription
   filter_parameter_logging :password
@@ -237,6 +237,13 @@ class UserController < ApplicationController
       end
       redirect_to :action => "show", :id => @current_user.id
     end
+  end
+  
+  def update_can_moderate_flag
+    @user = User.find(params[:id])
+    @user.can_moderate = params[:can_moderate]
+    @user.save
+    render :text => @user.can_moderate?
   end
   
   if CONFIG["enable_account_email_activation"]
