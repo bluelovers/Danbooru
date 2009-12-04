@@ -100,7 +100,7 @@ class PostController < ApplicationController
   end
 
   def moderate
-    return respond_to_error("You can not moderate posts") unless @current_user.can_moderate?
+    return respond_to_error("You can not moderate posts", :action => "error") unless @current_user.can_moderate?
     
     if request.post?
       params[:id].split(/,/).each do |post_id|
