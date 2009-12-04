@@ -8,7 +8,7 @@
     <% if @current_user.is_janitor_or_higher?%>
       <li><%= fast_link_to "Delete", :action => "delete", :id => @post.id %></li>
     <% end %>
-    <% if @post.is_deleted? && @current_user.is_janitor_or_higher?%>
+    <% if @post.is_deleted? && @current_user.is_contributor_or_higher?%>
       <li><%= fast_link_to "Undelete", :action => "undelete", :id => @post.id %></li>
     <% end %>
     <% if !@post.is_flagged? && !@post.is_deleted? && @post.flag_detail.nil? %>
