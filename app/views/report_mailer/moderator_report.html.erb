@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <% User.find(:all, :conditions => ["level >= ?", CONFIG["user_levels"]["Janitor"]], :order => "level, name").each do |user| %>
+    <% User.find(:all, :conditions => ["level >= ?", CONFIG["user_levels"]["Contributor"]], :order => "level, name").each do |user| %>
       <tr>
         <td><%= h user.name %></td>
         <td><%= h user.pretty_level %></td>
