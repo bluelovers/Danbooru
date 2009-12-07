@@ -199,6 +199,11 @@ module PostMethods
           conds << "p.is_rating_locked = FALSE"
         end
 
+        if q[:approver].is_a?(String)
+          conds << "p.approver_id = (select id from users where lower(name) = ?)"
+          cond_params << q[:approver]
+        end
+
         sql = "SELECT "
 
         if options[:count]

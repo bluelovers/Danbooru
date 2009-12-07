@@ -118,6 +118,11 @@ class PostController < ApplicationController
 
       respond_to_success("Post updated", {:action => "moderate"})
     else
+      if @current_user.is_contributor?
+        access_denied()
+        return
+      end
+
       if params[:query]
         @posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending"))
         @posts += Post.find_by_sql(Post.generate_sql(params[:query] + " status:flagged"))
@@ -406,7 +411,7 @@ class PostController < ApplicationController
   end
   
   def recent_approvals
-    @posts = Post.paginate(:conditions => ["approver_id is not null and created_at > ?", 1.month.ago], :order => "id desc", :per_page => 20, :page => params[:page])
+    @posts = Post.paginate(:conditions => ["posts.approver_id is not null and posts.created_at > ? and users.level = 33", 1.month.ago], :order => "id desc", :per_page => 20, :page => params[:page], :select => "posts.*", :joins => "join users on users.id = posts.approver_id")
   end
   
   def exception

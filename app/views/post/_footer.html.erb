@@ -13,7 +13,7 @@
   <% end %>
   <li><%= fast_link_to "Popular", :controller => "post", :action => "popular_by_day" %></li>
   <li><%= fast_link_to "Recent changes", :controller => "post_tag_history", :action => "index" %></li>
-  <% if @current_user.is_contributor_or_higher? %>
+  <% if @current_user.is_janitor_or_higher? %>
     <li><%= fast_link_to "Moderate", :controller => "post", :action => "moderate" %></li>
     <li><%= fast_link_to "Recent approvals", :controller => "post", :action => "recent_approvals" %></li>
   <% end %>

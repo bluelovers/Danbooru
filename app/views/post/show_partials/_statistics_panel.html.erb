@@ -3,8 +3,8 @@
   <ul>
     <li>Id: <%= @post.id %></li>
     <li>Posted: <%= fast_link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%Y-%m-%d %H:%M") %> by <%= fast_link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
-    <% if @current_user.is_admin? && @post.approver %>
-      <li>Approver: <%= @post.approver.name %></li>
+    <% if @current_user.is_mod_or_higher? && @post.approver %>
+      <li>Approver: <%= link_to @post.approver.name, :controller => "user", :action => "show", :id => @post.approver_id %></li>
     <% end %>
     <% if @post.image? %>
       <li>Size: <%= link_to "#{@post.width}x#{@post.height} (#{number_to_human_size(@post.file_size)})", @post.file_url, :id => "highres", :onclick => "Post.highres(); return false" %></li>
