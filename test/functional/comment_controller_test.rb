@@ -74,21 +74,34 @@ class CommentControllerTest < ActionController::TestCase
     get :index, {}, {:user_id => 4}
     assert_response :success
   end
-  
-  def test_mark_as_spam
-    # TODO: allow janitors to mark spam
+
+  def test_vote
     comment = create_comment(Post.find(1), :body => "hoge")
-    post :mark_as_spam, {:id => comment.id}, {:user_id => 2}
+    
+    post :vote, {:id => comment.id, :score => "up", :format => "json"}, {:user_id => 4}
+    assert_response :success
     comment.reload
-    assert(comment.is_spam?, "Comment not marked as spam")
+    assert_equal(1, comment.score)
+    assert_equal(4, comment.last_voted_by)
+    
+    post :vote, {:id => comment.id, :score => "down", :format => "json"}, {:user_id => 4}
+    assert_response 423
+    comment.reload
+    assert_equal(1, comment.score)
+    assert_equal(4, comment.last_voted_by)
   end
   
-  def test_moderate
+  def test_index_hidden_and_index_all
     create_comment(Post.find(1), :body => "hoge")
     create_comment(Post.find(1), :body => "moogle")
     create_comment(Post.find(3), :body => "box")
     create_comment(Post.find(2), :body => "tree")
-    get :moderate, {}, {:user_id => 2}
+    
+    get :index_hidden, {:post_id => 1, :format => "js"}, {:user_id => 4}
     assert_response :success
+
+    get :index_all, {:post_id => 1, :format => "js"}, {:user_id => 4}
+    assert_response :success
+    
   end
 end

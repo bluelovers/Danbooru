@@ -2,7 +2,7 @@ class CommentController < ApplicationController
   layout "default"
 
   verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
-  before_filter :member_only, :only => [:create, :destroy, :update, :show]
+  before_filter :member_only, :only => [:create, :destroy, :update, :show, :vote]
   before_filter :contributor_only, :only => [:moderate]
 
   def edit
@@ -37,7 +37,7 @@ class CommentController < ApplicationController
     comment = Comment.new(params[:comment])
     comment.post_id = params[:comment][:post_id]
     comment.user_id = @current_user.id
-    comment.is_spam = false
+    comment.score = 0
     comment.ip_addr = request.remote_ip
 
     if params[:commit] == "Post without bumping"
@@ -62,7 +62,12 @@ class CommentController < ApplicationController
   end
   
   def index_hidden
-    @comments = Comment.find(:all, :order => "id", :conditions => ["id < ? AND post_id = ?", params[:after_id], params[:post_id]])
+    @comments = Comment.find(:all, :order => "id", :conditions => ["post_id = ?", params[:post_id]])
+  end
+  
+  def index_all
+    @show_all = true
+    @comments = Comment.find(:all, :order => "id", :conditions => ["post_id = ?", params[:post_id]])
   end
   
   def index
@@ -76,37 +81,25 @@ class CommentController < ApplicationController
       @posts = @posts.select {|x| x.can_be_seen_by?(@current_user)}
     end
   end
-
-  def moderate
-    set_title "Moderate Comments"
-
-    if request.post? && params["c"]
-      ids = params["c"].keys
-      coms = Comment.find(:all, :conditions => ["id IN (?)", ids])
-
-      if params["commit"] == "Delete"
-        coms.each do |c|
-          c.destroy
-        end
-      elsif params["commit"] == "Approve"
-        coms.each do |c|
-          c.update_attribute(:is_spam, false)
-        end
+  
+  def vote
+    @comment = Comment.find(params[:id])
+    if @comment.can_be_voted_by?(@current_user)
+      @comment.last_voted_by = @current_user.id
+      
+      if params[:score] == "down"
+        @comment.score -= 1
+      else
+        @comment.score += 1
       end
-
-      redirect_to :action => "moderate"
+      
+      @comment.save
+      respond_to_success("Vote saved", {:action => "index"}, :api => {:score => @comment.score})
     else
-      @comments = Comment.find(:all, :conditions => "is_spam = TRUE", :order => "id DESC")
+      respond_to_error("Already voted", {:action => "index"}, :status => 423, :api => {:id => @comment.id})
     end
   end
 
-  def mark_as_spam
-    @comment = Comment.find(params[:id])
-    @comment.is_spam = true
-    @comment.save
-    respond_to_success("Comment marked as spam", :action => "index")
-  end
-  
   def search
     if params[:query]
       if params[:query] =~ /^user:(.+)$/

@@ -8,6 +8,10 @@ class AnonymousUser
     0
   end
 
+  def comment_threshold
+    0
+  end
+  
   def name
     "Anonymous"
   end

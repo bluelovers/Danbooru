@@ -66,6 +66,15 @@
             <%= check_box "user", "receive_dmails" %>
           </td>
         </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_comment_threshold">Comment Threshold</label>
+            <p>Comments below this score will be hidden.</p>
+          </th>
+          <td>
+            <%= text_field "user", "comment_threshold" %>
+          </td>
+        </tr>
         <% if CONFIG["image_samples"] && !CONFIG["force_image_samples"] %>
           <tr>
             <th>

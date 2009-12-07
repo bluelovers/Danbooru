@@ -460,6 +460,10 @@ div.auto_complete ul strong.highlight {
   padding:0;
 }
 
+div.bad-comment {
+	background: #FEE;
+}
+
 div.blocked {
   border: 2px solid #F00;
   background: #FCC;

@@ -1,0 +1,17 @@
+<div class="help">
+  <h1>Janitor Application</h1>
+  
+  <p>Janitors are responsible for approving posts. New janitors undergo a month long trial period during which their activity is monitored. Once sufficient trust is established, these test janitors become full fledged janitors and gain the right to delete and undelete posts.</p>
+  <p>Janitors must be familiar with the <%= link_to "site rules", :controller => "static", :action => "terms_of_service" %>. They should visit the site on a daily basis and read the forum regularly to keep up to date on rule changes.</p>
+  <p>There are three requirements to become a janitor:</p>
+  <ol>
+    <li>You must have been on the site for at least six months</li>
+    <li>You must have at least 100 favorites</li>
+    <li>You must not have any major negative feedback</li>
+  </ol>
+  <p>If you are interested in applying for a position, please send a message to the <%= link_to "administrator", :controller => "dmail", :action => "compose", :to => User.find(1).name, :title => "Janitor Application" %>.</p>
+</div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :action => "index" %></li>
+<% end %>

@@ -104,6 +104,7 @@ class UserController < ApplicationController
   def signup
     set_title "Signup"
     @user = User.new
+    @user.comment_threshold = 0
   end
 
   def logout

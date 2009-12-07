@@ -41,7 +41,7 @@ def create_comment(post, params = {})
   comm.post_id = post.id
   comm.user_id = params[:user_id] || 1
   comm.ip_addr = params[:ip_addr] || "127.0.0.1"
-  comm.is_spam = params[:is_spam] || false
+  comm.score = params[:score] || 0
   comm.save
   post.comments(true)
   comm

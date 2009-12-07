@@ -4,7 +4,7 @@ class Comment < ActiveRecord::Base
   belongs_to :user
   after_save :update_last_commented_at
   after_destroy :update_last_commented_at
-  attr_protected :post_id, :user_id, :is_spam, :text_search_index
+  attr_protected :post_id, :user_id, :score, :text_search_index
   attr_accessor :do_not_bump_post
   
   def self.generate_sql(params)
@@ -30,6 +30,10 @@ class Comment < ActiveRecord::Base
     author.tr("_", " ")
   end
   
+  def can_be_voted_by?(user)
+    last_voted_by != user.id
+  end
+  
   def api_attributes
     return {
       :id => id, 
@@ -37,7 +41,8 @@ class Comment < ActiveRecord::Base
       :post_id => post_id, 
       :creator => author, 
       :creator_id => user_id, 
-      :body => body
+      :body => body,
+      :score => score
     }
   end
 

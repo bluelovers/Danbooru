@@ -4,5 +4,9 @@
       <h2>Before commenting, read the <%= fast_link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h2>
     </div>
   <% end %>
+  <div style="margin-bottom: 1em;">
+    <%= render :partial => "comment/threshold_notice", :locals => {:post => @post} %>
+  </div>
+  
   <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
 </div>

@@ -81,6 +81,10 @@
       <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
     </tr>
     <tr>
+      <td><strong>Approvals</strong></td>
+      <td><%= link_to Post.count(:conditions => "approver_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "approver:#{@user.name}" %></td>
+    </tr>
+    <tr>
       <td><strong>Record</strong></td>
       <td>
         <% if !UserRecord.exists?(["user_id = ?", @user.id]) %>
