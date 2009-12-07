@@ -506,7 +506,17 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
   has_one :ban
-  attr_protected :can_moderate
+  has_one :test_janitor
+  has_many :favorites
+  has_many :user_records do
+    def negative
+      find(:all, :conditions => ["is_positive = FALSE"])
+    end
+    
+    def positive
+      find(:all, :conditions => ["is_positive = TRUE"])
+    end
+  end
   
   include UserBlacklistMethods
   include UserAuthenticationMethods

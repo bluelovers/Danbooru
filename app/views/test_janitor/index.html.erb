@@ -1,0 +1,33 @@
+<table width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Duration</th>
+      <th>Appr 7</th>
+      <th>Appr 14</th>
+      <th>Appr 30</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= link_to h(user.name), :controller => "user", :action => "show", :id => user.id %></td>
+        <td><%= time_ago_in_words(user.test_janitor.test_promotion_date) %></td>
+        <td><%= Post.count(:conditions => ["approver_id = ? and created_at >= ?", user.id, 7.days.ago]) %></td>
+        <td><%= Post.count(:conditions => ["approver_id = ? and created_at >= ?", user.id, 14.days.ago]) %></td>
+        <td><%= Post.count(:conditions => ["approver_id = ? and created_at >= ?", user.id, 30.days.ago]) %></td>
+        <td>
+          <%= link_to "Demote", :action => "demote", :id => user.test_janitor.id %>
+          | <%= link_to "Promote", :action => "promote", :id => user.test_janitor.id %>
+          | <%= link_to "Approvals", :action => "approvals", :id => user.test_janitor.id %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :controller => "test_janitor", :action => "index" %></li>
+  <li><%= link_to "New", :controller => "test_janitor", :action => "new" %></li>
+<% end %>

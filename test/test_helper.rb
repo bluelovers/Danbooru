@@ -126,6 +126,13 @@ def update_wiki(w1, params = {})
   w1.update_attributes(params)
 end
 
+def create_test_janitor(user_id)
+  TestJanitor.create(
+    :user_id => user_id,
+    :test_promotion_date => Time.now,
+    :original_level => User.find(user_id).level
+  )
+end
 
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true

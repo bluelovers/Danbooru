@@ -13,7 +13,6 @@ admin:
   receive_dmails: true
   show_samples: true
   created_at: 2001-01-01
-  can_moderate: true
 
 mod:
   id: 2
@@ -30,7 +29,6 @@ mod:
   receive_dmails: true
   show_samples: true
   created_at: 2001-01-01
-  can_moderate: true
 
 privileged:
   id: 3
@@ -47,7 +45,6 @@ privileged:
   receive_dmails: false
   show_samples: true
   created_at: 2001-01-01
-  can_moderate: true
 
 member:
   id: 4
@@ -64,7 +61,6 @@ member:
   receive_dmails: true
   show_samples: true
   created_at: 2001-01-01
-  can_moderate: true
 
 blocked:
   id: 5
@@ -81,7 +77,6 @@ blocked:
   receive_dmails: true
   show_samples: true
   created_at: 2001-01-01
-  can_moderate: true
   
 unactivated:
   id: 6
@@ -98,5 +93,4 @@ unactivated:
   receive_dmails: true
   show_samples: true
   created_at: 2001-01-01
-  can_moderate: true
   

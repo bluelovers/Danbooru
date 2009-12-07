@@ -12,9 +12,6 @@ module PostMethods
     
     def approve!(approver_id)
       user = User.find(approver_id)
-      if !user.can_moderate?
-        return false
-      end
       
       if flag_detail
         flag_detail.update_attributes(:is_resolved => true)

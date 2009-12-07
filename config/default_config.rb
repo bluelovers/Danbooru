@@ -66,6 +66,7 @@ CONFIG["user_levels"] = {
   "Member" => 20,
   "Privileged" => 30,
   "Contributor" => 33,
+  "Test Janitor" => 34,
   "Janitor" => 35,
   "Mod" => 40,
   "Admin" => 50

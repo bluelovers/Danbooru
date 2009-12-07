@@ -4,7 +4,7 @@ class PostController < ApplicationController
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :check_load_average, :only => [:index, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
-  before_filter :contributor_only, :only => [:moderate, :recent_approvals]
+  before_filter :test_janitor_only, :only => [:moderate]
   before_filter :janitor_only, :only => [:undelete]
   before_filter :privileged_only, :only => [:flag]
   after_filter :save_recent_tags, :only => [:update, :create]  
@@ -101,8 +101,6 @@ class PostController < ApplicationController
   end
 
   def moderate
-    return respond_to_error("You can not moderate posts", :action => "error") unless @current_user.can_moderate?
-    
     if request.post?
       params[:id].split(/,/).each do |post_id|
         post = Post.find(post_id)
@@ -411,7 +409,7 @@ class PostController < ApplicationController
   end
   
   def recent_approvals
-    @posts = Post.paginate(:conditions => ["posts.approver_id is not null and posts.created_at > ? and users.level = 33", 1.month.ago], :order => "id desc", :per_page => 20, :page => params[:page], :select => "posts.*", :joins => "join users on users.id = posts.approver_id")
+    @posts = Post.paginate(:conditions => ["posts.approver_id is not null and posts.created_at > ? and users.level = 34", 1.month.ago], :order => "id desc", :per_page => 20, :page => params[:page], :select => "posts.*", :joins => "join users on users.id = posts.approver_id")
   end
   
   def exception

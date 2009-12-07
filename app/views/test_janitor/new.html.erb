@@ -1,0 +1,9 @@
+<h4>New Test Janitor</h4>
+
+<p id="test"></p>
+
+<% form_tag(:action => "create") do %>
+  <%= text_field_tag "name", "", :size => 40 %>
+  <%= submit_to_remote "test_btn", "Test", :url => {:action => "test"}, :update => "test" %>
+  <%= submit_tag "Submit" %>
+<% end %>

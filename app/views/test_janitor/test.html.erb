@@ -1,0 +1,11 @@
+<% if @user.nil? %>
+  User not found
+<% elsif @user.created_at > 1.month.ago %>
+  User is not old enough
+<% elsif @user.favorites.count < 100 %>
+  User has only <%= @user.favorites.count %> favorites
+<% elsif @user.user_records.negative.count > 0 %>
+  User has negative records
+<% else %>
+  No issues found
+<% end %>

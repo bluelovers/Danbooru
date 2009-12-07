@@ -18,7 +18,7 @@
       </tr>
       <tr>
         <th><label for="dmail_title">Title</label></th>
-        <td><%= text_field "dmail", "title" %></td>
+        <td><%= text_field "dmail", "title", :value => params[:title] %></td>
       </tr>
       <tr>
         <th><label for="dmail_body">Body</label></th>
