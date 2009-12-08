@@ -3,13 +3,11 @@ module PostHelper
     html = ""
     
     if artist || wiki_page || split_tags.size == 1
-      html << '<div>'
-      
       if artist
-        html << %{<h5><a href="/artist/show/#{artist.id}">#{h(split_tags.to_s)}</a></h5>}
+        url = %{/artist/show/#{artist.id}}
         html << '<p>' + DText.parse(artist.notes, :inline => true) + '</p>'
       elsif split_tags.size == 1
-        html << %{<h5><a href="/wiki/show?title=#{h(split_tags.to_s)}">#{h(split_tags.to_s)}</a></h5>}
+        url = %{/wiki/show?title=#{h(split_tags.to_s)}}
         
         if wiki_page
           html << '<p>' + DText.parse(wiki_page.body, :inline => true) + '</p>'
@@ -17,8 +15,8 @@ module PostHelper
           html << '<p>There is no wiki for this tag.</p>'
         end
       end
-      
-      html << '</div>'
+
+      html << %{<p><a href="#{url}">Full entry &raquo;</a></p>}
     end
     
     html
@@ -76,7 +74,7 @@ module PostHelper
       tags = {:include => Tag.trending}
     end
     
-    html = ['<div style="margin-bottom: 1em;">', '<h5>Tags</h5>', '<ul id="tag-sidebar">']
+    html = ['<div style="margin-bottom: 1em;">', '<ul id="tag-sidebar">']
 
     if tags[:exclude]
       tags[:exclude].each do |tag|

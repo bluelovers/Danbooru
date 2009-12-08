@@ -7,4 +7,10 @@ module AdvertisementHelper
 			""
 		end
   end
+  
+  def print_rss_advertisement
+    if CONFIG["can_see_ads"].call(@current_user)
+      render :partial => "static/jlist_rss_ads"
+    end
+  end
 end

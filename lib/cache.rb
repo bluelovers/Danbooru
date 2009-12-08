@@ -21,6 +21,8 @@ module Cache
   end
   
   def get(key, expiry = 0)
+    key.gsub!(/\s/, "_")
+    
     if CONFIG["enable_caching"] == false
       if block_given?
         return yield
@@ -50,6 +52,8 @@ module Cache
   end
   
   def put(key, value, expiry = 0)
+    key.gsub!(/\s/, "_")
+    
     if CONFIG["enable_caching"] == false
       return value
     end

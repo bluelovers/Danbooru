@@ -7,48 +7,63 @@
 
   <div class="sidebar">
     <%= render :partial => "search" %>
-    <%= print_advertisement("vertical") %>
-    <div style="margin-bottom: 1em;">
-      <h5>Mode</h5>
-      <form onsubmit="return false;" action="">
-        <div>
-          <select name="mode" id="mode" onchange="PostModeMenu.change()" style="width: 13em;">
-            <option value="view">View posts</option>
-            <option value="edit">Edit posts</option>
-            <option value="add-fav">Add to favorites</option>
-            <option value="remove-fav">Remove from favorites</option>
-            <option value="rating-s">Rate safe</option>
-            <option value="rating-q">Rate questionable</option>
-            <option value="rating-e">Rate explicit</option>
-            <% if @current_user.is_privileged_or_higher? %>
-              <option value="vote-up">Vote up</option>
-              <option value="vote-down">Vote down</option>
-              <option value="lock-rating">Lock rating</option>
-              <option value="lock-note">Lock notes</option>
-            <% end %>
-            <% if @current_user.is_mod_or_higher? %>
-              <option value="approve">Approve post</option>
-            <% end %>
-            <option value="flag">Flag post</option>
-            <option value="edit-tag-script">Edit tag script</option>
-            <option value="apply-tag-script">Apply tag script</option>
-          </select>          
-        </div>
-      </form>
-    </div>
-
-    <div id="blacklisted-sidebar" style="display: none;">
-      <h5>
-        <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
-        <span id="blacklist-count" class="post-count"></span>
-      </h5>
-      <ul id="blacklisted-list" style="display: none;">
-      </ul>
-    </div>
-
-    <%= print_tag_sidebar(params[:tags]) %>
     
-    <%= wiki_excerpt(@artist, @wiki_page, @tags) %>
+    <%= print_rss_advertisement %>
+
+    <div style="margin-bottom: 1em;">
+      <h5>
+        <%= link_to_function "Tags", "$('sidebar-tags').show(); $('sidebar-mode').hide(); $('sidebar-wiki').hide()" %> 
+        <% if @artist || @wiki_page %>
+          | <%= link_to_function "Wiki", "$('sidebar-tags').hide(); $('sidebar-mode').hide(); $('sidebar-wiki').show()" %> 
+        <% end %>
+        | <%= link_to_function "Mode", "$('sidebar-tags').hide(); $('sidebar-mode').show(); $('sidebar-wiki').hide()" %> 
+      </h5>
+
+      <div id="sidebar-tags" style="margin-top: 1em;">
+        <%= print_tag_sidebar(params[:tags]) %>
+        
+        <div id="blacklisted-sidebar" style="display: none;">
+          <h5>
+            <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
+            <span id="blacklist-count" class="post-count"></span>
+          </h5>
+          <ul id="blacklisted-list" style="display: none;">
+          </ul>
+        </div>
+      </div>
+      
+      <div id="sidebar-wiki" style="margin-top: 1em; display: none;">
+        <%= wiki_excerpt(@artist, @wiki_page, @tags) %>
+      </div>
+      
+      <div id="sidebar-mode" style="margin-top: 1em; display: none;">
+        <form onsubmit="return false;" action="">
+          <div>
+            <select name="mode" id="mode" onchange="PostModeMenu.change()" style="width: 13em;">
+              <option value="view">View posts</option>
+              <option value="edit">Edit posts</option>
+              <option value="add-fav">Add to favorites</option>
+              <option value="remove-fav">Remove from favorites</option>
+              <option value="rating-s">Rate safe</option>
+              <option value="rating-q">Rate questionable</option>
+              <option value="rating-e">Rate explicit</option>
+              <% if @current_user.is_privileged_or_higher? %>
+                <option value="vote-up">Vote up</option>
+                <option value="vote-down">Vote down</option>
+                <option value="lock-rating">Lock rating</option>
+                <option value="lock-note">Lock notes</option>
+              <% end %>
+              <% if @current_user.is_janitor_or_higher? %>
+                <option value="approve">Approve post</option>
+              <% end %>
+              <option value="flag">Flag post</option>
+              <option value="edit-tag-script">Edit tag script</option>
+              <option value="apply-tag-script">Apply tag script</option>
+            </select>          
+          </div>
+        </form>
+      </div>      
+    </div>
   </div>
   <div class="content">
     <%= print_advertisement("horizontal") %>      
