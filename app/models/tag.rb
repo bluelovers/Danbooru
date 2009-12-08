@@ -48,7 +48,7 @@ class Tag < ActiveRecord::Base
     tag = find_by_name(name)
 
     if tag
-      if tag_type && !(options[:user] && options[:user].is_member_or_lower? && tag.post_count <= 10)
+      if tag_type && !(options[:user] && options[:user].is_member_or_lower? && tag.post_count > 10)
         tag.update_attribute(:tag_type, tag_type)
       end
       
