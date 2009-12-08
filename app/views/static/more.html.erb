@@ -3,108 +3,108 @@
   <div>
     <ul>
       <li><h4>Posts</h4></li>
-      <li><a href="/help/posts">Help</a></li>
-      <li><a href="/post/atom">Atom Feed</a></li>
-      <li><a href="/post/index">Listing</a></li>
-      <li><a href="/post/popular_by_day">Popular (by day)</a></li>
-      <li><a href="/post/popular_by_week">Popular (by week)</a></li>
-      <li><a href="/post/popular_by_month">Popular (by month)</a></li>
-      <li><a href="/post/random">Random</a></li>
-      <li><a href="/post/deleted_index">Recent Deletions</a></li>
-      <li><a href="/post_tag_history/index">Tag History</a></li>
-      <li><a href="/post/upload">Upload</a></li>
+      <li><%= link_to("Help", { :controller => "help", :action => "posts"}) %></li>
+      <li><%= link_to("Atom Feed", { :controller => "post", :action => "atom"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"post"}) %></li>
+      <li><%= link_to("Popular (by day)",{:controller=>"post",:action=>"popular_by_day"}) %></li>
+      <li><%= link_to("Popular (by week)",{:controller=>"post",:action=>"popular_by_week"}) %></li>
+      <li><%= link_to("Popular (by month)",{:controller=>"post",:action=>"popular_by_month"}) %></li>
+      <li><%= link_to("Random",{:controller=>"post",:action=>"random"}) %></li>
+      <li><%= link_to("Recent Deletions",{:controller=>"post",:action=>"deleted_index"}) %></li>
+      <li><%= link_to("Tag History",{:controller=>"post_tag_history",:action=>"index"}) %></li>
+      <li><%= link_to("Upload",{:controller=>"post",:action=>"upload"}) %></li>
     </ul>
     <ul>
       <li><h4>Tools</h4></li>
-      <li><a href="/help/bookmarklet">Bookmarklet</a></li>
-      <li><a href="http://unbuffered.info/danbooruup">Firefox Extension</a></li>
-      <li><a href="/help/api">API Documentation</a></li>
+      <li><%= link_to("Bookmarklet",{:controller=>"help",:action=>"bookmarklet"}) %></li>
+      <li><%= link_to("Firefox Extension","http://unbuffered.info/danbooruup") %></li>
+      <li><%= link_to("API Documentation",{:controller=>"help",:action=>"api"}) %></li>
     </ul>
     <ul>
       <li><h4>Reports</h4></li>
-      <li><a href="/report/note_updates">Note Updates</a></li>
-      <li><a href="/report/tag_updates">Tag Updates</a></li>
-      <li><a href="/report/wiki_updates">Wiki Updates</a></li>
-      <li><a href="/report/post_uploads">Post Uploads</a></li>
-      <li><a href="/job_task/index">Job Tasks</a></li>
-      <li><a href="/advertisement/index">Advertisement Statistics</a></li>
+      <li><%= link_to("Note Updates",{:controller=>"report",:action=>"note_updates"}) %></li>
+      <li><%= link_to("Tag Updates",{:controller=>"report",:action=>"tag_updates"}) %></li>
+      <li><%= link_to("Wiki Updates",{:controller=>"report",:action=>"wiki_updates"}) %></li>
+      <li><%= link_to("Post Uploads",{:controller=>"report",:action=>"post_uploads"}) %></li>
+      <li><%= link_to("Job Tasks",{:controller=>"job_task",:action=>"index"}) %></li>
+      <li><%= link_to("Advertisement Statistics",{:controller=>"advertisement",:action=>"index"}) %></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4>Tags</h4></li>
-      <li><a href="/help/tags">Help</a></li>
-      <li><a href="/help/cheatsheet">Cheat sheet</a></li>
-      <li><a href="/tag_alias/index">Aliases</a></li>
-      <li><a href="/tag_implication/index">Implications</a></li>
-      <li><a href="/tag/edit">Edit</a></li>
-      <li><a href="/tag/cloud">List (cloud view)</a></li>
-      <li><a href="/tag/index">List (all)</a></li>
-      <li><a href="/tag/mass_edit">Mass Edit</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"tags"}) %></li>
+      <li><%= link_to("Cheat sheet",{:controller=>"help",:action=>"cheatsheet"}) %></li>
+      <li><%= link_to("Aliases",{:controller=>"tag_alias",:action=>"index"}) %></li>
+      <li><%= link_to("Implications",{:controller=>"tag_implication",:action=>"index"}) %></li>
+      <li><%= link_to("Edit",{:controller=>"tag",:action=>"edit"}) %></li>
+      <li><%= link_to("List (cloud view)",{:controller=>"tag",:action=>"cloud"}) %></li>
+      <li><%= link_to("List (all)",{:controller=>"tag",:action=>"index"}) %></li>
+      <li><%= link_to("Mass Edit",{:controller=>"tag",:action=>"mass_edit"}) %></li>
     </ul>
     <ul>
       <li><h4>Notes</h4></li>
-      <li><a href="/help/notes">Help</a></li>
-      <li><a href="/note/history">History</a></li>
-      <li><a href="/note/index">Listing</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"notes"}) %></li>
+      <li><%= link_to("History",{:controller=>"note",:action=>"history"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"note",:action=>"index"}) %></li>
     </ul>
     <ul>
       <li><h4>Artists</h4></li>
-      <li><a href="/help/artists">Help</a></li>
-      <li><a href="/artist/index">Listing</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"artists"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"artist",:action=>"index"}) %></li>
     </ul>
     <ul>
       <li><h4>Pools</h4></li>
-      <li><a href="/help/pools">Help</a></li>
-      <li><a href="/pool/index">Listing</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"pools"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"pool",:action=>"index"}) %></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4>Comments</h4></li>
-      <li><a href="/help/comments">Help</a></li>
-      <li><a href="/comment/index">Listing</a></li>
-      <li><a href="/comment/moderate">Moderate</a></li>
-      <li><a href="http://trac.donmai.us">Trac</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"comments"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"comment",:action=>"index"}) %></li>
+      <li><%= link_to("Moderate",{:controller=>"comment",:action=>"moderate"}) %></li>
+      <li><%= link_to("Trac", "http://trac.donmai.us") %></li>
     </ul>
     <ul>
       <li><h4>Forum</h4></li>
-      <li><a href="/help/forum">Help</a></li>
-      <li><a href="/forum/index">Listing</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"forum"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"forum",:action=>"index"}) %></li>
     </ul>
     <ul>
       <li><h4>Wiki</h4></li>
-      <li><a href="/help/wiki">Help</a></li>
-      <li><a href="/wiki/index">Listing</a></li>
-      <li><a href="/wiki/history">History</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"wiki"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"wiki",:action=>"index"}) %></li>
+      <li><%= link_to("History",{:controller=>"wiki",:action=>"history"}) %></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4>Users</h4></li>
-      <li><a href="/help/users">Help</a></li>
-      <li><a href="/user/show_blocked_users">Blocked Users</a></li>
-      <li><a href="/user/change_password">Change Password</a></li>
-      <li><a href="/user/home">Home</a></li>
-      <li><a href="/user/invites">Invites</a></li>
-      <li><a href="/user/index">Listing</a></li>
-      <li><a href="/user/login">Login</a></li>
-      <li><a href="/user/logout">Logout</a></li>
+      <li><%= link_to("Help",{:controller=>"help",:action=>"users"}) %></li>
+      <li><%= link_to("Blocked Users",{:controller=>"user",:action=>"show_blocked_users"}) %></li>
+      <li><%= link_to("Change Password",{:controller=>"user",:action=>"change_password"}) %></li>
+      <li><%= link_to("Home",{:controller=>"user",:action=>"home"}) %></li>
+      <li><%= link_to("Invites",{:controller=>"user",:action=>"invites"}) %></li>
+      <li><%= link_to("Listing",{:controller=>"user",:action=>"index"}) %></li>
+      <li><%= link_to("Login",{:controller=>"user",:action=>"login"}) %></li>
+      <li><%= link_to("Logout",{:controller=>"user",:action=>"logout"}) %></li>
       <% unless @current_user.nil? %>
-        <li><a href="/user/show/<%= @current_user.id %>">My Profile</a></li>
+        <li><%= link_to("My Profile",{:controller=>"user",:action=>"show",:id=>@current_user.id}) %></li>
       <% end %>
-      <li><a href="/user_record/index">Records</a></li>
-      <li><a href="/user/reset_password">Reset Password</a></li>
-      <li><a href="/user/edit">Settings</a></li>
-      <li><a href="/user/signup">Signup</a></li>
-      <li><a href="/static/terms_of_service">Terms of Service</a></li>
+      <li><%= link_to("Records",{:controller=>"user_record",:action=>"index"}) %></li>
+      <li><%= link_to("Reset Password",{:controller=>"user",:action=>"reset_password"}) %></li>
+      <li><%= link_to("Settings",{:controller=>"user",:action=>"edit"}) %></li>
+      <li><%= link_to("Signup",{:controller=>"user",:action=>"signup"}) %></li>
+      <li><%= link_to("Terms of Service",{:controller=>"static",:action=>"terms_of_service"}) %></li>
     </ul>
     <% if @current_user.is_admin_or_higher? %>
       <ul>
         <li><h4>Admin</h4></li>
-        <li><a href="/admin/edit_user">Edit User</a></li>   
-        <li><a href="/admin/reset_password">Reset Password</a></li>
-        <li><a href="/test_janitor/index">Test Janitors</a></li>
+        <li><%= link_to("Edit User", { :controller => "admin", :action => "edit_user" }) %></li>   
+        <li><%= link_to("Reset Password", { :controller => "admin", :action => "reset_password" }) %></li>
+        <li><%= link_to("Test Janitors", { :controller => "test_janitor", :action => "index" }) %></li>
       </ul>
     <% end %>
   </div>
