@@ -35,11 +35,7 @@
 <% if @post.is_pending? %>
   <div class="status-notice" id="pending-notice">
     This post is pending moderator approval.
-
-    <% if !@post.is_active? && @current_user.is_contributor_or_higher? %>
-      <%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.moderate(#{@post.id}, 'Approve')}" %>
-      | <%= link_to_function "Hide from mod queue", "Post.moderate(#{@post.id}, 'Hide')" %>
-    <% end %>
+    <%= render :partial => "post/show_partials/moderation_panel" %>
   </div>
 <% elsif @post.is_deleted? %>
   <div class="status-notice">
@@ -54,6 +50,8 @@
     <% if @post.flag_detail %>
       Reason: <%= h @post.flag_detail.reason %>.
     <% end %>    
+
+    <%= render :partial => "post/show_partials/moderation_panel" %>
   </div>
 <% end %>
 
