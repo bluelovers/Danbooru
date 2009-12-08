@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <% User.find(:all, :conditions => ["level >= ?", CONFIG["user_levels"]["Contributor"]], :order => "level, name").each do |user| %>
+    <% User.find(:all, :conditions => ["level >= ?", CONFIG["user_levels"]["Test Janitor"]], :order => "level, name").each do |user| %>
       <tr>
         <td><%= h user.name %></td>
         <td><%= h user.pretty_level %></td>
@@ -24,7 +24,7 @@
         <td style="text-align: right;"><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 14.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 14.days.ago]) %></td>
         <td style="text-align: right;"><%= Comment.count(:conditions => ["created_at >= ? AND user_id = ?", 7.days.ago, user.id]) %></td>
         <td style="text-align: right;"><%= ForumPost.count(:conditions => ["created_at >= ? AND creator_id = ?", 7.days.ago, user.id]) %></td>
-        <td></td>
+        <td><%= link_to "Posts", :controller => "post", :action => "index", :tags => "approver:#{user.name}", :only_path => false %></td>
       </tr>
     <% end %>
   </tbody>

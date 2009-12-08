@@ -394,7 +394,8 @@ class PostController < ApplicationController
   end
   
   def recent_approvals
-    @posts = Post.paginate(:conditions => ["posts.approver_id is not null and posts.created_at > ? and users.level = 34", 1.month.ago], :order => "id desc", :per_page => 20, :page => params[:page], :select => "posts.*", :joins => "join users on users.id = posts.approver_id")
+    user_level = params[:level] || 34
+    @posts = Post.paginate(:conditions => ["posts.approver_id is not null and posts.created_at > ? and users.level = ? and status <> 'deleted'", 1.month.ago, user_level.to_i], :order => "id desc", :per_page => 20, :page => params[:page], :select => "posts.*", :joins => "join users on users.id = posts.approver_id")
   end
   
   def exception

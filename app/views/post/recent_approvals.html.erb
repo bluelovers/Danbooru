@@ -1,4 +1,11 @@
 <div>
+  <div style="margin-bottom: 1em;">
+    <% form_tag({:action => "recent_approvals"}, :method => :get) do %>
+      <%= select_tag "level", options_for_select([["Test Janitor", CONFIG["user_levels"]["Test Janitor"]], ["Janitor", CONFIG["user_levels"]["Janitor"]], ["Moderator", CONFIG["user_levels"]["Mod"]], ["Admin", CONFIG["user_levels"]["Admin"]]], params["level"].to_i) %>
+      <%= submit_tag "Search" %>
+    <% end %>
+  </div>
+  
   <%= render :partial => "post/posts", :locals => {:posts => @posts} %>
 
   <div id="paginator">
