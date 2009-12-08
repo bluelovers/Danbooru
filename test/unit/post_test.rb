@@ -366,13 +366,13 @@ class PostTest < ActiveSupport::TestCase
   
   def test_voting
     post = create_post("tag1 tag2")
-    assert_raise(PostMethods::VoteMethods::PrivilegeError) {post.vote!(User.find(4), 1)}
+    assert_raise(Post::VotingError) {post.vote!(User.find(4), 1)}
     post.reload
     assert_equal(0, post.score)
     assert_nothing_raised {post.vote!(User.find(3), 1)}
     post.reload
     assert_equal(1, post.score)
-    assert_raise(PostMethods::VoteMethods::AlreadyVotedError) {post.vote!(User.find(3), -1)}
+    assert_raise(Post::VotingError) {post.vote!(User.find(3), -1)}
     post.reload
     assert_equal(1, post.score)
   end
@@ -388,7 +388,7 @@ class PostTest < ActiveSupport::TestCase
   
   def test_flagging_and_approval
     post = create_post("tag1 tag2")
-    post.flag!("bad bad bad", 1)
+    post.flag!("bad bad bad", User.find(1))
     post.reload
     assert(post.is_flagged?, "Post should be flagged")
     assert_not_nil(post.flag_detail)

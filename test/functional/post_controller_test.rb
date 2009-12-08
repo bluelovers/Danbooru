@@ -37,10 +37,10 @@ class PostControllerTest < ActionController::TestCase
     ModQueuePost.destroy_all
     
     p1 = create_post("hoge", :status => "pending")
-    p2 = create_post("hoge")
-    p3 = create_post("moge")
+    p2 = create_post("hoge", :status => "active")
+    p3 = create_post("moge", :status => "active")
     
-    p2.flag!("sage", 1)
+    p2.flag!("sage", User.find(1))
     p2.reload
     assert_not_nil(p2.flag_detail)
 
@@ -54,11 +54,11 @@ class PostControllerTest < ActionController::TestCase
     p1.reload
     assert_equal("active", p1.status)
 
-    post :moderate, {:id => p2.id, :reason => "sage", :commit => "Delete"}, {:user_id => 1}
-    p2.reload
-    assert_equal("deleted", p2.status)
-    assert_not_nil(p2.flag_detail)
-    assert_equal("sage", p2.flag_detail.reason)
+    post :moderate, {:id => p3.id, :reason => "sage", :commit => "Delete"}, {:user_id => 1}
+    p3.reload
+    assert_equal("deleted", p3.status)
+    assert_not_nil(p3.flag_detail)
+    assert_equal("sage", p3.flag_detail.reason)
 
     assert_equal(0, ModQueuePost.count)
     post :moderate, {:id => "3", :commit => "Hide"}, {:user_id => 1}

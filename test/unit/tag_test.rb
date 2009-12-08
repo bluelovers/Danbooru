@@ -58,10 +58,17 @@ class TagTest < ActiveSupport::TestCase
     t = Tag.find_by_name("soge")
     assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
     
+    t = Tag.find_by_name("ho-ge")
+    assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
     t = Tag.find_or_create_by_name("copyright:ho-ge", :user => User.find(4))
     t = Tag.find_by_name("ho-ge")
     assert_equal(0, t.post_count)
-    assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
+    assert_equal(CONFIG["tag_types"]["Copyright"], t.tag_type)
+
+    t.update_attribute(:post_count, 100)
+    t = Tag.find_or_create_by_name("artist:ho-ge", :user => User.find(4))
+    t = Tag.find_by_name("ho-ge")
+    assert_equal(CONFIG["tag_types"]["Copyright"], t.tag_type)
 
     t = Tag.find_or_create_by_name("copyright:ho-ge", :user => User.find(3))
     t = Tag.find_by_name("ho-ge")

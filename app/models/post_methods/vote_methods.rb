@@ -1,13 +1,6 @@
 module PostMethods
   module VoteMethods
-    class InvalidScoreError < Exception
-    end
-  
-    class AlreadyVotedError < Exception
-    end
-  
-    class PrivilegeError < Exception
-    end
+    class VotingError < Exception ; end
 
     def self.included(m)
       m.has_many :votes, :class_name => "PostVote"
@@ -15,15 +8,15 @@ module PostMethods
   
     def vote!(current_user, score)
       unless [1, -1].include?(score)
-        raise InvalidScoreError
+        raise VotingError.new("Invalid score")
       end
 
       if current_user.is_member_or_lower?
-        raise PrivilegeError
+        raise VotingError.new("Only privileged members and above can vote")
       end
     
       if PostVote.exists?(["user_id = ? AND post_id = ?", current_user.id, id])
-        raise AlreadyVotedError
+        raise VotingError.new("You have already voted for this post")
       end
 
       self.score += score

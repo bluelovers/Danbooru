@@ -23,16 +23,7 @@ class Post < ActiveRecord::Base
   include PostMethods::ApiMethods
   include PostMethods::ModerationMethods
   include PostMethods::DeletionMethods
-  
-  def flag!(reason, creator_id)
-    update_attribute(:status, "flagged")
-    
-    if flag_detail
-      flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
-    else
-      FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
-    end
-  end
+  include PostMethods::FlagMethods
   
   # TODO: refactor or eliminate
   def favorited_by
