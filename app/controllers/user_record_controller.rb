@@ -37,4 +37,12 @@ class UserRecordController < ApplicationController
       end
     end
   end
+  
+  def preview
+    if params[:user_record]
+      render :inline => "<h4>Preview</h4><%= format_text(params[:user_record][:body]) %>"
+    else
+      render :text => ""
+    end
+  end
 end

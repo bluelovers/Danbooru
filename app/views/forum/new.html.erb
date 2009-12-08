@@ -1,6 +1,6 @@
 <h2>New Topic</h2>
 
-<div style="margin: 1em 0; float: left; width: 50em;">
+<div style="margin: 1em 0; float: left; width: 45em;">
   <% if @current_user.is_privileged_or_lower? || true%>
     <div style="margin-bottom: 1em;">
       <h4>Before creating a new topic, read the <%= link_to "how to comment guide", :controller => "wiki", :action => "show", :title => "howto:comment" %>.</h4>

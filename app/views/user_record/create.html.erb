@@ -1,5 +1,8 @@
 <h4>Add Record for <%= h(@user.pretty_name) %></h4>
 
+<div id="preview" style="margin-bottom: 1em;">
+</div>
+
 <% form_tag(:action => "create") do %>
   <%= hidden_field_tag "user_id", @user.id %>
   <table width="100%">
@@ -15,7 +18,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag "Submit" %> <%= button_to_function "Cancel", "location.back()" %></td>
+        <td colspan="2">
+          <%= submit_tag "Submit" %> 
+          <%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get %>
+          <%= button_to_function "Cancel", "location.back()" %>
+        </td>
       </tr>
     </tfoot>
   </table>
