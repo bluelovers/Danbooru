@@ -21,7 +21,7 @@
       <div id="sidebar-tags" style="margin-top: 1em;">
         <%= print_tag_sidebar(params[:tags]) %>
         
-        <div id="blacklisted-sidebar" style="display: none;">
+        <div id="blacklisted-sidebar" style="display: none; margin-bottom: 1em;">
           <h5>
             <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
             <span id="blacklist-count" class="post-count"></span>
@@ -30,8 +30,9 @@
           </ul>
         </div>
 
-        <form onsubmit="return false;" action="">
-          <div>
+        <div style="margin-bottom: 1em;">
+          <h5>Mode</h5>
+          <form onsubmit="return false;" action="">
             <select name="mode" id="mode" onchange="PostModeMenu.change()" style="width: 13em;">
               <option value="view">View posts</option>
               <option value="edit">Edit posts</option>
