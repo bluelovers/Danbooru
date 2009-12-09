@@ -12,11 +12,10 @@
 
     <div style="margin-bottom: 1em;">
       <h5>
-        <%= link_to_function "Tags", "$('sidebar-tags').show(); $('sidebar-mode').hide(); $('sidebar-wiki').hide()" %> 
+        <%= link_to_function "Tags", "$('sidebar-tags').show(); $('sidebar-wiki').hide()" %> 
         <% if @artist || @wiki_page %>
-          | <%= link_to_function "Wiki", "$('sidebar-tags').hide(); $('sidebar-mode').hide(); $('sidebar-wiki').show()" %> 
+          | <%= link_to_function "Wiki", "$('sidebar-tags').hide(); $('sidebar-wiki').show()" %> 
         <% end %>
-        | <%= link_to_function "Mode", "$('sidebar-tags').hide(); $('sidebar-mode').show(); $('sidebar-wiki').hide()" %> 
       </h5>
 
       <div id="sidebar-tags" style="margin-top: 1em;">
@@ -30,13 +29,7 @@
           <ul id="blacklisted-list" style="display: none;">
           </ul>
         </div>
-      </div>
-      
-      <div id="sidebar-wiki" style="margin-top: 1em; display: none;">
-        <%= wiki_excerpt(@artist, @wiki_page, @tags) %>
-      </div>
-      
-      <div id="sidebar-mode" style="margin-top: 1em; display: none;">
+
         <form onsubmit="return false;" action="">
           <div>
             <select name="mode" id="mode" onchange="PostModeMenu.change()" style="width: 13em;">
@@ -62,7 +55,11 @@
             </select>          
           </div>
         </form>
-      </div>      
+      </div>
+      
+      <div id="sidebar-wiki" style="margin-top: 1em; display: none;">
+        <%= wiki_excerpt(@artist, @wiki_page, @tags) %>
+      </div>
     </div>
   </div>
   <div class="content">

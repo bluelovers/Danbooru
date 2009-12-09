@@ -13,7 +13,7 @@ module PostMethods
     end
     
     def hidden_comment_count(current_user)
-      comments.hidden(current_user).count
+      comments.hidden(current_user).size
     end
   end
 end
