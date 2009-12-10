@@ -9,7 +9,14 @@ class ApplicationController < ActionController::Base
       previous_url = params[:url] || request.request_uri
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "user", :action => "login", :url => previous_url)}
+        fmt.html do 
+          flash[:notice] = "Access denied"
+          if request.get?
+            redirect_to(:controller => "user", :action => "login", :url => previous_url)
+          else
+            redirect_to(:controller => "user", :action => "login")
+          end
+        end
         fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
         fmt.json {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
       end

@@ -75,7 +75,7 @@ class PoolControllerTest < ActionController::TestCase
     
     # Test as anonymous
     get :add_post, {:post_id => 1}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/add_post?post_id=1"
     
     get :add_post, {:post_id => 1}, {:user_id => 4}
     assert_response :success
@@ -97,7 +97,7 @@ class PoolControllerTest < ActionController::TestCase
     
     # Test as anonymous
     get :add_post, {:post_id => 1}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/add_post?post_id=1"
     
     get :add_post, {:post_id => 1}, {:user_id => 4}
     assert_response :success
@@ -141,7 +141,7 @@ class PoolControllerTest < ActionController::TestCase
     pool.add_post(2)
     
     get :order, {:id => pool.id}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
     
     get :order, {:id => pool.id}, {:user_id => 4}
     assert_response :success
@@ -171,13 +171,13 @@ class PoolControllerTest < ActionController::TestCase
     pool.add_post(2)
     
     get :order, {:id => pool.id}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
     
     get :order, {:id => pool.id}, {:user_id => 4}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
 
     get :order, {:id => pool.id, :query => "tag1"}, {:user_id => 4}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
     
     pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
     pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
@@ -204,10 +204,10 @@ class PoolControllerTest < ActionController::TestCase
     p2 = create_post("tag2", :user_id => 2)
     
     get :import, {:id => pool.id}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
     
     get :import, {:id => pool.id}, {:user_id => 3}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
     
     post :import, {:id => pool.id, :posts => {"1" => "1", "2" => "2"}}, {:user_id => 3}
     assert_redirected_to :controller => "user", :action => "login"
@@ -255,7 +255,7 @@ class PoolControllerTest < ActionController::TestCase
     pool = create_pool(:name => "hoge", :is_public => true, :user_id => 4)
     
     get :select, {:post_id => 1}
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/select?post_id=1"
     
     get :select, {:post_id => 1}, {:user_id => 4}
     assert_response :success
