@@ -11,6 +11,10 @@ module PostMethods
     end
     
     def approve!(approver_id)
+      if self.status == "active"
+        return
+      end
+      
       user = User.find(approver_id)
       
       if flag_detail

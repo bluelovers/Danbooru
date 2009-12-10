@@ -514,5 +514,16 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, p1.copyright_tag_count)
   end
   
+  def test_approve
+    p1 = create_post("foo", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :status => "pending")
+    p1.approve!(1)
+    p1.reload
+    assert_equal(1, p1.approver_id)
+    assert_equal("active", p1.status)
+    p1.approve!(2)
+    assert_equal(1, p1.approver_id)
+    assert_equal("active", p1.status)
+  end
+  
   # TODO: additional search tests
 end
