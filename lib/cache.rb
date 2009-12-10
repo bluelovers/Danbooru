@@ -22,6 +22,7 @@ module Cache
   
   def get(key, expiry = 0)
     key.gsub!(/\s/, "_")
+    key = key[0, 200]
     
     if CONFIG["enable_caching"] == false
       if block_given?
@@ -53,6 +54,7 @@ module Cache
   
   def put(key, value, expiry = 0)
     key.gsub!(/\s/, "_")
+    key = key[0, 200]
     
     if CONFIG["enable_caching"] == false
       return value

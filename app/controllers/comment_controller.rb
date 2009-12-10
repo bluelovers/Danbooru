@@ -1,7 +1,8 @@
 class CommentController < ApplicationController
   layout "default"
 
-  verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
+  verify :method => :post, :only => [:create, :destroy, :update, :vote]
+  verify :xhr => true, :only => [:preview, :index_hidden, :index_all, :vote]
   before_filter :member_only, :only => [:create, :destroy, :update, :show, :vote]
   before_filter :contributor_only, :only => [:moderate]
 
@@ -32,7 +33,7 @@ class CommentController < ApplicationController
       access_denied()
     end
   end
-
+  
   def create
     comment = Comment.new(params[:comment])
     comment.post_id = params[:comment][:post_id]

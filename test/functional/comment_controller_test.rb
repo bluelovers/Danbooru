@@ -24,7 +24,7 @@ class CommentControllerTest < ActionController::TestCase
   def test_destroy
     comment = create_comment(Post.find(1), :body => "hi there")
 
-    post :destroy, {:id => comment.id}, {:user_id => 1}
+    xhr :post, :destroy, {:id => comment.id}, {:user_id => 1}
     assert_redirected_to :controller => "post", :action => "show", :id => 1
     assert_nil(Comment.find_by_id(comment.id))
     
@@ -78,12 +78,12 @@ class CommentControllerTest < ActionController::TestCase
   def test_vote
     comment = create_comment(Post.find(1), :body => "hoge")
     
-    post :vote, {:id => comment.id, :score => "up", :format => "json"}, {:user_id => 4}
+    xhr :post, :vote, {:id => comment.id, :score => "up", :format => "json"}, {:user_id => 4}
     assert_response :success
     comment.reload
     assert_equal(1, comment.score)
     
-    post :vote, {:id => comment.id, :score => "down", :format => "json"}, {:user_id => 4}
+    xhr :post, :vote, {:id => comment.id, :score => "down", :format => "json"}, {:user_id => 4}
     assert_response 423
     comment.reload
     assert_equal(1, comment.score)
@@ -95,10 +95,10 @@ class CommentControllerTest < ActionController::TestCase
     create_comment(Post.find(3), :body => "box")
     create_comment(Post.find(2), :body => "tree")
     
-    get :index_hidden, {:post_id => 1, :format => "js"}, {:user_id => 4}
+    xhr :get, :index_hidden, {:post_id => 1, :format => "js"}, {:user_id => 4}
     assert_response :success
 
-    get :index_all, {:post_id => 1, :format => "js"}, {:user_id => 4}
+    xhr :get, :index_all, {:post_id => 1, :format => "js"}, {:user_id => 4}
     assert_response :success
     
   end

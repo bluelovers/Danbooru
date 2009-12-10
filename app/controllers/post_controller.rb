@@ -102,19 +102,23 @@ class PostController < ApplicationController
 
   def moderate
     if request.post?
-      params[:id].split(/,/).each do |post_id|
-        post = Post.find(post_id)
+      begin
+        params[:id].split(/,/).each do |post_id|
+          post = Post.find(post_id)
       
-        if params[:commit] == "Hide"
-          post.mod_hide!(@current_user.id)
-        elsif params[:commit] == "Approve"
-          post.approve!(@current_user.id)
-        elsif params[:commit] == "Delete"
-          Post.destroy_with_reason(post.id, params[:reason], @current_user)
+          if params[:commit] == "Hide"
+            post.mod_hide!(@current_user.id)
+          elsif params[:commit] == "Approve"
+            post.approve!(@current_user.id)
+          elsif params[:commit] == "Delete"
+            Post.destroy_with_reason(post.id, params[:reason], @current_user)
+          end
         end
-      end
 
-      respond_to_success("Post updated", {:action => "moderate"})
+        respond_to_success("Post updated", {:action => "moderate"})
+      rescue Exception => x
+        respond_to_error(x.message, {:action => "error"})
+      end
     else
       if @current_user.is_contributor?
         access_denied()
@@ -174,7 +178,12 @@ class PostController < ApplicationController
       if @post.status == "deleted"
         @post.delete_from_database
       else
-        Post.destroy_with_reason(@post.id, params[:reason], @current_user)
+        begin
+          Post.destroy_with_reason(@post.id, params[:reason], @current_user)
+        rescue Post::FlaggingError => x
+          respond_to_error(x.message, :action => "error")
+          return
+        end
       end
 
       respond_to_success("Post deleted", :action => "show", :id => @post.id)

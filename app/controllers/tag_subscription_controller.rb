@@ -1,5 +1,7 @@
 class TagSubscriptionController < ApplicationController
   layout "default"
+  verify :xhr => true, :only => [:create, :destroy]
+  verify :method => :post, :only => [:update, :create, :destroy]
   
   def create
     if request.post?

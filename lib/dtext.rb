@@ -87,6 +87,8 @@ module DText
   end
 
   def parse(str, options = {})
+    return "" if str.blank?
+    
     # Make sure quote tags are surrounded by newlines
     
     unless options[:inline]

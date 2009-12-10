@@ -9,7 +9,7 @@ class TagSubscriptionControllerTest < ActionController::TestCase
     get :index, {}, {:user_id => 1}
     assert_response :success
     
-    post :create, {:format => "js"}, {:user_id => 1}
+    xhr :post, :create, {}, {:user_id => 1}
     assert_response :success
     assert_equal(1, TagSubscription.count)
     
@@ -22,7 +22,7 @@ class TagSubscriptionControllerTest < ActionController::TestCase
     get :index, {}, {:user_id => 1}
     assert_response :success
     
-    post :destroy, {:format => "js", :id => ts.id}, {:user_id => 1}
+    xhr :post, :destroy, {:format => "js", :id => ts.id}, {:user_id => 1}
     assert_response :success
     assert_equal(0, TagSubscription.count)
   end
