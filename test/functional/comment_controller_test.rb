@@ -82,13 +82,11 @@ class CommentControllerTest < ActionController::TestCase
     assert_response :success
     comment.reload
     assert_equal(1, comment.score)
-    assert_equal(4, comment.last_voted_by)
     
     post :vote, {:id => comment.id, :score => "down", :format => "json"}, {:user_id => 4}
     assert_response 423
     comment.reload
     assert_equal(1, comment.score)
-    assert_equal(4, comment.last_voted_by)
   end
   
   def test_index_hidden_and_index_all

@@ -65,4 +65,23 @@ class CommentTest < ActiveSupport::TestCase
       comment.to_json
     end
   end
+  
+  def test_voting
+    c1 = create_comment(Post.find(1), :body => "blah")
+    assert_nothing_raised {c1.vote!(User.find(1), 1)}
+    assert_raise(Comment::VotingError) {c1.vote!(User.find(1), 1)}
+    assert_equal(1, CommentVote.count)
+    
+    c2 = create_comment(Post.find(1), :body => "blah")
+    assert_nothing_raised {c2.vote!(User.find(1), 1)}
+    assert_equal(2, CommentVote.count)
+
+    c3 = create_comment(Post.find(1), :body => "blah")
+    assert_nothing_raised {c3.vote!(User.find(1), 1)}
+    assert_equal(3, CommentVote.count)
+
+    c4 = create_comment(Post.find(1), :body => "blah")
+    assert_raise(Comment::VotingError) {c4.vote!(User.find(1), 1)}
+    assert_equal(3, CommentVote.count)
+  end  
 end

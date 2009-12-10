@@ -1,7 +1,10 @@
 class Comment < ActiveRecord::Base
+  class VotingError < Exception ; end
+  
   validates_format_of :body, :with => /\S/, :message => 'has no content'
   belongs_to :post
   belongs_to :user
+  has_many :votes, :class_name => "CommentVote"
   after_save :update_last_commented_at
   after_destroy :update_last_commented_at
   attr_protected :post_id, :user_id, :score, :text_search_index
@@ -31,7 +34,18 @@ class Comment < ActiveRecord::Base
   end
   
   def can_be_voted_by?(user)
-    last_voted_by != user.id
+    !votes.exists?(["user_id = ?", user.id])
+  end
+  
+  def vote!(user, n)
+    if !user.can_comment_vote?
+      raise VotingError.new("You can only vote three times an hour on comments")
+    elsif can_be_voted_by?(user)
+      update_attribute(:score, score + n)
+      votes.create(:user_id => user.id)
+    else
+      raise VotingError.new("You have already voted for this comment")
+    end
   end
   
   def api_attributes

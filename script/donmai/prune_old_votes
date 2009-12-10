@@ -3,3 +3,4 @@
 require File.dirname(__FILE__) + '/../../config/environment'
 
 PostVote.prune!
+CommentVote.prune!

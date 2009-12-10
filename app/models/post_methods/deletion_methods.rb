@@ -4,7 +4,6 @@ module PostMethods
       def destroy_with_reason(id, reason, current_user)
         post = Post.find(id)
         Post.transaction do
-          puts post.status
           post.flag!(reason, current_user)
           post.reload
           post.delete!

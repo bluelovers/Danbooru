@@ -46,11 +46,8 @@ class UserController < ApplicationController
         rescue ActiveRecord::RecordNotFound
           flash[:notice] = "Account not found"
           
-        rescue User::NoInvites
-          flash[:notice] = "You have no invites for use"
-          
-        rescue User::HasNegativeRecord
-          flash[:notice] = "This use has a negative record and must be invited by an admin"
+        rescue User::InvitationError => x
+          flash[:notice] = x.message
         end
       end
       

@@ -84,19 +84,17 @@ class CommentController < ApplicationController
   
   def vote
     @comment = Comment.find(params[:id])
-    if @comment.can_be_voted_by?(@current_user)
-      @comment.last_voted_by = @current_user.id
-      
+
+    begin
       if params[:score] == "down"
-        @comment.score -= 1
+        @comment.vote!(@current_user, -1)
       else
-        @comment.score += 1
+        @comment.vote!(@current_user, 1)
       end
-      
-      @comment.save
+
       respond_to_success("Vote saved", {:action => "index"}, :api => {:score => @comment.score})
-    else
-      respond_to_error("Already voted", {:action => "index"}, :status => 423, :api => {:id => @comment.id})
+    rescue Comment::VotingError => x
+      respond_to_error(x.message, {:action => "index"}, :status => 423, :api => {:id => @comment.id})
     end
   end
 
