@@ -2,6 +2,7 @@ class Post < ActiveRecord::Base
   STATUSES = %w(active pending flagged deleted)
   
   has_many :notes, :order => "id desc"
+  has_and_belongs_to_many :pools
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
   belongs_to :approver, :class_name => "User"

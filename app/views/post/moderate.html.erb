@@ -27,6 +27,9 @@
               <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
               <li>Rating: <%= p.pretty_rating %></li>
               <li>Hidden: <%= p.mod_hidden_count %></li>
+              <% if p.pools.any? %>
+                <li>Pools: <%= h p.pools.map {|x| x.pretty_name}.join(", ") %></li>
+              <% end %>
               <% if p.parent_id %>
                 <li>Parent: <%= fast_link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
               <% end %>
