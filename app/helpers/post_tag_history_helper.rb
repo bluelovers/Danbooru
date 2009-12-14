@@ -8,6 +8,7 @@ module PostTagHistoryHelper
 
     tags.sort.each do |name|
       name ||= "UNKNOWN"
+      next if name == "parent:"
       
       tag_type = Tag.type_name(name)
       
