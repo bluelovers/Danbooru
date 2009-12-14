@@ -11,18 +11,14 @@ module PostMethods
         raise FlaggingError.new("Can only unapprove 10 posts a day")
       end
 
-      if status != "active"
-        raise FlaggingError.new("Can only unapprove active posts")
-      end
-
-      if flag_detail
-        raise FlaggingError.new("This post has been previously unapproved and cannot be unapproved again")
+      if status == "deleted"
+        raise FlaggingError.new("Can not flag deleted posts")
       end
 
       update_attribute(:status, "flagged")
 
       if flag_detail
-        flag_detail.update_attributes(:reason => reason, :user_id => creator_id)
+        flag_detail.update_attributes(:reason => reason, :user_id => current_user.id)
       else
         FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => current_user.id, :is_resolved => false)
       end

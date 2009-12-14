@@ -370,6 +370,7 @@ class PostController < ApplicationController
   def flag
     begin
       post = Post.find(params[:id])
+      raise Post::FlaggingError.new("Post was previously unapproved") if post.flag_detail
       post.flag!(params[:reason], @current_user)
       respond_to_success("Post flagged", :action => "show", :id => params[:id])
     rescue Post::FlaggingError => x

@@ -38,7 +38,7 @@ module UserMethods
     end
     
     def can_comment_vote?
-      CommentVote.count(:conditions => ["user_id = ? and created_at >= ?", id, 1.hour.ago]) < 3
+      CommentVote.count(:conditions => ["user_id = ? and created_at >= ?", id, 1.hour.ago]) < 10
     end
     
     def can_remove_from_pools?

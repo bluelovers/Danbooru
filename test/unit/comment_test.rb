@@ -75,13 +75,5 @@ class CommentTest < ActiveSupport::TestCase
     c2 = create_comment(Post.find(1), :body => "blah")
     assert_nothing_raised {c2.vote!(User.find(1), 1)}
     assert_equal(2, CommentVote.count)
-
-    c3 = create_comment(Post.find(1), :body => "blah")
-    assert_nothing_raised {c3.vote!(User.find(1), 1)}
-    assert_equal(3, CommentVote.count)
-
-    c4 = create_comment(Post.find(1), :body => "blah")
-    assert_raise(Comment::VotingError) {c4.vote!(User.find(1), 1)}
-    assert_equal(3, CommentVote.count)
   end  
 end
