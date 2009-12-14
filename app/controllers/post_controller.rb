@@ -175,15 +175,15 @@ class PostController < ApplicationController
     @post = Post.find(params[:id])
 
     if @current_user.is_janitor_or_higher?
-      if @post.status == "deleted"
-        @post.delete_from_database
-      else
-        begin
+      begin
+        if @post.status == "deleted"
+          @post.delete_from_database
+        else
           Post.destroy_with_reason(@post.id, params[:reason], @current_user)
-        rescue Post::FlaggingError => x
-          respond_to_error(x.message, :action => "error")
-          return
         end
+      rescue Post::FlaggingError => x
+        respond_to_error(x.message, :action => "error")
+        return
       end
 
       respond_to_success("Post deleted", :action => "show", :id => @post.id)

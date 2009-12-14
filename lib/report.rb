@@ -1,4 +1,12 @@
 module Report
+  def tag_history(name)
+    if name
+      ActiveRecord::Base.select_all_sql("SELECT date_trunc('week', posts.created_at) AS week, COUNT(*) AS post_count FROM posts WHERE posts.tags_index @@ to_tsquery('danbooru', E'" + Post.generate_sql_escape_helper([name]).first + "') GROUP BY week ORDER BY week").map {|x| [x["week"], x["post_count"]]}
+    else
+      []
+    end
+  end
+
   def usage_by_user(table_name, start, stop, limit, level)
     conds = ["#{table_name}.created_at BETWEEN ? AND ?"]
     params = [start, stop]
@@ -68,4 +76,5 @@ module Report
   module_function :wiki_updates
   module_function :note_updates
   module_function :add_sum
+  module_function :tag_history
 end

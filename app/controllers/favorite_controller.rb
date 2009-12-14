@@ -11,8 +11,8 @@ class FavoriteController < ApplicationController
       @post.reload
       
       respond_to_success("Post added", {:controller => "post", :action => "show", :id => @post.id}, :api => {:score => @post.score, :post_id => @post.id, :favorited_users => favorited_users_for_post(@post)})
-    rescue User::AlreadyFavoritedError
-      respond_to_error("Already favorited", {:controller => "post", :action => "show", :id => params[:id]}, :status => 423)
+    rescue User::FavoriteError => x
+      respond_to_error(x.message, {:controller => "post", :action => "show", :id => params[:id]}, :status => 423)
     end
   end
   
