@@ -36,6 +36,15 @@
         </select>          
       </form>
     </div>
+        
+    <div id="blacklisted-sidebar" style="display: none; margin-bottom: 1em;">
+      <h5>
+        <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
+        <span id="blacklist-count" class="post-count"></span>
+      </h5>
+      <ul id="blacklisted-list" style="display: none;">
+      </ul>
+    </div>
 
     <div style="margin-bottom: 1em;">
       <h5>
@@ -47,15 +56,6 @@
 
       <div id="sidebar-tags">
         <%= print_tag_sidebar(params[:tags]) %>
-        
-        <div id="blacklisted-sidebar" style="display: none; margin-bottom: 1em;">
-          <h5>
-            <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
-            <span id="blacklist-count" class="post-count"></span>
-          </h5>
-          <ul id="blacklisted-list" style="display: none;">
-          </ul>
-        </div>
       </div>
       
       <div id="sidebar-wiki" style="margin-top: 1em; display: none;">
