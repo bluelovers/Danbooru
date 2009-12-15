@@ -6,7 +6,7 @@
 
     <div class="sidebar">
       <%= render :partial => "search" %>
-      <%= print_rss_advertisement %>
+      <%= print_advertisement("vertical") %>
       <h5>Tags</h5>
       <%= print_tag_sidebar(@post) %>
       <%= render :partial => "post/show_partials/statistics_panel" %>
