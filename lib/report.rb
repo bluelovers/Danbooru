@@ -1,7 +1,11 @@
 module Report
-  def tag_history(name)
+  def tag_history(name, start_date, end_date)
     if name
-      ActiveRecord::Base.select_all_sql("SELECT date_trunc('week', posts.created_at) AS week, COUNT(*) AS post_count FROM posts WHERE posts.tags_index @@ to_tsquery('danbooru', E'" + Post.generate_sql_escape_helper([name]).first + "') GROUP BY week ORDER BY week").map {|x| [x["week"], x["post_count"]]}
+      start_date = start_date.strftime("%Y-%m-%d")
+      end_date = end_date.strftime("%Y-%m-%d")
+      results = ActiveRecord::Base.select_all_sql("SELECT extract(year from posts.created_at) as year, extract(week from posts.created_at) AS week, COUNT(*) AS post_count FROM posts WHERE posts.tags_index @@ to_tsquery('danbooru', E'" + Post.generate_sql_escape_helper([name]).first + "') AND posts.created_at >= '#{start_date}' AND posts.created_at <= '#{end_date}' GROUP BY year, week ORDER BY year, week").map {|x| [x["year"], x["week"], x["post_count"]]}
+      
+      results.map {|x| [x[0].to_i * 100 + x[1].to_i, x[2].to_i]}
     else
       []
     end

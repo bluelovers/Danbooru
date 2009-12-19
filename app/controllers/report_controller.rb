@@ -32,7 +32,12 @@ class ReportController < ApplicationController
   end
 
   def tag_history
-    @report = Report.tag_history(params[:tag])
+    if params[:tag]
+      @reports = []
+      params[:tag].scan(/\S+/).each do |tag|
+        @reports << [tag, Report.tag_history(tag, @start_date, @end_date)]
+      end
+    end
   end
   
 private
