@@ -1,14 +1,86 @@
 module Report
-  def tag_history(name, start_date, end_date)
+  def tag_history_query(name, start_date, end_date)
     if name
       start_date = start_date.strftime("%Y-%m-%d")
       end_date = end_date.strftime("%Y-%m-%d")
       results = ActiveRecord::Base.select_all_sql("SELECT extract(year from posts.created_at) as year, extract(week from posts.created_at) AS week, COUNT(*) AS post_count FROM posts WHERE posts.tags_index @@ to_tsquery('danbooru', E'" + Post.generate_sql_escape_helper([name]).first + "') AND posts.created_at >= '#{start_date}' AND posts.created_at <= '#{end_date}' GROUP BY year, week ORDER BY year, week").map {|x| [x["year"], x["week"], x["post_count"]]}
       
-      results.map {|x| [x[0].to_i * 100 + x[1].to_i, x[2].to_i]}
+      results.inject({}) do |h, x|
+        key = x[0].to_i * 100 + x[1].to_i
+        h[key] = x[2].to_i
+        h
+      end
     else
       []
     end
+  end
+  
+  def tag_history_graph(names, start_date, end_date)
+    graph = Scruffy::Graph.new
+    graph.title = "Uploads for #{names}"
+    graph.renderer = Scruffy::Renderers::Standard.new
+    global_date_min = nil
+    global_date_max = nil
+    results = {}
+    
+    names.scan(/\S+/).each do |name|
+      results[name] = tag_history_query(name, start_date, end_date)
+    end
+    
+    results.each do |key, result|
+      min = result.keys.min
+      
+      if global_date_min.nil? || min < global_date_min
+        global_date_min = min
+      end
+      
+      max = result.keys.max
+      
+      if global_date_max.nil? || max > global_date_max
+        global_date_max = max
+      end
+    end
+    
+    counts = {}
+    return counts if global_date_min.nil? || global_date_max.nil?
+    
+    names.scan(/\S+/).each do |name|
+      counts[name] = []
+      index = 1
+      
+      (global_date_min..global_date_max).each do |date|
+        next if date % 100 > 52 || date % 100 <= 0
+        
+        if results[name].has_key?(date)
+          counts[name] << [index, results[name][date]]
+        else
+          counts[name] << [index, 0]
+        end
+        
+        index += 1
+      end
+    end
+    
+    ticks = (global_date_min..global_date_max).to_a
+    ticks.reject! {|x| x % 100 == 0 || x % 100 > 52}
+    index = 0
+    reduced_ticks = ticks.map {|x| index += 1; [x, index]}
+    while reduced_ticks.size > 20
+      tmp = []
+      reduced_ticks.each_with_index do |x, i|
+        if i % 2 == 1
+          tmp << x
+        end
+      end
+      reduced_ticks = tmp
+    end
+    
+    reduced_ticks = reduced_ticks.map do |x|
+      index = x[1]
+      [index, Date.commercial(x[0] / 100, x[0] % 100, 1).to_s("%Y-%m-%d")]
+    end
+    
+    [counts, reduced_ticks]
   end
 
   def usage_by_user(table_name, start, stop, limit, level)
@@ -80,5 +152,6 @@ module Report
   module_function :wiki_updates
   module_function :note_updates
   module_function :add_sum
-  module_function :tag_history
+  module_function :tag_history_query
+  module_function :tag_history_graph
 end

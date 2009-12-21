@@ -22,23 +22,18 @@
   </table>
 <% end %>
 
-<div id="container" style="width: 100%; height: 400px; margin: 1em;"></div>
+<div id="container" style="width: 100%; height: 400px"></div>
 
-<% if @reports.any? %>
+<% if @counts %>
   <script type="text/javascript" charset="utf-8">
-    var f = Flotr.draw(
-      $("container"), [
-      <% @reports.each do |report| %>
-        {
-          data: <%= report[1].to_json %>,
-          label: <%= report[0].to_json %>
-        },
-      <% end %>
-      ], {
+    Flotr.draw(
+      $("container"), [<%= @counts.map {|x| "{data: #{x[1].to_json}, label: #{x[0].to_json}}"}.join(", ") %>],
+      {
         lines: {show: true},
-        points: {show: false},
-        xaxis: {noTicks: 15, tickDecimals: 0},
-        yaxis: {tickDecimals: 0}
+        xaxis: {ticks: <%= @ticks.to_json %>},
+        yaxis: {noTicks: 10, tickDecimals: 0},
+        legend: {show: true},
+        shadowSize: 0
       }
     )
   </script>
