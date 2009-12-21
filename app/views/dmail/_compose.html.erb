@@ -8,7 +8,7 @@
     <tfoot>
       <tr>
         <td></td>
-        <td><%= submit_tag "Send" %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
+        <td><%= submit_tag "Send" %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %></td>
       </tr>
     </tfoot>
     <tbody>
