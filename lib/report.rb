@@ -16,9 +16,6 @@ module Report
   end
   
   def tag_history_graph(names, start_date, end_date)
-    graph = Scruffy::Graph.new
-    graph.title = "Uploads for #{names}"
-    graph.renderer = Scruffy::Renderers::Standard.new
     global_date_min = nil
     global_date_max = nil
     results = {}
@@ -77,7 +74,7 @@ module Report
     
     reduced_ticks = reduced_ticks.map do |x|
       index = x[1]
-      [index, Date.commercial(x[0] / 100, x[0] % 100, 1).to_s("%Y-%m-%d")]
+      [index, Date.commercial(x[0] / 100, x[0] % 100, 1).strftime("%m/%d/%y")]
     end
     
     [counts, reduced_ticks]
