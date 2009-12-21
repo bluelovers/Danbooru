@@ -100,6 +100,8 @@ class Artist < ActiveRecord::Base
     end
     
     def commit_aliases
+      return if @alias_names.nil?
+      
       transaction do
         connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{id}")
 
@@ -155,6 +157,8 @@ class Artist < ActiveRecord::Base
     end
     
     def commit_members
+      return if @member_names.nil?
+      
       transaction do
         connection.execute("UPDATE artists SET group_id = NULL WHERE group_id = #{id}")
 
@@ -206,7 +210,7 @@ class Artist < ActiveRecord::Base
       return {
         :id => id, 
         :name => name, 
-        :alias_id => alias_id, 
+        :alias_id => alias_id,
         :group_id => group_id,
         :urls => artist_urls.map {|x| x.url},
         :is_active => is_active,

@@ -35,6 +35,14 @@ class ArtistControllerTest < ActionController::TestCase
     mary = Artist.find_by_name("mary")
     assert_not_nil(mary)
     assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
+    
+    post :update, {:id => artist.id, :artist => {}}, {:user_id => 4}
+    artist.reload
+    assert_equal("claude, oscar", artist.alias_names)
+    
+    post :update, {:id => artist.id, :artist => {:alias_names => ""}}, {:user_id => 4}
+    artist.reload
+    assert_equal("", artist.alias_names)
   end
   
   def test_create
