@@ -9,7 +9,7 @@ Favorite = {
        html = split_users.slice(0, 6).map(function(x) {return '<a href="/user/show?name=' + encodeURIComponent(x) + '">' + x + '</a>'}).join(", ")
       
       if (split_users.size() > 6) {
-        html += '<span id="remaining-favs" style="display: none;">' + split_users.slice(6, -1).map(function(x) {return '<a href="/user/show?name=' + encodeURIComponent(x) + '">' + x + '</a>'}).join(", ") + '</span> <span id="remaining-favs-link">(<a href="#" onclick="$(\'remaining-favs\').show(); $(\'remaining-favs-link\').hide(); return false;">' + (split_users.size() - 6) + ' more</a>)</span>'
+        html += '<span id="remaining-favs" style="display: none;">, ' + split_users.slice(6, 1000).map(function(x) {return '<a href="/user/show?name=' + encodeURIComponent(x) + '">' + x + '</a>'}).join(", ") + '</span> <span id="remaining-favs-link">(<a href="#" onclick="$(\'remaining-favs\').show(); $(\'remaining-favs-link\').hide(); return false;">' + (split_users.size() - 6) + ' more</a>)</span>'
       }
       
       return html

@@ -23,6 +23,6 @@
         (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)
       <% end %>
     </li>
-    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
+    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span></li>
   </ul>
 </div>
