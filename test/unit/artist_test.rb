@@ -56,46 +56,30 @@ class ArtistTest < ActiveSupport::TestCase
     
     # Make sure deleted artists are hidden
     artist.update_attribute(:is_active, false)
-    assert_equal([], Artist.find_all_by_url("http://also.not.rembrandt.com/test.jpg").map(&:name))
+    assert_equal([], Artist.find_all_by_url("http://also.not.rembrandt.com/test.jpg").map(&:name))    
   end
   
-  def test_aliases_simple
-    # Test to make sure setting an alias creates an artist if it doesn't already exist
-    a1 = create_artist(:name => "a1", :alias_names => "initialg")
-    assert_not_nil(Artist.find_by_name("a1"))
-    assert_not_nil(Artist.find_by_name("initialg"))
-    assert_equal(a1.id, Artist.find_by_name("initialg").alias_id)
+  def test_other_names
+    a1 = create_artist(:name => "a1", :other_names => "aaa, bbb, ccc ddd")
+    assert_nil(Artist.find_by_name("aaa"))
+    assert_nil(Artist.find_by_name("bbb"))
+    assert_nil(Artist.find_by_name("ccc_ddd"))
+    a1.reload
+    assert_equal("aaa, bbb, ccc_ddd", a1.other_names)
+    assert_equal("{aaa,bbb,ccc_ddd}", a1.other_names_array)
+    
+    # Test special characters
+    a1.update_attributes(:other_names => "\\, \", '")
+    a1.reload
+    assert_equal("\\, \", '", a1.other_names)
+    assert_equal("{\"\\\\\",\"\\\"\",'}", a1.other_names_array)
   end
 
-  def test_aliases_clear_out_old_aliases
-    # Test to make sure setting an alias clears out any old aliases
-    a1 = create_artist(:name => "a1", :alias_names => "initial-g")
-    assert_equal(a1.id, Artist.find_by_name("initial-g").alias_id)
-  end
-
-  def test_aliases_removed_from_find_all_by_url
-    # Test to make sure aliases are removed from Artist.find_all_by_url
-    create_artist(:name => "amadeus", :urls => "http://amadeus.com/top.jpg")
-    create_artist(:name => "mozart", :alias_names => "amadeus", :urls => "http://amadeus.com/top.jpg")
-    matches = Artist.find_all_by_url("http://amadeus.com/top.jpg")
-    assert_equal(1, matches.size)
-    assert_equal("mozart", matches[0].name)
-  end
-  
   def test_groups
-    cat_or_fish = create_artist(:name => "cat_or_fish", :member_names => "yuu, kazuki")
-    yuu = Artist.find_by_name("yuu")
-    kazuki = Artist.find_by_name("kazuki")
-    assert_not_nil(yuu)
-    assert_not_nil(kazuki)
-    assert_equal(cat_or_fish.id, yuu.group_id)
-    assert_equal(cat_or_fish.id, kazuki.group_id)
-    
-    max = create_artist(:name => "max", :group_name => "cat_or_fish")
-    assert_equal(cat_or_fish.id, max.group_id)
-    
+    cat_or_fish = create_artist(:name => "cat_or_fish")
+    yuu = create_artist(:name => "yuu", :group_name => "cat_or_fish")
     cat_or_fish.reload
-    assert_equal([yuu.id, kazuki.id, max.id].sort, cat_or_fish.members.map(&:id).sort)
+    assert_equal("yuu", cat_or_fish.member_names)
   end
   
   def test_api

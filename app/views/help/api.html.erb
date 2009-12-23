@@ -239,10 +239,8 @@
       <ul>
         <li><strong>artist[name]</strong> The artist's name.</li>
         <li><strong>artist[urls]</strong> A list of URLs associated with the artist, whitespace delimited.</li>
-        <li><strong>artist[alias_name]</strong> The artist that this artist is an alias for. Simply enter the alias artist's name.</li>
         <li><strong>artist[group_name]</strong> The group or circle that this artist is a member of. Simply enter the group's name.</li>
-        <li><strong>artist[alias_names]</strong> List of comma separated artists that are aliased to this artist.</li>
-        <li><strong>artist[member_names]</strong> List of comma separated artists that are a member of this group.</li>
+        <li><strong>artist[other_names]</strong> List of comma separated names this artist is also known by.</li>
       </ul>
     </div>
     <div class="section">
@@ -252,10 +250,8 @@
         <li><strong>id</strong> The id of thr artist to update.</li>
         <li><strong>artist[name]</strong> The artist's name.</li>
         <li><strong>artist[urls]</strong> A list of URLs associated with the artist, whitespace delimited.</li>
-        <li><strong>artist[alias_name]</strong> The artist that this artist is an alias for. Simply enter the alias artist's name.</li>
         <li><strong>artist[group_name]</strong> The group or circle that this artist is a member of. Simply enter the group's name.</li>
-        <li><strong>artist[alias_names]</strong> List of comma separated artists that are aliased to this artist.</li>
-        <li><strong>artist[member_names]</strong> List of comma separated artists that are a member of this group.</li>
+        <li><strong>artist[other_names]</strong> List of comma separated names this artist is also known by.</li>
       </ul>
     </div>
     <div class="section">
@@ -577,40 +573,6 @@
         <li><strong>post_id</strong> The post id.</li>
         <li><strong>user_id</strong> The user id.</li>
         <li><strong>user_name</strong> The user name.</li>
-      </ul>
-    </div>
-  </div>
-  
-  
-  
-  <div class="section">
-    <a name="changelog"></a>
-    <h2>Change Log</h2>
-    <div class="section">
-      <h4>1.16.0</h4>
-      <ul>
-        <li>Updated docs for favorites and tag history</li>
-      </ul>
-      
-      <h4>1.15.0</h4>
-      <ul>
-        <li>Added documentation for pools</li>
-      </ul>
-      
-      <h4>1.13.0</h4>
-      <ul>
-        <li>Changed interface for artists to use new URL system</li>
-        <li>JSON requests now end in a .json suffix</li>
-        <li>Renamed some error reason messages</li>
-        <li>Removed comment/index from API</li>
-        <li>Removed url and md5 parameters from artist search (can just pass the URL or MD5 hash to the name parameter)</li>
-      </ul>
-    </div>
-    
-    <div class="section">
-      <h4>1.8.1</h4>
-      <ul>
-        <li>Removed post[is_flagged] attribute</li>
       </ul>
     </div>
   </div>

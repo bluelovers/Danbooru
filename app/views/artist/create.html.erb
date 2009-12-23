@@ -1,25 +1,20 @@
 <div id="artist-create">
-  <p>Separate multiple aliases and group members with commas.</p>
-
   <form method="post" action="/artist/create">
     <table class="form">
       <tr>
         <th><label for="artist_name">Name</label></th>
         <td><%= text_field "artist", "name", :size => 80 %></td>
       </tr>
-      <% if params[:alias_id] %>
-        <tr>
-          <th><label for="artist_alias_name">Alias for</label></th>
-          <td><%= text_field "artist", "alias_name", :size => 80 %></td>
-        </tr>
-      <% end %>
       <tr>
-        <th><label for="artist_alias_names">Aliases</label</th>
-        <td><%= text_field "artist", "alias_names", :size => 80, :value => params[:jp_name] %></td>
+        <th>
+          <label for="artist_other_names">Other Names</label>
+          <p class="info">Separate with commas</p>
+        </th>
+        <td><%= text_field "artist", "other_names", :size => 80 %></td>
       </tr>
       <tr>
-        <th><label for="artist_member_names">Members</label></th>
-        <td><%= text_field "artist", "member_names", :size => 80 %></td>
+        <th><label for="artist_group_name">Group</label></th>
+        <td><%= text_field "artist", "group_name", :size => 80 %></td>
       </tr>
       <tr>
         <th><label for="artist_urls">URLs</label></th>

@@ -18,51 +18,34 @@ class ArtistControllerTest < ActionController::TestCase
     get :update, {:id => artist.id}, {:user_id => 4}
     assert_response :success
 
-    post :update, {:id => artist.id, :artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :alias_names => "claude, oscar", :member_names => "john, mary", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
+    post :update, {:id => artist.id, :artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :other_names => "claude, oscar", :group_name => "john", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
     artist.reload
     assert_equal("monet", artist.name)
     monet = Artist.find_by_name("monet")
     assert_not_nil(monet)
     assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
-    claude = Artist.find_by_name("claude")
-    assert_not_nil(claude)
-    assert_equal(monet.id, claude.alias_id)
-    oscar = Artist.find_by_name("oscar")
-    assert_not_nil(oscar)
-    john = Artist.find_by_name("john")
-    assert_not_nil(john)
-    assert_equal(monet.id, john.group_id)
-    mary = Artist.find_by_name("mary")
-    assert_not_nil(mary)
+    
+    assert_equal("claude, oscar", monet.other_names)
     assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
     
     post :update, {:id => artist.id, :artist => {}}, {:user_id => 4}
     artist.reload
-    assert_equal("claude, oscar", artist.alias_names)
+    assert_equal("claude, oscar", artist.other_names)
+    assert_equal("john", artist.group_name)
     
-    post :update, {:id => artist.id, :artist => {:alias_names => ""}}, {:user_id => 4}
+    post :update, {:id => artist.id, :artist => {:other_names => ""}}, {:user_id => 4}
     artist.reload
-    assert_equal("", artist.alias_names)
+    assert_equal("", artist.other_names)
   end
   
   def test_create
     get :create, {}, {:user_id => 4}
     assert_response :success
     
-    post :create, {:artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :alias_names => "claude, oscar", :member_names => "john, mary", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
+    post :create, {:artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :other_names => "claude, oscar", :group_name => "john", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
     monet = Artist.find_by_name("monet")
     assert_not_nil(monet)
     assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
-    claude = Artist.find_by_name("claude")
-    assert_not_nil(claude)
-    assert_equal(monet.id, claude.alias_id)
-    oscar = Artist.find_by_name("oscar")
-    assert_not_nil(oscar)
-    john = Artist.find_by_name("john")
-    assert_not_nil(john)
-    assert_equal(monet.id, john.group_id)
-    mary = Artist.find_by_name("mary")
-    assert_not_nil(mary)
     assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
   end
   
@@ -74,7 +57,7 @@ class ArtistControllerTest < ActionController::TestCase
   
   def test_index
     create_artist(:name => "monet")
-    create_artist(:name => "pablo", :alias_name => "monet")
+    create_artist(:name => "pablo", :other_names => "monet")
     create_artist(:name => "hanaharu", :group_name => "monet")
     get :index
     assert_response :success

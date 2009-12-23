@@ -9,32 +9,21 @@
   <div class="section">
     <h4>How do artists differ from tags?</h4>
     <p>For starters, artists can have URLs associated with them. These come in handy when you're uploading a post from the artist's site and want to auto-identify it; Danbooru will query the artist database for the URL and automatically figure out who it is. It isn't foolproof but as the database gets more artists, the more reliable it becomes.</p>
-    <p>You can also organize artists more. Doujin circles can be represented as artists and can have group members. Artists can also have aliases and notes for extraneous details.</p>
+    <p>You can also organize artists more. Doujin circles can be represented as artists and can have group members. Artists can also have multiple names associated with them and notes for extraneous details.</p>
   </div>
 
   <div class="section">
     <h4>How do I search for artists?</h4>
     <p>Start at the <%= link_to "index", :controller => "artist", :action => "index" %>. In addition to browsing through the entire artist list, you can also search for artists.</p>
-    <p>By default, if you just enter a name in the search box Danbooru will return any artist that has your query in their name. This is probably the behavior you want in most cases.</p>
+    <p>By default, Danbooru will return artists with the name you entered. You can do wildcard searching with "*". For example, searching for "bol*" will return any artist whose name starts with "bol". Danbooru will also include results with matching group names.</p>
     <p>Suppose you know the artist's homepage, but can't figure out their name. Simply search for the URL (beginning with http) and Danbooru will return any associated artists.</p>
   </div>
 
   <div class="section">
     <h4>How do I create an artist?</h4>
     <p>First off, <%= link_to "go here", :controller => "artist", :action => "create" %>.</p>
-    <p>You'll see five fields. <strong>Name</strong> is self-explanatory. <strong>Jap Name/Aliases</strong> is for any aliases the artist has. For example, you would place the artist's name in kanji or kana in this field. If you have more than one alias to enter, you can separate them with commas. <strong>Notes</strong> are for any extra tidbits of information you want to mention (this field is actually saved to the artist's matching wiki page on Danbooru).</p>
+    <p>You'll see five fields. <strong>Name</strong> is self-explanatory. <strong>Other Names</strong> are for any miscellaneous names or identities the artist has, comma delimited. For example, you can place the artist's name in kanji or kana in this field. <strong>Group</strong> is the name of the group or circle this artist belongs to. <strong>Notes</strong> are for any extra tidbits of information you want to mention (this field is actually saved to the artist's matching wiki page on Danbooru).</p>
     <p>The URLs field is a list of URLs associated with the artist, like their home page, their blog, and any servers that store the artist's images. You can separate multiple artists with newlines or spaces.</p>
-  </div>
-
-  <div class="section">
-    <h4>How do I update an artist?</h4>
-    <p>The interface for updating an artist is nearly identical to the interface for creating artists, except for one additional field: members. <strong>Members</strong> is for artists who are a member of this circle. If there are more than one, you can separate them with commas.</p>
-  </div>
-
-  <div class="section">
-    <h4>What are aliases?</h4>
-    <p>Artists often have more than one name. In particular, they can have a Japanese name and a romanized name. Ideally, users should be able to search for either and get the same artist.</p>
-    <p>Danbooru allows you to alias artists to one reference artist, typically one that you can search posts on.</p>
   </div>
 
   <div class="section">

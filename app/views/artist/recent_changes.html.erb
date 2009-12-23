@@ -9,7 +9,7 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>Alias</th>
+        <th>Other Names</th>
         <th>Group</th>
         <th>Updated</th>
         <th>Updated by</th>
@@ -20,8 +20,8 @@
       <% @versions.each do |version| %>
         <tr class="<%= cycle 'even', 'odd' %>">
           <td><%= link_to h(version.name), :action => "history", :id => version.artist_id %></td>
-          <td><%= version.alias_id %></td>
-          <td><%= version.group_id %></td>
+          <td><%= h version.other_names %></td>
+          <td><%= h version.group_name %></td>
           <td><%= time_ago_in_words version.created_at %> ago</td>
           <td><%= link_to version.updater_name, :controller => "user", :action => "show", :id => version.updater_id %></td>
           <td><%= version.urls.join(" ") %></td>

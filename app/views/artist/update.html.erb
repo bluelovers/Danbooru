@@ -1,6 +1,4 @@
 <div id="artist-update">
-  <p>Separate multiple aliases and group members with commas.</p>
-  
   <div id="preview" style="display: none; margin: 1em 0;">
   </div>
 
@@ -13,12 +11,15 @@
         <td><%= text_field "artist", "name", :size => 80 %></td>
       </tr>
       <tr>
-        <th><label for="artist_aliases">Aliases</label></th>
-        <td><%= text_field "artist", "alias_names", :size => 80 %></td>
+        <th>
+          <label for="artist_aliases">Other Names</label>
+          <p class="info">Separate with commas</p>
+        </th>
+        <td><%= text_field "artist", "other_names", :size => 80 %></td>
       </tr>
       <tr>
-        <th><label for="artist_members">Members</label></th>
-        <td><%= text_field "artist", "member_names", :size => 80 %></td>
+        <th><label for="artist_members">Group</label></th>
+        <td><%= text_field "artist", "group_name", :size => 80 %></td>
       </tr>
       <tr>
         <th><label for="artist_urls">URLs</label></th>

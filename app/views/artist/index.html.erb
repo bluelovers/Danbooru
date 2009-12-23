@@ -24,12 +24,9 @@
             </td>
             <td>
               <%= link_to h(artist.name), {:action => "show", :id => artist.id} %>
-              <% if artist.alias_id %>
-                &rarr; <%= link_to h(artist.alias_name), {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
+              <% if !artist.group_name.blank? %>
+                [<%= link_to(h(artist.group_name), {:action => "show", :id => nil, :name => artist.group_name})%>]
               <% end %>
-              <% if artist.group_id %>
-                [<%= link_to h(artist.group_name), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
-              <% end %>             
             </td>
             <% if artist.updater_id %>
               <td><%= link_to h(artist.updater_name), :controller => "user", :action => "show", :id => artist.updater_id %></td>

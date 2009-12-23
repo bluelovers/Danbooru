@@ -8,6 +8,30 @@
   <div style="margin-bottom: 1em; clear: both;">
     <table class="form">
       <tbody>
+        <% if !@artist.other_names.blank? %>
+          <tr>
+            <th width="15%">Other Names</th>
+            <td width="85%">
+              <%= artist_list_link_to(@artist, :other_names) %>
+            </td>
+          </tr>
+        <% end %>
+        <% if !@artist.group_name.blank? %>
+          <tr>
+            <th width="15%">Group</th>
+            <td width="85%">
+              <%= link_to(h(@artist.group_name), :action => "show", :id => nil, :name => @artist.group_name) %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @artist.members.any? %>
+          <tr>
+            <th width="15%">Members</th>
+            <td width="85%">
+              <%= artist_list_link_to(@artist, :member_names) %>
+            </td>
+          </tr>
+        <% end %>
         <tr>
           <th width="15%">Active</th>
           <td width="85%"><%= @artist.is_active? %></td>
@@ -23,30 +47,6 @@
                 <% end %>
               <% end %>
             </td>
-          </tr>
-        <% end %>
-        <% if @artist.alias_id %>
-          <tr>
-            <th width="15%">Alias for</th>
-            <td width="85%"><%= link_to h(@artist.alias_name), :action => "show", :id => @artist.alias_id %></td>
-          </tr>
-        <% end %>
-        <% if @artist.aliases.any? %>
-          <tr>
-            <th width="15%">Aliases</th>
-            <td width="85%"><%= @artist.aliases.map {|x| link_to(h(x.name), :action => "show", :id => x.id)}.join(", ") %></td>
-          </tr>
-        <% end %>
-        <% if @artist.group_id %>
-          <tr>
-            <th width="15%">Member of</th>
-            <td width="85%"><%= link_to h(@artist.group_name), :action => "show", :id => @artist.group_id %></td>
-          </tr>
-        <% end %>
-        <% if @artist.members.any? %>
-          <tr>
-            <th width="15%">Members</th>
-            <td width="85%"><%= @artist.members.map {|x| link_to(h(x.name), :action => "show", :id => x.id)}.join(", ") %></td>
           </tr>
         <% end %>
       </tbody>
@@ -65,9 +65,6 @@
     <li><%= link_to "Edit", :action => "update", :id => @artist.id %></li>
     <li><%= link_to "Delete", :action => "destroy", :id => @artist.id %></li>
     <li><%= link_to "History", :action => "history", :id => @artist.id %></li>
-    <% unless @artist.alias_id %>
-      <li><%= link_to "Posts", :controller => "post", :action => "index", :tags => @artist.name %></li>
-    <% end %>
   <% end %>
   
   <%= render :partial => "footer" %>
