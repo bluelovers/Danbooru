@@ -12,6 +12,14 @@ class AnonymousUser
     0
   end
   
+  def created_at
+    Time.now
+  end
+  
+  def updated_at
+    Time.now
+  end
+  
   def name
     "Anonymous"
   end
