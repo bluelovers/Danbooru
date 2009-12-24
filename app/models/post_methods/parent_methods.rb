@@ -60,7 +60,7 @@ module PostMethods
         favorited_by.map do |user|
           begin
             user.add_favorite(parent_id)
-          rescue User::AlreadyFavoritedError
+          rescue User::FavoriteError
           end
           user.delete_favorite(id)
         end
