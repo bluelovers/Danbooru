@@ -28,6 +28,10 @@ class Artist < ActiveRecord::Base
   def updater_name
     User.find_name(updater_id).tr("_", " ")
   end
+
+  def self.find_by_name(name)
+    first(generate_sql(name))
+  end
   
   def self.generate_sql(name)
     b = Nagato::Builder.new do |builder, cond|
