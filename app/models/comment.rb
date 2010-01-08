@@ -39,7 +39,7 @@ class Comment < ActiveRecord::Base
   
   def vote!(user, n)
     if !user.can_comment_vote?
-      raise VotingError.new("You can only vote three times an hour on comments")
+      raise VotingError.new("You can only vote ten times an hour on comments")
     elsif can_be_voted_by?(user)
       update_attribute(:score, score + n)
       votes.create(:user_id => user.id)
