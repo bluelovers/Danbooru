@@ -12,12 +12,8 @@ class ArtistController < ApplicationController
     @artist = Artist.find(params[:id])
     
     if request.post?
-      if params[:commit] == "Yes"
-        @artist.update_attributes(:is_active => false, :updater_id => @current_user.id)
-        respond_to_success("Artist deleted", :action => "index", :page => params[:page])
-      else
-        redirect_to :action => "index", :page => params[:page]
-      end
+      @artist.update_attributes(:is_active => false, :updater_id => @current_user.id)
+      respond_to_success("Artist deleted", :action => "index", :page => params[:page])
     end
   end
 
