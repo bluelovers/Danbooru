@@ -4,8 +4,8 @@ module ArtistMethods
       return {
         :id => id, 
         :name => name, 
-        :alias_id => alias_id,
-        :group_id => group_id,
+        :other_names => other_names,
+        :group_name => group_name,
         :urls => artist_urls.map {|x| x.url},
         :is_active => is_active,
         :version => version,
