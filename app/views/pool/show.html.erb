@@ -31,6 +31,7 @@
 
 <% content_for("footer") do %>
   <li>|</li>
+  <li><%= link_to "Posts", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %></li>
   <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
   <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>
   <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
