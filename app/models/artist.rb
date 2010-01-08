@@ -29,6 +29,14 @@ class Artist < ActiveRecord::Base
   def updater_name
     User.find_name(updater_id).tr("_", " ")
   end
+  
+  def has_tag_alias?
+    TagAlias.exists?(["name = ?", name])
+  end
+  
+  def tag_alias_name
+    TagAlias.find_by_name(name).alias_name
+  end
 
   def self.find_by_name(name)
     first(generate_sql(:name => name))

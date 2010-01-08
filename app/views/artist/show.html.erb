@@ -8,6 +8,14 @@
   <div style="margin-bottom: 1em; clear: both;">
     <table class="form">
       <tbody>
+        <% if @artist.has_tag_alias? %>
+          <tr>
+            <th width="15%">Tag Alias</th>
+            <td width="85%">
+              <%= h @artist.tag_alias_name %>
+            </td>
+          </tr>
+        <% end %>
         <% if !@artist.other_names.blank? %>
           <tr>
             <th width="15%">Other Names</th>
