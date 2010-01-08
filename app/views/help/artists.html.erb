@@ -15,7 +15,8 @@
   <div class="section">
     <h4>How do I search for artists?</h4>
     <p>Start at the <%= link_to "index", :controller => "artist", :action => "index" %>. In addition to browsing through the entire artist list, you can also search for artists.</p>
-    <p>By default, Danbooru will return artists with the name you entered. You can do wildcard searching with "*". For example, searching for "bol*" will return any artist whose name starts with "bol". Danbooru will also include results with matching group names.</p>
+    <p>By default, Danbooru will search across names, other names, and group names using exact string matching. You can do wildcard searching with "*". For example, searching for "bol*" will return any artist whose name starts with "bol".</p>
+    <p>If you only want to search the name field, prefix your query with <em>name:</em> like <em>name:john</em>. <em>group:</em> and <em>other:</em> work similarly.</p>
     <p>Suppose you know the artist's homepage, but can't figure out their name. Simply search for the URL (beginning with http) and Danbooru will return any associated artists.</p>
   </div>
 

@@ -8,8 +8,9 @@ class ArtistControllerTest < ActionController::TestCase
     
     post :destroy, {:id => artist.id, :commit => "Yes"}, {:user_id => 1}
     assert_redirected_to :controller => "artist", :action => "index"
-    assert_not_nil(Artist.find_by_name("bob"))
-    assert_equal(false, Artist.find_by_name("bob").is_active?)
+    bob = Artist.first(:conditions => ["name = ?", "bob"])
+    assert_not_nil(bob)
+    assert_equal(false, bob.is_active?)
   end
   
   def test_update
