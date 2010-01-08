@@ -12,6 +12,7 @@ class Artist < ActiveRecord::Base
   validates_uniqueness_of :name
   belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
   attr_accessor :updater_ip_addr
+  has_many :members, :class_name => "Artist", :foreign_key => "group_name", :primary_key => "name"
 
   def self.normalize(name)
     name.downcase.strip.gsub(/ /, '_')

@@ -1,7 +1,7 @@
 class ForumPost < ActiveRecord::Base
   belongs_to :creator, :class_name => "User", :foreign_key => :creator_id
   after_create :initialize_last_updated_by
-  before_validation :validate_title
+  validate :validate_title
   validates_length_of :body, :minimum => 1, :message => "You need to enter a body"
   
   module LockMethods

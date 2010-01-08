@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../../config/environment'
 
 ActiveRecord::Base.execute_sql("set statement_timeout=0")
 
-Post.find_each(:select => "id, cached_tags, general_tag_count, artist_tag_count, character_tag_count, copyright_tag_count", :conditions => "id >= 55333") do |post|
+Post.find_each(:select => "id, cached_tags, general_tag_count, artist_tag_count, character_tag_count, copyright_tag_count") do |post|
   puts post.id
   general, artist, character, copyright = 0, 0, 0, 0
   post.cached_tags.split(/ /).each do |tag|

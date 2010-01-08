@@ -37,7 +37,7 @@ class Pool < ActiveRecord::Base
   
   module PostMethods
     def self.included(m)
-      m.has_many :pool_posts, :class_name => "PoolPost", :order => "sequence", :dependent => :delete_all
+      m.has_many :pool_posts, :order => "sequence", :dependent => :delete_all
     end
     
     def can_be_updated_by?(user)

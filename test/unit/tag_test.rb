@@ -208,6 +208,17 @@ class TagTest < ActiveSupport::TestCase
     t = Tag.find_or_create_by_name("artist:foo")
     assert_equal("artist", t.type_name)
   end
+
+  def test_update_type
+    p1 = create_post("tag1")
+    assert_equal(1, p1.general_tag_count)
+    assert_equal(0, p1.artist_tag_count)
+    tag = Tag.find_by_name("tag1")
+    tag.update_attribute(:tag_type, 1)
+    p1.reload
+    assert_equal(0, p1.general_tag_count)
+    assert_equal(1, p1.artist_tag_count)
+  end
   
   def test_suggestions
     create_post("julius_caesar")

@@ -38,7 +38,7 @@ module ArtistMethods
     def urls=(urls)
       @urls = urls
     end
-
+    
     def urls
       @urls || artist_urls.map {|x| x.url}.join("\n")
     end
