@@ -5,7 +5,7 @@
       <% if @artist %>
         This Pixiv artist has a Danbooru artist record: <%= link_to h(@artist.name), :controller => "artist", :action => "show", :id => @artist.id %>. Other URLs associated with this artist include: <%= @artist.urls.map {|x| link_to(h(x), x, :target => "_blank")}.join(", ") %>
       <% else %>
-        This Pixiv artist does not have a Danbooru artist record. You can <%= link_to "create", {:controller => "artist", :action => "create", :name => results[:artist], :alias_names => results[:artist], :urls => "http://www.pixiv.net/#{results[:profile_url]} #{results[:image_url]}"}, :target => "_blank" %> a new artist record.
+        This Pixiv artist does not have a Danbooru artist record. You can <%= link_to "create", {:controller => "artist", :action => "create", :name => results[:artist], :other_names => results[:artist], :urls => "http://www.pixiv.net/#{results[:profile_url]} #{results[:image_url]}"}, :target => "_blank" %> a new artist record.
       <% end %>
     </li>
   <% end %>

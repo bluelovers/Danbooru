@@ -58,8 +58,8 @@ class ArtistController < ApplicationController
         end
       end
 
-      if params[:alias_names]
-        @artist.alias_names = params[:alias_names]
+      if params[:other_names]
+        @artist.other_names = params[:other_names]
       end
       
       if params[:urls]
