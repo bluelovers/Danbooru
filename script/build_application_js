@@ -8,3 +8,5 @@ for i in prototype effects controls common cookie comment favorite forum notes p
     cat $JS/$i.js >> $JS/application.js
     echo "" >> $JS/application.js
 done
+
+cat $JS/application.js | ruby lib/jsmin.rb > $JS/application-min.js
