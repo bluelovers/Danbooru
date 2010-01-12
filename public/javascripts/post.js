@@ -348,8 +348,8 @@ Post = {
     var f = function() {
       img.stopObserving("load")
       img.stopObserving("error")
-      img.height = img.getAttribute("orig_height");
-      img.width = img.getAttribute("orig_width");
+      img.height = img.getAttribute("data-orig_height");
+      img.width = img.getAttribute("data-orig_width");
       img.src = $("highres").href;
 
       if (window.Note) {
