@@ -78,8 +78,10 @@ class ArtistController < ApplicationController
     else
       order = "name"
     end
+    
+    limit = (params[:limit] || 50).to_i
 
-    @artists = Artist.paginate(Artist.generate_sql(params).merge(:per_page => 50, :page => params[:page], :order => order))
+    @artists = Artist.paginate(Artist.generate_sql(params).merge(:per_page => limit, :page => params[:page], :order => order))
     respond_to_list("artists")
   end
 
