@@ -79,7 +79,7 @@ class TagAlias < ActiveRecord::Base
     alias_tag = Tag.find_or_create_by_name(name)
     tag = Tag.find_or_create_by_name(self.name)
     
-    if alias_tag.tag_type != tag.tag_type && alias_tag.tag_type != CONFIG["tag_types"]["General"]
+    if alias_tag.tag_type != tag.tag_type && tag.tag_type != CONFIG["tag_types"]["General"]
       alias_tag.update_attribute(:tag_type, tag.tag_type)
     end
     

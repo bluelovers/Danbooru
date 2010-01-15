@@ -562,7 +562,7 @@ this.boxStartY=null
 this.boundsX=null
 this.boundsY=null
 this.dragging=false
-this.bodyShow()},ratio:function(){return this.elements.image.width/this.elements.image.getAttribute("orig_width")},adjustScale:function(){if(Note.debug){console.debug("Note#adjustScale (id=%d)",this.id)}
+this.bodyShow()},ratio:function(){return this.elements.image.width/this.elements.image.getAttribute("data-orig_width")},adjustScale:function(){if(Note.debug){console.debug("Note#adjustScale (id=%d)",this.id)}
 var ratio=this.ratio()
 for(p in this.fullsize){this.elements.box.style[p]=this.fullsize[p]*ratio+'px'}},drag:function(e){var left=this.boxStartX+e.pointerX()-this.cursorStartX
 var top=this.boxStartY+e.pointerY()-this.cursorStartY
@@ -828,7 +828,7 @@ if(window.Note){for(var i=0;i<window.Note.all.length;++i){window.Note.all[i].adj
 if((img.scale_factor!=null)&&(img.scale_factor!=1)){Post.resize_image();}
 var f=function(){img.stopObserving("load")
 img.stopObserving("error")
-img.height=img.getAttribute("orig_height");img.width=img.getAttribute("orig_width");img.src=$("highres").href;if(window.Note){window.Note.all.invoke("adjustScale")}}
+img.height=img.getAttribute("data-orig_height");img.width=img.getAttribute("data-orig_width");img.src=$("highres").href;if(window.Note){window.Note.all.invoke("adjustScale")}}
 img.observe("load",f)
 img.observe("error",f)
 $("resized_notice").hide()
