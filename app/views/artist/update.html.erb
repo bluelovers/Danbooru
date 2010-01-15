@@ -8,7 +8,14 @@
     <table class="form">
       <tr>
         <th><label for="artist_name">Name</label></th>
-        <td><%= text_field "artist", "name", :size => 80 %></td>
+        <td>
+          <%= text_field "artist", "name", :size => 80 %>
+          <%= button_to_remote "Check", :url => {:action => "check_name.json"}, :with => "'name=' + $F('artist_name')", :method => :get %>
+        </td>
+      </tr>
+      <tr style="display: none;" id="name-check-results">
+        <th></th>
+        <td></td>
       </tr>
       <tr>
         <th>

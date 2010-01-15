@@ -26,6 +26,7 @@ class ArtistController < ApplicationController
         params[:artist].delete(:name)
         artist.update_attribute(:is_active, false)
         artist = artist_by_name
+        artist.is_active = true
       end
 
       artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
@@ -105,6 +106,20 @@ class ArtistController < ApplicationController
   def history
     @artist = Artist.find(params[:id])
     @versions = ArtistVersion.paginate :order => "version desc", :per_page => 25, :page => params[:page], :conditions => ["artist_id = ?", @artist.id]
+  end
+
+  def check_name
+    @artist = Artist.find_by_name(params[:name])
+    
+    render :update do |page|
+      page.show "name-check-results"
+
+      if @artist
+        page.select("#name-check-results td").first.update("This artist already exists: " + link_to(h(params[:name]), {:action => "show", :name => params[:name]}, :target => "_blank"))
+      else
+        page.select("#name-check-results td").first.update("This artist does not exist")
+      end
+    end
   end
   
   def recent_changes

@@ -43,9 +43,9 @@ a.last-page {
 }
 
 addr {
-	display: block;
-	margin-left: 2em;
-	font-weight: bold;
+  display: block;
+  margin-left: 2em;
+  font-weight: bold;
 }
 
 blockquote {
@@ -461,7 +461,7 @@ div.auto_complete ul strong.highlight {
 }
 
 div.bad-comment {
-	background: #FEE;
+  background: #FEE;
 }
 
 div.blocked {
@@ -770,10 +770,10 @@ div#post-view > div#right-col > div#edit {
 }
 
 div.preview {
-	border: 1px dashed #AAA; 
-	padding: 1em;
-	margin: 1em 0;
-	width: 40em;
+  border: 1px dashed #AAA; 
+  padding: 1em;
+  margin: 1em 0;
+  width: 40em;
 }
 
 div#related {
@@ -903,21 +903,21 @@ div#tag-list > a {
 }
 
 div#upgrade-account {
-	margin: 1em;
-	padding: 1em;
-	font-size: 1.2em;
-	font-weight: bold;
-	text-align: center;
+  margin: 1em;
+  padding: 1em;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
 }
 
 div#upgrade-account a {
-	color: black;
+  color: black;
 }
 
 div#upgrade-account a#hide-upgrade-account-link {
-	font-size: 0.8em;
-	color: #CCC;
-	display: block;
+  font-size: 0.8em;
+  color: #CCC;
+  display: block;
 }
 
 div#user-record > table > tbody > tr.positive-record {
