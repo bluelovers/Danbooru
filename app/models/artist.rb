@@ -38,7 +38,7 @@ class Artist < ActiveRecord::Base
     TagAlias.find_by_name(name).alias_name
   end
 
-  def self.find_by_name(name)
+  def self.find_by_any_name(name)
     first(generate_sql(:name => name))
   end
   

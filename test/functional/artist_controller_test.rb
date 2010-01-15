@@ -13,6 +13,26 @@ class ArtistControllerTest < ActionController::TestCase
     assert_equal(false, bob.is_active?)
   end
   
+  def test_update_to_existing_name
+    a1 = create_artist(:name => "a1", :group_name => "sam", :urls => "d e f", :other_names => "a2")
+    a2 = create_artist(:name => "a2", :group_name => "bob", :urls => "a b c")
+    
+    post :update, {:id => a1.id, :artist => {:name => "a2", :group_name => "ted", :urls => "x y z", :other_names => "a3"}}, {:user_id => 4}
+    a1 = Artist.find(a1.id)
+    a2 = Artist.find(a2.id)
+    
+    assert_equal(false, a1.is_active?)
+    assert_equal(true, a2.is_active?)
+    assert_equal("a1", a1.name)
+    assert_equal("a2", a2.name)
+    assert_equal("d\ne\nf", a1.urls)
+    assert_equal("x\ny\nz", a2.urls)
+    assert_equal("sam", a1.group_name)
+    assert_equal("ted", a2.group_name)
+    assert_equal("a2", a1.other_names)
+    assert_equal("a3", a2.other_names)
+  end
+  
   def test_update
     artist = create_artist(:name => "bob")
     
@@ -20,22 +40,23 @@ class ArtistControllerTest < ActionController::TestCase
     assert_response :success
 
     post :update, {:id => artist.id, :artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :other_names => "claude, oscar", :group_name => "john", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
-    artist.reload
+    artist = Artist.find(artist.id)
     assert_equal("monet", artist.name)
     monet = Artist.find_by_name("monet")
     assert_not_nil(monet)
+    assert_equal(artist.id, monet.id)
     assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
     
     assert_equal("claude, oscar", monet.other_names)
     assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
     
     post :update, {:id => artist.id, :artist => {}}, {:user_id => 4}
-    artist.reload
+    artist = Artist.find(artist.id)
     assert_equal("claude, oscar", artist.other_names)
     assert_equal("john", artist.group_name)
     
     post :update, {:id => artist.id, :artist => {:other_names => ""}}, {:user_id => 4}
-    artist.reload
+    artist = Artist.find(artist.id)
     assert_equal("", artist.other_names)
   end
   
@@ -44,7 +65,7 @@ class ArtistControllerTest < ActionController::TestCase
     assert_response :success
     
     post :create, {:artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :other_names => "claude, oscar", :group_name => "john", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
-    monet = Artist.find_by_name("monet")
+    monet = Artist.find_by_any_name("monet")
     assert_not_nil(monet)
     assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
     assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)

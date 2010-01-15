@@ -60,19 +60,19 @@ class ArtistTest < ActiveSupport::TestCase
   end
   
   def test_other_names
-    assert_nil(Artist.find_by_name("other:aaa"))
+    assert_nil(Artist.find_by_any_name("other:aaa"))
     
     a1 = create_artist(:name => "a1", :other_names => "aaa, bbb, ccc ddd")
     
-    assert_nil(Artist.find_by_name("name:aaa"))
-    assert_nil(Artist.find_by_name("name:bbb"))
-    assert_nil(Artist.find_by_name("name:ccc_ddd"))
+    assert_nil(Artist.find_by_any_name("name:aaa"))
+    assert_nil(Artist.find_by_any_name("name:bbb"))
+    assert_nil(Artist.find_by_any_name("name:ccc_ddd"))
     
     a1.reload
     
     assert_equal("aaa, bbb, ccc_ddd", a1.other_names)
     assert_equal("{aaa,bbb,ccc_ddd}", a1.other_names_array)
-    assert_not_nil(Artist.find_by_name("other:aaa"))
+    assert_not_nil(Artist.find_by_any_name("other:aaa"))
     
     # Test special characters
     a1.update_attributes(:other_names => "\\, \", '")
@@ -80,14 +80,14 @@ class ArtistTest < ActiveSupport::TestCase
     assert_equal("\\, \", '", a1.other_names)
     assert_equal("{\"\\\\\",\"\\\"\",'}", a1.other_names_array)
   end
-
+  
   def test_groups
-    assert_nil(Artist.find_by_name("group:cat_or_fish"))
+    assert_nil(Artist.find_by_any_name("group:cat_or_fish"))
     cat_or_fish = create_artist(:name => "cat_or_fish")
     yuu = create_artist(:name => "yuu", :group_name => "cat_or_fish")
     cat_or_fish.reload
     assert_equal("yuu", cat_or_fish.member_names)
-    assert_not_nil(Artist.find_by_name("group:cat_or_fish"))
+    assert_not_nil(Artist.find_by_any_name("group:cat_or_fish"))
   end
   
   def test_api

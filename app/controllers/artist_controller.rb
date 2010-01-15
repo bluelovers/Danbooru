@@ -19,14 +19,17 @@ class ArtistController < ApplicationController
 
   def update
     if request.post?
-      if params[:commit] == "Cancel"
-        redirect_to :action => "show", :id => params[:id]
-        return
+      artist = Artist.find(params[:id])
+      artist_by_name = Artist.find_by_name(params[:artist][:name])
+
+      if artist_by_name && artist_by_name.id != artist.id
+        params[:artist].delete(:name)
+        artist.update_attribute(:is_active, false)
+        artist = artist_by_name
       end
 
-      artist = Artist.find(params[:id])
       artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
-
+      
       if artist.errors.empty?
         respond_to_success("Artist updated", :action => "show", :id => artist.id)
       else
