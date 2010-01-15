@@ -40,6 +40,9 @@ class WikiPageTest < ActiveSupport::TestCase
     
     w1 = WikiPage.find_page("hoge", 3)
     assert_equal("moge moge", w1.body)
+    
+    w1 = WikiPage.find_page("HOGE", 1)
+    assert_not_nil(w1)
   end
   
   def test_lock

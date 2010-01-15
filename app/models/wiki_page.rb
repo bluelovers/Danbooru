@@ -112,7 +112,7 @@ class WikiPage < ActiveRecord::Base
   def self.find_page(title, version = nil)
     return nil if title.blank?
 
-    page = find_by_title(title)
+    page = find_by_title(title.downcase)
     page.revert_to(version) if version && page
 
     return page
