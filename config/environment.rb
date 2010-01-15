@@ -27,7 +27,6 @@ Rails::Initializer.run do |config|
   # (enables use of different database adapters for development and test environments)
   config.active_record.schema_format = :sql
   
-  config.gem "postgres"
   config.gem "diff-lcs", :lib => "diff/lcs/array"
   config.gem "html5"
   config.gem "memcache-client", :lib => "memcache"
