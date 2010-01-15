@@ -188,9 +188,11 @@ class PostTest < ActiveSupport::TestCase
     assert(!p2.has_children?, "Parent should not have children")
 
     # Undeleting should restore the status
-    c1.undelete!
+    c1.undelete!(1)
+    c1.reload
     p2.reload
     assert(p2.has_children?, "Parent should have children")
+    assert_equal(1, c1.approver_id)
   end
   
   def test_rating

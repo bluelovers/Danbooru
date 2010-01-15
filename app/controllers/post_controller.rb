@@ -396,7 +396,7 @@ class PostController < ApplicationController
   
   def undelete
     post = Post.find(params[:id])
-    post.undelete!
+    post.undelete!(@current_user)
     respond_to_success("Post was undeleted", :action => "show", :id => params[:id])
   end
   

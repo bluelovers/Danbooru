@@ -13,8 +13,8 @@ module PostMethods
       touch_change_seq!
     end
   
-    def undelete!
-      execute_sql("UPDATE posts SET status = ? WHERE id = ?", "active", id)
+    def undelete!(user_id)
+      execute_sql("UPDATE posts SET status = ?, approver_id = ? WHERE id = ?", "active", user_id, id)
       Post.update_has_children(parent_id) if parent_id
     end
     
