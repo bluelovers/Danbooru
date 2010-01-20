@@ -18,7 +18,7 @@
         <% @artists.each do |artist| %>
           <% content_tag(:tr, :class => cycle('even', 'odd'), :id => "artist-#{artist.id}") do %>
             <td>
-              <%= link_to_unless artist.alias_id, "P", {:controller => "post", :action => "index", :tags => artist.name}, :title => "Find posts for artist" %>
+              <%= link_to "P", {:controller => "post", :action => "index", :tags => artist.name}, :title => "Find posts for artist" %>
               <%= link_to "E", {:action => "update", :id => artist.id}, :title => "Edit artist" %> 
               <%= link_to "D", {:action => "destroy", :id => artist.id} %>
             </td>
