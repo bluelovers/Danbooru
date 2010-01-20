@@ -12,9 +12,9 @@ module DText
       if tag =~ /^(.+?)\|(.+)$/
         tag = $1
         name = $2
-        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag.tr(" ", "_"))) + '">' + name + '</a>'
+        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag.tr(" ", "_").downcase)) + '">' + name + '</a>'
       else
-        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag.tr(" ", "_"))) + '">' + tag + '</a>'
+        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag.tr(" ", "_").downcase)) + '">' + tag + '</a>'
       end
     end
     str.gsub!(/\{\{.+?\}\}/m) do |tag|

@@ -2,8 +2,8 @@ class WikiPagePresenter < Presenter
   def initialize(template, user, title, version)
     @template = template
     @user = user
-    @title = title
-    @wiki_page = WikiPage.find_page(title, version)
+    @title = title.downcase
+    @wiki_page = WikiPage.find_page(@title, version)
     @tag = Tag.find_by_name(title.downcase)
     @posts = Post.find_by_tag_join(title, :limit => 8).select {|x| x.can_be_seen_by?(@user)}
   end
