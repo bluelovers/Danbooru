@@ -1,4 +1,6 @@
 class WikiPagePresenter < Presenter
+  attr_reader :wiki_page, :title
+  
   def initialize(template, user, title, version)
     @template = template
     @user = user

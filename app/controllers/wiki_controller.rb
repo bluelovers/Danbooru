@@ -108,7 +108,8 @@ class WikiController < ApplicationController
     end
 
     @presenter = WikiPagePresenter.new(self, @current_user, params[:title], params[:version])
-    @posts = Post.find_by_tag_join(params[:title], :limit => 8).select {|x| x.can_be_seen_by?(@current_user)}
+    @wiki_page = @presenter.wiki_page
+    @title = @presenter.title
     set_title params[:title].tr("_", " ")
   end
 
