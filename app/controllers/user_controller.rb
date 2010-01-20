@@ -4,8 +4,7 @@ class UserController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:authenticate, :update, :create]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
-  before_filter :janitor_only, :only => [:invites]
-  before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
+  before_filter :janitor_only, :only => [:invites, :revert_tag_changes, :block, :unblock, :show_blocked_users]
   before_filter :admin_only, :only => [:edit_upload_limit, :update_upload_limit]
   helper :post, :tag_subscription
   filter_parameter_logging :password
@@ -242,6 +241,16 @@ class UserController < ApplicationController
         flash[:notice] = "Uploaded tags are being calculated. Please check back in 5-10 minutes."
       end
       redirect_to :action => "show", :id => @current_user.id
+    end
+  end
+  
+  def revert_tag_changes
+    @user = User.find(params[:id])
+    
+    if request.post?
+      PostTagHistory.undo_changes_by_user(@user.id)
+      flash[:notice] = "Changes were reverted"
+      redirect_to :controller => "post_tag_history", :action => "index"
     end
   end
   

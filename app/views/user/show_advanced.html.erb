@@ -117,10 +117,11 @@
 
 <% content_for("footer") do %>
   <li><%= link_to "List", :controller => "user", :action => "index" %></li>
-  <% if @current_user.is_mod_or_higher? %>
+  <% if @current_user.is_janitor_or_higher? %>
     <li><%= link_to "Ban", :controller => "user", :action => "block", :id => @user.id %></li>
+    <li><%= link_to "Revert tag changes", :controller => "user", :action => "revert_tag_changes", :id => @user.id %></li>
   <% end %>
-  <% if @current_user.is_janitor_or_higher? && @user.is_privileged_or_lower? %>
+  <% if @current_user.is_mod_or_higher? && @user.is_privileged_or_lower? %>
     <li><%= link_to "Invite", :controller => "user", :action => "invites", :name => @user.name %></li>
   <% end %>
   <li><%= link_to "Send message", :controller => "dmail", :action => "compose", :to => @user.name %></li>
