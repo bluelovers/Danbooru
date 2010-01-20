@@ -107,11 +107,8 @@ class WikiController < ApplicationController
       return
     end
 
-    @title = params[:title]
-    @page = WikiPage.find_page(params[:title], params[:version])
+    @presenter = WikiPagePresenter.new(self, @current_user, params[:title], params[:version])
     @posts = Post.find_by_tag_join(params[:title], :limit => 8).select {|x| x.can_be_seen_by?(@current_user)}
-    @artist = Artist.find_by_name(params[:title])
-    @tag = Tag.find_by_name(params[:title])
     set_title params[:title].tr("_", " ")
   end
 

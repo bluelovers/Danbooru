@@ -941,11 +941,11 @@ div#wiki-show > div#body {
 
 div#wiki-show > div#body ul {
   line-height: 1.2em;
-  margin: 0 0 0 1em;
+  margin: 0 0 1em 1em;
 }
 
-div#wiki-show > div#body > ul {
-  margin-bottom: 1em;
+div#wiki-show > div#body ul ul {
+  margin-bottom: 0;
 }
 
 div#wiki-show > div#body > div#wiki-footer {
