@@ -28,8 +28,16 @@ class UserController < ApplicationController
     if params[:name]
       @user = User.find_by_name(params[:name])
     else
-      @user = User.find(params[:id])
+      @user = User.find_by_id(params[:id])
     end
+
+    if @user.nil?
+      redirect_to "/404"
+    end
+  end
+  
+  def show_advanced
+    @user = User.find_by_id(params[:id])
 
     if @user.nil?
       redirect_to "/404"
