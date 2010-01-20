@@ -18,7 +18,6 @@ module ArtistMethods
       ArtistVersion.create(
         :artist_id => id,
         :version => version,
-        :group_id => group_id,
         :name => name,
         :updater_id => updater_id,
         :cached_urls => cached_urls,
