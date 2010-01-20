@@ -36,6 +36,16 @@ class NoteTest < ActiveSupport::TestCase
     assert_equal("hello", note.body)
   end
   
+  def test_undo_changes_by_user
+    note = create_note(:x => 100, :y => 100, :body => "hello")
+    note.update_attributes(:x => 2000, :y => 2000, :body => "blipster", :user_id => 2)
+    Note.undo_changes_by_user(2)
+    note.reload
+    assert_equal(100, note.x)
+    assert_equal(100, note.y)
+    assert_equal("hello", note.body)
+  end
+  
   def test_locking
     Post.update(1, :is_note_locked => true)
     note = create_note(:body => "hello")

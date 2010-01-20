@@ -1,0 +1,8 @@
+<h4>Revert Changes</h4>
+<p>You can revert all the tag, rating, and note changes made by <%= h @user.name %>. This is primarily useful to erase any damage caused by vandals. There is a caveat, however. When reverting a post, edits made by the vandal are deleted from the tag history, and the most recent tag set/rating is used. This means that if someone else legitimately edited a post after it was vandalized, the post will be reverted to the most recent edit.</p>
+
+<% form_tag(:action => "revert_changes", :id => @user.id) do %>
+  <%= submit_tag "Revert tag and rating edits" %>
+  <%= submit_tag "Revert note edits" %>
+  <%= button_to_function "Cancel", "window.back()" %>
+<% end %>

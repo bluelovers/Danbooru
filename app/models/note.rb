@@ -80,6 +80,20 @@ class Note < ActiveRecord::Base
     User.find_name(user_id)
   end
   
+  def self.undo_changes_by_user(user_id)
+    transaction do  
+      notes = Note.all(:joins => "join note_versions nv on nv.note_id = notes.id", :select => "distinct notes.*", :conditions => ["nv.user_id = ?", user_id])
+      
+      NoteVersion.destroy_all(["user_id = ?", user_id])
+      notes.each do |note|
+        first = note.versions.first
+        if first
+          note.revert_to!(first.version)
+        end
+      end
+    end
+  end
+  
   def self.generate_sql(params)
     b = Nagato::Builder.new do |builder, cond|
       if !params[:query].blank?

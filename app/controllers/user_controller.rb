@@ -244,13 +244,19 @@ class UserController < ApplicationController
     end
   end
   
-  def revert_tag_changes
+  def revert_changes
     @user = User.find(params[:id])
     
     if request.post?
-      PostTagHistory.undo_changes_by_user(@user.id)
-      flash[:notice] = "Changes were reverted"
-      redirect_to :controller => "post_tag_history", :action => "index"
+      if params[:commit] == "Revert tag and rating edits"
+        PostTagHistory.undo_changes_by_user(@user.id)
+        flash[:notice] = "Changes were reverted"
+        redirect_to :controller => "post_tag_history", :action => "index"
+      elsif params[:commit] == "Revert note edits"
+        Note.undo_changes_by_user(@user.id)
+        flash[:notice] = "Changes were reverted"
+        redirect_to :controller => "note", :action => "history"
+      end
     end
   end
   
