@@ -27,8 +27,7 @@ class PostTagHistory < ActiveRecord::Base
   
   def self.undo_changes_by_user(user_id)
     transaction do  
-      # posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.*", :conditions => ["pth.user_id = ?", user_id])
-      posts = Post.find(:all, :conditions => "id = 540525")
+      posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.*", :conditions => ["pth.user_id = ?", user_id])
             
       PostTagHistory.destroy_all(["user_id = ?", user_id])
       posts.each do |post|
