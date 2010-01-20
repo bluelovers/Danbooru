@@ -2,10 +2,22 @@
 
 require 'rubygems'
 require 'daemons'
-require 'postgres'
+begin
+  require 'pg'
+rescue LoadError => e
+  begin
+    require 'postgres'
+  rescue LoadError
+    raise e
+  end
+end
 
-db_host = ENV["DB_HOST"] || "localhost"
-db_name = ENV["DB_NAME"] || "danbooru"
+DB_CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), '../../config/database.yml'))[ENV['RAILS_ENV'] || "development"]
+db_host = DB_CONFIG['host'] || "localhost"
+db_name = DB_CONFIG['database'] || "danbooru"
+db_port = DB_CONFIG['port'] || nil
+db_login = DB_CONFIG['username'] || "danbooru"
+db_pass = DB_CONFIG['password'] || ""
 
 if ARGV[0] == "start"
   current = []
@@ -27,7 +39,7 @@ if ARGV[0] == "start"
     end
   end
 
-  db = PGconn.connect(db_host, nil, nil, nil, db_name)
+  db = PGconn.connect(db_host, db_port, nil, nil, db_name, db_login, db_pass)
   db.exec("UPDATE job_tasks SET status = 'pending' WHERE status IN ('processing', 'error')")
 end
 
