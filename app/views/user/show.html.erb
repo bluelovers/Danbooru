@@ -15,16 +15,6 @@
         <% end %>
       </td>
     </tr>
-    <tr>
-      <td><strong>Uploaded Tags</strong></td>
-      <td><%= @user.uploaded_tags.scan(/\S+/).map {|x| link_to(h(x), :controller => "post", :action => "index", :tags => x)}.join(" ") %></td>
-    </tr>
-    <tr>
-      <td><strong>Tag Subscriptions</strong></td>
-      <td class="large-text">
-        <%= render :partial => "tag_subscription/user_listing", :locals => {:user => @user} %>
-      </td>
-    </tr>
   </table>
 </div>
 
