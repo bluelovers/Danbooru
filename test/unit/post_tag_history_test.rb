@@ -67,4 +67,22 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     assert_equal(["tag1"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:removed_tags])
     assert_equal(["rating:q", "parent:"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
   end
+  
+  def test_undo_changes_by_user
+    p1 = create_post
+    update_post(p1, :tags => "tag2", :rating => "e", :updater_user_id => 2)
+    
+    p2 = create_post(:user_id => 2)
+    update_post(p2, :tags => "tag3", :rating => "e", :updater_user_id => 1)
+    
+    PostTagHistory.undo_changes_by_user(2)
+    
+    p1.reload
+    assert_equal("tag1", p1.cached_tags)
+    assert_equal("q", p1.rating)
+    
+    p2.reload
+    assert_equal("tag3", p2.cached_tags)
+    assert_equal("e", p2.rating)
+  end
 end

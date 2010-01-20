@@ -2,17 +2,6 @@ class PostTagHistory < ActiveRecord::Base
   belongs_to :user
   belongs_to :post
 
-  def self.undo_user_changes(user_id)
-    posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.id", :conditions => ["pth.user_id = ?", user_id])
-#    destroy_all(["user_id = ?", user_id])
-#    posts.each do |post|
-#      post.tags = post.tag_history.first.tags
-#      post.updater_user_id = post.tag_history.first.user_id
-#      post.updater_ip_addr = post.tag_history.first.ip_addr
-#      post.save!
-#    end
-  end
-
   def self.generate_sql(options = {})
     Nagato::Builder.new do |builder, cond|
       cond.add_unless_blank "post_tag_histories.post_id = ?", options[:post_id]
