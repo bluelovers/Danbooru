@@ -12,7 +12,7 @@ module ArtistMethods
 
           # Remove duplicates based on name
           artists = artists.inject({}) {|all, artist| all[artist.name] = artist ; all}.values
-          url = File.dirname(url)
+          url = File.dirname(url) + "/"
         end
 
         return artists[0, 20]
