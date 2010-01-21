@@ -15,7 +15,7 @@ class PostController < ApplicationController
   def check_load_average
     if CONFIG["load_average_threshold"] && @current_user.is_anonymous?
       bandwidth_used = Cache.get("db-bw")
-      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 700)
+      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 850)
         respond_to do |fmt|
           fmt.html {render :template => "static/overloaded", :status => 503}
           fmt.xml {render :nothing => true, :status => 503}

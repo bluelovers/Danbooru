@@ -39,7 +39,7 @@ class WikiPagePresenter < Presenter
     tag_alias = TagAlias.find_by_name(@title)
     
     if tag_alias
-      tag_alias_link = @template.link_to(@template.h(tag_alias.alias_name), :controller => "wiki", :action => "show", :title => tag_alias.alias_name)
+      tag_alias_link = view_template.link_to(h(tag_alias.alias_name), :controller => "wiki", :action => "show", :title => tag_alias.alias_name)
       html += %[<p>This tag has been aliased to #{tag_alias_link}.</p>]
     end
     
