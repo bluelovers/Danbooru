@@ -4,7 +4,7 @@ class UserController < ApplicationController
   layout "default"
   verify :method => :post, :only => [:authenticate, :update, :create]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit]
-  before_filter :member_only, :only => [:show_advanced]
+  before_filter :member_only, :only => [:show]
   before_filter :janitor_only, :only => [:invites, :revert_tag_changes, :block, :unblock, :show_blocked_users]
   before_filter :admin_only, :only => [:edit_upload_limit, :update_upload_limit]
   helper :post, :tag_subscription
@@ -30,14 +30,6 @@ class UserController < ApplicationController
     else
       @user = User.find_by_id(params[:id])
     end
-
-    if @user.nil?
-      redirect_to "/404"
-    end
-  end
-  
-  def show_advanced
-    @user = User.find_by_id(params[:id])
 
     if @user.nil?
       redirect_to "/404"
