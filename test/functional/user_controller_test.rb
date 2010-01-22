@@ -10,7 +10,7 @@ class UserControllerTest < ActionController::TestCase
   end
   
   def test_show
-    get :show, {:id => 1}
+    get :show, {:id => 1}, {:user_id => 2}
     assert_response :success
   end
   

@@ -116,6 +116,8 @@ module ApplicationHelper
   end
   
   def navigation_links(post)
+    return "" if params[:before_id]
+    
     html = []
     
     if post.is_a?(Post)

@@ -1,4 +1,26 @@
 module PostHelper
+  def will_paginate_for_posts(posts)
+    page = params[:page].to_i
+    if page > 1_000 || params[:before_id]
+      post_pagination_links(posts)
+    else
+      will_paginate(posts)
+    end
+  end
+  
+  def post_pagination_links(posts)
+    html = ""
+    
+    previous_link = request.env["HTTP_REFERER"]
+    next_link = url_for(:controller => "post", :action => "index", :tags => params[:tags], :before_id => posts[-1].id, :page => nil)
+    
+    html << %[<a href="#{previous_link}">&laquo; Previous</a>]
+    
+    if posts.any?
+      html << %[<a href="#{next_link}">Next &raquo;</a>]
+    end
+  end
+  
   def wiki_excerpt(artist, wiki_page, split_tags)
     html = ""
     

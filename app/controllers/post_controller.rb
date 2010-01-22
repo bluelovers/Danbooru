@@ -200,11 +200,32 @@ class PostController < ApplicationController
     end
   end
 
+private
+  def index_after_thousand(tags, per_page, before_id)
+    @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :limit => per_page, :before_id => before_id))
+  end
+  
+  def index_before_thousand(tags, page, per_page)
+    post_count = Post.fast_count(tags.join(" "), :user => @current_user)
+    @posts = WillPaginate::Collection.create(page, per_page, post_count) do |pager|
+      pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
+    end
+    
+    @tag_suggestions = Tag.find_suggestions(tags.join(" ")) if post_count < 20 && tags.size == 1
+  end
+
+public
   def index
     tags = params[:tags].to_s
     @tags = QueryParser.parse(tags)
     page = params[:page].to_i; page = 1 if page == 0
     limit = params[:limit].to_i; limit = 20 if limit == 0; limit = 1000 if limit > 1000
+    before_id = params[:before_id]
+    
+    if page > 1000
+      respond_to_error("You can only search up to page 1,000", :action => "error")
+      return
+    end
     
     if @current_user.is_member_or_lower? && @tags.size > 2
       respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
@@ -219,21 +240,22 @@ class PostController < ApplicationController
     
     begin
       db_start_time = Time.now
-      post_count = Post.fast_count(tags, :user => @current_user)
       set_title "/" + tags.tr("_", " ")
       @db_delta_time = Time.now - db_start_time
-      @posts = WillPaginate::Collection.create(page, limit, post_count) do |pager|
-        pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
-      end
 
-      # If there are blank pages for this query, then fix the post count
-      if @posts.size == 0 && page > 1 && @tags.size == 1 && JobTask.pending_count("calculate_post_count") < 1000
-        JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @tags[0]}, :status => "pending")
+      if before_id
+        index_after_thousand(@tags, limit, before_id)
+      else
+        index_before_thousand(@tags, page, limit)
+
+        # If there are blank pages for this query, then fix the post count
+        if @posts.size == 0 && page > 1 && @tags.size == 1 && JobTask.pending_count("calculate_post_count") < 1000
+          JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @tags[0]}, :status => "pending")
+        end
       end
     
       respond_to do |fmt|
         fmt.html do
-          @tag_suggestions = Tag.find_suggestions(tags) if post_count < 20 && @tags.size == 1
           @ambiguous_tags = Tag.select_ambiguous(@tags)
           @render_start_time = Time.now
         end

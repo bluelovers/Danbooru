@@ -76,6 +76,11 @@ module PostMethods
         generate_sql_range_helper(q[:copyright_tag_count], "p.copyright_tag_count", conds, cond_params)
         generate_sql_range_helper(q[:character_tag_count], "p.character_tag_count", conds, cond_params)
 
+        if options[:before_id]
+          conds << "p.id < ?"
+          cond_params << options[:before_id]
+        end
+
         if q[:md5].is_a?(String)
           conds << "p.md5 IN (?)"
           cond_params << q[:md5].split(/,/)
