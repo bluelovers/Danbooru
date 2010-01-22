@@ -5,12 +5,12 @@ class WikiPagePresenter < Presenter
     @template = template
     @user = user
     @title = title.downcase
-    @wiki_page = WikiPage.find_page(@title, version)
+    @wiki_page = WikiPage.find_page(title, version)
     @tag = Tag.find_by_name(title.downcase)
     @posts = Post.find_by_tag_join(title, :limit => 8).select {|x| x.can_be_seen_by?(@user)}
   end
   
-  def title
+  def html_title
     html = ""    
     html += h(@tag.pretty_type_name) + ": " if @tag
     
@@ -27,7 +27,7 @@ class WikiPagePresenter < Presenter
     html
   end
   
-  def body(view_template)
+  def html_body(view_template)
     html = ""
     
     if @wiki_page.nil?
@@ -54,7 +54,7 @@ class WikiPagePresenter < Presenter
     html
   end
   
-  def posts(view_template)
+  def html_posts(view_template)
     html = ""
     
     if @posts.any?

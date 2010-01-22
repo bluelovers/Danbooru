@@ -38,7 +38,7 @@ class TagSubscription < ActiveRecord::Base
     user = User.find_by_name(user_name)
     if user
       if sub_group
-        find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user.id, sub_group]).map {|x| x.tag_query.split(/ /)}.flatten
+        find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user.id, sub_group.to_escaped_for_sql_like]).map {|x| x.tag_query.split(/ /)}.flatten
       else
         find(:all, :conditions => ["user_id = ?", user.id]).map {|x| x.tag_query.split(/ /)}.flatten
       end
@@ -49,7 +49,7 @@ class TagSubscription < ActiveRecord::Base
   
   def self.find_post_ids(user_id, name = nil, limit = CONFIG["tag_subscription_post_limit"])
     if name
-      find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.map(&:to_i).sort.reverse.slice(0, limit)
+      find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, name.to_escaped_for_sql_like], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.map(&:to_i).sort.reverse.slice(0, limit)
     else
       find(:all, :conditions => ["user_id = ?", user_id], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.map(&:to_i).sort.reverse.slice(0, limit)
     end

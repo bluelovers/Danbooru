@@ -1,15 +1,15 @@
 <div class="wiki" id="wiki-show">
   <%= render :partial => "sidebar" %>
 
-  <h2 class="title"><%= @presenter.title %></h2>
+  <h2 class="title"><%= @presenter.html_title %></h2>
 
   <div id="body">
     <div style="margin-bottom: 1em;">
-      <%= @presenter.body(self) %>
+      <%= @presenter.html_body(self) %>
     </div>
 
     <div style="margin-bottom: 1em;">
-      <%= @presenter.posts(self) %>
+      <%= @presenter.html_posts(self) %>
     </div>
   </div>
   
