@@ -120,6 +120,7 @@ class UserController < ApplicationController
     end
     
     if @current_user.update_attributes(params[:user])
+      cookies.delete(:hide_resized_notice)
       respond_to_success("Account settings saved", :action => "home")
     else
       respond_to_error(@current_user, :action => "edit")

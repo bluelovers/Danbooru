@@ -7,6 +7,12 @@
     This image is displayed at <%= number_to_percentage @post.sample_percentage, :precision => 0 %> of its original size. <%= link_to_function "View original", "Post.highres()" %>
     <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>
       | <%= link_to_function "Always view original", "User.disable_samples()" %>
+      | <%= link_to_function "Hide this message", "$('resized_notice').hide(); Cookie.put('hide_resized_notice', '1')" %>
+      <script type="text/javascript">
+        if (Cookie.get("hide_resized_notice") != "1") {
+          $("resized_notice").show()
+        }
+      </script>
     <% end %>
   </div>
   <div class="status-notice" style="display: none;" id="samples_disabled">
