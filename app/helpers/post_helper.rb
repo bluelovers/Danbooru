@@ -1,7 +1,7 @@
 module PostHelper
   def will_paginate_for_posts(posts)
     page = params[:page].to_i
-    if page > 1_000 || params[:before_id]
+    if page >= 1_000 || params[:before_id]
       post_pagination_links(posts)
     else
       will_paginate(posts)
