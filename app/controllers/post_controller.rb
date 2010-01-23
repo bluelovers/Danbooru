@@ -202,13 +202,13 @@ class PostController < ApplicationController
 
 private
   def index_after_thousand(tags, per_page, before_id)
-    @posts = Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :limit => per_page, :before_id => before_id))
+    @posts = Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :limit => per_page, :before_id => before_id))
   end
   
   def index_before_thousand(tags, page, per_page)
     post_count = Post.fast_count(tags.join(" "), :user => @current_user)
     @posts = WillPaginate::Collection.create(page, per_page, post_count) do |pager|
-      pager.replace(Post.find_by_sql(Post.generate_sql(tags, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
+      pager.replace(Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     
     @tag_suggestions = Tag.find_suggestions(tags.join(" ")) if post_count < 20 && tags.size == 1
