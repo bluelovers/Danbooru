@@ -64,8 +64,8 @@ class ArtistControllerTest < ActionController::TestCase
     get :create, {}, {:user_id => 4}
     assert_response :success
     
-    post :create, {:artist => {:name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :other_names => "claude, oscar", :group_name => "john", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
-    monet = Artist.find_by_any_name("monet")
+    post :create, {:artist => {:name => "monet'()", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :other_names => "claude, oscar", :group_name => "john", :notes => "Claude Oscar Monet"}}, {:user_id => 4}
+    monet = Artist.find_by_any_name("monet'()")
     assert_not_nil(monet)
     assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
     assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
