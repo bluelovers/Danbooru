@@ -23,6 +23,8 @@
         (vote <%= link_to_function "up", "Post.vote(1, #{@post.id})" %>/<%= link_to_function "down", "Post.vote(-1, #{@post.id})" %>)
       <% end %>
     </li>
-    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span></li>
+    <% if @current_user.is_privileged_or_higher? %>
+      <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span></li>
+    <% end %>
   </ul>
 </div>

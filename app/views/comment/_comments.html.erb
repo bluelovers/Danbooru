@@ -1,7 +1,5 @@
 <div class="response-list" id="response-list-for-<%= post_id %>">
-  <% comments.each do |c| %>
-    <%= render :partial => "comment/comment", :locals => {:comment => c} %>
-  <% end %>
+  <%= render :partial => "comment/comment", :collection => comments %>
 </div>
 
 <div style="clear: both;">

@@ -28,12 +28,11 @@ class Post < ActiveRecord::Base
   
   # TODO: refactor or eliminate
   def favorited_by
-    # Cache results
-    if @favorited_by.nil?
-      @favorited_by = User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id, users.created_at, users.level", :conditions => ["f.post_id = ?", id], :order => "f.id DESC")
-    end
+    @favorited_by ||= User.find(:all, :joins => "JOIN favorites f ON f.user_id = users.id", :select => "users.name, users.id, users.created_at, users.level", :conditions => ["f.post_id = ?", id], :order => "f.id DESC")
+  end
 
-    return @favorited_by
+  def favorited_by_hash
+    @favorited_by_hash ||= User.select_all_sql("SELECT users.name, users.id FROM users JOIN favorites f ON f.user_id = users.id WHERE f.post_id = #{id} ORDER BY f.id DESC")
   end
 
   def author

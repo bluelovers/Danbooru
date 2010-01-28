@@ -14,3 +14,5 @@ config.action_controller.perform_caching             = false
 config.action_mailer.raise_delivery_errors = false
 
 config.log_level = :debug
+
+config.middleware.use("Rack::Bug", :password => "muggles", :secret_key => "ajioehgoeahguosghuuw3hgohgh9823g93hg923h93h")

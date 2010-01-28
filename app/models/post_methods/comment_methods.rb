@@ -15,5 +15,9 @@ module PostMethods
     def hidden_comment_count(current_user)
       comments.hidden(current_user).size
     end
+    
+    def comments_as_hash
+      @comments_as_hash ||= Comment.select_all_sql("SELECT id, created_at, user_id, body, score FROM comments WHERE post_id = #{id} ORDER BY id")
+    end
   end
 end

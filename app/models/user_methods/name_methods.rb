@@ -6,13 +6,7 @@ module UserMethods
           return CONFIG["default_guest_name"]
         end
 
-        user = find(:first, :conditions => ["id = ?", user_id], :select => "name")
-
-        if user
-          return user.name
-        else
-          return CONFIG["default_guest_name"]
-        end
+        connection.select_value("select name from users where id = #{user_id.to_i}") || CONFIG["default_guest_name"]
       end
 
       def find_name(user_id)

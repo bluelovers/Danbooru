@@ -11,12 +11,12 @@ module TagMethods
       # Returns the text representation of a tag's type value.
       def type_name(tag_name)
         tag_name.gsub!(/\s/, "_")
-        tag = Tag.first(:conditions => ["name = ?", tag_name], :select => "tag_type")
+        tag_type = select_value_sql("SELECT tag_type FROM tags WHERE name = ?", tag_name)
 
-        if tag.nil?
+        if tag_type.nil?
           "general"
         else
-          type_map[tag.tag_type]
+          type_map[tag_type.to_i]
         end
       end
 
