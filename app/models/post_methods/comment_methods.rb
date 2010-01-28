@@ -13,11 +13,11 @@ module PostMethods
     end
     
     def hidden_comment_count(current_user)
-      comments.hidden(current_user).size
+      comments_as_hash.inject(0) {|sum, x| x["score"].to_i < current_user.comment_threshold ? sum + 1 : sum}
     end
     
     def comments_as_hash
-      @comments_as_hash ||= Comment.select_all_sql("SELECT id, created_at, user_id, body, score FROM comments WHERE post_id = #{id} ORDER BY id")
+      @comments_as_hash ||= Comment.select_all_sql("SELECT id, created_at, user_id, body, score FROM comments WHERE post_id = #{id} ORDER BY id ASC")
     end
   end
 end

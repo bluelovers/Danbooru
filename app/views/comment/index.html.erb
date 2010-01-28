@@ -36,20 +36,20 @@
             <% end %>
           </div>
           <div style="margin-top: 1em;">
-            <% if post.comments_as_hash.count > 6 %>
+            <% if post.comments_as_hash.size > 6 %>
               <span class="info" id="hidden-comments-notice-for-<%= post.id %>"><%= link_to_remote "#{pluralize post.comments.size - 6, 'comment'} hidden", :url => {:controller => "comment", :action => "index_hidden", :post_id => post.id} %>.</span>
             <% end %>
 
             <%= render :partial => "threshold_notice", :locals => {:post => post} %>
           </div>
         </div>
-        <%= render :partial => "comments", :locals => {:comments => post.comments_as_hash[-6..-1], :post_id => post.id, :hide => true} %>          
+        <%= render :partial => "comments", :locals => {:comments => post.comments_as_hash.reverse.slice(0, 6).reverse, :post_id => post.id, :hide => true} %>          
       </div>
     </div>
   <% end %>
 
   <div id="paginator">
-    <%= will_paginate(@posts) %>
+    <%= next_prev_pagination_links(@posts) %>
   </div>
 
   <%= render :partial => "footer" %>

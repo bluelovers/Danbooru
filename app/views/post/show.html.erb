@@ -26,17 +26,13 @@
       <script type="text/javascript">
         Post.observe_text_area("post_tags")
       
-        <% if @post %>
-          var current_user = Cookie.get("login")
-          
-          <% if @current_user.is_privileged_or_higher? %>
-            var favorited_by = <%= @post.favorited_by_hash.map {|x| x["name"]}.to_json %>
-            if (favorited_by.include(current_user)) {
-              $("add-to-favs").hide()
-            } else {
-              $("remove-from-favs").hide()
-            }
-          <% end %>
+        <% if @post && @current_user.is_privileged_or_higher? %>
+          var favorited_by = <%= @post.favorited_by_hash.map {|x| x["name"]}.to_json %>
+          if (favorited_by.include(Cookie.get("login"))) {
+            $("add-to-favs").hide()
+          } else {
+            $("remove-from-favs").hide()
+          }
         <% end %>
 
         RelatedTags.init(<%= @current_user.uploaded_tags_with_types.to_json %>, <%= @current_user.recent_tags_with_types.to_json %>)

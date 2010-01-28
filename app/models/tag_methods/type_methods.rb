@@ -8,25 +8,33 @@ module TagMethods
         type_map[type_value]
       end
 
+      def type_cache_key(name)
+        name.gsub(/\W/) {|x| "%#{x[0]}"}
+      end
+
       # Returns the text representation of a tag's type value.
       def type_name(tag_name)
-        tag_name.gsub!(/\s/, "_")
-        tag_type = select_value_sql("SELECT tag_type FROM tags WHERE name = ?", tag_name)
+        Cache.get("tag_type:#{type_cache_key(tag_name)}") do
+          tag_name.gsub!(/\s/, "_")
+          tag_type = select_value_sql("SELECT tag_type FROM tags WHERE name = ?", tag_name)
 
-        if tag_type.nil?
-          "general"
-        else
-          type_map[tag_type.to_i]
+          if tag_type.nil?
+            "general"
+          else
+            type_map[tag_type.to_i]
+          end
         end
       end
 
       # Returns the tag type and post count of a tag.
       def type_and_count(tag_name)
-        results = select_all_sql("SELECT tag_type, post_count FROM tags WHERE name = ?", tag_name)
-        if results.any?
-          [results[0]["tag_type"].to_i, results[0]["post_count"].to_i]
-        else
-          [0, 0]
+        Cache.get("tag_type_count:#{type_cache_key(tag_name)}") do
+          results = select_all_sql("SELECT tag_type, post_count FROM tags WHERE name = ?", tag_name)
+          if results.any?
+            [results[0]["tag_type"].to_i, results[0]["post_count"].to_i]
+          else
+            [0, 0]
+          end
         end
       end
     end
@@ -49,6 +57,9 @@ module TagMethods
           post.increment("#{revised_type_name.downcase}_tag_count")
           post.save
         end
+        
+        Cache.delete("tag_type:#{type_cache_key(name)}")
+        Cache.delete("tag_type_count:#{type_cache_key(name)}")
       end
     end
 

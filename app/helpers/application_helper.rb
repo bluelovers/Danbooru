@@ -1,4 +1,24 @@
 module ApplicationHelper
+  def next_prev_pagination_links(items)
+    html = ""
+    page = params[:page].to_i
+    page = 1 if page < 1
+    
+    if page > 1
+      previous_link = link_to("&laquo; Previous", :page => page - 1)
+    else
+      previous_link = nil
+    end
+    
+    if items.any?
+      next_link = link_to("Next &raquo;", :page => page + 1)
+    else
+      next_link = nil
+    end
+    
+    "#{previous_link} #{next_link}"
+  end
+  
   def fast_link_to(text, link_params, options = {})
     if options
       attributes = options.map do |k, v| 
@@ -139,7 +159,7 @@ module ApplicationHelper
     end
 
     return html.join("\n")
-  end  
+  end 
   
   def print_preview(post, options = {})
     unless post.can_be_seen_by?(@current_user)
