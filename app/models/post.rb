@@ -43,6 +43,10 @@ class Post < ActiveRecord::Base
     notes.select {|x| x.is_active?}
   end
   
+  def active_notes_hash
+    @active_notes_hash ||= Note.select_all_sql("SELECT * FROM notes WHERE post_id = #{id}")
+  end
+  
   def can_be_seen_by?(user)
     CONFIG["can_see_post"].call(user, self)
   end

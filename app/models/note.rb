@@ -63,7 +63,7 @@ class Note < ActiveRecord::Base
 
   # TODO: move this to a helper
   def formatted_body
-    body.gsub(/<tn>(.+?)<\/tn>/m, '<br><p class="tn">\1</p>').gsub(/\n/, '<br>')
+    Note.format_body(body)
   end
 
   def update_post
@@ -78,6 +78,10 @@ class Note < ActiveRecord::Base
 
   def author
     User.find_name(user_id)
+  end
+  
+  def self.format_body(text)
+    text.gsub(/<tn>(.+?)<\/tn>/m, '<br><p class="tn">\1</p>').gsub(/\n/, '<br>')
   end
   
   def self.undo_changes_by_user(user_id)

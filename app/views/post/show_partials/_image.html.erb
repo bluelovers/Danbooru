@@ -4,11 +4,11 @@
       <p>You need a privileged account to see this image.</p>
     <% elsif @post.image? %>
       <div id="note-container">
-        <% @post.active_notes.each do |note| %>
-          <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
-            <div class="note-corner" id="note-corner-<%= note.id %>"></div>
+        <% @post.active_notes_hash.each do |note| %>
+          <div class="note-box" style="width: <%= note["width"] %>px; height: <%= note["height"] %>px; top: <%= note["y"] %>px; left: <%= note["x"] %>px;" id="note-box-<%= note["id"] %>">
+            <div class="note-corner" id="note-corner-<%= note["id"] %>"></div>
           </div>
-           <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= hs note.formatted_body %></div>
+           <div class="note-body" id="note-body-<%= note["id"] %>" title="Click to edit"><%= hs Note.format_body(note["body"]) %></div>
         <% end %>
       </div>
       <%= image_tag(@post.sample_url(@current_user), :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.get_sample_width(@current_user), :height => @post.get_sample_height(@current_user), :"data-orig_width" => @post.width, :"data-orig_height" => @post.height) %>
@@ -29,8 +29,8 @@
     <script type="text/javascript">
       Note.post_id = <%= @post.id %>
 
-      <% @post.active_notes.each do |note| %>
-        Note.all.push(new Note(<%= note.id %>, false, '<%= h note.body.to_escaped_js %>'))
+      <% @post.active_notes_hash.each do |note| %>
+        Note.all.push(new Note(<%= note["id"] %>, false, '<%= h note["body"].to_escaped_js %>'))
       <% end %>
 
       Note.updateNoteCount()
