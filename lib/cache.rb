@@ -89,9 +89,14 @@ module Cache
     end
   end
   
+  def sanitize_key(key)
+    key.gsub(/\W/) {|x| "%#{key[0]}"}.slice(0, 220)
+  end
+  
   module_function :get
   module_function :expire
   module_function :incr
   module_function :put
   module_function :delete
+  module_function :sanitize_key
 end

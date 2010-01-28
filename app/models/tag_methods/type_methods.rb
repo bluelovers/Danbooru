@@ -8,13 +8,9 @@ module TagMethods
         type_map[type_value]
       end
 
-      def type_cache_key(name)
-        name.gsub(/\W/) {|x| "%#{x[0]}"}.slice(0, 220)
-      end
-
       # Returns the text representation of a tag's type value.
       def type_name(tag_name)
-        Cache.get("tag_type:#{type_cache_key(tag_name)}") do
+        Cache.get("tag_type:#{Cache.sanitize_key(tag_name)}") do
           tag_name.gsub!(/\s/, "_")
           tag_type = select_value_sql("SELECT tag_type FROM tags WHERE name = ?", tag_name)
 
@@ -28,7 +24,7 @@ module TagMethods
 
       # Returns the tag type and post count of a tag.
       def type_and_count(tag_name)
-        Cache.get("tag_type_count:#{type_cache_key(tag_name)}") do
+        Cache.get("tag_type_count:#{Cache.sanitize_key(tag_name)}") do
           results = select_all_sql("SELECT tag_type, post_count FROM tags WHERE name = ?", tag_name)
           if results.any?
             [results[0]["tag_type"].to_i, results[0]["post_count"].to_i]
@@ -58,8 +54,8 @@ module TagMethods
           post.save
         end
         
-        Cache.delete("tag_type:#{Tag.type_cache_key(name)}")
-        Cache.delete("tag_type_count:#{Tag.type_cache_key(name)}")
+        Cache.delete("tag_type:#{Cache.sanitize_key(name)}")
+        Cache.delete("tag_type_count:#{Cache.sanitize_key(name)}")
       end
     end
 
