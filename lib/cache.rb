@@ -90,7 +90,7 @@ module Cache
   end
   
   def sanitize_key(key)
-    key.gsub(/\W/) {|x| "%#{key[0]}"}.slice(0, 220)
+    key.gsub(/\W/, "_").slice(0, 220)
   end
   
   module_function :get
