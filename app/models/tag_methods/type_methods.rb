@@ -9,7 +9,7 @@ module TagMethods
       end
 
       def type_cache_key(name)
-        name.gsub(/\W/) {|x| "%#{x[0]}"}
+        name.gsub(/\W/) {|x| "%#{x[0]}"}.slice(0, 220)
       end
 
       # Returns the text representation of a tag's type value.
