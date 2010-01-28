@@ -58,8 +58,8 @@ module TagMethods
           post.save
         end
         
-        Cache.delete("tag_type:#{type_cache_key(name)}")
-        Cache.delete("tag_type_count:#{type_cache_key(name)}")
+        Cache.delete("tag_type:#{Tag.type_cache_key(name)}")
+        Cache.delete("tag_type_count:#{Tag.type_cache_key(name)}")
       end
     end
 
