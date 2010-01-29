@@ -1,24 +1,24 @@
-<% if @show_all || comment["score"].to_i >= @current_user.comment_threshold %>
-  <div class="comment <% if comment["score"].to_i < @current_user.comment_threshold %>bad-comment<% end %>" id="comment-<%= comment["id"] %>">
+<% if @show_all || comment.score.to_i >= @current_user.comment_threshold %>
+  <div class="comment <% if comment.score < @current_user.comment_threshold %>bad-comment<% end %>" id="comment-<%= comment.id %>">
     <div class="author">
-      <% if comment["user_id"] %>
-        <h6><a href="/user/show/<%= comment["user_id"] %>"><%= h User.find_name(comment["user_id"]) %></a></h6>
+      <% if comment.user_id %>
+        <h6><a href="/user/show/<%= comment.user_id %>"><%= h comment.pretty_author %></a></h6>
       <% else %>
-        <h6><%= h User.find_name(comment["user_id"]) %></h6>
+        <h6><%= h User.find_name(comment.user_id) %></h6>
       <% end %>
-      <span class="date" title="Posted at <%= comment["created_at"].to_time.strftime('%c') %>"><%= time_ago_in_words(comment["created_at"].to_time) %> ago</span>
+      <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
     </div>
     <div class="content">
       <div class="body">
-        <%= format_text(comment["body"], :mode => :comment) %>
+        <%= format_text(comment.body, :mode => :comment) %>
       </div>
       <div class="footer">
-        <%= link_to_function "Quote", "Comment.quote(#{comment["id"]})" %>
-        <% if @current_user.is_janitor_or_higher? || @current_user.id == comment["user_id"].to_i %>
-          | <%= link_to_function "Delete", "Comment.destroy(#{comment["id"]})" %>
+        <%= link_to_function "Quote", "Comment.quote(#{comment.id})" %>
+        <% if @current_user.is_janitor_or_higher? || @current_user.id == comment.user_id %>
+          | <%= link_to_function "Delete", "Comment.destroy(#{comment.id})" %>
         <% end %>
-        | <%= link_to_function "Vote up", "Comment.vote(#{comment["id"]}, 'up')" %>
-        | <%= link_to_function "Vote down", "Comment.vote(#{comment["id"]}, 'down')" %>
+        | <%= link_to_function "Vote up", "Comment.vote(#{comment.id}, 'up')" %>
+        | <%= link_to_function "Vote down", "Comment.vote(#{comment.id}, 'down')" %>
       </div>
     </div>
   </div>

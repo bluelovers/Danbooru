@@ -8,5 +8,5 @@
     <%= render :partial => "comment/threshold_notice", :locals => {:post => @post} %>
   </div>
   
-  <%= render :partial => "comment/comments", :locals => {:comments => @post.comments_as_hash, :post_id => @post.id, :hide => false} %>
+  <%= render :partial => "comment/comments", :locals => {:comments => @post.comments, :post_id => @post.id, :hide => false} %>
 </div>

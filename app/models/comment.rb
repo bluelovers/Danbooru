@@ -15,6 +15,10 @@ class Comment < ActiveRecord::Base
       cond.add_unless_blank "post_id = ?", params[:post_id]
     end.to_hash
   end
+  
+  def self.recent
+    all(:limit => 6, :order => "id desc")
+  end
 
   def update_last_commented_at
     return if self.do_not_bump_post
