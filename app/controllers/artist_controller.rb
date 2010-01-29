@@ -56,7 +56,7 @@ class ArtistController < ApplicationController
       if params[:name]
         @artist.name = params[:name]
 
-        post = Post.find_by_tags("source:http* #{params[:name]}", :limit => 1)
+        post = Post.find_by_tags("source:http* #{params[:name]}", :limit => 1).first
         unless post == nil || post.source.blank?
           @artist.urls = post.source
         end
