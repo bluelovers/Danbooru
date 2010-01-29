@@ -75,11 +75,9 @@ class NoteController < ApplicationController
       return
     end
 
-    note.attributes = params[:note]
-    note.user_id = @current_user.id
-    note.ip_addr = request.remote_ip
+    note.update_attributes(params[:note].merge(:user_id => @current_user.id, :ip_addr => request.remote_ip))
 
-    if note.save
+    if note.errors.empty?
       respond_to_success("Note updated", {:action => "index"}, :api => {:new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)})
     else
       respond_to_error(note, :controller => "post", :action => "show", :id => note.post_id)
