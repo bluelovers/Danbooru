@@ -10,7 +10,7 @@ module TagMethods
 
       # Returns the text representation of a tag's type value.
       def type_name(tag_name)
-        Cache.get("tag_type:#{Cache.sanitize_key(tag_name)}") do
+        Cache.get("tag_type:#{Cache.sanitize_key(tag_name)}", 24.hours) do
           tag_name.gsub!(/\s/, "_")
           tag_type = select_value_sql("SELECT tag_type FROM tags WHERE name = ?", tag_name)
 
@@ -24,7 +24,7 @@ module TagMethods
 
       # Returns the tag type and post count of a tag.
       def type_and_count(tag_name)
-        Cache.get("tag_type_count:#{Cache.sanitize_key(tag_name)}") do
+        Cache.get("tag_type_count:#{Cache.sanitize_key(tag_name)}", 24.hour) do
           results = select_all_sql("SELECT tag_type, post_count FROM tags WHERE name = ?", tag_name)
           if results.any?
             [results[0]["tag_type"].to_i, results[0]["post_count"].to_i]
