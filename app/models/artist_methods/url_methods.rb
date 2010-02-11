@@ -8,14 +8,19 @@ module ArtistMethods
         while artists.empty? && url.size > 10
           u = url.gsub(/\/+$/, "") + "/"
           u = u.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
-          artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artists.is_active = TRUE AND artist_urls.normalized_url LIKE ? ESCAPE E'\\\\'", u], :order => "artists.name")
+          puts u
+          artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artists.is_active = TRUE AND artist_urls.normalized_url LIKE ? ESCAPE E'\\\\'", u], :order => "artists.name", :limit => "5")
 
           # Remove duplicates based on name
           artists = artists.inject({}) {|all, artist| all[artist.name] = artist ; all}.values
           url = File.dirname(url) + "/"
         end
 
-        return artists[0, 20]
+        if artists.size > 3
+          return []
+        else
+          return artists[0, 20]
+        end
       end
     end
     
