@@ -135,3 +135,7 @@ CONFIG["tag_subscription_post_limit"] = 200
 CONFIG["max_tag_subscriptions"] = 5
 
 CONFIG["load_average_threshold"] = nil
+
+CONFIG["servers"] = ["danbooru", "hako"]
+CONFIG["server_ftp_password"] = "changeme"
+CONFIG["server_ftp_dir"] = "/var/www/danbooru"

@@ -13,8 +13,29 @@ module PostMethods
       m.before_validation_on_create :generate_sample
       m.before_validation_on_create :generate_preview
       m.before_validation_on_create :move_file
+      m.before_validation_on_create :distribute_file      
     end
-  
+    
+    def distribute_file
+      CONFIG["servers"].each do |server|
+        if server != Socket.gethostname
+          Net::FTP.open(server) do |ftp|
+            ftp.connect("ftp://#{server}", 21)
+            ftp.login("danbooru", CONFIG["server_ftp_password"])
+            ftp.chdir(CONFIG["server_ftp_dir"] + "/public/data")
+            ftp.putbinaryfile(file_path)
+            ftp.chdir(CONFIG["server_ftp_dir"] + "/public/data/preview")
+            ftp.putbinaryfile(preview_path)
+            if has_sample?
+              ftp.chdir(CONFIG["server_ftp_dir"] + "/public/data/sample")
+              ftp.putbinaryfile(sample_path)
+            end
+          end
+        end
+      end      
+      true
+    end
+    
     def ensure_tempfile_exists
       unless File.exists?(tempfile_path)
         errors.add :file, "not found, try uploading again"

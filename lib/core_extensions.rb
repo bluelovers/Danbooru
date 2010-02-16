@@ -14,12 +14,6 @@ class ActiveRecord::Base
   end
 end
 
-class NilClass
-  def id
-    raise NoMethodError
-  end
-end
-
 class String
   def to_escaped_for_sql_like
     # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
