@@ -63,7 +63,7 @@
       </div>
     </div>
   </div>
-  <div class="content">
+  <div class="content" <% if CONFIG["can_see_ads"].call(@current_user) %>style="width: 60%;"<% end %>>
     <%= print_advertisement("horizontal") %>      
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
@@ -90,8 +90,12 @@
 
     <div id="paginator">
       <%= will_paginate_for_posts(@posts) %>
-    </div>
+    </div>    
   </div>
+  
+  <% if CONFIG["can_see_ads"].call(@current_user) %>
+    <%= render :partial => "static/jlist_rss_ads" %>
+  <% end %>
 </div>
 
 <script type="text/javascript">
