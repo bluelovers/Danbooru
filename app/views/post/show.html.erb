@@ -14,14 +14,16 @@
       <%= render :partial => "post/show_partials/history_panel" %>
       <%= render :partial => "post/show_partials/related_posts_panel" %>
     </div>
-    <div class="content" id="right-col">
+    <div class="content" id="right-col" <% if CONFIG["can_see_ads"].call(@current_user) %>style="width: 60%;"<% end %>>
       <%= print_advertisement("horizontal") %>
       <%= render :partial => "post/show_partials/image" %>      
       <%= render :partial => "post/show_partials/image_footer" %>
       <%= render :partial => "post/show_partials/edit" %>
       <%= render :partial => "post/show_partials/comments" %>
-      <%= render :partial => "static/jlist_rss_ads" %>
     </div>
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
+      <%= render :partial => "static/jlist_rss_ads" %>
+    <% end %>
 
     <% content_for("post_cookie_javascripts") do %>
       <script type="text/javascript">
