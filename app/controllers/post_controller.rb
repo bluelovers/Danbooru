@@ -2,7 +2,7 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-  before_filter :check_load_average, :only => [:index, :piclens]
+#  before_filter :check_load_average, :only => [:index, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
   before_filter :test_janitor_only, :only => [:moderate]
   before_filter :janitor_only, :only => [:undelete]
@@ -15,7 +15,7 @@ class PostController < ApplicationController
   def check_load_average
     if CONFIG["load_average_threshold"] && @current_user.is_anonymous?
       bandwidth_used = Cache.get("db-bw")
-      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 850)
+      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 600)
         respond_to do |fmt|
           fmt.html {render :template => "static/overloaded", :status => 503}
           fmt.xml {render :nothing => true, :status => 503}

@@ -64,7 +64,7 @@ class Artist < ActiveRecord::Base
         
       when /./
         stripped_name = Artist.normalize(params[:name]).to_escaped_for_sql_like
-        cond.add "name LIKE ? ESCAPE E'\\\\' OR ? ~~~ ANY (other_names_array) OR group_name LIKE ?", stripped_name, stripped_name, stripped_name
+        cond.add "name LIKE ? ESCAPE E'\\\\' OR ? ~~~ ANY (other_names_array) OR group_name LIKE ? ", stripped_name, stripped_name, stripped_name
       end
       
       cond.add_unless_blank "id = ?", params[:id]

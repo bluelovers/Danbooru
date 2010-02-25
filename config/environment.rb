@@ -32,6 +32,6 @@ Rails::Initializer.run do |config|
   config.gem "memcache-client", :lib => "memcache"
   config.gem "aws-s3", :lib => "aws/s3"
   config.gem "json"
-  config.gem "sys-cpu", :lib => "sys/cpu"
-	config.gem "mechanize"
+  config.gem "mechanize"
+  config.gem "net-sftp", :lib => "net/sftp"
 end

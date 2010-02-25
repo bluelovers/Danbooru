@@ -19,16 +19,11 @@ module PostMethods
     def distribute_file
       CONFIG["servers"].each do |server|
         if server != Socket.gethostname
-          Net::FTP.open(server) do |ftp|
-            ftp.connect("ftp://#{server}", 21)
-            ftp.login("danbooru", CONFIG["server_ftp_password"])
-            ftp.chdir(CONFIG["server_ftp_dir"] + "/public/data")
-            ftp.putbinaryfile(file_path)
-            ftp.chdir(CONFIG["server_ftp_dir"] + "/public/data/preview")
-            ftp.putbinaryfile(preview_path)
-            if has_sample?
-              ftp.chdir(CONFIG["server_ftp_dir"] + "/public/data/sample")
-              ftp.putbinaryfile(sample_path)
+          Net::SFTP.start(server, "albert") do |ftp|
+            ftp.upload!(file_path, CONFIG["server_sftp_dir"] + "/public/data/#{md5}.#{file_ext}")
+	          ftp.upload!(preview_path, CONFIG["server_sftp_dir"] + "/public/data/preview/#{md5}.jpg")
+            if File.exists?(sample_path)
+              ftp.upload!(sample_path, CONFIG["server_sftp_dir"] + "/public/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg")
             end
           end
         end
