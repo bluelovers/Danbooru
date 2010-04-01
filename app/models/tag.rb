@@ -104,7 +104,7 @@ class Tag < ActiveRecord::Base
       # Contains only one underscore
       search_for = query.split(/_/).reverse.join("_").to_escaped_for_sql_like
     else
-      search_for = "%" + query.to_escaped_for_sql_like + "%"
+      search_for = query.to_escaped_for_sql_like + "%"
     end
     
     Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\' AND post_count > 0 AND name <> ?", search_for, query], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
