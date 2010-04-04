@@ -5,7 +5,7 @@ module TagMethods
     end
 
     def update_cache
-      Cache.put("tag_type:#{name}", self.class.type_name_from_value(tag_type))
+      Cache.put("tag_type:#{name}", tag_type)
     end
   end
 end

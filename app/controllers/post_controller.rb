@@ -211,7 +211,7 @@ private
       pager.replace(Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     
-    @tag_suggestions = Tag.find_suggestions(tags.join(" ")) if post_count < 20 && tags.size == 1
+    # @tag_suggestions = Tag.find_suggestions(tags.join(" ")) if post_count < 20 && tags.size == 1
   end
 
 public
@@ -256,7 +256,7 @@ public
     
       respond_to do |fmt|
         fmt.html do
-          @ambiguous_tags = Tag.select_ambiguous(@tags)
+          # @ambiguous_tags = Tag.select_ambiguous(@tags)
           @render_start_time = Time.now
         end
         fmt.xml do

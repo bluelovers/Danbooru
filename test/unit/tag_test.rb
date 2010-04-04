@@ -82,11 +82,9 @@ class TagTest < ActiveSupport::TestCase
     assert_equal(["moge"], Tag.select_ambiguous(["moge", "chichi", "oppai"]))
   end
   
-  if CONFIG["enable_caching"]
-    def test_cache
-      Tag.find_or_create_by_name("artist:a1")
-      assert_equal("artist", Cache.get("tag_type:a1"))
-    end
+  def test_cache
+    Tag.find_or_create_by_name("artist:a1")
+    assert_equal(1, Cache.get("tag_type:a1"))
   end
 
   def test_parse_cast
@@ -167,41 +165,41 @@ class TagTest < ActiveSupport::TestCase
     p2 = create_post('tag1 tag2 tag3')
     
     t = Tag.find_by_name("tag1")
-    related = t.related(true).sort {|a, b| a[0] <=> b[0]}
-    assert_equal(["tag1", "2", "0"], related[0])
-    assert_equal(["tag2", "2", "0"], related[1])
-    assert_equal(["tag3", "1", "0"], related[2])
+    t.update_related
+    related = t.related_tag_array.sort {|a, b| a[0] <=> b[0]}
+    assert_equal(["tag2", "2"], related[0])
+    assert_equal(["tag3", "1"], related[1])
     
     # Make sure the related tags are cached
     p3 = create_post("tag1 tag4")
-    t.reload
-    related = t.related(true).sort {|a, b| a[0] <=> b[0]}
+    t.update_related
+    related = t.related_tag_array.sort {|a, b| a[0] <=> b[0]}
+    
     assert_equal(3, related.size)
-    assert_equal(["tag1", "2", "0"], related[0])
-    assert_equal(["tag2", "2", "0"], related[1])
-    assert_equal(["tag3", "1", "0"], related[2])
+    assert_equal(["tag2", "2"], related[0])
+    assert_equal(["tag3", "1"], related[1])
+    assert_equal(["tag4", "1"], related[2])
     
     # Make sure related tags are properly updated with the cache is expired
     t.update_attribute(:cached_related_expires_on, 5.days.ago)
-    t.reload
-    related = t.related(true).sort {|a, b| a[0] <=> b[0]}
-    assert_equal(4, related.size)
-    assert_equal(["tag1", "3", "0"], related[0])
-    assert_equal(["tag2", "2", "0"], related[1])
-    assert_equal(["tag3", "1", "0"], related[2])
-    assert_equal(["tag4", "1", "0"], related[3])
+    t.update_related
+    related = t.related_tag_array.sort {|a, b| a[0] <=> b[0]}
+    assert_equal(3, related.size)
+    assert_equal(["tag2", "2"], related[0])
+    assert_equal(["tag3", "1"], related[1])
+    assert_equal(["tag4", "1"], related[2])
   end
   
   def test_related_by_type
     p1 = create_post("tag1 artist:tag2")
     p2 = create_post('tag1 tag2 artist:tag3 copyright:tag4')
     
-    related = Tag.calculate_related_by_type("tag1", CONFIG["tag_types"]["Artist"]).sort {|a, b| a[0] <=> b[0]}
+    related = Tag.find_related_by_type("tag1", CONFIG["tag_types"]["Artist"]).sort {|a, b| a[0] <=> b[0]}
     assert_equal(2, related.size)
     assert_equal("tag2", related[0][0])
-    assert_equal("2", related[0][1])
+    assert_equal(2, related[0][1])
     assert_equal("tag3", related[1][0])
-    assert_equal("1", related[1][1])
+    assert_equal(1, related[1][1])
   end
   
   def test_types

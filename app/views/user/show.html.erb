@@ -36,39 +36,39 @@
     </tr>
     <tr>
       <td><strong>Posts</strong></td>
-      <td><%= link_to Post.count(:conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %> (<%= link_to "random", :action => "random", :id => @user.id %>)</td>
+      <td><%= link_to "View", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %> (<%= link_to "random", :action => "random", :id => @user.id %>)</td>
     </tr>
     <tr>
       <td><strong>Deleted Posts</strong></td>
-      <td><%= link_to Post.count(:conditions => "status = 'deleted' and user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "user:#{@user.name} status:deleted" %></td>
+      <td><%= link_to "View", :controller => "post", :action => "index", :tags => "user:#{@user.name} status:deleted" %></td>
     </tr>
     <tr>
       <td><strong>Favorites</strong></td>
-      <td><%= link_to Favorite.count(:conditions => "user_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></td>
+      <td><%= link_to "View", :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Comments</strong></td>
-      <td><%= link_to Comment.count(:conditions => "user_id = #{@user.id}"), :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
+      <td><%= link_to "View", :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Tag Edits</strong></td>
-      <td><%= link_to PostTagHistory.count(:conditions => "user_id = #{@user.id}"), :controller => "post_tag_history", :action => "index", :user_id => @user.id %></td>
+      <td><%= link_to "View", :controller => "post_tag_history", :action => "index", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong>Note Edits</strong></td>
-      <td><%= link_to NoteVersion.count(:conditions => "user_id = #{@user.id}"), :controller => "note", :action => "history", :user_id => @user.id %></td>
+      <td><%= link_to "View", :controller => "note", :action => "history", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong>Wiki Edits</strong></td>
-      <td><%= link_to WikiPageVersion.count(:conditions => "user_id = #{@user.id}"), :controller => "wiki", :action => "recent_changes", :user_id => @user.id %></td>
+      <td><%= link_to "View", :controller => "wiki", :action => "recent_changes", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong>Forum Posts</strong></td>
-      <td><%= link_to ForumPost.count(:conditions => "creator_id = #{@user.id}"), :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
+      <td><%= link_to "View", :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Pool Updates</strong></td>
-      <td><%= link_to PoolUpdate.count(:conditions => "user_id = #{@user.id}"), :controller => "pool", :action => "recent_changes", :user_id => @user.id %></td>
+      <td><%= link_to "View", :controller => "pool", :action => "recent_changes", :user_id => @user.id %></td>
     </tr>
     <% if @user.invited_by %>
       <tr>
@@ -77,12 +77,8 @@
       </tr>
     <% end %>
     <tr>
-      <td><strong>Recent Invites</strong></td>
-      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
-    </tr>
-    <tr>
       <td><strong>Approvals</strong></td>
-      <td><%= link_to Post.count(:conditions => "approver_id = #{@user.id}"), :controller => "post", :action => "index", :tags => "approver:#{@user.name}" %></td>
+      <td><%= link_to "View", :controller => "post", :action => "index", :tags => "approver:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Record</strong></td>

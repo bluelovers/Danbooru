@@ -23,6 +23,10 @@ class String
   def to_escaped_js
     return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\r|\n/, '\\n')
   end
+  
+  def to_escaped_for_tsquery
+    "''" + self.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77").gsub("%", "\\\\37") + "''"
+  end
 end
 
 class Hash

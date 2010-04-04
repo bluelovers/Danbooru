@@ -60,14 +60,13 @@ module PostHelper
     
     if tag.is_a?(String)
       tag_name = tag
-      tag_type, tag_count = Tag.type_and_count(tag)
-      type_name = Tag.type_name_from_value(tag_type.to_i)
+      type_value, post_count = Tag.type_and_count(tag_name)
     else
       tag_name = tag[0]
-      tag_count = tag[1]
-      type_name = Tag.type_name_from_value(tag[2].to_i)
+      type_value, post_count = Tag.type_name(tag[0]), tag[1]
     end
-    
+
+    type_name = Tag.type_name_from_value(type_value)
     html = %{<li class="tag-type-#{type_name}">}
 
     if type_name == "artist"
@@ -82,7 +81,7 @@ module PostHelper
     end
 
     html << %{<a href="/post/index?tags=#{u(tag_name)}">#{h(tag_name.tr("_", " "))}</a> }
-    html << %{<span class="post-count">#{tag_count}</span> }
+    html << %{<span class="post-count">#{post_count}</span>}
     html << '</li>'
     return html
   end

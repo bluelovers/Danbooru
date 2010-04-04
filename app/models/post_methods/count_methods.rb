@@ -8,7 +8,7 @@ module PostMethods
           c = select_value_sql("SELECT post_count FROM tags WHERE name = ?", tags).to_i
           if c == 0
             key = Digest::MD5.hexdigest(tags)
-            Cache.get("post_count:#{key}", 24.hours) do
+            Cache.get("post_count:#{key}", 1.hour) do
               Post.count_by_sql(Post.generate_sql(tags, options.merge(:count => true)))
             end.to_i
           else
@@ -19,13 +19,11 @@ module PostMethods
     
       def fast_deleted_count(tags = nil)
         if tags.blank?
-          Cache.get("deleted_count", 24.hours) do
+          Cache.get("deleted_count", 1.hour) do
             select_value_sql("SELECT COUNT(*) FROM posts WHERE status = 'deleted'")
           end.to_i
         else
-          key = Digest::MD5.hexdigest(tags)
-        
-          Cache.get("deleted_count:#{key}", 24.hours) do
+          Cache.get("deleted_count:#{Cache.sanitize_key(tags)}", 1.hour) do
             Post.count_by_sql(Post.generate_sql("#{tags} status:deleted", :count => true))
           end.to_i
         end

@@ -71,7 +71,8 @@ class JobTask < ActiveRecord::Base
     tag_id = data["id"].to_i
     tag = Tag.find_by_id(tag_id)
     if tag
-      tag.commit_related(Tag.calculate_related(tag.name))      
+      tag.update_related
+      tag.save
     end
   end
   

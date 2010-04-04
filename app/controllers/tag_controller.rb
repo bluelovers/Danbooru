@@ -127,7 +127,7 @@ class TagController < ApplicationController
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|
-        all[x] = Tag.calculate_related_by_type(x, CONFIG["tag_types"][params[:type]])
+        all[x] = Tag.find_related_by_type(x, CONFIG["tag_types"][params[:type]])
         all
       end
     else

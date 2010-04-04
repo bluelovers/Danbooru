@@ -46,8 +46,7 @@ module PostMethods
   
       def generate_sql_escape_helper(array)
         array.map do |token|
-          escaped_token = token.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77").gsub("%", "\\\\37")
-          "''" + escaped_token + "''"
+          token.to_escaped_for_tsquery
         end
       end
 

@@ -8,18 +8,22 @@ module TagMethods
         type_map[type_value]
       end
 
-      # Returns the text representation of a tag's type value.
-      def type_name(tag_name)
+      def type_value(tag_name)
         Cache.get("tag_type:#{Cache.sanitize_key(tag_name)}", 24.hours) do
           tag_name.gsub!(/\s/, "_")
           tag_type = select_value_sql("SELECT tag_type FROM tags WHERE name = ?", tag_name)
 
           if tag_type.nil?
-            "general"
+            0
           else
-            type_map[tag_type.to_i]
+            tag_type.to_i
           end
         end
+      end
+      
+      # Returns the text representation of a tag's type value.
+      def type_name(tag_name)
+        type_map[type_value(tag_name)]
       end
 
       # Returns the tag type and post count of a tag.
