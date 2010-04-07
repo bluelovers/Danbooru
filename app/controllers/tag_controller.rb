@@ -142,6 +142,10 @@ class TagController < ApplicationController
         @tags[x] = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", x.to_escaped_for_sql_like]).map {|y| [y.name, y.post_count]}
       end
     end
+    
+    @tags.each do |k, v|
+      @tags[k] = @tags[k].map {|x| [x[0], x[1], Tag.type_name(x[0])]}
+    end
 
     respond_to do |fmt|
       fmt.xml do

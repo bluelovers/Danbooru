@@ -11,15 +11,13 @@ class RelatedTagCalculator
       if category_constraint
         tag_array.each do |tag|
           category = Tag.type_value(tag)
-          if category == category_constraint && tag != name
+          if category == category_constraint
             counts[tag] += 1
           end
         end
       else
         tag_array.each do |tag|
-          if tag != name
-            counts[tag] += 1
-          end
+          counts[tag] += 1
         end
       end
     end

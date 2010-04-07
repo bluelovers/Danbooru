@@ -56,8 +56,6 @@ module PostHelper
   end
   
   def print_tag_sidebar_helper(tag)
-    # tag = [name, count, type]
-    
     if tag.is_a?(String)
       tag_name = tag
       type_value, post_count = Tag.type_and_count(tag_name)
@@ -81,7 +79,7 @@ module PostHelper
     end
 
     html << %{<a href="/post/index?tags=#{u(tag_name)}">#{h(tag_name.tr("_", " "))}</a> }
-    # html << %{<span class="post-count">#{post_count}</span>}
+    html << %{<span class="post-count">#{post_count}</span>}
     html << '</li>'
     return html
   end
