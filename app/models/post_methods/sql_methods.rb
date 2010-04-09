@@ -223,6 +223,9 @@ module PostMethods
 
         if q[:order] && !options[:count]
           case q[:order]
+          when "md5"
+            sql << " ORDER BY p.md5"
+            
           when "id", "id_asc"
             sql << " ORDER BY p.id"
     

@@ -1,6 +1,6 @@
 class RelatedTagCalculator
   def find_tags(tag, limit)
-    Post.find_by_tags(tag, :limit => limit, :select => "p.cached_tags").map(&:cached_tags)
+    Post.find_by_tags(tag, :limit => limit, :select => "p.cached_tags", :order => "md5").map(&:cached_tags)
   end
   
   def calculate_from_sample(name, limit, category_constraint = nil)

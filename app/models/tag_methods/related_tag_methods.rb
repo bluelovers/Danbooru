@@ -22,7 +22,7 @@ module TagMethods
       
       def find_related_for_multiple(names)
         calculator = RelatedTagCalculator.new
-        counts = calculator.calculate_from_sample(names, 150)
+        counts = calculator.calculate_from_sample(names, 100)
         calculator.convert_hash_to_array(counts)        
       end
       
@@ -39,7 +39,7 @@ module TagMethods
     
     def update_related
       calculator = RelatedTagCalculator.new
-      counts = calculator.calculate_from_sample(name, 150)
+      counts = calculator.calculate_from_sample(name, 100)
       self.cached_related = calculator.convert_hash_to_string(counts)
       self.cached_related_expires_on = related_cache_expiry.hours.since
     end
