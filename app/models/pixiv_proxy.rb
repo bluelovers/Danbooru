@@ -40,7 +40,7 @@ class PixivProxy < ActiveRecord::Base
   			hash[:profile_url] = page.search("div#profile/div/a").attr("href")
   			hash[:jp_tags] = page.search("div#tag_area/span#tags/a").map do |node|
   				[node.inner_text, node.attribute("href").to_s]
-  			end
+  			end.reject {|x| x[0].empty?}
 			else
 			  hash[:artist] = "?"
   			hash[:image_url] = "?"

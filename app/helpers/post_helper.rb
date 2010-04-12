@@ -12,11 +12,10 @@ module PostHelper
     html = ""
     
     previous_link = request.env["HTTP_REFERER"]
-    next_link = url_for(:controller => "post", :action => "index", :tags => params[:tags], :before_id => posts[-1].id, :page => nil)
-    
     html << %[<a href="#{previous_link}">&laquo; Previous</a>]
     
     if posts.any?
+      next_link = url_for(:controller => "post", :action => "index", :tags => params[:tags], :before_id => posts[-1].id, :page => nil)
       html << %[<a href="#{next_link}">Next &raquo;</a>]
     end
   end
