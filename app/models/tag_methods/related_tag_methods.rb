@@ -52,7 +52,12 @@ module TagMethods
     end
     
     def related_cache_expiry
-      base = Math.sqrt(post_count)
+      if post_count > 0
+        base = Math.sqrt(post_count)
+      else
+        base = 0
+      end
+      
       if base > 24
         24
       else
