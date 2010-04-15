@@ -35,9 +35,9 @@ class PixivProxy < ActiveRecord::Base
 		hash = {}
 		mech.get(url) do |page|
 		  if page.search("div#profile/div/a/img")
-  			hash[:artist] = page.search("div#profile/div/a/img").attr("alt")
-  			hash[:image_url] = page.search("div#profile/div/a/img").attr("src").sub("_m.", ".")
-  			hash[:profile_url] = page.search("div#profile/div/a").attr("href")
+  			hash[:artist] = page.search("div#profile/div/a/img").attr("alt").value
+  			hash[:image_url] = page.search("div#profile/div/a/img").attr("src").value.sub("_m.", ".")
+  			hash[:profile_url] = page.search("div#profile/div/a").attr("href").value
   			hash[:jp_tags] = page.search("div#tag_area/span#tags/a").map do |node|
   				[node.inner_text, node.attribute("href").to_s]
   			end.reject {|x| x[0].empty?}
