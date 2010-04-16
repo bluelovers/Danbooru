@@ -167,27 +167,30 @@ class TagTest < ActiveSupport::TestCase
     t = Tag.find_by_name("tag1")
     t.update_related
     related = t.related_tag_array.sort {|a, b| a[0] <=> b[0]}
-    assert_equal(["tag2", "2"], related[0])
-    assert_equal(["tag3", "1"], related[1])
+    assert_equal(["tag1", "2"], related[0])
+    assert_equal(["tag2", "2"], related[1])
+    assert_equal(["tag3", "1"], related[2])
     
     # Make sure the related tags are cached
     p3 = create_post("tag1 tag4")
     t.update_related
     related = t.related_tag_array.sort {|a, b| a[0] <=> b[0]}
     
-    assert_equal(3, related.size)
-    assert_equal(["tag2", "2"], related[0])
-    assert_equal(["tag3", "1"], related[1])
-    assert_equal(["tag4", "1"], related[2])
+    assert_equal(4, related.size)
+    assert_equal(["tag1", "3"], related[0])
+    assert_equal(["tag2", "2"], related[1])
+    assert_equal(["tag3", "1"], related[2])
+    assert_equal(["tag4", "1"], related[3])
     
     # Make sure related tags are properly updated with the cache is expired
     t.update_attribute(:cached_related_expires_on, 5.days.ago)
     t.update_related
     related = t.related_tag_array.sort {|a, b| a[0] <=> b[0]}
-    assert_equal(3, related.size)
-    assert_equal(["tag2", "2"], related[0])
-    assert_equal(["tag3", "1"], related[1])
-    assert_equal(["tag4", "1"], related[2])
+    assert_equal(4, related.size)
+    assert_equal(["tag1", "3"], related[0])
+    assert_equal(["tag2", "2"], related[1])
+    assert_equal(["tag3", "1"], related[2])
+    assert_equal(["tag4", "1"], related[3])
   end
   
   def test_related_by_type
