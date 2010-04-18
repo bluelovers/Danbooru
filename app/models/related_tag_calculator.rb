@@ -2,7 +2,7 @@ class RelatedTagCalculator
   CONFIDENCE = 0.05
 
   def find_tags(tag, limit)
-    Post.find_by_tags(tag, :limit => limit, :select => "p.cached_tags", :order => "p.md5").map(&:cached_tags)
+    Post.find_by_tags(tag, :limit => limit, :select => "p.cached_tags", :order => "p.id DESC").map(&:cached_tags)
   end
 
   def minimum_count(tags)

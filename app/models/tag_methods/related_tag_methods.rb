@@ -22,13 +22,13 @@ module TagMethods
       
       def find_related_for_multiple(names)
         calculator = RelatedTagCalculator.new
-        counts = calculator.calculate_from_sample(names)
+        counts = calculator.calculate_from_sample(names, 200)
         calculator.convert_hash_to_array(counts)        
       end
       
       def find_related_by_type(name, type)
         calculator = RelatedTagCalculator.new
-        counts = calculator.calculate_from_sample(name, nil, type)
+        counts = calculator.calculate_from_sample(name, 300, type)
         calculator.convert_hash_to_array(counts)
       end
     end
