@@ -41,12 +41,14 @@ class Comment < ActiveRecord::Base
     !votes.exists?(["user_id = ?", user.id])
   end
   
-  def vote!(user, n)
-    if !user.can_comment_vote?
+  def vote!(voter, n)
+    if !voter.can_comment_vote?
       raise VotingError.new("You can only vote ten times an hour on comments")
-    elsif can_be_voted_by?(user)
+    elsif n < 0 && user.is_janitor_or_higher?
+      raise VotingError.new("You cannot downvote janitor/moderator/admin comments")
+    elsif can_be_voted_by?(voter)
       update_attribute(:score, score + n)
-      votes.create(:user_id => user.id)
+      votes.create(:user_id => voter.id)
     else
       raise VotingError.new("You have already voted for this comment")
     end

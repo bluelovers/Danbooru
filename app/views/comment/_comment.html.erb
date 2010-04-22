@@ -1,4 +1,4 @@
-<% if @show_all || comment.score.to_i >= @current_user.comment_threshold %>
+<% if @show_all || (comment.score.to_i >= @current_user.comment_threshold) %>
   <div class="comment <% if comment.score < @current_user.comment_threshold %>bad-comment<% end %>" id="comment-<%= comment.id %>">
     <div class="author">
       <% if comment.user_id %>
