@@ -44,7 +44,7 @@ class Comment < ActiveRecord::Base
   def vote!(voter, n)
     if !voter.can_comment_vote?
       raise VotingError.new("You can only vote ten times an hour on comments")
-    elsif n < 0 && user.is_janitor_or_higher?
+    elsif n < 0 && user && user.is_janitor_or_higher?
       raise VotingError.new("You cannot downvote janitor/moderator/admin comments")
     elsif can_be_voted_by?(voter)
       update_attribute(:score, score + n)
