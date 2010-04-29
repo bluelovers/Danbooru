@@ -1,0 +1,33 @@
+<h1>Search IPs</h1>
+
+<% form_tag({:action => "search"}, :method => :get) do %>
+  <label for="user_ids">User IDs</label>
+  <%= text_field_tag :user_ids %>    
+  <%= submit_tag "Search" %>
+<% end %>
+
+<table width="100%">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Count</th>
+      <th>IP Address</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @results.each do |category, results| %>
+      <% results.each do |result| %>
+        <tr>
+          <td><%= h category %></td>
+          <td><%= result["count"] %></td>
+          <td><%= result["ip_addr"] %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+
+<strong>All Ip Addresses</strong>
+<%= text_field_tag "all", @ip_addrs %>
+
+<%= render :partial => "footer" %>

@@ -1,0 +1,25 @@
+<h1>Ban New IP Address</h1>
+
+<% form_for :banned_ip, :url => {:action => "create"} do |f| %>
+  <%= f.error_messages %>
+  
+  <table width="100%">
+    <tfoot>
+      <tr>
+        <td colspan="2"><%= submit_tag %></td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr>
+        <th><%= f.label :ip_addr, "IP Addresses" %></th>
+        <td><%= f.text_field :ip_addr %></td>
+      </tr>
+      <tr>
+        <th><%= f.label :reason %></th>
+        <td><%= f.text_field :reason %></td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
+
+<%= render :partial => "footer" %>

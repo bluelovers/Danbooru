@@ -1,0 +1,26 @@
+<h1>Banned IPs</h1>
+
+<table width="100%">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Creator</th>
+      <th>Date</th>
+      <th>IP Address</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @banned_ips.each do |banned_ip| %>
+      <tr id="banned-ip-<%= banned_ip.id %>">
+        <td><%= link_to_remote "Delete", :url => {:action => "destroy", :id => banned_ip.id}, :method => :delete, :confirm => "Do you really want to unban this IP address?" %></td>
+        <td><%= h banned_ip.creator.name %></td>
+        <td><%= banned_ip.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><%= banned_ip.ip_addr %></td>
+        <td><%= h banned_ip.reason %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render :partial => "footer" %>
