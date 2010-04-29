@@ -183,4 +183,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal("bob", member.name)
     assert_equal(5, member.base_upload_limit)
   end
+  
+  def test_banned_ips
+    create_banned_ip("1.2.3.4")
+    user = create_user("bob", :ip_addr => "1.2.3.4")
+    assert(user.errors.any?)
+    assert_equal("This IP address is banned and cannot create new accounts", user.errors.full_messages.join(", "))
+  end
 end

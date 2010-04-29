@@ -14,4 +14,12 @@ class UserRecord < ActiveRecord::Base
     
     Dmail.create(:from_id => reported_by, :to_id => user_id, :title => "Your user record has been updated", :body => body)
   end
+
+  def self.negative
+    find(:all, :conditions => ["is_positive = FALSE"])
+  end
+  
+  def self.positive
+    find(:all, :conditions => ["is_positive = TRUE"])
+  end
 end

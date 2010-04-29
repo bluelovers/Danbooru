@@ -36,6 +36,14 @@ def update_artist(artist, params)
   artist.update_attributes({:updater_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
 end
 
+def create_banned_ip(ip_addr)
+  BannedIp.create(
+    :creator_id => 1,
+    :ip_addr => ip_addr,
+    :reason => "blah"
+  )
+end
+
 def create_comment(post, params = {})
   comm = Comment.new(params)
   comm.post_id = post.id

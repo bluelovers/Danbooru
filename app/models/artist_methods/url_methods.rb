@@ -8,7 +8,6 @@ module ArtistMethods
         while artists.empty? && url.size > 10
           u = url.gsub(/\/+$/, "") + "/"
           u = u.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
-          puts u
           artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artists.is_active = TRUE AND artist_urls.normalized_url LIKE ? ESCAPE E'\\\\'", u], :order => "artists.name", :limit => "5")
 
           # Remove duplicates based on name

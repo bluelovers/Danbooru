@@ -11,6 +11,10 @@
     <div class="content">
       <div class="body">
         <%= format_text(comment.body, :mode => :comment) %>
+        
+        <% if @current_user.is_admin? %>
+          <p><em><%= comment.ip_addr %></em></p>
+        <% end %>
       </div>
       <div class="footer">
         <%= link_to_function "Quote", "Comment.quote(#{comment.id})" %>

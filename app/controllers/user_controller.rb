@@ -85,7 +85,7 @@ class UserController < ApplicationController
   end
 
   def create
-    user = User.create(params[:user])
+    user = User.create(params[:user].merge(:ip_addr => request.remote_ip))
 
     if user.errors.empty?
       save_cookies(user)

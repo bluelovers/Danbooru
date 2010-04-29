@@ -28,7 +28,6 @@ class RelatedTagCalculator
     counts = Hash.new {|h, k| h[k] = 0}
     if limit == nil
       limit = sample_size(minimum_count(name))
-      puts limit
     end
     
     case category_constraint

@@ -9,7 +9,8 @@
         <tr>
           <th width="5%">From</th>
           <th width="5%">To</th>
-          <th width="90%">Last edited</th>
+          <th width="10%">IP Address</th>
+          <th width="80%">Last edited</th>
         </tr>       
       </thead>
       <tfoot>
@@ -22,6 +23,11 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <td><%= radio_button_tag "from", wiki_page.version, i==1, :id => "from_#{wiki_page.version}" %></td>
             <td><%= radio_button_tag "to", wiki_page.version, i==0, :id => "to_#{wiki_page.version}" %></td>
+            <td>
+              <% if @current_user.is_admin? %>
+                <%= h wiki_page.ip_addr %>
+              <% end %>
+            </td>
             <td><%= link_to wiki_page.updated_at.strftime("%m/%d/%Y %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %> by <%= link_to h(wiki_page.author), :controller => "user", :action => "show", :id => wiki_page.user_id %></td>
           </tr>
         <% end %>       
