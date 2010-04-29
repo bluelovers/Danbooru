@@ -417,9 +417,16 @@ public
   end
   
   def undelete
-    post = Post.find(params[:id])
-    post.undelete!(@current_user)
-    respond_to_success("Post was undeleted", :action => "show", :id => params[:id])
+    @post = Post.find(params[:id])
+    
+    if request.post?
+      if params[:commit] == "Undelete"
+        @post.undelete!(@current_user)
+        respond_to_success("Post was undeleted", :action => "show", :id => @post.id)
+      else
+        redirect_to(:action => "show", :id => @post.id)
+      end
+    end
   end
   
   def error
