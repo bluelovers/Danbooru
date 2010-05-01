@@ -41,7 +41,7 @@
   <div class="status-notice">
     This post was deleted. 
     <% if @post.flag_detail %>
-      Reason: <%= h @post.flag_detail.reason %>. MD5: <%= @post.md5 %>
+      Reason: <%= h @post.flag_detail.reason %>. MD5: <%= @post.md5 %>. By: <%= @post.flag_detail.user.name %>.
     <% end %>
   </div>
 <% elsif @post.is_flagged? %>
