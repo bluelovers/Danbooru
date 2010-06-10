@@ -22,12 +22,21 @@ class BannedIpControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  def test_search
-    get :search, {}, {:user_id => 1}
+  def test_search_users
+    get :search_users, {}, {:user_id => 1}
     assert_response :success
     
     wiki_page = create_wiki()
-    get :search, {:user_ids => "1"}, {:user_id => 1}
+    get :search_users, {:user_ids => "1"}, {:user_id => 1}
+    assert_response :success
+  end
+
+  def test_search_ip_addrs
+    get :search_ip_addrs, {}, {:user_id => 1}
+    assert_response :success
+    
+    wiki_page = create_wiki()
+    get :search_ip_addrs, {:ip_addrs => "127.0.0.1"}, {:user_id => 1}
     assert_response :success
   end
   

@@ -143,39 +143,21 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :init_cookies
-  # around_filter :run_profile
   
   protected :build_cache_key
   protected :get_cache_key
 
 protected
-  # def run_profile
-  #   return yield if params[:profile].nil?
-  #   result = RubyProf.profile {yield}
-  #   printer = RubyProf::GraphPrinter.new(result)
-  #   out = StringIO.new
-  #   printer.print(out, 0)
-  #   response.body.replace(out.string)
-  #   response.content_type = "text/plain"
-  # end
-
   def set_title(title = CONFIG["app_name"])
     @page_title = CGI.escapeHTML(title)
   end
 
-=begin
-  def check_load_average
-    if CONFIG["load_average_threshold"]
-      current_load = Sys::CPU.load_avg[0]
-
-      if request.get? && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
-        render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
-        return false
-      end
+  def verify_user_is_not_banned
+    if BannedIp.is_banned?(request.remote_ip)
+      respond_to_error("You have been banned", {:controller => "post", :action => "error"})
     end
   end
-=end
-  
+
   def set_cache_headers
     response.headers["Cache-Control"] = "max-age=300"
   end

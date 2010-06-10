@@ -2,6 +2,7 @@ class PoolController < ApplicationController
   layout "default"
   before_filter :member_only, :except => [:index, :show]
   before_filter :privileged_only, :only => [:revert]
+  before_filter :verify_user_is_not_banned, :only => [:update, :create, :destroy, :add_post, :remove_post, :order, :import, :revert]
   helper :post
   
   def index

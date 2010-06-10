@@ -2,8 +2,8 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-#  before_filter :check_load_average, :only => [:index, :piclens]
   before_filter :member_only, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags, :random]
+  before_filter :verify_user_is_not_banned, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags]
   before_filter :test_janitor_only, :only => [:moderate]
   before_filter :janitor_only, :only => [:undelete]
   before_filter :privileged_only, :only => [:flag]
@@ -12,21 +12,7 @@ class PostController < ApplicationController
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisement
 
-  def check_load_average
-    if CONFIG["load_average_threshold"] && @current_user.is_anonymous?
-      bandwidth_used = Cache.get("db-bw")
-      if bandwidth_used && (bandwidth_used.to_i / (1000.0 * 1000.0) > 600)
-        respond_to do |fmt|
-          fmt.html {render :template => "static/overloaded", :status => 503}
-          fmt.xml {render :nothing => true, :status => 503}
-          fmt.json {render :nothing => true, :status => 503}
-        end
-
-        return false
-      end
-    end
-  end
-
+protected
   def verify_action(options)
     redirect_to_proc = false
     
@@ -44,6 +30,7 @@ class PostController < ApplicationController
     return result
   end
 
+public
   def upload
     if params[:url]
       @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
