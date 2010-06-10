@@ -33,7 +33,8 @@ module UserMethods
     def self.included(m)
       m.extend(ClassMethods)
       m.validates_length_of :name, :within => 2..20, :on => :create
-      m.validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
+      m.validates_format_of :name, :with => /\A[\x21-\x7E]+\Z/, :on => :create, :message => "can only have ASCII printable characters"
+      m.validates_format_of :name, :with => /\A[^\s,;]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
       m.validates_uniqueness_of :name, :case_sensitive => false, :on => :create
       m.after_save :update_cached_name
     end

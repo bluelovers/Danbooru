@@ -42,6 +42,14 @@ class UserTest < ActiveSupport::TestCase
     Favorite.create(:user_id => user_id, :post_id => post_id)
   end
   
+  def test_name
+    user = create_user("\x01\x02\x03")
+    assert_equal(["Name can only have ASCII printable characters"], user.errors.full_messages)
+    
+    user = create_user("alpha,")
+    assert_equal(["Name cannot have whitespace, commas, or semicolons"], user.errors.full_messages)
+  end
+  
   def test_blacklists
     CONFIG["default_blacklists"] = "tag1"
     user = create_user("bob")
