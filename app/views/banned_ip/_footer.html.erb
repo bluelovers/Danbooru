@@ -1,5 +1,6 @@
 <% content_for('subnavbar') do %>
   <li><%= link_to "List", :action => "index" %></li>
   <li><%= link_to "Ban", :action => "new" %></li>
-  <li><%= link_to "Search", :action => "search" %></li>
+  <li><%= link_to "Search Users", :action => "search_users" %></li>
+  <li><%= link_to "Search IPs", :action => "search_ip_addrs" %></li>
 <% end %>

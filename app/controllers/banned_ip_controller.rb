@@ -2,14 +2,24 @@ class BannedIpController < ApplicationController
   before_filter :admin_only
   layout "default"
   
-  def search
+  def search_users
     if params[:user_ids]
       user_ids = params[:user_ids].scan(/\d+/)
-      @results = BannedIp.search(user_ids)
+      @results = BannedIp.search_users(user_ids)
     else
       @results = {}
     end
-    @ip_addrs = @results.values.flatten.map {|x| x["ip_addr"]}.join(" ")
+    @ip_addrs = @results.values.flatten.map {|x| x["ip_addr"]}.uniq.join(" ")
+  end
+
+  def search_ip_addrs
+    if params[:ip_addrs]
+      ip_addrs = params[:ip_addrs].scan(/[\d.]+/)
+      @results = BannedIp.search_ip_addrs(ip_addrs)
+    else
+      @results = {}
+    end
+    @user_ids = @results.values.flatten.map {|x| x["user_id"]}.uniq.join(" ")
   end
   
   def index
