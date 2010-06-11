@@ -1,8 +1,8 @@
 <h1>Search IPs</h1>
 
-<% form_tag({:action => "search"}, :method => :get) do %>
-  <label for="user_ids">User IDs</label>
-  <%= text_field_tag :user_ids %>    
+<% form_tag({:action => "search_ip_addrs"}, :method => :get) do %>
+  <label for="user_ids">IPs</label>
+  <%= text_field_tag :ip_addrs %>    
   <%= submit_tag "Search" %>
 <% end %>
 
@@ -11,7 +11,7 @@
     <tr>
       <th>Category</th>
       <th>Count</th>
-      <th>IP Address</th>
+      <th>User</th>
     </tr>
   </thead>
   <tbody>
@@ -20,14 +20,14 @@
         <tr>
           <td><%= h category %></td>
           <td><%= result["count"] %></td>
-          <td><%= result["ip_addr"] %></td>
+          <td><%= link_to User.find_name(result["user_id"]), :controller => "user", :action => "show", :id => result["user_id"] %></td>
         </tr>
       <% end %>
     <% end %>
   </tbody>
 </table>
 
-<strong>All Ip Addresses</strong>
-<%= text_field_tag "all", @ip_addrs %>
+<strong>All Users</strong>
+<%= text_field_tag "all", @user_ids %>
 
 <%= render :partial => "footer" %>
