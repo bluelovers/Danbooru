@@ -57,6 +57,9 @@ class UserTest < ActiveSupport::TestCase
     
     user.update_attributes(:blacklisted_tags => "tag2\ntag3\n")
     assert_equal("tag2\ntag3\n", user.blacklisted_tags)
+    
+    user.update_attributes(:blacklisted_tags => ("x" * 3500))
+    assert_equal("Blacklisted tags may not exceed 3000 characters in length", user.errors.full_messages.join(""))
   end
   
   def test_authentication
