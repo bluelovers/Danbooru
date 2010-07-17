@@ -22,6 +22,9 @@ class PoolController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
+      fmt.json do
+        render :json => {:pool => @pool, :posts => @posts}.to_json
+      end
       fmt.xml do
         builder = Builder::XmlMarkup.new(:indent => 2)
         builder.instruct!
