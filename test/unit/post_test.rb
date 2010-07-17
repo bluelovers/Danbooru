@@ -527,5 +527,21 @@ class PostTest < ActiveSupport::TestCase
     assert_equal("active", p1.status)
   end
   
+  def test_pixiv_sources
+    p1 = Post.new
+    
+    p1.source = "http://img05.pixiv.net/img/shirow/8805118.jpg?1266234503"
+    assert_equal("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=8805118", p1.normalized_source)
+
+    p1.source = "http://img05.pixiv.net/img/shirow/8805118_m.jpg"
+    assert_equal("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=8805118", p1.normalized_source)
+
+    p1.source = "http://img05.pixiv.net/img/shirow/8805118_p5.jpg"
+    assert_equal("http://www.pixiv.net/member_illust.php?mode=manga&illust_id=8805118", p1.normalized_source)
+
+    p1.source = "http://img05.pixiv.net/img/shirow/8805118.jpg"
+    assert_equal("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=8805118", p1.normalized_source)
+  end
+  
   # TODO: additional search tests
 end
