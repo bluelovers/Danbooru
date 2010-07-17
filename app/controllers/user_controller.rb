@@ -32,7 +32,7 @@ class UserController < ApplicationController
     end
 
     if @user.nil?
-      redirect_to "/404"
+      redirect_to "/404.html"
     end
   end
   
