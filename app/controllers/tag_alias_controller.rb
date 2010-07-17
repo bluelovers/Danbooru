@@ -56,4 +56,9 @@ class TagAliasController < ApplicationController
       redirect_to :controller => "job_task", :action => "index"
     end
   end
+  
+  def expire
+    TagAlias.find(params[:id]).expire_cache
+    render :nothing => true
+  end
 end

@@ -42,6 +42,14 @@ class TagAlias < ActiveRecord::Base
     Cache.delete("tag_alias:#{name}")
   end
   
+  def expire_remote_cache
+    CONFIG["servers"].each do |server|
+      if server != Socket.gethostname
+        Net::HTTP.get(URI.parse("http://#{server}/tag_alias/expire/#{id}"))
+      end
+    end
+  end
+  
   # Destroys the alias and sends a message to the alias's creator.
   def destroy_and_notify(current_user, reason)
     if creator_id && creator_id != current_user.id
