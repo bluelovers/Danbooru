@@ -996,3 +996,12 @@ div.auto_complete ul strong.highlight {
   margin:0;
   padding:0;
 }
+
+
+div#janitor-recruitment {
+  text-align: center;
+  margin: 1em;
+  padding: 1em;
+  background: #EEF;
+  border: 2px solid #DDE;
+}

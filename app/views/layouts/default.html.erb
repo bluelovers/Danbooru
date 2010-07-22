@@ -89,6 +89,13 @@
     </div>
   <% end %>
 
+  <% if @current_user.created_at < 4.months.ago && cookies["hide_janitor_recruitment"].blank? %>
+    <div id="janitor-recruitment">
+      <h2>Now Recruiting Janitors</h2>
+      <p>Help Danbooru by approving good uploads. Click <%= link_to "here", :controller => "help", :action => "janitor_application" %> for more details. Click <%= link_to_function "here", "$('janitor-recruitment').hide(); Cookie.put('hide_janitor_recruitment', '1')" %> to hide this message.</p>
+    </div>
+  <% end %>
+
   <div id="content">
     <%= @content_for_layout %>
   </div>
