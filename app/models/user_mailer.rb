@@ -25,6 +25,10 @@ class UserMailer < ActionMailer::Base
   end
   
   def self.normalize_address(address)
+    if RAILS_ENV == "development"
+      address = CONFIG["admin_contact"]
+    end
+    
     if defined?(IDN)
       address =~ /\A([^@]+)@(.+)\Z/
       mailbox = $1

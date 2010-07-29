@@ -6,6 +6,8 @@
       <th>Appr 7</th>
       <th>Appr 14</th>
       <th>Appr 30</th>
+      <th>% Pos</th>
+      <th>% Neg</th>
       <th></th>
     </tr>
   </thead>
@@ -17,6 +19,8 @@
         <td><%= Post.count(:conditions => ["approver_id = ? and created_at >= ?", user.id, 7.days.ago]) %></td>
         <td><%= Post.count(:conditions => ["approver_id = ? and created_at >= ?", user.id, 14.days.ago]) %></td>
         <td><%= Post.count(:conditions => ["approver_id = ? and created_at >= ?", user.id, 30.days.ago]) %></td>
+        <td><%= positive_score_approval_percentage(user) %></td>
+        <td><%= negative_score_approval_percentage(user) %></td>
         <td>
           <%= link_to "Demote", :action => "demote", :id => user.test_janitor.id %>
           | <%= link_to "Promote", :action => "promote", :id => user.test_janitor.id %>
