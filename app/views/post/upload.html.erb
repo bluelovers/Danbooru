@@ -58,7 +58,12 @@
             <td></td>
             <td>
               <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
-              <%= button_to_function "Find similar", "Post.find_similar()" %>
+              <%= button_to_function "Find similar", "$('always-find-similar-container').show(); Post.find_similar()" %>
+              
+              <span style="display: none;" id="always-find-similar-container">
+                <%= check_box_tag "__always_find_similar__", "1", cookies["always_find_similar"] == "1" %>
+                <label for="__always_find_similar__">Always find similar</label>
+              </span>
             </td>
           </tr>
         </tfoot>
@@ -126,9 +131,23 @@
 
 <% content_for("post_cookie_javascripts") do %>
   <script type="text/javascript">
-    Post.observe_text_area("post_tags")
-    
-    RelatedTags.init(<%= @current_user.uploaded_tags_with_types.to_json %>, <%= @current_user.recent_tags_with_types.to_json %>, <%= @artists.to_json %>)
+    $(document).observe("dom:loaded", function() {
+      Post.observe_text_area("post_tags")
+
+      RelatedTags.init(<%= @current_user.uploaded_tags_with_types.to_json %>, <%= @current_user.recent_tags_with_types.to_json %>, <%= @artists.to_json %>)
+
+      $("__always_find_similar__").observe("click", function(event) {
+        if (event.element().checked) {
+          Cookie.put("always_find_similar", "1");
+        } else {
+          Cookie.remove("always_find_similar");
+        }
+      });
+
+      if (Cookie.get("always_find_similar") == "1" && $F("post_source").match(/^http/)) {
+        Post.find_similar();
+      }
+    });
   </script>
 <% end %>
 
