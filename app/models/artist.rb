@@ -10,6 +10,7 @@ class Artist < ActiveRecord::Base
   
   before_validation :normalize
   validates_uniqueness_of :name
+  validates_format_of :name, :with => /\S/
   belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
   attr_accessor :updater_ip_addr
   has_many :members, :class_name => "Artist", :foreign_key => "group_name", :primary_key => "name"

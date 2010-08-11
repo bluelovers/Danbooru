@@ -19,7 +19,7 @@ module PoolHelper
     added = current_ids - previous_ids
     removed = previous_ids - current_ids
     
-    added.map {|x| "<ins>+<a target=\"blank\" href=\"/post/show/#{x}\">#{x}</a></ins>"}.join(" ") + " " + removed.map {|x| "<del>-<a target=\"blank\" href=\"/post/show/#{x}\">#{x}</a></del>"}.join(" ")
+    added.map {|x| "<ins>+<a target=\"_blank\" href=\"/post/show/#{x}\">#{x}</a></ins>"}.join(" ") + " " + removed.map {|x| "<del>-<a target=\"_blank\" href=\"/post/show/#{x}\">#{x}</a></del>"}.join(" ")
   end
   
   def pool_list(post)

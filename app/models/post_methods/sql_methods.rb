@@ -266,7 +266,7 @@ module PostMethods
             end
         
           when "favcount"
-            sql << " ORDER BY p.fav_count DESC"
+            sql << " ORDER BY p.fav_count DESC, p.id DESC"
 
         	when "filesize", "filesize_desc"
         	  sql << " ORDER BY p.file_size DESC"

@@ -27,6 +27,7 @@ module Danbooru
           if source =~ %r!(/img/.+?/.+?)_m.+$!
             match = $1
             source.sub!(match + "_m", match)
+            url = URI.parse(source)
           end
         end
         
