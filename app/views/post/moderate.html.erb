@@ -24,7 +24,13 @@
           <td width="10%"><%= fast_link_to image_tag(p.preview_url, :class => (p.status == "flagged" ? "flagged" : nil), :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), {:controller => "post", :action => "show", :id => p.id}, :target => "_blank" %></td>
           <td width="90%">
             <ul>
-              <li><%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %></li>
+              <li>
+                <%= link_to_function "Approve", "Post.moderate(#{p.id}, 'Approve')" %> | 
+                <% if @current_user.is_janitor_or_higher? %>
+                  <%= link_to_function "Delete", "Post.moderate(#{p.id}, 'Delete')" %> | 
+                <% end %>
+                <%= link_to_function "Hide", "Post.moderate(#{p.id}, 'Hide')" %>
+              </li>
               <li>Rating: <%= p.pretty_rating %></li>
               <li>Hidden: <%= p.mod_hidden_count %></li>
               <% if p.pools.any? %>
