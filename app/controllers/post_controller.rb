@@ -163,7 +163,7 @@ public
 
     if @current_user.is_janitor_or_higher?
       begin
-        if @post.status == "deleted"
+        if @post.status == "deleted" && @current_user.is_mod_or_higher?
           @post.delete_from_database
         else
           Post.destroy_with_reason(@post.id, params[:reason], @current_user)
