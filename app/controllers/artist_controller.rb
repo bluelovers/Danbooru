@@ -1,11 +1,22 @@
 class ArtistController < ApplicationController
   layout "default"
 
+  before_filter :mod_only, :only => [:ban]
   before_filter :member_only, :only => [:create, :update, :destroy]
   helper :post, :wiki
 
   def preview
     render :inline => "<h4>Preview</h4><%= format_text(params[:artist][:notes]) %>"
+  end
+  
+  def ban
+    @artist = Artist.find(params[:id])
+
+    if request.post?
+      @artist.ban!(@current_user)
+      flash[:notice] = "Artist has been banned"
+      redirect_to :action => "show", :id => @artist.id
+    end
   end
 
   def destroy

@@ -1,0 +1,8 @@
+<h1>Ban Artist</h1>
+<p>Do you wish to ban <%= h @artist.name %>?</p>
+
+<% form_tag(:action => "ban") do %>
+  <%= hidden_field_tag "id", params[:id] %>
+  <%= submit_tag "Yes" %>
+  <%= button_to_function "No", "window.back()" %>
+<% end %>
