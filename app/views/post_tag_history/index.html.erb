@@ -32,7 +32,8 @@
           <th width="5%">Rating</th>
           <th width="5%">Parent</th>
           <th width="10%">IP Address</th>
-          <th width="50%">Tags</th>
+          <th width="10%">Source</th>
+          <th width="40%">Tags</th>
         </tr>
       </thead>
       <tfoot>
@@ -56,6 +57,9 @@
               <% if @current_user.is_admin? %>
                 <%= change[:ip_addr] %>
               <% end %>
+            </td>
+            <td>
+              <%= h change[:source] %>
             </td>
             <td>
               <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete => change[:obsolete_added_tags], :prefix => "+") %></span>

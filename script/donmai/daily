@@ -2,16 +2,14 @@
 
 export RAILS_ENV=production
 cd "$(dirname $0)/../../"
-script/donmai/downbooru
-#mongrel_rails cluster::stop
-DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb stop
+# script/donmai/downbooru
+# DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb stop
 rake maint:recalculate_row_count
 rake maint:prune_mod_queue_posts
 script/donmai/fix_images
 script/donmai/backup_db
 script/donmai/backup_db_to_s3
 script/donmai/backup_svn_to_s3
-# sudo script/donmai/process_logs
 sudo script/donmai/rotate_logs
 script/donmai/prune_unapproved_posts
 script/donmai/prune_old_job_tasks
@@ -25,7 +23,6 @@ fi
 if [[ `date '+%d'` -eq '01' ]] ; then
   script/donmai/dump_tags
 fi
-DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb start
-#mongrel_rails cluster::start
-sleep 5
-script/donmai/upbooru
+# DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb start
+# sleep 5
+# script/donmai/upbooru

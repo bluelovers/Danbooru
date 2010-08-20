@@ -56,7 +56,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     p1.reload
     assert_equal(["tag2"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:added_tags])
     assert_equal([], p1.tag_history[0].tag_changes(p1.tag_history[1])[:removed_tags])
-    assert_equal(["tag1", "rating:q", "parent:"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
+    assert_equal(["tag1", "rating:q", "parent:", "source:"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
   end
 
   def test_changes_after_removing_tags
@@ -65,7 +65,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     p1.reload
     assert_equal(["tag2"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:added_tags])
     assert_equal(["tag1"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:removed_tags])
-    assert_equal(["rating:q", "parent:"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
+    assert_equal(["rating:q", "parent:", "source:"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
   end
   
   def test_undo_changes_by_user

@@ -37,6 +37,18 @@ module PostMethods
         FileUtils.rm_f(file_path)
         FileUtils.rm_f(preview_path) if image?
         FileUtils.rm_f(sample_path) if image?
+        
+        CONFIG["servers"].each do |server|
+          if server != Socket.gethostname
+            Net::SFTP.start(server, "albert") do |ftp|
+              ftp.remove(CONFIG["server_sftp_dir"] + "/public/data/#{md5}.#{file_ext}")
+  	          ftp.remove(CONFIG["server_sftp_dir"] + "/public/data/preview/#{md5}.jpg")
+              if File.exists?(sample_path)
+                ftp.remove(CONFIG["server_sftp_dir"] + "/public/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg")
+              end
+            end
+          end
+        end
       end
 
       def move_file

@@ -86,7 +86,7 @@ class PostControllerTest < ActionController::TestCase
   def test_destroy
     p1 = create_post("hoge", :user_id => 3)
     
-    get :delete, {:id => p1.id}, {:user_id => 3}
+    get :delete, {:id => p1.id}, {:user_id => 2}
     assert_response :success
     
     post :destroy, {:id => p1.id, :reason => "sage"}, {:user_id => 4}

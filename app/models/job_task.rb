@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(bandwidth_throttle mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count calculate_uploaded_tags s3_backup)
+  TASK_TYPES = %w(bandwidth_throttle mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions calculate_related_tags calculate_post_count calculate_uploaded_tags s3_backup pixiv_fix)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -35,6 +35,9 @@ class JobTask < ActiveRecord::Base
     rescue Exception => x
       update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
     end
+  end
+  
+  def execute_pixiv_fix
   end
   
   def execute_mass_tag_edit

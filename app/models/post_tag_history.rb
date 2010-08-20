@@ -24,6 +24,7 @@ class PostTagHistory < ActiveRecord::Base
         if first
           post.rating = first.rating
           post.tags = first.tags
+          post.source = first.source
           post.updater_ip_addr = first.ip_addr
           post.updater_user_id = first.user_id
           post.save!
@@ -50,7 +51,7 @@ class PostTagHistory < ActiveRecord::Base
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
     options[:update_options] ||= {}
-    post.attributes = {:tags => new_tags.join(" "), :rating => prev.rating}.merge(options[:update_options])
+    post.attributes = {:tags => new_tags.join(" "), :rating => prev.rating, :source => prev.source}.merge(options[:update_options])
   end
 
   def author
@@ -62,9 +63,11 @@ class PostTagHistory < ActiveRecord::Base
     old_tags = (prev.tags rescue "").scan(/\S+/)
     new_tags << "rating:#{rating}"
     new_tags << "parent:#{parent_id}"
+    new_tags << "source:#{source}"
     if prev
       old_tags << "rating:#{prev.rating}"
       old_tags << "parent:#{prev.parent_id}"
+      old_tags << "source:#{prev.source}"
     end
     latest = Post.find(post_id).cached_tags
     latest_tags = latest.scan(/\S+/)
@@ -83,10 +86,10 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-    {:id => id, :post_id => post_id, :tags => tags}.to_xml(options.merge(:root => "tag_history"))
+    {:id => id, :post_id => post_id, :tags => tags, :source => source, :rating => rating}.to_xml(options.merge(:root => "tag_history"))
   end
 
   def to_json(*args)
-    {:id => id, :post_id => post_id, :tags => tags}.to_json(*args)
+    {:id => id, :post_id => post_id, :tags => tags, :source => source, :rating => rating}.to_json(*args)
   end
 end

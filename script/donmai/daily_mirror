@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# tasks that should be run on hijiribe and other non-main servers
+
+export RAILS_ENV=production
+cd "$(dirname $0)/../../"
+script/donmai/fix_images
+sudo script/donmai/rotate_logs
+if [[ `date '+%d'` -eq '01' ]] ; then 
+  script/donmai/dump_related_tags
+fi
+if [[ `date '+%d'` -eq '01' ]] ; then
+  script/donmai/dump_tags
+fi

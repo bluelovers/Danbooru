@@ -43,12 +43,13 @@ class TestJanitorControllerTest < ActionController::TestCase
   
   test "demote" do
     janitor = create_test_janitor(4)
+    assert_equal(1, ActionMailer::Base.deliveries.size)
     get :demote, {:id => janitor.id}, {:user_id => 1}
     assert_redirected_to :action => "index"
     user = User.find(4)
     assert_equal(20, user.level)
     assert_nil(user.test_janitor)
     assert_equal(1, user.user_records.negative.count)
-    assert_equal(1, ActionMailer::Base.deliveries.size)
+    assert_equal(2, ActionMailer::Base.deliveries.size)
   end
 end
