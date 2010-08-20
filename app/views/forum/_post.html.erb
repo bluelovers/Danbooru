@@ -5,12 +5,12 @@
   </div>
   <div class="content">
     <% if post.is_parent? %>
-      <h6><%= h post.title %></h6>
+      <h6><%= auto_link_tag_changes(post, h(post.title)) %></h6>
     <% else %>
-      <h6 class="response-title"><%= h post.title %></h6>
+      <h6 class="response-title"><%= auto_link_tag_changes(post, h(post.title)) %></h6>
     <% end %>
     <div class="body">
-      <%= format_text(post.body) %>
+      <%= auto_link_tag_changes(post, format_text(post.body)) %>
     </div>
     <div class="footer">
       <%= link_to "Edit", :action => "edit", :id => post.id %>

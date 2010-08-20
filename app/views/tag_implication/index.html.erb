@@ -55,7 +55,7 @@
 <% end %>
 
 <% if @current_user.is_admin_or_higher? %>
-  <div id="add-box" style="display: none;">
+  <div id="add-box" <% unless params[:to_name] %>style="display: none;"<% end %>>
     <% form_tag(:action => "create") do %>
       <h4>Add Implication</h4>
       <% unless @current_user.is_anonymous? %>
@@ -65,15 +65,15 @@
       <table>
         <tr>
           <th><label for="tag_implication_predicate">Predicate</label></th>
-          <td><%= text_field "tag_implication", "predicate", :size => 40 %></td>
+          <td><%= text_field "tag_implication", "predicate", :size => 40, :value => params[:from_name] %></td>
         </tr>
         <tr>
           <th><label for="tag_implication_consequent">Consequent</label></th>
-          <td><%= text_field "tag_implication", "consequent", :size => 40 %></td>
+          <td><%= text_field "tag_implication", "consequent", :size => 40, :value => params[:to_name] %></td>
         </tr>
         <tr>
           <th><label for="tag_implication_reason">Reason</label></th>
-          <td><%= text_area "tag_implication", "reason", :size => "40x2" %></td>
+          <td><%= text_area "tag_implication", "reason", :size => "40x2", :value => params[:reason] %></td>
         </tr>
         <tr>
           <td colspan="2"><%= submit_tag "Submit" %></td>
