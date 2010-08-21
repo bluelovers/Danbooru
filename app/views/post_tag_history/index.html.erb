@@ -59,7 +59,7 @@
               <% end %>
             </td>
             <td>
-              <%= h change[:source] %>
+              <%= h change[:change].source %>
             </td>
             <td>
               <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete => change[:obsolete_added_tags], :prefix => "+") %></span>
