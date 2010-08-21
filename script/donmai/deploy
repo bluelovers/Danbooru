@@ -2,11 +2,11 @@
 
 script/donmai/downbooru
 #mongrel_rails cluster::stop
-DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb stop
-svn update
+#DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb stop
+svn update app db config lib vendor public/javascripts public/stylesheets test
 RAILS_ENV=production rake db:migrate
 script/build_application_js
-DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb start
+#DB_HOST=dbserver app/daemons/job_task_processor_ctl.rb start
 touch tmp/restart.txt
 #mongrel_rails cluster::start
 script/donmai/upbooru
