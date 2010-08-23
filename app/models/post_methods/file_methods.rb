@@ -76,7 +76,7 @@ module PostMethods
 
       self.md5 = File.open(tempfile_path, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}
       self.file_size = File.size(tempfile_path)
-
+      
       if Post.exists?(["md5 = ?", md5])
         delete_tempfile
         errors.add "md5", "already exists"
@@ -127,7 +127,7 @@ module PostMethods
             end
           end
         end
-      
+        
         if source.to_s =~ /\/src\/\d{12,}|urnc\.yi\.org|yui\.cynthia\.bne\.jp/
           self.source = "Image board"
         end

@@ -38,6 +38,15 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_pixiv_fix
+    last_post_id = data["last_post_id"].to_i
+    post_id = nil
+    
+    Post.find_each(:conditions => ["GREATEST(width, height) IN (150, 600) AND source LIKE ? AND id > ?", "%pixiv%", last_post_id]) do |post|
+      post_id = post.id
+      
+    end
+    
+    update_attributes(:data => {:last_post_id => post_id})
   end
   
   def execute_mass_tag_edit
@@ -189,4 +198,5 @@ class JobTask < ActiveRecord::Base
       sleep 1
     end
   end
+
 end
