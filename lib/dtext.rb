@@ -25,6 +25,7 @@ module DText
     str.gsub!(/[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>')
     str.gsub!(/[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>')
     str.gsub!(/[Pp]ool #(\d+)/, '<a href="/pool/show/\1">pool #\1</a>')
+    str.gsub!(/[Pp]review #(\d+)/) {print_preview(Post.find($1))}
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')

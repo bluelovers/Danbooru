@@ -120,26 +120,30 @@ module PostMethods
         end
 
         if q[:fav].is_a?(String)
-          joins << "JOIN favorites f ON f.post_id = p.id JOIN users fu ON f.user_id = fu.id"
-          conds << "lower(fu.name) = lower(?)"
-          cond_params << q[:fav]
-          q[:order] = "fav" unless q[:order].is_a?(String)
+          user = User.find_by_name(q[:fav])
+          
+          if user
+            joins << "JOIN favorites f ON f.post_id = p.id"
+            conds << "f.user_id = #{user.id}"
+            q[:order] = "fav" unless q[:order].is_a?(String)
+          end
         end
     
         if q[:user].is_a?(String)
-          joins << "JOIN users u ON p.user_id = u.id"
-          conds << "lower(u.name) = lower(?)"
-          cond_params << q[:user]
+          user = User.find_by_name(q[:user])
+          if user
+            conds << "p.user_id = #{user.id}"
+          else
+            conds << "FALSE"
+          end
         end
 
-        if q[:pool].is_a?(String)
-          joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
-          conds << "pools.name ILIKE ? ESCAPE E'\\\\'"
-          cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
-        elsif q[:pool].is_a?(Integer)
-          joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
-          conds << "pools.id = ?"
-          cond_params << q[:pool]
+        if q[:pool].is_a?(String) || q[:pool].is_a?(Integer)
+          pool = Pool.find_by_name(q[:pool].to_s)
+          if pool
+            joins << "JOIN pools_posts ON pools_posts.post_id = p.id"
+            conds << "pools_posts.id = #{pool.id}"
+          end
         end
 
         tags_index_query = []
