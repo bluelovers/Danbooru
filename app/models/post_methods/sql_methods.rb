@@ -142,7 +142,7 @@ module PostMethods
           pool = Pool.find_by_name(q[:pool].to_s)
           if pool
             joins << "JOIN pools_posts ON pools_posts.post_id = p.id"
-            conds << "pools_posts.id = #{pool.id}"
+            conds << "pools_posts.pool_id = #{pool.id}"
           end
         end
 
