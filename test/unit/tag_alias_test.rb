@@ -79,4 +79,26 @@ class TagAliasTest < ActiveSupport::TestCase
     assert_nothing_raised {@alias.to_json}
     assert_nothing_raised {@alias.to_xml}
   end
+  
+  def test_fix
+    ta = TagAlias.create(:name => "tag3", :alias => "tag4", :is_pending => false, :reason => "xxx", :creator_id => 1)
+    p1 = create_post("tag1")
+    ActiveRecord::Base.connection.execute("UPDATE tag_aliases SET name = 'tag1' WHERE id = #{ta.id}")
+    Cache.delete("tag_alias:tag1")
+    Cache.delete("tag_alias:tag3")
+    ta.reload
+    p1.reload
+    assert_equal("tag1", ta.name)
+    assert_equal("tag4", ta.alias_name)
+    assert_equal("tag1", p1.cached_tags)
+    assert_equal(1, Tag.find_by_name("tag1").post_count)
+    assert_equal(0, Tag.find_by_name("tag3").post_count)
+    assert_equal(0, Tag.find_by_name("tag4").post_count)
+    TagAlias.fix("tag1")
+    p1.reload
+    assert_equal("tag4", p1.cached_tags)
+    assert_equal(0, Tag.find_by_name("tag1").post_count)
+    assert_equal(0, Tag.find_by_name("tag3").post_count)
+    assert_equal(1, Tag.find_by_name("tag4").post_count)
+  end
 end

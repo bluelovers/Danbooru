@@ -37,6 +37,15 @@ class TagAliasController < ApplicationController
     ids = params[:aliases].keys
 
     case params[:commit]
+    when "Fix"
+      ids.each do |tag_alias_id|
+        tag_alias = TagAlias.find(tag_alias_id)
+        TagAlias.fix(tag_alias.name)
+      end
+      
+      flash[:notice] = "Tag aliases fixed"
+      redirect_to :action => "index"
+      
     when "Delete"
       ids.each {|x| TagAlias.find(x).destroy_and_notify(@current_user, params[:reason])}
     

@@ -25,6 +25,19 @@ class TagAlias < ActiveRecord::Base
     end
   end
   
+  def self.fix(tag_name)
+    Post.find_by_sql("SELECT * FROM posts WHERE tags_index @@ to_tsquery('danbooru', E'" + tag_name.to_escaped_for_tsquery + "')").each do |post|
+      post.tags = post.cached_tags
+      post.updater_user_id = 1
+      post.updater_ip_addr = "127.0.0.1"
+      post.save
+    end
+    
+    ta = find(:first, :conditions => ["name = ?", tag_name])
+    Tag.recalculate_post_count(ta.name)
+    Tag.recalculate_post_count(ta.alias_name)
+  end
+  
   def update_implications
     alias_predicate_id = Tag.find_or_create_by_name(name).id
     alias_consequent_id = alias_id

@@ -24,6 +24,7 @@
               <%= button_to_function "Select pending", "$$('.pending').each(function(x) {x.checked = true})" %> 
               <%= submit_tag "Approve" %> 
               <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
+              <%= submit_tag "Fix" %>
               <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_alias_name').focus()" %>
 
               <div id="reason-box" style="display: none; margin-top: 1em;">
