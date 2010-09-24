@@ -39,6 +39,11 @@ module PostMethods
       m.after_create :increment_count
       m.before_destroy :decrement_count      
     end
+    
+    def expire_count_cache
+      key = Digest::MD5.hexdigest(name)
+      Cache.delete("post_count:#{key}")
+    end
 
     def increment_count
       execute_sql("UPDATE table_data SET row_count = row_count + 1 WHERE name = 'posts'")

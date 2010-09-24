@@ -11,7 +11,7 @@ class TagAliasController < ApplicationController
     else
       flash[:notice] = "Error: " + ta.errors.full_messages.join(", ")
     end
-
+    
     redirect_to :action => "index"
   end
 

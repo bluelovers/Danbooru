@@ -2,7 +2,7 @@ class TagAlias < ActiveRecord::Base
   before_create :normalize
   before_create :validate_uniqueness
   after_destroy :expire_cache
-  after_create :expire_cache
+  after_destroy :expire_remote_cache
   after_create :update_implications
 
   # Maps tags to their preferred names. Returns an array of strings.
@@ -118,7 +118,9 @@ class TagAlias < ActiveRecord::Base
   def approve(user_id, ip_addr)
     key = name.tr(" ", "_")
     execute_sql("UPDATE tag_aliases SET is_pending = FALSE WHERE id = ?", id)
-    Cache.delete("tag_alias:#{key}")
+
+    expire_cache
+    expire_remote_cache
 
     Post.find_each(:conditions => "tags_index @@ to_tsquery('danbooru', E'#{Post.generate_sql_escape_helper(name)}')") do |post|
       post.reload

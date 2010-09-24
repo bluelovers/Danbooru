@@ -14,7 +14,7 @@ class PixivFix
       puts "- MISMATCH"
       download_file(post)
       strip_pixiv_tags(post)
-      post.save!
+      # post.save!
     end
   end
   
