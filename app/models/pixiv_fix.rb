@@ -8,7 +8,7 @@ class PixivFix
   def fix!
     return unless source_is_downloadable?(post)
     
-    puts "Testing #{post.source}"
+    puts "Testing #{post.id}: #{post.source}"
     
     unless post_md5_matches_pixiv_md5?(post)
       puts "- MISMATCH"
