@@ -189,7 +189,7 @@ public
 
 private
   def index_after_thousand(tags, per_page, before_id)
-    @posts = Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :limit => per_page, :before_id => before_id))
+    @posts = Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :limit => per_page, :before_id => before_id.to_i))
   end
   
   def index_before_thousand(tags, page, per_page)
