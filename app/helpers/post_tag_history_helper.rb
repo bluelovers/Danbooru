@@ -21,4 +21,16 @@ module PostTagHistoryHelper
 
     return html
   end
+
+  def tag_history_pagination_links(changes)
+    html = ""
+    
+    previous_link = request.env["HTTP_REFERER"]
+    html << %[<a href="#{previous_link}">&laquo; Previous</a>]
+    
+    if changes.any?
+      next_link = url_for(:controller => "post_tag_history", :action => "index", :tags => params[:tags], :before_id => changes[-1].id, :page => nil)
+      html << %[<a href="#{next_link}">Next &raquo;</a>]
+    end
+  end
 end

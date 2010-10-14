@@ -10,7 +10,7 @@ class PostTagHistoryController < ApplicationController
       page = params[:page]
     end
     
-    @changes = PostTagHistory.paginate(PostTagHistory.generate_sql(params).merge(:order => "id DESC", :per_page => 250, :select => "post_tag_histories.*", :page => page))
+    @changes = PostTagHistory.all(PostTagHistory.generate_sql(params).merge(:order => "id DESC", :limit => 250))
     @change_list = @changes.map do |c|
       { :parent_id => c.parent_id, :change => c, :ip_addr => c.ip_addr }.merge(c.tag_changes(c.previous))
     end

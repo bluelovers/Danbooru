@@ -6,7 +6,11 @@ class PostTagHistory < ActiveRecord::Base
     Nagato::Builder.new do |builder, cond|
       cond.add_unless_blank "post_tag_histories.post_id = ?", options[:post_id]
       cond.add_unless_blank "post_tag_histories.user_id = ?", options[:user_id]
-    
+      
+      if options[:before_id]
+        cond.add "post_tag_histories.id < ?", options[:before_id].to_i
+      end
+      
       if options[:user_name]
         builder.join "users ON users.id = post_tag_histories.user_id"
         cond.add "users.name = ?", options[:user_name]
