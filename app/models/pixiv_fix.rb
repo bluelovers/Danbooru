@@ -14,6 +14,12 @@ class PixivFix
       puts "- MISMATCH"
       download_file(post)
       strip_pixiv_tags(post)
+      if Post.exists?(["md5 = '#{post.md5}' and id <> #{post.id}"])
+        puts "- post already exists"
+        return
+      end
+      post.updater_user_id = 1
+      post.updater_ip_addr = "127.0.0.1"
       post.save!
     end
   end
@@ -38,6 +44,11 @@ class PixivFix
   
   def post_md5_matches_pixiv_md5?(post)
     hashes = []
+
+    if post.source =~ %r!(/img/.+?/.+?)_m.+$!
+      match = $1
+      post.source = post.source.sub(match + "_m", match)
+    end
     
     url = URI.parse(post.source)
     Net::HTTP.start(url.host, url.port) do |http|
@@ -77,22 +88,30 @@ class PixivFix
   end
   
   def download_file(post)
+    post.file_ext = nil
+    post.width = nil
+    post.height = nil
+    post.sample_width = nil
+    post.sample_height = nil
     puts "- Downloading"
     puts "-- download_source: #{post.download_source}"
     raise "download failed" if post.errors.any?
-    
+
     puts "-- ensure_tempfile_exists: #{post.ensure_tempfile_exists}"
     puts "-- determine_content_type: #{post.determine_content_type}"
     puts "-- validate_content_type: #{post.validate_content_type}"
     raise "invalid_content_type" if post.errors.any?
-    
+
     puts "-- generate_hash: #{post.generate_hash}"
     raise "duplicate_hash" if post.errors.any?
-    
+
     puts "-- set_image_dimensions: #{post.set_image_dimensions}"
     puts "-- generate_sample: #{post.generate_sample}"
     puts "-- generate_preview: #{post.generate_preview}"
     puts "-- move_file: #{post.move_file}"
+
+    puts "--- file: #{File.size(post.file_path)}"
+    puts "--- preview: #{File.size(post.preview_path)}"
     puts "-- distribute_file: #{post.distribute_file}"
   end
   

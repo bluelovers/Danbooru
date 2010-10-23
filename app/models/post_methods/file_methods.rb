@@ -20,10 +20,10 @@ module PostMethods
       CONFIG["servers"].each do |server|
         if server != Socket.gethostname
           Net::SFTP.start(server, "albert") do |ftp|
-            ftp.upload!(file_path, CONFIG["server_sftp_dir"] + "/public/data/#{md5}.#{file_ext}")
-	          ftp.upload!(preview_path, CONFIG["server_sftp_dir"] + "/public/data/preview/#{md5}.jpg")
+            ftp.upload!(file_path, CONFIG["server_sftp_dir"] + "/public/data/#{md5}.#{file_ext}") rescue Net::SFTP::StatusException
+	          ftp.upload!(preview_path, CONFIG["server_sftp_dir"] + "/public/data/preview/#{md5}.jpg") rescue Net::SFTP::StatusException
             if File.exists?(sample_path)
-              ftp.upload!(sample_path, CONFIG["server_sftp_dir"] + "/public/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg")
+              ftp.upload!(sample_path, CONFIG["server_sftp_dir"] + "/public/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg") rescue Net::SFTP::StatusException
             end
           end
         end
