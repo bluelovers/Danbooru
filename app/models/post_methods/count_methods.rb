@@ -46,11 +46,11 @@ module PostMethods
     end
 
     def increment_count
-#      execute_sql("UPDATE table_data SET row_count = row_count + 1 WHERE name = 'posts'")
+      execute_sql("UPDATE table_data SET row_count = row_count + 1 WHERE name = 'posts'")
     end
 
     def decrement_count
-#      execute_sql("UPDATE table_data SET row_count = row_count - 1 WHERE name = 'posts'")
+      execute_sql("UPDATE table_data SET row_count = row_count - 1 WHERE name = 'posts'")
     end
   end
 end
