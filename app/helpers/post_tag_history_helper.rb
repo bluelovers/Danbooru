@@ -29,7 +29,7 @@ module PostTagHistoryHelper
     html << %[<a href="#{previous_link}">&laquo; Previous</a>]
     
     if changes.any?
-      next_link = url_for(:controller => "post_tag_history", :action => "index", :tags => params[:tags], :before_id => changes[-1].id, :page => nil)
+      next_link = url_for(:controller => "post_tag_history", :action => "index", :tags => params[:tags], :before_id => changes[-1].id, :user_name => params[:user_name], :post_id => params[:post_id], :user_id => params[:user_id], :page => nil)
       html << %[<a href="#{next_link}">Next &raquo;</a>]
     end
   end
