@@ -54,6 +54,7 @@ class PostTagHistory < ActiveRecord::Base
     changes = tag_changes(prev)
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
+    new_tags.reject! {|x| x =~ /^source:/}
     options[:update_options] ||= {}
     post.attributes = {:tags => new_tags.join(" "), :rating => prev.rating, :source => prev.source}.merge(options[:update_options])
   end
