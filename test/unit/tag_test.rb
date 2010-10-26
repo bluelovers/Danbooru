@@ -208,6 +208,9 @@ class TagTest < ActiveSupport::TestCase
   def test_types
     t = Tag.find_or_create_by_name("artist:foo")
     assert_equal("artist", t.type_name)
+
+    t = Tag.find_or_create_by_name("gen:foo")
+    assert_equal("general", t.type_name)
   end
 
   def test_update_type

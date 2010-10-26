@@ -83,6 +83,7 @@ CONFIG["tag_types"] = {
   "artist" => 1,
   "copyright" => 3,
   "character" => 4,
+  "gen" => 0,
   "art" => 1,
   "copy" => 3,
   "char" => 4
