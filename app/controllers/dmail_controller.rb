@@ -1,5 +1,6 @@
 class DmailController < ApplicationController
-  before_filter :blocked_only
+  before_filter :blocked_only, :except => [:create, :compose]
+  before_filter :member_only, :only => [:create, :compose]
   layout "default"
   
   def auto_complete_for_dmail_to_name
