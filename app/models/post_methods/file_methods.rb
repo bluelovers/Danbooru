@@ -285,7 +285,7 @@ module PostMethods
 
     # Returns true if the post has a sample image.
     def has_sample?
-      sample_width.is_a?(Integer)
+      sample_width.is_a?(Integer) && sample_percentage < 90
     end
 
     # Returns true if the post has a sample image, and we're going to use it.
