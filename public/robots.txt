@@ -22,6 +22,7 @@ Disallow: /wiki/history
 Disallow: /wiki/rename
 Disallow: /user
 Disallow: /job_task
+Disallow: /post_tag_history
 
 User-agent: HTTrack
 Disallow: /post
