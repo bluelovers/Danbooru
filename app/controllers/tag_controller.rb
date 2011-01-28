@@ -119,15 +119,23 @@ class TagController < ApplicationController
   end
 
   def related
+    @tags = Tag.scan_tags(params[:tags])
+
     if params[:type]
-      @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|
         all[x] = Tag.find_related_by_type(x, CONFIG["tag_types"][params[:type]])
         all
       end
+    elsif params[:source] == "wiki"
+      @tags = @tags.inject({}) do |all, tag|
+        wiki_page = WikiPage.find_by_title(tag.strip)
+        if wiki_page
+          all[tag] = wiki_page.tags.map {|x| [x, 0]}
+        end
+        all
+      end
     else
-      @tags = Tag.scan_tags(params[:tags])
       @patterns, @tags = @tags.partition {|x| x.include?("*")}
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|

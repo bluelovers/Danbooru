@@ -111,7 +111,10 @@ RelatedTags = {
 		}
 
     var params = {"tags": tags}
-    if (type) {
+    
+    if (type == "wiki") {
+      params["source"] = "wiki"
+    } else if (type) {
       params["type"] = type
     }
   

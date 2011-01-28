@@ -958,7 +958,7 @@ if(field.value[a]==" "){a+=1}
 while((b<text_length)&&field.value[b]!=" "){b+=1}
 tags=field.value.slice(a,b)}else{tags=field.value}
 var params={"tags":tags}
-if(type){params["type"]=type}
+if(type=="wiki"){params["source"]="wiki"}else if(type){params["type"]=type}
 new Ajax.Request("/tag/related.json",{method:'get',parameters:params,onComplete:function(resp){var resp=resp.responseJSON
 var converted=this.convert_related_js_response(resp)
 this.build_all(converted)}.bind(this)})},convert_related_js_response:function(resp){var converted={}

@@ -155,6 +155,17 @@ class WikiPage < ActiveRecord::Base
       "General"
     end
   end
+  
+  def tags
+    matches = body.scan(/\[\[(.+?)\]\]/).flatten
+    matches.map do |match|
+      if match =~ /^(.+?)\|(.+)/
+        $1
+      else
+        match
+      end
+    end.map {|x| x.downcase.tr(" ", "_")}
+  end
 
   def to_xml(options = {})
     {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_xml(options.merge(:root => "wiki_page"))

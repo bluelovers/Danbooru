@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class WikiPageTest < ActiveSupport::TestCase
+  fixtures :users
+  
   def setup
     if CONFIG["enable_caching"]
       MEMCACHE.flush_all
@@ -68,6 +70,11 @@ class WikiPageTest < ActiveSupport::TestCase
 
     w1.rename!("shalala")
     assert_not_nil(WikiPageVersion.find_by_title("shalala"))
+  end
+  
+  def test_tags
+    w1 = create_wiki(:body => "aaa [[bbb]] fff [[c c c|d d d]] eee")
+    assert_equal(%w(bbb c_c_c), w1.tags)
   end
   
   def test_api

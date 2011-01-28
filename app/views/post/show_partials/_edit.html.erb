@@ -65,7 +65,8 @@
               <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
               <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
               <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> |
-              <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+              <%= link_to_function "Search wiki", "RelatedTags.find('post_tags', 'wiki')" %> |
+              <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %> 
             <% end %>
             </td>
           </tr>

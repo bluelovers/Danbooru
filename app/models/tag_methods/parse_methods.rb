@@ -6,9 +6,9 @@ module TagMethods
       end
 
       def scan_tags(tags)
-        tags.to_s.gsub(/[%,*]/, "").downcase.scan(/\S+/).uniq
+        tags.to_s.gsub(/[%,]/, "").downcase.scan(/\S+/).uniq
       end
-    
+      
       def parse_cast(x, type)
         if type == :integer
           x.to_i
