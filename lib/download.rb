@@ -1,6 +1,42 @@
 module Danbooru
+  def self.pixiv_rewrite(source)
+    # Don't download the small version
+    if source =~ %r!(/img/.+?/.+?)_m.+$!
+      match = $1
+      source = source.sub(match + "_m", match)
+    end
+    
+    if source =~ %r!(\d+_p\d+)\.!
+      match = $1
+      repl = match.sub(/_p/, "_big_p")
+      big_source = source.sub(match, repl)
+      if pixiv_http_exists?(big_source)
+        source = big_source
+      end
+    end
+    
+    url = URI.parse(source)
+
+    return [source, url]
+  end
+  
+  def self.pixiv_http_exists?(source)
+    # example: http://img01.pixiv.net/img/as-special/15649262_big_p2.jpg
+    exists = false
+    uri = URI.parse(source)
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      headers = {"Referer" => "http://www.pixiv.net", "User-Agent" => "#{CONFIG["app_name"]}/#{CONFIG["version"]}"}
+      http.request_head(uri.request_uri, headers) do |res|
+        if res.is_a?(Net::HTTPSuccess)
+          exists = true
+        end
+      end
+    end
+    exists
+  end
+  
   # Download the given URL, following redirects; once we have the result, yield the request.
-  def http_get_streaming(source, options = {}, &block)
+  def self.http_get_streaming(source, options = {}, &block)
     max_size = options[:max_size] || CONFIG["max_image_size"]
     max_size = nil if max_size == 0 # unlimited
 
@@ -22,13 +58,7 @@ module Danbooru
         
         if source =~ /pixiv\.net/
           headers["Referer"] = "http://www.pixiv.net"
-          
-          # Don't download the small version
-          if source =~ %r!(/img/.+?/.+?)_m.+$!
-            match = $1
-            source.sub!(match + "_m", match)
-            url = URI.parse(source)
-          end
+          source, url = pixiv_rewrite(source)
         end
         
         http.request_get(url.request_uri, headers) do |res|
@@ -55,7 +85,5 @@ module Danbooru
       end
     end
   end
-
-  module_function :http_get_streaming
 end
 
