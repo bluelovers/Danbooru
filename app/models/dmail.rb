@@ -3,12 +3,24 @@ class Dmail < ActiveRecord::Base
   validates_presence_of :from_id
   validates_format_of :title, :with => /\S/
   validates_format_of :body, :with => /\S/
-
+  validate :validate_user_is_not_restricted
+  
   belongs_to :to, :class_name => "User", :foreign_key => "to_id"
   belongs_to :from, :class_name => "User", :foreign_key => "from_id"
   
   after_create :update_recipient
   after_create :send_dmail
+  
+  named_scope :recent, lambda {{:conditions => ["created_at > ?", 1.day.ago]}}
+  
+  def validate_user_is_not_restricted
+    if from.is_blocked? && from.dmails.recent.count > 3
+      errors.add_to_base("Banned users cannot send more than three messages in a day")
+      return false
+    else
+      return true
+    end
+  end
   
   def send_dmail
     if to.receive_dmails? && to.email.include?("@")

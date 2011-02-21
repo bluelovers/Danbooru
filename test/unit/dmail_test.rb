@@ -13,6 +13,14 @@ class DmailTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries = []
   end
   
+  def test_banned_user_restriction
+    msg1 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
+    msg2 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
+    msg3 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
+    msg4 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
+    assert_equal([], msg4.errors.full_messages)
+  end
+  
   def test_mark_as_read
     member = User.find_by_name("member")
     msg1 = Dmail.create(:to_name => "member", :from_name => "admin", :title => "hello", :body => "hello")

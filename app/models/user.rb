@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
   has_one :test_janitor
   has_many :favorites
   has_many :user_records
+  has_many :dmails, :foreign_key => "from_id"
   
   @salt = CONFIG["user_password_salt"]
   
