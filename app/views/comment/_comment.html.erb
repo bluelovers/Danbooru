@@ -20,6 +20,7 @@
         <%= link_to_function "Quote", "Comment.quote(#{comment.id})" %>
         <% if @current_user.is_janitor_or_higher? || @current_user.id == comment.user_id %>
           | <%= link_to_function "Delete", "Comment.destroy(#{comment.id})" %>
+          | <%= link_to "Edit", {:controller => "comment", :action => "edit", :id => comment.id} %>
         <% end %>
         | <%= link_to_function "Vote up", "Comment.vote(#{comment.id}, 'up')" %>
         | <%= link_to_function "Vote down", "Comment.vote(#{comment.id}, 'down')" %>

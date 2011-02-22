@@ -18,7 +18,8 @@ class DmailTest < ActiveSupport::TestCase
     msg2 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
     msg3 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
     msg4 = Dmail.create(:to_name => "member", :from_name => "blocked", :title => "hello", :body => "hello")
-    assert_equal([], msg4.errors.full_messages)
+    assert_equal(3, Dmail.count)
+    assert_equal(["Banned users cannot send more than three messages in a day"], msg4.errors.full_messages)
   end
   
   def test_mark_as_read

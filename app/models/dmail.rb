@@ -14,7 +14,7 @@ class Dmail < ActiveRecord::Base
   named_scope :recent, lambda {{:conditions => ["created_at > ?", 1.day.ago]}}
   
   def validate_user_is_not_restricted
-    if from.is_blocked? && from.dmails.recent.count > 3
+    if from.is_blocked? && from.dmails.recent.count == 3
       errors.add_to_base("Banned users cannot send more than three messages in a day")
       return false
     else
