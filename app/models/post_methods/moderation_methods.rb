@@ -15,6 +15,10 @@ module PostMethods
         return
       end
       
+      if self.approver_id == approver_id
+        raise "You have previously approved this post and cannot approve it again"
+      end
+      
       user = User.find(approver_id)
       
       if flag_detail
