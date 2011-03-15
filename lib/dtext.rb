@@ -95,6 +95,8 @@ module DText
     unless options[:inline]
       str.gsub!(/\s*\[quote\]\s*/m, "\n\n[quote]\n\n")
       str.gsub!(/\s*\[\/quote\]\s*/m, "\n\n[/quote]\n\n")
+      str.gsub!(/\s*\[spoiler\]\n\s*/m, "\n\n[spoiler]\n\n")
+      str.gsub!(/\s*\n\[\/spoiler\]\s*/m, "\n\n[/spoiler]\n\n")
     end
     
     str.gsub!(/(?:\r?\n){3,}/, "\n\n")
@@ -128,6 +130,20 @@ module DText
           ""
         else
           '</blockquote>'
+        end
+
+      when "[spoiler]"
+        if options[:inline]
+          '<span class="spoiler">'
+        else
+          '<div class="spoiler">'
+        end
+        
+      when "[/spoiler]"
+        if options[:inline]
+          '</span>'
+        else
+          '</div>'
         end
 
       else

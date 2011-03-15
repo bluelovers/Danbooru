@@ -183,13 +183,14 @@ span.post-count {
   color: #AAA;
 }
 
-span.spoiler {
+.spoiler {
   color: black;
   background: black;
   cursor: text;
+  display: inline-block;
 }
 
-span.spoiler:hover {
+.spoiler:hover {
   color: white;
 }
 
