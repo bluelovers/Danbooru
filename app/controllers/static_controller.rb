@@ -4,4 +4,8 @@ class StaticController < ApplicationController
   def overloaded
     render :layout => "default"
   end
+  
+  def state_of_danbooru
+    render :layout => "default"
+  end
 end
