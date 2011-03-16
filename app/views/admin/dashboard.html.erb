@@ -1,0 +1,117 @@
+<div id="moderator-dashboard">
+  <h1>Moderator Dashboard</h1>
+  
+  <div id="ip-addr-search">
+    <% form_tag({:controller => "banned_ip", :action => "search_ip_addrs"}, :target => "_blank", :method => :get) do %>
+      <label for="user_ids">Search IPs</label>
+      <%= text_field_tag :ip_addrs, params[:ip_addrs] %>    
+      <%= submit_tag "Search" %>
+    <% end %>
+    
+    <% form_tag({:controller => "banned_ip", :action => "search_users"}, :target => "_blank", :method => :get) do %>
+      <label for="user_ids">Search User IDs</label>
+      <%= text_field_tag :user_ids, params[:user_ids] %>    
+      <%= submit_tag "Search" %>
+    <% end %>
+  </div>
+  
+  <div id="activity-search">
+    <% form_tag({:controller => "admin", :action => "dashboard"}, :method => :get) do %>
+      <label for="min_date">Minimum Date</label>
+      <%= text_field_tag :min_date, @dashboard.min_date %>
+      <%= submit_tag "Search" %>
+    <% end %>
+  </div>
+  
+  <div id="comment-activity">
+    <table width="100%" class="highlightable">
+      <caption>Comment Activity (Negative)</caption>
+      <thead>
+        <tr>
+          <th>Comment</th>
+          <th>User</th>
+          <th>Votes</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.comment_activity.each do |activity| %>
+          <tr>
+            <td><%= link_to activity.comment.body, :controller => "post", :action => "show", :id => activity.comment.post_id %></td>
+            <td><%= link_to activity.comment.user.name, :controller => "user", :action => "show", :id => activity.comment.user_id %></td>
+            <td><%= activity.count %></td>
+            <td><%= activity.comment.score %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <table width="100%" class="highlightable">
+      <caption>Comment Activity (Positive)</caption>
+      <thead>
+        <tr>
+          <th>Comment</th>
+          <th>User</th>
+          <th>Votes</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.comment_activity(true).each do |activity| %>
+          <tr>
+            <td><%= link_to activity.comment.body, :controller => "post", :action => "show", :id => activity.comment.post_id %></td>
+            <td><%= link_to activity.comment.user.name, :controller => "user", :action => "show", :id => activity.comment.user_id %></td>
+            <td><%= activity.count %></td>
+            <td><%= activity.comment.score %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  
+  <div id="post-activity">
+    <table>
+      <caption>Post Activity (Negative)</caption>
+      <thead>
+        <tr>
+          <th>Post</th>
+          <th>User</th>
+          <th>Votes</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.post_activity.each do |activity| %>
+          <tr>
+            <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
+            <td><%= link_to activity.post.user.name, :controller => "user", :action => "show", :id => activity.post.user_id %></td>
+            <td><%= activity.count %></td>
+            <td><%= activity.post.score %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <table>
+      <caption>Post Activity (Positive)</caption>
+      <thead>
+        <tr>
+          <th>Post</th>
+          <th>User</th>
+          <th>Votes</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.post_activity(true).each do |activity| %>
+          <tr>
+            <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
+            <td><%= link_to activity.post.user.name, :controller => "user", :action => "show", :id => activity.post.user_id %></td>
+            <td><%= activity.count %></td>
+            <td><%= activity.post.score %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

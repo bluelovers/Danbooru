@@ -1017,3 +1017,26 @@ div#state-of-danbooru {
 div#state-of-danbooru-details {
   padding: 1em;
 }
+
+div#moderator-dashboard div#comment-activity {
+  width: 45%;
+  float: left;
+}
+
+div#moderator-dashboard div#post-activity {
+  width: 45%;
+  float: left;
+  margin-left: 2em;
+}
+
+div#moderator-dashboard div#ip-addr-search {
+  margin-bottom: 2em;
+}
+
+div#moderator-dashboard div#activity-search {
+  margin-bottom: 2em;
+}
+
+div#moderator-dashboard table {
+  margin-bottom: 2em;
+}

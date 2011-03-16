@@ -1,5 +1,6 @@
 class BannedIpController < ApplicationController
-  before_filter :admin_only
+  before_filter :admin_only, :except => [:search_users, :search_ip_addrs]
+  before_filter :mod_only, :only => [:search_users, :search_ip_addrs]
   layout "default"
   
   def search_users

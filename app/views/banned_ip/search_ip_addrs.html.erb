@@ -2,7 +2,7 @@
 
 <% form_tag({:action => "search_ip_addrs"}, :method => :get) do %>
   <label for="user_ids">IPs</label>
-  <%= text_field_tag :ip_addrs %>    
+  <%= text_field_tag :ip_addrs, params[:ip_addrs] %>    
   <%= submit_tag "Search" %>
 <% end %>
 
