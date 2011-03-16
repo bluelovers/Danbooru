@@ -8,7 +8,7 @@ class AdminController < ApplicationController
   end
   
   def dashboard
-    @dashboard = Dashboard.new(params[:min_date] || 360.days.ago.to_date)
+    @dashboard = Dashboard.new(params[:min_date] || 3.days.ago.to_date)
   end
 
   def edit_user
