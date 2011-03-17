@@ -203,7 +203,7 @@ class UserController < ApplicationController
   end
   
   def show_blocked_users
-    @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id")
+    @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :order => "bans.id desc")
   end  
   
   def upload_limit
