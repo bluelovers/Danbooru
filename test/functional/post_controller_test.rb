@@ -40,10 +40,6 @@ class PostControllerTest < ActionController::TestCase
     p2 = create_post("hoge", :status => "active")
     p3 = create_post("moge", :status => "active")
     
-    p2.flag!("sage", User.find(1))
-    p2.reload
-    assert_not_nil(p2.flag_detail)
-
     get :moderate, {}, {:user_id => 1}
     assert_response :success
 
@@ -57,11 +53,11 @@ class PostControllerTest < ActionController::TestCase
     post :moderate, {:id => p3.id, :reason => "sage", :commit => "Delete"}, {:user_id => 1}
     p3.reload
     assert_equal("deleted", p3.status)
-    assert_not_nil(p3.flag_detail)
-    assert_equal("sage", p3.flag_detail.reason)
+    assert(p3.flags.any?)
+    assert_equal("sage", p3.flags.first.reason)
 
     assert_equal(0, ModQueuePost.count)
-    post :moderate, {:id => "3", :commit => "Hide"}, {:user_id => 1}
+    post :moderate, {:id => p3.id, :commit => "Hide"}, {:user_id => 1}
     assert_equal(1, ModQueuePost.count)
   end
   
@@ -102,19 +98,11 @@ class PostControllerTest < ActionController::TestCase
     post :destroy, {:id => p1.id, :reason => "sage"}, {:user_id => 1}
     p1.reload
     assert_equal("deleted", p1.status)
-    assert_not_nil(p1.flag_detail)
-    assert_equal("sage", p1.flag_detail.reason)
+    assert(p1.flags.any?)
+    assert_equal("sage", p1.flags.first.reason)
 
     post :destroy, {:id => p1.id, :reason => "sage"}, {:user_id => 1}
     assert_nil(Post.find_by_id(p1.id))
-  end
-  
-  def test_deleted_index
-    get :deleted_index, {}, {:user_id => 3}
-    assert_response :success
-    
-    get :deleted_index, {:user_id => 1}, {:user_id => 3}
-    assert_response :success
   end
   
   def test_index
@@ -146,18 +134,10 @@ class PostControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  def test_piclens
-    create_default_posts
-    
-    get :piclens, {}, {:user_id => 3}
-    assert_response :success
-    
-    get :piclens, {:tags => "tag1"}, {:user_id => 3}
-    assert_response :success
-  end
-  
   def test_show
-    get :show, {:id => 1}, {:user_id => 3}
+    p1, p2, p3, p4 = create_default_posts
+    
+    get :show, {:id => p1.id}, {:user_id => 3}
     assert_response :success
   end
   
@@ -203,12 +183,12 @@ class PostControllerTest < ActionController::TestCase
   def test_flag
     p1 = create_post("tag1")
     
-    post :flag, {:id => p1.id, :reason => "sage"}, {:user_id => 3}
+    post :flag, {:id => p1.id, :flag => {:reason => "sage"}}, {:user_id => 3}
     
     p1.reload
     assert_equal("flagged", p1.status)
-    assert_not_nil(p1.flag_detail)
-    assert_equal("sage", p1.flag_detail.reason)
+    assert(p1.flags.any?)
+    assert_equal("sage", p1.flags.first.reason)
   end
   
   def test_random

@@ -260,12 +260,7 @@ public
   end
 
   def piclens
-    @posts = WillPaginate::Collection.create(params[:page], 20, Post.fast_count(params[:tags])) do |pager|
-      pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :user => @current_user, :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
-    end
-    
-    headers["Content-Type"] = "application/rss+xml"
-    render :layout => false
+    render :nothing => true, :status => 404
   end
 
   def show
