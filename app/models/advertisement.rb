@@ -1,6 +1,17 @@
 class Advertisement < ActiveRecord::Base
   validates_inclusion_of :ad_type, :in => %w(horizontal vertical)
   has_many :hits, :class_name => "AdvertisementHit"
+  after_save :distribute_file
+  
+  def distribute_file
+    CONFIG["servers"].each do |server|
+      if server != Socket.gethostname
+        Net::SFTP.start(server, "albert") do |ftp|
+          ftp.upload!(image_path, image_path) rescue Net::SFTP::StatusException
+        end
+      end
+    end
+  end
 
   def hit!(ip_addr)
     AdvertisementHit.create(:ip_addr => ip_addr, :advertisement_id => id)
@@ -19,7 +30,7 @@ class Advertisement < ActiveRecord::Base
   end
 
   def image_path
-    "#{RAILS_ROOT}/public/#{image_url}"
+    "#{RAILS_ROOT}/public#{image_url}"
   end
   
   def file=(f)
