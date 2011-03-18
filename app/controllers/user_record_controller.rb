@@ -22,6 +22,8 @@ class UserRecordController < ApplicationController
         flash[:notice] = "Record updated"
       end
       redirect_to :action => "index", :user_id => @user.id
+    else
+      @user_record = UserRecord.new(params[:user_record])
     end
   end
   

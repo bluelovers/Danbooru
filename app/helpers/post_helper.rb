@@ -20,6 +20,25 @@ module PostHelper
     end
   end
   
+  def post_flag_reason_select_tag(name)
+    select_tag(name, options_for_select(["Not anime related", "Furry", "Watermarked", "Poor compression", "Mutilation", "Distension" ,"Scat", "Absurd proportions", "Other", "Duplicate", "Banned artist", "Poorly drawn", "Fake translation", "Nude filter"].sort))
+  end
+  
+  def post_appeal_reason_select_tag(name)
+    select_tag(name, options_for_select(["Artistic merit", "Funny", "Weird", "Translated"].sort))
+  end
+  
+  def post_flag_summary(post)
+    hash = Hash.new {|h, k| h[k] = 0}
+    post.flags.each do |flag|
+      hash[flag.reason] += 1
+    end
+    
+    hash.to_a.sort_by {|x| -1 * x[1]}.map do |reason, count|
+      '<span class="flag-reason-and-count">' + h(reason) + ' (' + count.to_s + ')</span>'
+    end.join(", ")
+  end
+  
   def wiki_excerpt(artist, wiki_page, split_tags)
     html = ""
     

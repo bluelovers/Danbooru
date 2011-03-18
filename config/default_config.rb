@@ -65,6 +65,7 @@ CONFIG["user_levels"] = {
   "Blocked" => 10,
   "Member" => 20,
   "Privileged" => 30,
+  "Builder" => 32,
   "Contributor" => 33,
   "Test Janitor" => 34,
   "Janitor" => 35,
@@ -121,7 +122,7 @@ CONFIG["default_blacklists"] = [
 CONFIG["session_secret_key"] = "This should be at least 30 characters long"
 
 # Users cannot search for more than X regular tags at a time.
-CONFIG["tag_query_limit"] = 6
+CONFIG["tag_query_limit"] = 7
 
 # Set this to insert custom CSS or JavaScript files into your app.
 CONFIG["custom_html_headers"] = nil

@@ -39,16 +39,16 @@
   </div>
 <% elsif @post.is_deleted? %>
   <div class="status-notice">
-    This post was deleted. 
-    <% if @post.flag_detail %>
-      Reason: <%= h @post.flag_detail.reason %>. MD5: <%= @post.md5 %>. By: <%= h @post.flag_detail.user.name %>.
+    This post was deleted: 
+    <% if @post.flags.any? %>
+      <%= post_flag_summary(@post) %>.
     <% end %>
   </div>
 <% elsif @post.is_flagged? %>
   <div class="status-notice">
-    This post was flagged for deletion. 
-    <% if @post.flag_detail %>
-      Reason: <%= h @post.flag_detail.reason %>. By: <%= h @post.flag_detail.user.name %>.
+    This post was flagged for deletion: 
+    <% if @post.flags.any? %>
+      <%= post_flag_summary(@post) %>.
     <% end %>    
 
     <%= render :partial => "post/show_partials/moderation_panel" %>

@@ -10,23 +10,23 @@ module PostMethods
       ModQueuePost.count(:conditions => ["post_id = ?", id])
     end
     
-    def approve!(approver_id)
+    def is_resolved?
+      flags.any? {|x| x.is_resolved?}
+    end
+    
+    def approve!(current_user_id)
       if self.status == "active"
         return
       end
       
-      if self.approver_id == approver_id
+      if self.approver_id == current_user_id
         raise "You have previously approved this post and cannot approve it again"
       end
       
-      user = User.find(approver_id)
-      
-      if flag_detail
-        flag_detail.update_attributes(:is_resolved => true)
-      end
+      flags.each {|x| x.update_attribute(:is_resolved, true)}
 
       self.status = "active"
-      self.approver_id = approver_id
+      self.approver_id = current_user_id
       save
     end
   end

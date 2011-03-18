@@ -1,14 +1,15 @@
 class AdminController < ApplicationController
   layout "default"
+  helper :user, :post
   before_filter :admin_only, :except => :dashboard
-  before_filter :mod_only, :only => :dashboard
+  before_filter :janitor_only, :only => :dashboard
 
   def index
     set_title "Admin"
   end
   
   def dashboard
-    @dashboard = Dashboard.new(params[:min_date] || 3.days.ago.to_date)
+    @dashboard = Dashboard.new(params[:min_date] || 2.days.ago.to_date, params[:max_level] || 20)
   end
 
   def edit_user

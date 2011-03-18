@@ -4,7 +4,7 @@ module PostMethods
       give_favorites_to_parent
       update_attribute(:status, "deleted")
       Post.update_has_children(parent_id) if parent_id
-      flag_detail.update_attributes(:is_resolved => true) if flag_detail
+      flags.each {|x| x.update_attribute(:is_resolved, true)}
     end
 
     def status=(s)

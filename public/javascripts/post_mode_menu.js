@@ -44,8 +44,6 @@ PostModeMenu = {
       document.body.setStyle({backgroundColor: "#3AA"})
     } else if (s == "approve") {
       document.body.setStyle({backgroundColor: "#26A"})
-    } else if (s == "flag") {
-      document.body.setStyle({backgroundColor: "#F66"})
     } else if (s == "add-to-pool") {
       document.body.setStyle({backgroundColor: "#26A"})
     } else if (s == "apply-tag-script") {
@@ -99,8 +97,6 @@ PostModeMenu = {
       Post.update(post_id, {"post[is_rating_locked]": "1"})
     } else if (s.value == 'lock-note') {
       Post.update(post_id, {"post[is_note_locked]": "1"})
-    } else if (s.value == 'flag') {
-      Post.flag(post_id)
     } else if (s.value == "approve") {
       Post.moderate(post_id, "Approve")
     } else if (s.value == 'add-to-pool') {

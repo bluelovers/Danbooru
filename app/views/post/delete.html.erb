@@ -4,7 +4,10 @@
 
 <% form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
-  <label>Reason</label> <%= text_field_tag "reason" %>
+  
+  <% if @post.flags.empty? %>
+    <label>Reason</label> <%= text_field_tag "reason" %>
+  <% end %>
   <%= submit_tag "Delete" %> <%= submit_tag "Cancel" %>
 <% end %>
 

@@ -18,12 +18,92 @@
   <div id="activity-search">
     <% form_tag({:controller => "admin", :action => "dashboard"}, :method => :get) do %>
       <label for="min_date">Minimum Date</label>
-      <%= text_field_tag :min_date, @dashboard.min_date %>
+      <%= text_field_tag :min_date, @dashboard.min_date %><br>
+      
+      <label for="max_level">Max Level</label>
+      <%= user_level_select_tag(:max_level) %><br>
+      
       <%= submit_tag "Search" %>
     <% end %>
   </div>
   
   <div id="comment-activity">
+    <table width="100%" class="highlightable">
+      <caption>Note Updates</caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.note_activity.each do |activity| %>
+          <tr>
+            <td><%= admin_link_to_user(activity.user, :positive) %></td>
+            <td><%= link_to activity.count, {:controller => "note", :action => "history", :user_id => activity.user.id}, :target => "_blank" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    
+    <table width="100%" class="highlightable">
+      <caption>Tag Updates</caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.tag_activity.each do |activity| %>
+          <tr>
+            <td><%= admin_link_to_user(activity.user, :positive) %></td>
+            <td><%= link_to activity.count, {:controller => "post_tag_history", :action => "index", :user_id => activity.user.id}, :target => "_blank" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    
+    <table width="100%" class="highlightable">
+      <caption>Wiki Page Updates</caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.wiki_page_activity.each do |activity| %>
+          <tr>
+            <td><%= admin_link_to_user(activity.user, :positive) %></td>
+            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id}, :target => "_blank" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    
+    <table width="100%" class="highlightable">
+      <caption>Artist Updates</caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.artist_activity.each do |activity| %>
+          <tr>
+            <td><%= admin_link_to_user(activity.user, :positive) %></td>
+            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id}, :target => "_blank" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    
     <table width="100%" class="highlightable">
       <caption>Comment Activity (Negative)</caption>
       <thead>
@@ -38,7 +118,7 @@
         <% @dashboard.comment_activity.each do |activity| %>
           <tr>
             <td><%= link_to activity.comment.body, :controller => "post", :action => "show", :id => activity.comment.post_id %></td>
-            <td><%= link_to activity.comment.user.name, :controller => "user", :action => "show", :id => activity.comment.user_id %></td>
+            <td><%= admin_link_to_user(activity.comment.user, :negative) %></td>
             <td><%= activity.count %></td>
             <td><%= activity.comment.score %></td>
           </tr>
@@ -60,7 +140,7 @@
         <% @dashboard.comment_activity(true).each do |activity| %>
           <tr>
             <td><%= link_to activity.comment.body, :controller => "post", :action => "show", :id => activity.comment.post_id %></td>
-            <td><%= link_to activity.comment.user.name, :controller => "user", :action => "show", :id => activity.comment.user_id %></td>
+            <td><%= admin_link_to_user(activity.comment.user, :positive) %></td>
             <td><%= activity.count %></td>
             <td><%= activity.comment.score %></td>
           </tr>
@@ -70,6 +150,32 @@
   </div>
   
   <div id="post-activity">
+    <table>
+      <caption>Flagged Posts</caption>
+      <thead>
+        <tr>
+          <th>Post</th>
+          <th>User</th>
+          <th>Flags</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.flagged_post_activity.each do |activity| %>
+          <tr>
+            <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
+            <td><%= admin_link_to_user activity.post.user, :negative %></td>
+            <td>
+              <%= post_flag_summary(activity.post) %>
+            </td>
+            <td><%= activity.post.score %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    
+    
     <table>
       <caption>Post Activity (Negative)</caption>
       <thead>
@@ -84,7 +190,7 @@
         <% @dashboard.post_activity.each do |activity| %>
           <tr>
             <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
-            <td><%= link_to activity.post.user.name, :controller => "user", :action => "show", :id => activity.post.user_id %></td>
+            <td><%= admin_link_to_user activity.post.user, :negative %></td>
             <td><%= activity.count %></td>
             <td><%= activity.post.score %></td>
           </tr>
@@ -106,7 +212,7 @@
         <% @dashboard.post_activity(true).each do |activity| %>
           <tr>
             <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
-            <td><%= link_to activity.post.user.name, :controller => "user", :action => "show", :id => activity.post.user_id %></td>
+            <td><%= admin_link_to_user activity.post.user, :positive %></td>
             <td><%= activity.count %></td>
             <td><%= activity.post.score %></td>
           </tr>

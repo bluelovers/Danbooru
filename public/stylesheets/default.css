@@ -1040,3 +1040,11 @@ div#moderator-dashboard div#activity-search {
 div#moderator-dashboard table {
   margin-bottom: 2em;
 }
+
+div.input label {
+  display: block;
+}
+
+div.input {
+  margin-bottom: 1em;
+}

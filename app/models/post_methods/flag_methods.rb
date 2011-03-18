@@ -7,8 +7,8 @@ module PostMethods
         raise FlaggingError.new("Must provide a reason")
       end
       
-      if current_user.is_privileged_or_lower? && FlaggedPostDetail.count(:conditions => ["user_id = ? and created_at >= ?", current_user.id, 1.day.ago]) >= 10
-        raise FlaggingError.new("Can only unapprove 10 posts a day")
+      if current_user.is_privileged_or_lower? && PostFlag.count(:conditions => ["user_id = ? and created_at >= ?", current_user.id, 1.day.ago]) >= 10
+        raise FlaggingError.new("Can only flag 10 posts a day")
       end
 
       if status == "deleted"
@@ -16,12 +16,7 @@ module PostMethods
       end
 
       update_attribute(:status, "flagged")
-
-      if flag_detail
-        flag_detail.update_attributes(:reason => reason, :user_id => current_user.id)
-      else
-        FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => current_user.id, :is_resolved => false)
-      end
+      self.flags.create!(:post_id => id, :reason => reason, :user_id => current_user.id, :is_resolved => false)
     end
   end
 end

@@ -54,7 +54,7 @@ class UserController < ApplicationController
       
       redirect_to :action => "invites"
     else
-      @invited_users = User.find(:all, :conditions => ["invited_by = ?", @current_user.id], :order => "lower(name)")
+      @member = User.new(params[:user])
     end
   end
   

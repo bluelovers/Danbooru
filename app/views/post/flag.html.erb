@@ -1,0 +1,19 @@
+<h1>Flag Post</h1>
+
+<% form_tag(:action => "flag") do %>
+  <%= hidden_field_tag "id", @post.id %>
+  
+  <div class="input">
+    <label for="flag_reason">Reason</label>
+    <%= post_flag_reason_select_tag "flag[reason]" %>
+  </div>
+  
+  <div class="input">
+    <label for="flag_note">Note</label>
+    <%= text_field_tag "flag[note]" %>
+  </div>
+  
+  <div class="input">
+    <%= submit_tag "Submit" %>
+  </div>
+<% end %>

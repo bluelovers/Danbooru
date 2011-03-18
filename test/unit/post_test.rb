@@ -384,8 +384,25 @@ class PostTest < ActiveSupport::TestCase
     Post.destroy_with_reason(post.id, "bad bad bad", User.find(1))
     post.reload
     assert(post.is_deleted?, "Post should be deleted")
-    assert_not_nil(post.flag_detail)
-    assert_equal("bad bad bad", post.flag_detail.reason)
+    assert(post.flags.any?)
+    assert_equal("bad bad bad", post.flags.first.reason)
+  end
+  
+  def test_multiple_flagging_from_same_user
+    post = create_post("tag1 tag2")
+    post.flag!("bad bad bad", User.find(1))
+    assert_raises(ActiveRecord::RecordInvalid) do
+      post.flag!("rarararara", User.find(1))
+    end
+    assert_equal(1, post.flags.size)
+  end
+  
+  def test_multiple_flagging_different_users
+    post = create_post("tag1 tag2")
+    post.flag!("bad bad bad", User.find(1))
+    post.flag!("rarararara", User.find(2))
+    assert_equal(2, post.flags.size)
+    assert(!post.is_resolved?)
   end
   
   def test_flagging_and_approval
@@ -393,13 +410,13 @@ class PostTest < ActiveSupport::TestCase
     post.flag!("bad bad bad", User.find(1))
     post.reload
     assert(post.is_flagged?, "Post should be flagged")
-    assert_not_nil(post.flag_detail)
-    assert_equal("bad bad bad", post.flag_detail.reason)
+    assert(post.flags.any?)
+    assert_equal("bad bad bad", post.flags.first.reason)
     
     post.approve!(1)
     post.reload
     assert(post.is_active?, "Post should be active")
-    assert(post.flag_detail.is_resolved?, "Flag detail should be resolved")
+    assert(post.is_resolved?, "Flag detail should be resolved")
     assert_equal(1, post.approver_id)
   end
   
@@ -476,6 +493,19 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(p1.id, matches[0].id)
   end
   
+  def test_search_status_any
+    Post.delete_all
+    
+    p1 = create_post("hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :status => "active")
+    p2 = create_post("hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"), :status => "deleted")
+    
+    matches = search_posts("")
+    assert_equal(1, matches.size)
+    
+    matches = search_posts("status:any")
+    assert_equal(2, matches.size)
+  end
+  
   def test_search_pattern
     p1 = create_post("hoge nushi", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
     p2 = create_post("hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
@@ -515,6 +545,15 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, p1.character_tag_count)
     assert_equal(0, p1.copyright_tag_count)
   end
+
+  def test_repeat_approval_by_same_user_should_fail
+    p1 = create_post("foo", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :status => "pending")
+    p1.approve!(1)
+    p1.delete!
+    assert_raises(RuntimeError) do
+      p1.approve!(1)
+    end
+  end
   
   def test_approve
     p1 = create_post("foo", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :status => "pending")
@@ -525,6 +564,13 @@ class PostTest < ActiveSupport::TestCase
     p1.approve!(2)
     assert_equal(1, p1.approver_id)
     assert_equal("active", p1.status)
+  end
+  
+  def test_is_resolved
+    p1 = create_post("foo", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :status => "pending")
+    p1.flag!("xxx", User.find(1))
+    p1.approve!(1)
+    assert(p1.is_resolved?)
   end
   
   def test_pixiv_sources

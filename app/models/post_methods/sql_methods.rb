@@ -85,9 +85,13 @@ module PostMethods
           cond_params << q[:md5].split(/,/)
         end
     
-        if q[:status].is_a?(String) and Post::STATUSES.member?(q[:status])
-          conds << "p.status = ?"
-          cond_params << q[:status]
+        if q[:status].is_a?(String) 
+          if Post::STATUSES.member?(q[:status])
+            conds << "p.status = ?"
+            cond_params << q[:status]
+          elsif q[:status] == "any"
+            # do nothing
+          end
         else
           conds << "p.status <> 'deleted'"
         end

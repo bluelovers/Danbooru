@@ -1,7 +1,7 @@
 class PostController < ApplicationController
   layout 'default'
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
+  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update, :revert_tags, :random]
   before_filter :verify_user_is_not_banned, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags]
   before_filter :test_janitor_only, :only => [:moderate]
@@ -114,16 +114,14 @@ public
 
       if params[:query]
         @posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending"))
-        @posts += Post.find_by_sql(Post.generate_sql(params[:query] + " status:flagged"))
       else
         @posts = Post.find(:all, :conditions => "status = 'pending'")
-        @posts += Post.find(:all, :conditions => "status = 'flagged'")
       end
 
       @posts = ModQueuePost.reject_hidden(@posts, @current_user, params[:hidden])
       @posts = @posts.sort_by do |post|
-        if post.flag_detail
-          post.flag_detail.created_at
+        if post.flags.any?
+          post.flags.last.created_at
         else
           post.created_at
         end
@@ -179,14 +177,6 @@ public
     end
   end
   
-  def deleted_index
-    if params[:user_id]
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ? ", params[:user_id]], :page => params[:page])
-    else
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted'"], :page => params[:page])
-    end
-  end
-
 private
   def index_after_thousand(tags, per_page, before_id)
     @posts = Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :limit => per_page, :before_id => before_id.to_i))
@@ -377,13 +367,22 @@ public
   end
 
   def flag
-    begin
-      post = Post.find(params[:id])
-      raise Post::FlaggingError.new("Post was previously unapproved") if post.flag_detail
-      post.flag!(params[:reason], @current_user)
-      respond_to_success("Post flagged", :action => "show", :id => params[:id])
-    rescue Post::FlaggingError => x
-      respond_to_error(x.message, :action => "show", :id => params[:id])
+    @post = Post.find(params[:id])
+
+    if request.post?
+      begin
+        if params[:flag][:reason] == "Other"
+          @post.flag!("Other: #{params[:flag][:note]}", @current_user)
+        else
+          @post.flag!(params[:flag][:reason], @current_user)
+        end
+        @post.vote!(@current_user, -1)
+        respond_to_success("Post flagged", :action => "show", :id => params[:id])
+      rescue Post::FlaggingError => x
+        respond_to_error(x.message, :action => "show", :id => params[:id])
+      rescue Post::VotingError => x
+        respond_to_success("Post flagged", :action => "show", :id => params[:id])
+      end
     end
   end
   

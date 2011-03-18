@@ -764,10 +764,7 @@ if(resp.success){Post.register(resp.post)}else{notice('Error: '+resp.reason)}}})
 e.stop()}})},vote:function(score,id){Post.notice_update("inc")
 new Ajax.Request("/post/vote.json",{parameters:{"id":id,"score":score},onComplete:function(resp){Post.notice_update("dec")
 var resp=resp.responseJSON
-if(resp.success){$("post-score-"+resp.post_id).update(resp.score)}else{notice("Error: "+resp.reason)}}})},flag:function(id){var reason=prompt("Why should this post be reconsidered for moderation?")
-if(reason==null){return false}
-new Ajax.Request("/post/flag.json",{parameters:{"id":id,"reason":reason},onComplete:function(resp){var resp=resp.responseJSON
-if(resp.success){notice("Post was resent to moderation queue")}else{notice("Error: "+resp.reason)}}})},register:function(post){post.tags=post.tags.match(/\S+/g)
+if(resp.success){$("post-score-"+resp.post_id).update(resp.score)}else{notice("Error: "+resp.reason)}}})},register:function(post){post.tags=post.tags.match(/\S+/g)
 post.match_tags=post.tags.clone()
 post.match_tags.push("rating:"+post.rating.charAt(0))
 post.match_tags.push("status:"+post.status)
@@ -841,7 +838,7 @@ $("mode").value="view"}else{$("mode").value=Cookie.get("mode")}
 this.change()},change:function(){var s=$F("mode")
 Cookie.put("mode",s,7)
 if(s.value!="edit"){$("quick-edit").hide()}
-if(s=="view"){document.body.setStyle({backgroundColor:this.original_background_color})}else if(s=="edit"){document.body.setStyle({backgroundColor:"#3A3"})}else if(s=="add-fav"){document.body.setStyle({backgroundColor:"#FFA"})}else if(s=="remove-fav"){document.body.setStyle({backgroundColor:"#FFA"})}else if(s=="rating-q"){document.body.setStyle({backgroundColor:"#AAA"})}else if(s=="rating-s"){document.body.setStyle({backgroundColor:"#6F6"})}else if(s=="rating-e"){document.body.setStyle({backgroundColor:"#F66"})}else if(s=="vote-down"){document.body.setStyle({backgroundColor:"#FAA"})}else if(s=="vote-up"){document.body.setStyle({backgroundColor:"#AFA"})}else if(s=="lock-rating"){document.body.setStyle({backgroundColor:"#AA3"})}else if(s=="lock-note"){document.body.setStyle({backgroundColor:"#3AA"})}else if(s=="approve"){document.body.setStyle({backgroundColor:"#26A"})}else if(s=="flag"){document.body.setStyle({backgroundColor:"#F66"})}else if(s=="add-to-pool"){document.body.setStyle({backgroundColor:"#26A"})}else if(s=="apply-tag-script"){document.body.setStyle({backgroundColor:"#A3A"})}else if(s=="edit-tag-script"){document.body.setStyle({backgroundColor:"white"})
+if(s=="view"){document.body.setStyle({backgroundColor:this.original_background_color})}else if(s=="edit"){document.body.setStyle({backgroundColor:"#3A3"})}else if(s=="add-fav"){document.body.setStyle({backgroundColor:"#FFA"})}else if(s=="remove-fav"){document.body.setStyle({backgroundColor:"#FFA"})}else if(s=="rating-q"){document.body.setStyle({backgroundColor:"#AAA"})}else if(s=="rating-s"){document.body.setStyle({backgroundColor:"#6F6"})}else if(s=="rating-e"){document.body.setStyle({backgroundColor:"#F66"})}else if(s=="vote-down"){document.body.setStyle({backgroundColor:"#FAA"})}else if(s=="vote-up"){document.body.setStyle({backgroundColor:"#AFA"})}else if(s=="lock-rating"){document.body.setStyle({backgroundColor:"#AA3"})}else if(s=="lock-note"){document.body.setStyle({backgroundColor:"#3AA"})}else if(s=="approve"){document.body.setStyle({backgroundColor:"#26A"})}else if(s=="add-to-pool"){document.body.setStyle({backgroundColor:"#26A"})}else if(s=="apply-tag-script"){document.body.setStyle({backgroundColor:"#A3A"})}else if(s=="edit-tag-script"){document.body.setStyle({backgroundColor:"white"})
 var script=Cookie.get("tag-script")
 script=prompt("Enter a tag script",script)
 if(script){Cookie.put("tag-script",script)
@@ -852,7 +849,7 @@ $("id").value=post_id
 $("post_old_tags").value=post.tags.join(" ")
 $("post_tags").value=post.tags.join(" ")+" rating:"+post.rating.substr(0,1)
 $("quick-edit").show()
-$("post_tags").focus()}else if(s.value=='vote-down'){Post.vote(-1,post_id)}else if(s.value=='vote-up'){Post.vote(1,post_id)}else if(s.value=='rating-q'){Post.update(post_id,{"post[rating]":"questionable"})}else if(s.value=='rating-s'){Post.update(post_id,{"post[rating]":"safe"})}else if(s.value=='rating-e'){Post.update(post_id,{"post[rating]":"explicit"})}else if(s.value=='lock-rating'){Post.update(post_id,{"post[is_rating_locked]":"1"})}else if(s.value=='lock-note'){Post.update(post_id,{"post[is_note_locked]":"1"})}else if(s.value=='flag'){Post.flag(post_id)}else if(s.value=="approve"){Post.moderate(post_id,"Approve")}else if(s.value=='add-to-pool'){Pool.add_post(post_id,0)}else if(s.value=="apply-tag-script"){var tag_script=Cookie.get("tag-script")
+$("post_tags").focus()}else if(s.value=='vote-down'){Post.vote(-1,post_id)}else if(s.value=='vote-up'){Post.vote(1,post_id)}else if(s.value=='rating-q'){Post.update(post_id,{"post[rating]":"questionable"})}else if(s.value=='rating-s'){Post.update(post_id,{"post[rating]":"safe"})}else if(s.value=='rating-e'){Post.update(post_id,{"post[rating]":"explicit"})}else if(s.value=='lock-rating'){Post.update(post_id,{"post[is_rating_locked]":"1"})}else if(s.value=='lock-note'){Post.update(post_id,{"post[is_note_locked]":"1"})}else if(s.value=="approve"){Post.moderate(post_id,"Approve")}else if(s.value=='add-to-pool'){Pool.add_post(post_id,0)}else if(s.value=="apply-tag-script"){var tag_script=Cookie.get("tag-script")
 TagScript.run(post_id,tag_script)}
 return false}}
 TagScript={parse:function(script){return script.match(/\[.+?\]|\S+/g)},test:function(tags,predicate){var split_pred=predicate.match(/\S+/g)

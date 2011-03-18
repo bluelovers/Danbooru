@@ -3,7 +3,7 @@ class Post < ActiveRecord::Base
   
   has_many :notes, :order => "id desc"
   has_and_belongs_to_many :pools
-  has_one :flag_detail, :class_name => "FlaggedPostDetail"
+  has_many :flags, :class_name => "PostFlag"
   belongs_to :user
   belongs_to :approver, :class_name => "User"
   attr_accessor :updater_ip_addr, :updater_user_id
