@@ -4,6 +4,7 @@ class Post < ActiveRecord::Base
   has_many :notes, :order => "id desc"
   has_and_belongs_to_many :pools
   has_many :flags, :class_name => "PostFlag"
+  has_many :appeals, :class_name => "PostAppeal"
   belongs_to :user
   belongs_to :approver, :class_name => "User"
   attr_accessor :updater_ip_addr, :updater_user_id

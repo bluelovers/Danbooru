@@ -218,7 +218,7 @@ class UserController < ApplicationController
   
   def update_upload_limit
     @user = User.find(params[:id])
-    @user.base_upload_limit = params[:user][:base_upload_limit]
+    @user.upload_limit = params[:user][:upload_limit]
     @user.save
     flash[:notice] = "User updated"
     redirect_to :action => "show", :id => @user.id

@@ -64,7 +64,7 @@ class AnonymousUser
     0
   end
   
-  def base_upload_limit
+  def calculated_upload_limit
     0
   end
 

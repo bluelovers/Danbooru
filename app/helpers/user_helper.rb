@@ -6,11 +6,20 @@ module UserHelper
   end
   
   def upload_limit_formula(user)
-    base = user.base_upload_limit
-    approved = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "active"])
-    deleted = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "deleted"])
-    pending = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "pending"])
-    total = base + (approved / 10) - (deleted / 4) - pending
-    "#{base} + (#{approved} / 10) - (#{deleted} / 4) - #{pending} = #{total}"
+    upload_limit = user.upload_limit
+    
+    if upload_limit.nil?
+      base = 10
+      approved = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "active"])
+      deleted = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "deleted"])
+      pending = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "pending"])
+      total = base + (approved / 10) - (deleted / 4) - pending
+      "base:#{base} + approved:(#{approved} / 10) - deleted:(#{deleted} / 4) - pending:#{pending} = #{total}"
+    else
+      base = upload_limit
+      pending = Post.count(:conditions => ["user_id = ? and status = ?", user.id, "pending"])
+      total = base - pending
+      "base:#{base} - pending:#{pending} = #{total}"
+    end
   end
 end

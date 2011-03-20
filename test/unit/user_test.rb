@@ -1,13 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users
+  fixtures :users, :table_data
   
   def setup
-    if CONFIG["enable_caching"]
-      MEMCACHE.flush_all
-    end
-    
+    MEMCACHE.flush_all
     @test_number = 1
   end
   
@@ -183,16 +180,16 @@ class UserTest < ActiveSupport::TestCase
   
   def test_upload_limit
     member = User.find(4)
-    assert_equal(10, member.base_upload_limit)
-    member.base_upload_limit = 5
+    assert_equal(10, member.calculated_upload_limit)
+    member.upload_limit = 5
     member.save
     member.reload
-    assert_equal(5, member.base_upload_limit)
-    member.attributes = {:base_upload_limit => 10, :name => "bob"}
+    assert_equal(5, member.calculated_upload_limit)
+    member.attributes = {:upload_limit => 10, :name => "bob"}
     member.save
     member.reload
     assert_equal("bob", member.name)
-    assert_equal(5, member.base_upload_limit)
+    assert_equal(5, member.calculated_upload_limit)
   end
   
   def test_banned_ips

@@ -1,7 +1,7 @@
 <h2>Upload Limit</h2>
 
 <div style="margin-bottom: 1em;">
-  <p>You can currently upload <strong><%= @current_user.upload_limit %></strong> posts. This limit is based on the following formula:</p>
+  <p>You can currently upload <strong><%= @current_user.calculated_upload_limit %></strong> posts. This limit is based on the following formula:</p>
 
   <ul>
     <li>Approved: <%= @approved_count %></li>
