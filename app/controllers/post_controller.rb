@@ -2,11 +2,10 @@ class PostController < ApplicationController
   layout 'default'
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-  before_filter :member_only, :only => [:create, :upload, :destroy, :flag, :update, :revert_tags, :random]
-  before_filter :verify_user_is_not_banned, :only => [:create, :upload, :destroy, :delete, :flag, :update, :revert_tags]
+  before_filter :member_only, :only => [:flag, :appeal, :create, :upload, :destroy, :update, :revert_tags, :random]
+  before_filter :verify_user_is_not_banned, :only => [:create, :upload, :destroy, :delete, :flag, :appeal, :update, :revert_tags]
   before_filter :test_janitor_only, :only => [:moderate]
   before_filter :janitor_only, :only => [:undelete, :delete]
-  before_filter :privileged_only, :only => [:flag]
   after_filter :save_recent_tags, :only => [:update, :create]  
   # around_filter :cache_action, :only => [:index, :atom, :piclens]
 
@@ -22,11 +21,11 @@ protected
     end
     
     result = super(options)
-  	
+    
     if redirect_to_proc
       options[:redirect_to][:id] = redirect_to_proc
     end
-	  
+    
     return result
   end
 
@@ -56,16 +55,16 @@ public
       status = "pending"
     end
 
-		begin
-    	@post = Post.new(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip))
-    	@post.user_id = @current_user.id
-    	@post.status = status
-    	@post.ip_addr = request.remote_ip
-    	@post.save
-		rescue Errno::ENOENT
-			respond_to_error("Internal error. Try uploading again.", {:controller => "post", :action => "error"})
-			return
-		end
+    begin
+      @post = Post.new(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip))
+      @post.user_id = @current_user.id
+      @post.status = status
+      @post.ip_addr = request.remote_ip
+      @post.save
+    rescue Errno::ENOENT
+      respond_to_error("Internal error. Try uploading again.", {:controller => "post", :action => "error"})
+      return
+    end
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -187,8 +186,6 @@ private
     @posts = WillPaginate::Collection.create(page, per_page, post_count) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(tags.join(" "), :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
-    
-    # @tag_suggestions = Tag.find_suggestions(tags.join(" ")) if post_count < 20 && tags.size == 1
   end
 
 public
@@ -216,9 +213,7 @@ public
     end
     
     begin
-      db_start_time = Time.now
       set_title "/" + tags.tr("_", " ")
-      @db_delta_time = Time.now - db_start_time
 
       if before_id
         index_after_thousand(@tags, limit, before_id)
@@ -232,10 +227,7 @@ public
       end
     
       respond_to do |fmt|
-        fmt.html do
-          # @ambiguous_tags = Tag.select_ambiguous(@tags)
-          @render_start_time = Time.now
-        end
+        fmt.html
         fmt.xml do
           render :layout => false
         end
@@ -280,17 +272,17 @@ public
   end
 
   def popular_by_day
-		begin
-	    if params[:year] && params[:month] && params[:day]
-	      @day = Time.gm(params[:year].to_i, params[:month], params[:day])
-	    else
-	      @day = Time.new.getgm.at_beginning_of_day
-	    end
-		rescue ArgumentError
-			respond_to_error("Date out of range", :controller => "post", :action => "error")
-			return
-		end
-		
+    begin
+      if params[:year] && params[:month] && params[:day]
+        @day = Time.gm(params[:year].to_i, params[:month], params[:day])
+      else
+        @day = Time.new.getgm.at_beginning_of_day
+      end
+    rescue ArgumentError
+      respond_to_error("Date out of range", :controller => "post", :action => "error")
+      return
+    end
+    
     set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
     @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20)
@@ -299,16 +291,16 @@ public
   end
 
   def popular_by_week
-		begin
-	    if params[:year] && params[:month] && params[:day]
-	      @start = Time.gm(params[:year].to_i, params[:month], params[:day]).beginning_of_week
-	    else
-	      @start = Time.new.getgm.beginning_of_week
-	    end
-		rescue ArgumentError
-			respond_to_error("Date out of range", :controller => "post", :action => "error")
-			return
-		end
+    begin
+      if params[:year] && params[:month] && params[:day]
+        @start = Time.gm(params[:year].to_i, params[:month], params[:day]).beginning_of_week
+      else
+        @start = Time.new.getgm.beginning_of_week
+      end
+    rescue ArgumentError
+      respond_to_error("Date out of range", :controller => "post", :action => "error")
+      return
+    end
 
     @end = @start.next_week
 
@@ -320,16 +312,16 @@ public
   end
 
   def popular_by_month
-		begin
-	    if params[:year] && params[:month]
-	      @start = Time.gm(params[:year].to_i, params[:month], 1)
-	    else
-	      @start = Time.new.getgm.beginning_of_month
-	    end
-		rescue ArgumentError
-			respond_to_error("Date out of range", :controller => "post", :action => "error")
-			return
-		end
+    begin
+      if params[:year] && params[:month]
+        @start = Time.gm(params[:year].to_i, params[:month], 1)
+      else
+        @start = Time.new.getgm.beginning_of_month
+      end
+    rescue ArgumentError
+      respond_to_error("Date out of range", :controller => "post", :action => "error")
+      return
+    end
 
     @end = @start.next_month
 
@@ -375,7 +367,7 @@ public
         # swallow
       end
 
-      respond_to_success("Post flagged", :action => "show", :id => params[:id])
+      respond_to_success("Post has been flagged", :action => "show", :id => params[:id])
     end
   end
   
@@ -383,7 +375,7 @@ public
     @post = Post.find(params[:id])
 
     if request.post?
-      @appeal = @post.appeals.create(params[:appeal].merge(:ip_addr => request.remote_ip))
+      @appeal = @post.appeals.create(params[:appeal].merge(:user_id => @current_user.id, :ip_addr => request.remote_ip))
       
       if @appeal.errors.any?
         flash[:notice] = "Error: " + @appeal.errors.full_messages.join("; ")
