@@ -2,13 +2,13 @@
   <h1>Moderator Dashboard</h1>
   
   <div id="ip-addr-search">
-    <% form_tag({:controller => "banned_ip", :action => "search_ip_addrs"}, :target => "_blank", :method => :get) do %>
+    <% form_tag({:controller => "banned_ip", :action => "search_ip_addrs"}, :method => :get) do %>
       <label for="user_ids">Search IPs</label>
       <%= text_field_tag :ip_addrs, params[:ip_addrs] %>    
       <%= submit_tag "Search" %>
     <% end %>
     
-    <% form_tag({:controller => "banned_ip", :action => "search_users"}, :target => "_blank", :method => :get) do %>
+    <% form_tag({:controller => "banned_ip", :action => "search_users"}, :method => :get) do %>
       <label for="user_ids">Search User IDs</label>
       <%= text_field_tag :user_ids, params[:user_ids] %>    
       <%= submit_tag "Search" %>
@@ -40,7 +40,7 @@
         <% @dashboard.note_activity.each do |activity| %>
           <tr>
             <td><%= admin_link_to_user(activity.user, :positive) %></td>
-            <td><%= link_to activity.count, {:controller => "note", :action => "history", :user_id => activity.user.id}, :target => "_blank" %></td>
+            <td><%= link_to activity.count, {:controller => "note", :action => "history", :user_id => activity.user.id} %></td>
           </tr>
         <% end %>
       </tbody>
@@ -59,7 +59,7 @@
         <% @dashboard.tag_activity.each do |activity| %>
           <tr>
             <td><%= admin_link_to_user(activity.user, :positive) %></td>
-            <td><%= link_to activity.count, {:controller => "post_tag_history", :action => "index", :user_id => activity.user.id}, :target => "_blank" %></td>
+            <td><%= link_to activity.count, {:controller => "post_tag_history", :action => "index", :user_id => activity.user.id} %></td>
           </tr>
         <% end %>
       </tbody>
@@ -78,7 +78,7 @@
         <% @dashboard.wiki_page_activity.each do |activity| %>
           <tr>
             <td><%= admin_link_to_user(activity.user, :positive) %></td>
-            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id}, :target => "_blank" %></td>
+            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id} %></td>
           </tr>
         <% end %>
       </tbody>
@@ -97,7 +97,7 @@
         <% @dashboard.artist_activity.each do |activity| %>
           <tr>
             <td><%= admin_link_to_user(activity.user, :positive) %></td>
-            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id}, :target => "_blank" %></td>
+            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id} %></td>
           </tr>
         <% end %>
       </tbody>
@@ -151,23 +151,23 @@
   
   <div id="post-activity">
     <table>
-      <caption>Flagged Posts</caption>
+      <caption>Appealed Posts</caption>
       <thead>
         <tr>
           <th>Post</th>
           <th>User</th>
           <th>Flags</th>
+          <th>Appeals</th>
           <th>Score</th>
         </tr>
       </thead>
       <tbody>
-        <% @dashboard.flagged_post_activity.each do |activity| %>
+        <% @dashboard.appealed_post_activity.each do |activity| %>
           <tr>
             <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
             <td><%= admin_link_to_user activity.post.user, :negative %></td>
-            <td>
-              <%= post_flag_summary(activity.post) %>
-            </td>
+            <td><%= post_flag_summary(activity.post) %></td>
+            <td><%= post_appeal_summary(activity.post) %></td>
             <td><%= activity.post.score %></td>
           </tr>
         <% end %>

@@ -113,9 +113,9 @@ public
       end
 
       if params[:query]
-        @posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:pending"))
+        @posts = Post.find_by_sql(Post.generate_sql(params[:query] + " status:mod"))
       else
-        @posts = Post.find(:all, :conditions => "status = 'pending'")
+        @posts = Post.find(:all, :conditions => "status = 'pending' or status = 'flagged'")
       end
 
       @posts = ModQueuePost.reject_hidden(@posts, @current_user, params[:hidden])
@@ -366,18 +366,32 @@ public
 
     if request.post?
       begin
-        if params[:flag][:reason] == "Other"
-          @post.flag!("Other: #{params[:flag][:note]}", @current_user)
-        else
-          @post.flag!(params[:flag][:reason], @current_user)
-        end
+        @post.flag!(params[:flag][:reason], @current_user)
         @post.vote!(@current_user, -1)
         respond_to_success("Post flagged", :action => "show", :id => params[:id])
       rescue Post::FlaggingError => x
         respond_to_error(x.message, :action => "show", :id => params[:id])
       rescue Post::VotingError => x
-        respond_to_success("Post flagged", :action => "show", :id => params[:id])
+        # swallow
       end
+
+      respond_to_success("Post flagged", :action => "show", :id => params[:id])
+    end
+  end
+  
+  def appeal
+    @post = Post.find(params[:id])
+
+    if request.post?
+      @appeal = @post.appeals.create(params[:appeal].merge(:ip_addr => request.remote_ip))
+      
+      if @appeal.errors.any?
+        flash[:notice] = "Error: " + @appeal.errors.full_messages.join("; ")
+      else
+        flash[:notice] = "Post has been appealed"
+      end
+
+      redirect_to :action => "show", :id => @post.id
     end
   end
   

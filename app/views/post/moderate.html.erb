@@ -41,6 +41,9 @@
               <% if p.flags.any? %>
                 <li>Flags: <%= post_flag_summary(p) %></li>
               <% end %>
+              <% if p.appeals.any? %>
+                <li>Appeals: <%= post_appeal_summary(p) %></li>
+              <% end %>
               <li>Uploaded by <%= fast_link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= fast_link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
             </ul>
           </td>

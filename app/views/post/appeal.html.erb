@@ -1,0 +1,19 @@
+<h1>Appeal Post</h1>
+
+<% form_tag(:action => "appeal") do %>
+  <%= hidden_field_tag "id", @post.id %>
+  
+  <div class="input">
+    <label for="appeal_reason">Reason</label>
+    <%= post_appeal_reason_select_tag "appeal[reason]" %>
+  </div>
+  
+  <div class="input">
+    <label for="appeal_note">Note</label>
+    <%= text_field_tag "appeal[note]" %>
+  </div>
+  
+  <div class="input">
+    <%= submit_tag "Submit" %>
+  </div>
+<% end %>

@@ -37,6 +37,10 @@ class Dashboard
     ActiveRecord::Base.select_all_sql("SELECT flagged_post_details.post_id, count(*) FROM flagged_post_details JOIN posts ON posts.id = flagged_post_details.post_id WHERE flagged_post_details.created_at > ? AND flagged_post_details.reason <> ? AND posts.status <> 'deleted' GROUP BY flagged_post_details.post_id ORDER BY count(*) DESC LIMIT 10", min_date, "Unapproved in three days").map {|x| PostActivity.new(x)}
   end
   
+  def appealed_post_activity
+    ActiveRecord::Base.select_all_sql("SELECT post_appeals.post_id, count(*) FROM post_appeals JOIN posts ON posts.id = post_appeals.post_id WHERE post_appeals.created_at > ? AND posts.status <> ? GROUP BY post_appeals.post_id ORDER BY count(*) DESC LIMIT 10", min_date, "active").map {|x| PostActivity.new(x)}
+  end
+  
   def comment_activity(positive = false)
     if positive
       ActiveRecord::Base.select_all_sql("SELECT comment_votes.comment_id, count(*) FROM comment_votes JOIN comments ON comments.id = comment_votes.comment_id JOIN users ON users.id = comments.user_id WHERE comment_votes.created_at > ? AND comments.score > 0 AND users.level <= ? GROUP BY comment_votes.comment_id  HAVING count(*) >= 3 ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| CommentActivity.new(x)}

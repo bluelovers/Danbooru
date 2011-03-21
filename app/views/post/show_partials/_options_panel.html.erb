@@ -14,6 +14,9 @@
     <% if !@post.is_deleted? %>
       <li><%= link_to "Flag", :action => "flag", :id => @post.id %></li>
     <% end %>
+    <% if @post.is_flagged? %>
+      <li><%= link_to "Appeal", :action => "appeal", :id => @post.id %></li>
+    <% end %>
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
       <li><%= link_to_function "Add translation", "Note.create(#{@post.id})" %></li>
     <% end %>
