@@ -16,7 +16,7 @@ module PostMethods
       end
 
       update_attribute(:status, "flagged")
-      self.flags.create!(:post_id => id, :reason => reason, :user_id => current_user.id, :is_resolved => false)
+      self.flags.create(:post_id => id, :reason => reason, :user_id => current_user.id, :is_resolved => false)
     end
   end
 end
