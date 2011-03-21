@@ -1,7 +1,22 @@
 <div id="post-add">
   <% if @current_user.is_privileged_or_lower? %>
     <div style="margin-bottom: 1em;">
-      <h2>Before uploading, read the <%= link_to "how to upload guide", :controller => "wiki", :action => "show", :title => "howto:upload" %>.</h2>      
+      <h2>The following things are banned from Danbooru:</h2>
+      <ul>
+        <li><%= link_to "Furry", :controller => "wiki", :action => "show", :title => "furry" %></li>
+        <li><%= link_to "Watermarked", :controller => "wiki", :action => "show", :title => "watermark" %></li>
+        <li><%= link_to "Poorly compressed", :controller => "wiki", :action => "show", :title => "jpeg_artifacts" %></li>
+        <li><%= link_to "Guro", :controller => "wiki", :action => "show", :title => "guro" %></li>
+        <li><%= link_to "Scat", :controller => "wiki", :action => "show", :title => "scat" %></li>
+        <li><%= link_to "Bad proportions", :controller => "wiki", :action => "show", :title => "bad_proportions" %></li>
+        <li><%= link_to "Manga", :controller => "wiki", :action => "show", :title => "manga" %></li>
+
+        <li><%= link_to "Nude filter", :controller => "wiki", :action => "show", :title => "nude_filter" %></li>
+        <li><%= link_to "Hard translations", :controller => "wiki", :action => "show", :title => "hard_translated" %></li>
+        <li><%= link_to "Fake translations", :controller => "wiki", :action => "show", :title => "fake_translation" %></li>
+      </ul>
+      
+      <p>For more details, read the <%= link_to "how to upload guide", :controller => "wiki", :action => "show", :title => "howto:upload" %>.</p>
     </div>
   <% end %>
   

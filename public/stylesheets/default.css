@@ -187,7 +187,11 @@ span.post-count {
   color: black;
   background: black;
   cursor: text;
-  display: inline-block;
+  display: block;
+}
+
+.spoiler a {
+  color: black;
 }
 
 .spoiler:hover {
