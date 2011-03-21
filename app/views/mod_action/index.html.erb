@@ -1,0 +1,25 @@
+<h2>Mod Actions</h2>
+
+<table width="100%"> 
+  <thead>
+    <tr>
+      <th>Moderator</th>
+      <th>Description</th>
+      <th>Date</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <% @mod_actions.each do |mod_action| %>
+      <tr class="<%= cycle 'even', 'odd' %>">
+        <td><%= link_to h(mod_action.user.pretty_name), :action => "show", :id => mod_action.user.id %></td>
+        <td><%= format_text(mod_action.description) %></td>
+        <td><%= time_ago_in_words mod_action.created_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div id="paginator">
+  <%= will_paginate(@mod_actions) %>
+</div>

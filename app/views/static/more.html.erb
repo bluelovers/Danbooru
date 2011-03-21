@@ -21,6 +21,8 @@
     </ul>
     <ul>
       <li><h4>Reports</h4></li>
+      <li><%= link_to("Moderator Actions", {:controller => "mod_action", :action => "index"}) %></li>
+      <li><%= link_to("Moderator Dashboard", {:controller => "admin", :action => "dashboard"}) %></li>
       <li><%= link_to("Note Updates",{:controller=>"report",:action=>"note_updates"}) %></li>
       <li><%= link_to("Tag Updates",{:controller=>"report",:action=>"tag_updates"}) %></li>
       <li><%= link_to("Wiki Updates",{:controller=>"report",:action=>"wiki_updates"}) %></li>

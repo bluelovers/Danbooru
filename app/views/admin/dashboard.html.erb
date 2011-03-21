@@ -147,6 +147,25 @@
         <% end %>
       </tbody>
     </table>
+    
+    
+    <table width="100%" class="highlightable">
+      <caption>Mod Actions</caption>
+      <thead>
+        <tr>
+          <th>Moderator</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% ModAction.all(:order => "id desc", :limit => 10).each do |mod_action| %>
+          <tr>
+            <td><%= link_to mod_action.user.name, :controller => "user", :action => "show", :id => mod_action.user_id %></td>
+            <td><%= format_text(mod_action.description) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
   
   <div id="post-activity">
