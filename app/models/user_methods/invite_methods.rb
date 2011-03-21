@@ -17,20 +17,16 @@ module UserMethods
         raise ActiveRecord::RecordNotFound
       end
       
-      if UserRecord.exists?(["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", invitee.id, CONFIG["user_levels"]["Mod"]]) && !is_admin?
+      if UserRecord.exists?(["user_id = ? AND score < 0 AND reported_by IN (SELECT id FROM users WHERE level >= ?)", invitee.id, CONFIG["user_levels"]["Mod"]]) && !is_mod_or_higher?
         raise InvitationError.new("Only mods can invite users with negative records")
       end
       
       transaction do
-        if level == CONFIG["user_levels"]["Contributor"]
-          Post.find(:all, :conditions => ["user_id = ? AND status = 'pending'", id]).each do |post|
-            post.approve!(id)
-          end
-        end
         invitee.level = level
         invitee.invited_by = id
         invitee.save
         decrement! :invite_count
+        ModAction.create(:description => "invited #{name}", :user_id => id)
       end
     end
     

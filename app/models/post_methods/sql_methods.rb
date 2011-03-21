@@ -92,7 +92,7 @@ module PostMethods
           elsif q[:status] == "any"
             # do nothing
           elsif q[:status] == "mod"
-            cond << "p.status IN (?)"
+            conds << "p.status IN (?)"
             cond_params << ["pending", "flagged"]
           end
         else

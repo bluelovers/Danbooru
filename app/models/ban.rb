@@ -2,7 +2,13 @@ class Ban < ActiveRecord::Base
   before_create :save_level
   after_create :save_to_record
   after_create :update_level
+  after_create :create_mod_action
   after_destroy :restore_level
+  belongs_to :user
+  
+  def create_mod_action
+    ModAction.create(:description => "banned #{user.name}", :user_id => banned_by)
+  end
   
   def restore_level
     User.find(user_id).update_attribute(:level, old_level)
@@ -19,7 +25,7 @@ class Ban < ActiveRecord::Base
   end
   
   def save_to_record
-    UserRecord.create(:user_id => self.user_id, :reported_by => self.banned_by, :is_positive => false, :body => "Blocked: #{self.reason}")
+    UserRecord.create(:user_id => self.user_id, :reported_by => self.banned_by, :score => -1, :body => "Blocked: #{self.reason}")
   end
   
   def duration=(dur)

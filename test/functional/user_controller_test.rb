@@ -18,27 +18,33 @@ class UserControllerTest < ActionController::TestCase
     setup_action_mailer
     
     member = User.find(4)
+    janitor = User.find(7)
     
-    # Should fail
-    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => 2}
+    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => janitor.id}
     member.reload
-    assert_equal(CONFIG["user_levels"]["Member"], member.level)    
-    
-    # Should fail
+    assert_equal(33, member.level)
+  end
+  
+  def test_invite_for_user_with_negative_user_record_by_janitor
+    member = User.find(4)
     mod = User.find(2)
-    mod.invite_count = 10
-    mod.save
-    ur = UserRecord.create(:user_id => 4, :is_positive => false, :body => "bad", :reported_by => 1)    
-    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => 2}
+    janitor = User.find(7)
+    
+    UserRecord.create(:score => -1, :user_id => member.id, :reported_by => mod.id, :body => "xxx")
+    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => janitor.id}
     member.reload
-    assert_equal(CONFIG["user_levels"]["Member"], member.level)    
-
-    ur.destroy
-
-    # Should succeed
-    post :invites, {:member => {:name => "member", :level => 50}}, {:user_id => 2}
+    assert_equal(20, member.level)
+  end
+  
+  def test_invite_for_user_with_negative_user_record_by_mod
+    member = User.find(4)
+    mod = User.find(2)
+    janitor = User.find(7)
+    
+    UserRecord.create(:score => -1, :user_id => member.id, :reported_by => mod.id, :body => "xxx")
+    post :invites, {:member => {:name => "member", :level => 33}}, {:user_id => mod.id}
     member.reload
-    assert_equal(CONFIG["user_levels"]["Contributor"], member.level)
+    assert_equal(20, member.level)
   end
   
   def test_home

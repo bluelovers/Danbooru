@@ -196,6 +196,7 @@ class UserController < ApplicationController
       Ban.destroy_all(["user_id = ?", user_id])
       user = User.find(user_id)
       user.level = CONFIG["user_levels"]["Member"]
+      ModAction.create(:description => "unbanned #{user.name}", :user_id => @current_user.id)
       user.save
     end
     

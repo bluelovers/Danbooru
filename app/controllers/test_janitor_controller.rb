@@ -40,7 +40,7 @@ class TestJanitorController < ApplicationController
     UserRecord.create(
       :user_id => @janitor.user_id,
       :reported_by => @current_user.id,
-      :is_positive => false,
+      :score => 0,
       :body => "Demoted from test janitor position"
     )
     @janitor.destroy

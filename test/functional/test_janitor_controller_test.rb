@@ -49,7 +49,7 @@ class TestJanitorControllerTest < ActionController::TestCase
     user = User.find(4)
     assert_equal(20, user.level)
     assert_nil(user.test_janitor)
-    assert_equal(1, user.user_records.negative.count)
+    assert_equal(1, user.user_records.neutral.count)
     assert_equal(2, ActionMailer::Base.deliveries.size)
   end
 end

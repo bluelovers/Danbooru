@@ -4,22 +4,31 @@ class UserRecord < ActiveRecord::Base
   validates_presence_of :user_id
   validates_presence_of :reported_by
   after_save :generate_dmail
+  named_scope :for_user, lambda {|user_id| {:conditions => ["user_id = ?", user_id]}}
+  named_scope :negative, :conditions => ["score < 0"]
+  named_scope :positive, :conditions => ["score > 0"]
+  named_scope :neutral, :conditions => ["score = 0"]
   
   def user=(name)
     self.user_id = User.find_by_name(name).id rescue nil
   end
   
-  def generate_dmail
-    body = %{#{reporter.name} created a "#{is_positive? ? 'positive' : 'negative'} record":/user_record/index?user_id=#{user_id} for your account.}
-    
-    Dmail.create(:from_id => reported_by, :to_id => user_id, :title => "Your user record has been updated", :body => body)
-  end
-
-  def self.negative
-    find(:all, :conditions => ["is_positive = FALSE"])
+  def score_text
+    case score
+    when 1
+      "positive"
+      
+    when 0
+      "neutral"
+      
+    when -1
+      "negative"
+    end
   end
   
-  def self.positive
-    find(:all, :conditions => ["is_positive = TRUE"])
+  def generate_dmail
+    body = %{#{reporter.name} created a "#{score_text} record":/user_record/index?user_id=#{user_id} for your account.}
+    
+    Dmail.create(:from_id => reported_by, :to_id => user_id, :title => "Your user record has been updated", :body => body)
   end
 end

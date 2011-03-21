@@ -86,9 +86,11 @@
         <% if !UserRecord.exists?(["user_id = ?", @user.id]) %>
           None
         <% else %>
-          <%= UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = true", @user.id]) - UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = false", @user.id]) %>
+          positive:<%= @user.user_records.positive.count %>
+          neutral:<%= @user.user_records.neutral.count %>
+          negative:<%= @user.user_records.negative.count %>
         <% end %>
-        (<%= link_to "add", :controller => "user_record", :action => "index", :user_id => @user.id %>)
+        (<%= link_to "details", :controller => "user_record", :action => "index", :user_id => @user.id %>)
       </td>
     </tr>
   </table>

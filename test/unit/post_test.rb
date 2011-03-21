@@ -183,7 +183,7 @@ class PostTest < ActiveSupport::TestCase
     assert(p2.has_children?, "Parent should have children")
     
     # Parent should be updated when all children are deleted
-    c1.delete!
+    c1.delete!(1)
     p2.reload
     assert(!p2.has_children?, "Parent should not have children")
 
@@ -212,7 +212,7 @@ class PostTest < ActiveSupport::TestCase
 
   def test_delete
     post = create_post("tag1 tag2")
-    post.delete!
+    post.delete!(1)
     assert_not_nil(Post.find_by_id(post.id))
     post.reload
     assert_equal("deleted", post.status)
@@ -453,7 +453,7 @@ class PostTest < ActiveSupport::TestCase
   end
   
   def test_search_negated_tags
-    Post.find(:all).each {|x| x.delete_from_database}
+    Post.find(:all).each {|x| x.delete_from_database(1)}
     
     p1 = create_post("tag1 tag2 tag3")
     p2 = create_post("tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
@@ -549,7 +549,7 @@ class PostTest < ActiveSupport::TestCase
   def test_repeat_approval_by_same_user_should_fail
     p1 = create_post("foo", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"), :status => "pending")
     p1.approve!(1)
-    p1.delete!
+    p1.delete!(1)
     assert_raises(RuntimeError) do
       p1.approve!(1)
     end

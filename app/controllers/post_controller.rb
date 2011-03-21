@@ -161,7 +161,7 @@ public
     if @current_user.is_janitor_or_higher?
       begin
         if @post.status == "deleted" && @current_user.is_mod_or_higher?
-          @post.delete_from_database
+          @post.delete_from_database(@current_user.id)
         else
           Post.destroy_with_reason(@post.id, params[:reason], @current_user)
         end
@@ -360,9 +360,9 @@ public
       begin
         @post.flag!(params[:flag][:reason], @current_user)
         @post.vote!(@current_user, -1)
-        respond_to_success("Post flagged", :action => "show", :id => params[:id])
       rescue Post::FlaggingError => x
         respond_to_error(x.message, :action => "show", :id => params[:id])
+        return
       rescue Post::VotingError => x
         # swallow
       end

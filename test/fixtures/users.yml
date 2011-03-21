@@ -93,4 +93,19 @@ unactivated:
   receive_dmails: true
   show_samples: true
   created_at: 2001-01-01
-  
+
+janitor:
+  id: 7
+  name: janitor
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 35
+  email: unactivated@danbooru.com
+  invite_count: 10
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: true
+  show_samples: true
+  created_at: 2001-01-01  
