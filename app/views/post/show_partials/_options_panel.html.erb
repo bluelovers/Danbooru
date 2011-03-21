@@ -14,7 +14,7 @@
     <% if !@post.is_deleted? %>
       <li><%= link_to "Flag", :action => "flag", :id => @post.id %></li>
     <% end %>
-    <% if @post.is_flagged? %>
+    <% if @post.is_flagged? || @post.is_deleted? %>
       <li><%= link_to "Appeal", :action => "appeal", :id => @post.id %></li>
     <% end %>
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
