@@ -21,7 +21,7 @@ module PostHelper
   end
   
   def post_flag_reason_select_tag(name)
-    select_tag(name, options_for_select(["Not anime related", "Furry", "Watermarked", "Poor compression", "Mutilation", "Distension" ,"Scat", "Absurd proportions", "Other", "Duplicate", "Banned artist", "Poorly drawn", "Fake translation", "Nude filter"].sort))
+    select_tag(name, options_for_select(["Not anime related", "Furry", "Watermarked", "Poor compression", "Mutilation", "Distension" ,"Scat", "Absurd proportions", "Other", "Pixiv (manga) sample", "Banned artist", "Poorly drawn", "Fake translation", "Nude filter"].sort))
   end
   
   def post_appeal_reason_select_tag(name)

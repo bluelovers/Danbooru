@@ -14,7 +14,7 @@
     </thead>
     <tbody>
       <% @user_records.each do |rec| %>
-        <tr id="record-<%= rec.id %>">
+        <tr id="record-<%= rec.id %>" class="user-record-score-<%= rec.score %>">
           <td>
             <% if @user %>
               <%= link_to h(rec.user.pretty_name), :controller => "user", :action => "show", :id => rec.user_id %>

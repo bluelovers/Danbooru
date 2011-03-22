@@ -1057,3 +1057,11 @@ div.input label {
 div.input {
   margin-bottom: 1em;
 }
+
+tr.user-record-score--1 {
+  background: #FFDDDD;
+}
+
+tr.user-record-score-1 {
+  background: #DDFFDD;
+}

@@ -1,5 +1,5 @@
 <div id="post-add">
-  <% if true || @current_user.is_privileged_or_lower? %>
+  <% if @current_user.is_privileged_or_lower? %>
     <div style="margin-bottom: 1em;">
       <h2>The following things are banned from Danbooru:</h2>
       <ul>
@@ -12,7 +12,6 @@
         <li><%= link_to "Manga", :controller => "wiki", :action => "show", :title => "manga" %></li>
 
         <li><%= link_to "Nude filter", :controller => "wiki", :action => "show", :title => "nude_filter" %></li>
-        <li><%= link_to "Hard translations", :controller => "wiki", :action => "show", :title => "hard_translated" %></li>
         <li><%= link_to "Fake translations", :controller => "wiki", :action => "show", :title => "fake_translation" %></li>
       </ul>
       
