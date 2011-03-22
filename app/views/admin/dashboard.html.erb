@@ -105,6 +105,28 @@
     
     
     <table width="100%" class="highlightable">
+      <caption>User Records</caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Message</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% UserRecord.all(:order => "id desc", :limit => 10).each do |record| %>
+          <tr class="user-record-score-<%= record.score %>">
+            <td><%= link_to(record.user.name, :controller => "user", :action => "show", :id => record.user_id) %></td>
+            <td><%= format_text(record.body) %></td>
+            <td><%= time_ago_in_words(record.created_at) %> ago</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    
+    
+    <table width="100%" class="highlightable">
       <caption>Comment Activity (Negative)</caption>
       <thead>
         <tr>
