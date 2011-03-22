@@ -8,6 +8,7 @@ class UserRecord < ActiveRecord::Base
   named_scope :negative, :conditions => ["score < 0"]
   named_scope :positive, :conditions => ["score > 0"]
   named_scope :neutral, :conditions => ["score = 0"]
+  named_scope :recent, lambda {|min_date| {:conditions => ["created_at >= ?", min_date]}}
   
   def user=(name)
     self.user_id = User.find_by_name(name).id rescue nil
