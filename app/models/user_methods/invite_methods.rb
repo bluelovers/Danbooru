@@ -26,6 +26,7 @@ module UserMethods
         invitee.invited_by = id
         invitee.save
         decrement! :invite_count
+        
         ModAction.create(:description => "invited #{name}", :user_id => id)
       end
     end

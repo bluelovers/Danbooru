@@ -180,6 +180,11 @@
           <th>Score</th>
         </tr>
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="5"><%= link_to "View all posts", :controller => "post_appeal", :action => "index" %></td>
+        </tr>
+      </tfoot>
       <tbody>
         <% @dashboard.appealed_post_activity.each do |activity| %>
           <tr>

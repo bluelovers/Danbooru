@@ -2,6 +2,8 @@
 
 require File.dirname(__FILE__) + '/../../config/environment'
 
+Thread.current["inside_batch"] = true
+
 user = User.find(1)
 
 Post.find(:all, :conditions => ["status = 'pending' and created_at < ? ", 3.days.ago], :select => "id").each do |post|
