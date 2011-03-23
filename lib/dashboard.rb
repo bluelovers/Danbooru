@@ -26,6 +26,15 @@ class Dashboard
     end
   end
   
+  class PostAppealActivity
+    attr_reader :post, :reason
+    
+    def initialize(hash)
+      @post = Post.find(hash["post_id"])
+      @reason = hash["reason"]
+    end
+  end
+  
   attr_reader :min_date, :max_level
   
   def initialize(min_date, max_level)
@@ -37,8 +46,8 @@ class Dashboard
     ActiveRecord::Base.select_all_sql("SELECT flagged_post_details.post_id, count(*) FROM flagged_post_details JOIN posts ON posts.id = flagged_post_details.post_id WHERE flagged_post_details.created_at > ? AND flagged_post_details.reason <> ? AND posts.status <> 'deleted' GROUP BY flagged_post_details.post_id ORDER BY count(*) DESC LIMIT 10", min_date, "Unapproved in three days").map {|x| PostActivity.new(x)}
   end
   
-  def appealed_post_activity
-    ActiveRecord::Base.select_all_sql("SELECT post_appeals.post_id, count(*) FROM post_appeals JOIN posts ON posts.id = post_appeals.post_id WHERE post_appeals.created_at > ? AND posts.status <> ? GROUP BY post_appeals.post_id ORDER BY count(*) DESC LIMIT 10", min_date, "active").map {|x| PostActivity.new(x)}
+  def appealed_posts
+    PostAppeal.find(:all, :joins => "JOIN posts ON post_appeals.post_id = posts.id", :conditions => ["post_appeals.created_at > ? and posts.status <> ?", min_date, "active"], :order => "post_appeals.id desc", :limit => 10)
   end
   
   def comment_activity(positive = false)

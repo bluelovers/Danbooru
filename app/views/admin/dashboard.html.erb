@@ -213,13 +213,13 @@
         </tr>
       </tfoot>
       <tbody>
-        <% @dashboard.appealed_post_activity.each do |activity| %>
+        <% @dashboard.appealed_posts.each do |appeal| %>
           <tr>
-            <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
-            <td><%= admin_link_to_user activity.post.user, :negative %></td>
-            <td><%= post_flag_summary(activity.post) %></td>
-            <td><%= post_appeal_summary(activity.post) %></td>
-            <td><%= activity.post.score %></td>
+            <td><%= link_to image_tag(appeal.post.preview_url), :controller => "post", :action => "show", :id => appeal.post.id %></td>
+            <td><%= admin_link_to_user appeal.post.user, :negative %></td>
+            <td><%= post_flag_summary(appeal.post) %></td>
+            <td><%= post_appeal_summary(appeal.post) %></td>
+            <td><%= appeal.post.score %></td>
           </tr>
         <% end %>
       </tbody>
