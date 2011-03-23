@@ -3,6 +3,7 @@ class PostController < ApplicationController
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
   before_filter :member_only, :only => [:flag, :appeal, :create, :upload, :destroy, :update, :revert_tags, :random]
+  before_filter :privileged_only, :only => [:piclens]
   before_filter :verify_user_is_not_banned, :only => [:create, :upload, :destroy, :delete, :flag, :appeal, :update, :revert_tags]
   before_filter :test_janitor_only, :only => [:moderate]
   before_filter :janitor_only, :only => [:undelete, :delete]
