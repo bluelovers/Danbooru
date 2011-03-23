@@ -31,7 +31,7 @@ module PostHelper
   def post_flag_summary(post)
     post.flags.map do |flag|
       content_tag("span", :class => "flag-and-reason-count") do
-        flag.reason + " by " + link_to(flag.user.name, :controller => "user", :action => "show", :id => flag.user_id)
+        flag.reason + " (" + link_to(flag.user.name, :controller => "user", :action => "show", :id => flag.user_id) + ")"
       end
     end.join("; ")
   end
@@ -39,7 +39,7 @@ module PostHelper
   def post_appeal_summary(post)
     post.appeals.map do |appeal|
       content_tag("span", :class => "flag-and-reason-count") do
-        appeal.reason + " by " + link_to(appeal.user.name, :controller => "user", :action => "show", :id => appeal.user_id)
+        appeal.reason + " (" + link_to(appeal.user.name, :controller => "user", :action => "show", :id => appeal.user_id) + ")"
       end
     end.join("; ")
   end

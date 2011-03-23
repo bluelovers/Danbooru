@@ -361,7 +361,7 @@ public
         @post.flag!(params[:flag][:reason], @current_user)
         @post.vote!(@current_user, -1)
       rescue Post::FlaggingError => x
-        respond_to_error(x.message, :action => "show", :id => params[:id])
+        respond_to_error(x.message, :action => "flag", :id => params[:id])
         return
       rescue Post::VotingError => x
         # swallow
@@ -381,9 +381,8 @@ public
         flash[:notice] = "Error: " + @appeal.errors.full_messages.join("; ")
       else
         flash[:notice] = "Post has been appealed"
+        redirect_to :action => "show", :id => @post.id
       end
-
-      redirect_to :action => "show", :id => @post.id
     end
   end
   

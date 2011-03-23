@@ -1,19 +1,35 @@
-<h1>Flag Post</h1>
+<div id="post-flag">
+  <h1>Flag Post</h1>
+  
+  <p>If you believe a post does not belong on this site, you can flag for its deletion. As a reminder, the following are some common reasons for flagging a post:</p>
+  
+  <ul>
+    <li>Not anime-related</li>
+    <li>Furry: a character has body fur or an animal face</li>
+    <li>Watermark: text or logo inserted by someone besides the original artist</li>
+    <li>Poor compression: JPEG artifacts</li>
+    <li>Guro: mutilation, extreme bodily distension</li>
+    <li>Bad proportions: extremely large breasts or penises</li>
+    <li>Manga: Multiple pages of a manga, doujinshi, or comic that don't stand up to individual scrutiny</li>
+    <li>Fake translations: Made up translations are banned</li>
+  </ul>
+  
+  <p>The following are <strong>NOT</strong> valid reasons for flagging a post:</p>
+  
+  <ul>
+    <li>Duplicate: just parent to the original</li>
+  </ul>
 
-<% form_tag(:action => "flag") do %>
-  <%= hidden_field_tag "id", @post.id %>
-  
-  <div class="input">
-    <label for="flag_reason">Reason</label>
-    <%= post_flag_reason_select_tag "flag[reason]" %>
-  </div>
-  
-  <div class="input">
-    <label for="flag_note">Note</label>
-    <%= text_field_tag "flag[note]" %>
-  </div>
-  
-  <div class="input">
-    <%= submit_tag "Submit" %>
-  </div>
-<% end %>
+  <% form_tag(:action => "flag") do %>
+    <%= hidden_field_tag "id", @post.id %>
+
+    <div class="input">
+      <label for="flag_reason">Reason</label>
+      <%= text_field "flag", "reason" %>
+    </div>
+
+    <div class="input">
+      <%= submit_tag "Submit" %>
+    </div>
+  <% end %>
+</div>

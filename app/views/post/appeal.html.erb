@@ -1,19 +1,33 @@
-<h1>Appeal Post</h1>
+<div id="post-appeal">
+  <h1>Appeal Post</h1>
 
-<% form_tag(:action => "appeal") do %>
-  <%= hidden_field_tag "id", @post.id %>
+  <p>Before you appeal a post, you should familiarize yourself with Danbooru's <%= link_to "moderation process", :controller => "wiki", :action => "show", :title => "about:mod_queue" %>. If this post was automatically deleted, <strong>then it means at least ten janitors all thought it didn't belong on the site</strong>.</p>
+
+  <p>If you still believe this image was wrongfully deleted, then you can appeal its deletion.</p>
+
+  <p>If your justification is that there is worse art on the site, then please find these posts and flag them so they can be appropriately moderated. <strong>The fact that there is worse art is not a valid justification for appealing a post</strong>.</p>
   
-  <div class="input">
-    <label for="appeal_reason">Reason</label>
-    <%= post_appeal_reason_select_tag "appeal[reason]" %>
-  </div>
+  <p>Some valid reasons for appealing include:</p>
   
-  <div class="input">
-    <label for="appeal_note">Note</label>
-    <%= text_field_tag "appeal[note]" %>
-  </div>
+  <ul>
+    <li>Funny</li>
+    <li>Weird</li>
+    <li>Translated</li>
+    <li>Part of a pool</li>
+  </ul>
   
-  <div class="input">
-    <%= submit_tag "Submit" %>
-  </div>
-<% end %>
+  <p>All users are limited to 5 appeals a day. For more details, please read the <%= link_to "wiki", :controller => "wiki", :action => "show", :title => "help:deletion_appeals" %>.</p>
+
+  <% form_tag(:action => "appeal") do %>
+    <%= hidden_field_tag "id", @post.id %>
+
+    <div class="input">
+      <label for="appeal_reason">Reason</label>
+      <%= text_field "appeal", "reason" %>
+    </div>
+
+    <div class="input">
+      <%= submit_tag "Submit" %>
+    </div>
+  <% end %>  
+</div>

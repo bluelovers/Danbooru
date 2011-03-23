@@ -1050,6 +1050,10 @@ div#moderator-dashboard caption {
   font-size: 1.5em;
 }
 
+div#post-appeal, div#post-flag {
+  width: 40em;
+}
+
 div.input label {
   display: block;
 }

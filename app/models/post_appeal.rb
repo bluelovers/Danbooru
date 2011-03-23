@@ -1,7 +1,6 @@
 class PostAppeal < ActiveRecord::Base
-  attr_accessor :note
   validates_uniqueness_of :post_id, :scope => :user_id
-  before_validation :merge_note
+  validates_presence_of :reason
   validate :appealer_is_not_limited
   belongs_to :user
   belongs_to :post
@@ -12,12 +11,6 @@ class PostAppeal < ActiveRecord::Base
       return false
     else
       return true
-    end
-  end
-  
-  def merge_note
-    if !note.blank?
-      self.reason = "#{reason}: #{note}"
     end
   end
 end
