@@ -407,7 +407,7 @@ public
     
     if request.post?
       if params[:commit] == "Undelete"
-        @post.undelete!(@current_user)
+        @post.undelete!(@current_user.id)
         respond_to_success("Post was undeleted", :action => "show", :id => @post.id)
       else
         redirect_to(:action => "show", :id => @post.id)
