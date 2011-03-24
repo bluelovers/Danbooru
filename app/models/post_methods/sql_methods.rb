@@ -219,6 +219,12 @@ module PostMethods
           cond_params << q[:approver]
         end
 
+        if q[:order] == "rank"
+          conds << "p.score > 0"
+          conds << "p.created_at >= ?"
+          cond_params << 7.days.ago
+        end
+
         sql = "SELECT "
 
         if options[:count]
@@ -284,6 +290,9 @@ module PostMethods
 
         	when "filesize_asc"
         	  sql << " ORDER BY p.file_size ASC"
+        	  
+      	  when "rank"
+      	    sql << " ORDER BY log(p.score) + (extract(epoch from p.created_at) - extract(epoch from timestamp '2005-05-24')) / 100000 DESC"
 
           else
             sql << " ORDER BY p.id DESC"
