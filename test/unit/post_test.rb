@@ -391,9 +391,10 @@ class PostTest < ActiveSupport::TestCase
   def test_multiple_flagging_from_same_user
     post = create_post("tag1 tag2")
     post.flag!("bad bad bad", User.find(1))
-    assert_raises(ActiveRecord::RecordInvalid) do
+    assert_nothing_raised do
       post.flag!("rarararara", User.find(1))
     end
+    post.reload
     assert_equal(1, post.flags.size)
   end
   
@@ -401,6 +402,7 @@ class PostTest < ActiveSupport::TestCase
     post = create_post("tag1 tag2")
     post.flag!("bad bad bad", User.find(1))
     post.flag!("rarararara", User.find(2))
+    post.reload
     assert_equal(2, post.flags.size)
     assert(!post.is_resolved?)
   end

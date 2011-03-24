@@ -70,6 +70,11 @@ class DTextTest < ActiveSupport::TestCase
     assert_equal('<p><a href="/post/index?tags=%3C3">&lt;3</a></p>', p("{{<3}}"))
   end
   
+  def test_missing_spoiler_tags
+    assert_equal('<div class="spoiler"><p>testing</p></div>', p('[spoiler]testing'))
+    assert_equal('<div class="spoiler"><div class="spoiler"><p>testing</p></div></div>', p('[spoiler][spoiler]testing[/spoiler]'))
+  end
+  
   def test_extra_newlines
     assert_equal('<p>a</p><p>b</p>', p("a\n\n\n\n\n\n\nb\n\n\n\n"))
   end

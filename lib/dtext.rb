@@ -29,7 +29,6 @@ module DText
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
-    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span class="spoiler">\1</span>')
     str.gsub!(/("[^"]+":(http:\/\/|\/)\S+|http:\/\/\S+)/m) do |link|
       if link =~ /^"([^"]+)":(.+)$/
         text = $1
@@ -102,6 +101,7 @@ module DText
     str.gsub!(/(?:\r?\n){3,}/, "\n\n")
     str.strip!
     blocks = str.split(/(?:\r?\n){2}/)
+    stack = []
     
     html = blocks.map do |block|
       case block
@@ -122,32 +122,40 @@ module DText
         if options[:inline]
           ""
         else
-          '<blockquote>'
+          stack << "blockquote"
+          "<blockquote>"
         end
         
       when "[/quote]"
         if options[:inline]
           ""
-        else
+        elsif stack.last == "blockquote"
+          stack.pop
           '</blockquote>'
+        else
+          ""
         end
 
       when "[spoiler]"
-        if options[:inline]
-          '<span class="spoiler">'
-        else
-          '<div class="spoiler">'
-        end
+        stack << "div"
+        '<div class="spoiler">'
         
       when "[/spoiler]"
-        if options[:inline]
-          '</span>'
-        else
+        if stack.last == "div"
+          stack.pop
           '</div>'
         end
 
       else
         '<p>' + parse_inline(block) + "</p>"
+      end
+    end
+    
+    stack.reverse.each do |tag|
+      if tag == "blockquote"
+        html << "</blockquote>"
+      elsif tag == "div"
+        html << "</div>"
       end
     end
 
