@@ -292,7 +292,7 @@ module PostMethods
         	  sql << " ORDER BY p.file_size ASC"
         	  
       	  when "rank"
-      	    sql << " ORDER BY log(5, p.fav_count) + (extract(epoch from p.created_at) - extract(epoch from timestamp '2005-05-24')) / 45000 DESC"
+      	    sql << " ORDER BY log(3, p.score) + (extract(epoch from p.created_at) - extract(epoch from timestamp '2005-05-24')) / 45000 DESC"
 
           else
             sql << " ORDER BY p.id DESC"
