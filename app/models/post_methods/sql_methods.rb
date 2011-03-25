@@ -220,7 +220,7 @@ module PostMethods
         end
 
         if q[:order] == "rank"
-          conds << "p.fav_count > 0"
+          conds << "p.score > 0"
           conds << "p.created_at >= ?"
           cond_params << 4.days.ago
         end
