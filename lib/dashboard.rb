@@ -50,6 +50,10 @@ class Dashboard
     PostAppeal.find(:all, :joins => "JOIN posts ON post_appeals.post_id = posts.id", :conditions => ["post_appeals.created_at > ? and posts.status <> ?", min_date, "active"], :order => "post_appeals.id desc", :limit => 10)
   end
   
+  def upload_activity
+    ActiveRecord::Base.select_all_sql("select posts.user_id, count(*) from posts join users on posts.user_id = users.id where posts.created_at > ? and users.level <= ? group by posts.user_id order by count(*) desc limit 10").map {|x| UserActivity.new}
+  end
+  
   def comment_activity(positive = false)
     if positive
       ActiveRecord::Base.select_all_sql("SELECT comment_votes.comment_id, count(*) FROM comment_votes JOIN comments ON comments.id = comment_votes.comment_id JOIN users ON users.id = comments.user_id WHERE comment_votes.created_at > ? AND comments.score > 0 AND users.level <= ? GROUP BY comment_votes.comment_id  HAVING count(*) >= 3 ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| CommentActivity.new(x)}

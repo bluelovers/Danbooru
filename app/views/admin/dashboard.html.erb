@@ -29,6 +29,23 @@
   
   <div id="comment-activity">
     <table width="100%" class="highlightable">
+      <caption>Uploads</caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dashboard.upload_activity.each do |activity| %>
+          <tr>
+            <td><%= admin_link_to_user(activity.user, :positive) %></td>
+            <td><%= link_to activity.count, {:controller => "post", :action => "index", :tags => "user:#{activity.user.name}"} %></td>
+          </tr>
+      </tbody>
+    </table>
+    
+    <table width="100%" class="highlightable">
       <caption>Note Updates</caption>
       <thead>
         <tr>
@@ -97,33 +114,11 @@
         <% @dashboard.artist_activity.each do |activity| %>
           <tr>
             <td><%= admin_link_to_user(activity.user, :positive) %></td>
-            <td><%= link_to activity.count, {:controller => "wiki", :action => "recent_changes", :user_id => activity.user.id} %></td>
+            <td><%= link_to activity.count, {:controller => "artist", :action => "recent_changes", :user_id => activity.user.id} %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    
-    
-    <table width="100%" class="highlightable">
-      <caption>User Records</caption>
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Message</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% UserRecord.recent(@dashboard.min_date).all(:order => "id desc").each do |record| %>
-          <tr class="user-record-score-<%= record.score %>">
-            <td><%= link_to(record.user.name, :controller => "user", :action => "show", :id => record.user_id) %></td>
-            <td><%= format_text(record.body) %></td>
-            <td><%= time_ago_in_words(record.created_at) %> ago</td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    
     
     
     <table width="100%" class="highlightable">
@@ -143,52 +138,6 @@
             <td><%= admin_link_to_user(activity.comment.user, :negative) %></td>
             <td><%= activity.count %></td>
             <td><%= activity.comment.score %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    
-    <table width="100%" class="highlightable">
-      <caption>Comment Activity (Positive)</caption>
-      <thead>
-        <tr>
-          <th>Comment</th>
-          <th>User</th>
-          <th>Votes</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @dashboard.comment_activity(true).each do |activity| %>
-          <tr>
-            <td><%= link_to activity.comment.body, :controller => "post", :action => "show", :id => activity.comment.post_id %></td>
-            <td><%= admin_link_to_user(activity.comment.user, :positive) %></td>
-            <td><%= activity.count %></td>
-            <td><%= activity.comment.score %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    
-    
-    <table width="100%" class="highlightable">
-      <caption>Mod Actions</caption>
-      <thead>
-        <tr>
-          <th>Moderator</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tfoot>
-        <tr>
-          <td colspan="2"><%= link_to "View all actions", :controller => "mod_action", :action => "index" %></td>
-        </tr>
-      </tfoot>
-      <tbody>
-        <% ModAction.all(:order => "id desc", :limit => 10).each do |mod_action| %>
-          <tr>
-            <td><%= link_to mod_action.user.name, :controller => "user", :action => "show", :id => mod_action.user_id %></td>
-            <td><%= format_text(mod_action.description) %></td>
           </tr>
         <% end %>
       </tbody>
@@ -224,48 +173,46 @@
         <% end %>
       </tbody>
     </table>
-    
-    
-    
+
     <table width="100%" class="highlightable">
-      <caption>Post Activity (Negative)</caption>
+      <caption>User Records</caption>
       <thead>
         <tr>
-          <th>Post</th>
           <th>User</th>
-          <th>Votes</th>
-          <th>Score</th>
+          <th>Message</th>
+          <th>Date</th>
         </tr>
       </thead>
       <tbody>
-        <% @dashboard.post_activity.each do |activity| %>
-          <tr>
-            <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
-            <td><%= admin_link_to_user activity.post.user, :negative %></td>
-            <td><%= activity.count %></td>
-            <td><%= activity.post.score %></td>
+        <% UserRecord.recent(@dashboard.min_date).all(:order => "id desc").each do |record| %>
+          <tr class="user-record-score-<%= record.score %>">
+            <td><%= link_to(record.user.name, :controller => "user", :action => "show", :id => record.user_id) %></td>
+            <td><%= format_text(record.body) %></td>
+            <td><%= time_ago_in_words(record.created_at) %> ago</td>
           </tr>
         <% end %>
       </tbody>
     </table>
     
+    
     <table width="100%" class="highlightable">
-      <caption>Post Activity (Positive)</caption>
+      <caption>Mod Actions</caption>
       <thead>
         <tr>
-          <th>Post</th>
-          <th>User</th>
-          <th>Votes</th>
-          <th>Score</th>
+          <th>Moderator</th>
+          <th>Description</th>
         </tr>
       </thead>
+      <tfoot>
+        <tr>
+          <td colspan="2"><%= link_to "View all actions", :controller => "mod_action", :action => "index" %></td>
+        </tr>
+      </tfoot>
       <tbody>
-        <% @dashboard.post_activity(true).each do |activity| %>
+        <% ModAction.all(:order => "id desc", :limit => 10).each do |mod_action| %>
           <tr>
-            <td><%= link_to image_tag(activity.post.preview_url), :controller => "post", :action => "show", :id => activity.post.id %></td>
-            <td><%= admin_link_to_user activity.post.user, :positive %></td>
-            <td><%= activity.count %></td>
-            <td><%= activity.post.score %></td>
+            <td><%= link_to mod_action.user.name, :controller => "user", :action => "show", :id => mod_action.user_id %></td>
+            <td><%= format_text(mod_action.description) %></td>
           </tr>
         <% end %>
       </tbody>
