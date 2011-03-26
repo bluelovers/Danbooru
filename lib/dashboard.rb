@@ -51,7 +51,7 @@ class Dashboard
   end
   
   def upload_activity
-    ActiveRecord::Base.select_all_sql("select posts.user_id, count(*) from posts join users on posts.user_id = users.id where posts.created_at > ? and users.level <= ? group by posts.user_id order by count(*) desc limit 10").map {|x| UserActivity.new}
+    ActiveRecord::Base.select_all_sql("select posts.user_id, count(*) from posts join users on posts.user_id = users.id where posts.created_at > ? and users.level <= ? group by posts.user_id order by count(*) desc limit 10", min_date, max_level).map {|x| UserActivity.new}
   end
   
   def comment_activity(positive = false)

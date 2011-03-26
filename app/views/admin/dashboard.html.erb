@@ -42,6 +42,7 @@
             <td><%= admin_link_to_user(activity.user, :positive) %></td>
             <td><%= link_to activity.count, {:controller => "post", :action => "index", :tags => "user:#{activity.user.name}"} %></td>
           </tr>
+        <% end %>
       </tbody>
     </table>
     
