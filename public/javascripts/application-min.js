@@ -409,8 +409,7 @@ if(c.indexOf(nameEq)==0){return c.substring(nameEq.length,c.length)}}
 return""},get:function(name){return this.unescape(this.raw_get(name))},remove:function(name){Cookie.put(name,"",-1)},unescape:function(val){return decodeURIComponent(val.replace(/\+/g," "))},setup:function(){if(location.href.match(/^\/(comment|pool|note|post)/)&&this.get("tos")!="1"){var domain=location.href.match(/^(http:\/\/[^\/]+)/)[0]
 location.href=domain+"/static/terms_of_service?url="+location.href
 return}
-if(this.get("hide-upgrade-account")!="1"){if($("upgrade-account")){$("upgrade-account").show()}}
-$("state-of-danbooru-link").observe("click",function(){Cookie.put("state-of-danbooru-link-hidden","1");$("state-of-danbooru").hide();});if(Cookie.get("state-of-danbooru-link-hidden")==="1"){$("state-of-danbooru").hide();}}}
+if(this.get("hide-upgrade-account")!="1"){if($("upgrade-account")){$("upgrade-account").show()}}}}
 Comment={flag:function(id){if(!confirm("Are you sure you want to flag this comment for deletion?")){return;}
 new Ajax.Request("/comment/mark_as_spam.json",{parameters:{"id":id,"comment[is_spam]":1},onComplete:function(resp){var resp=resp.responseJSON
 if(resp.success){notice("Comment flagged for deletion");}else{notice("Error: "+resp.reason);}}})},quote:function(id){new Ajax.Request("/comment/show.json",{method:"get",parameters:{"id":id},onSuccess:function(resp){var resp=resp.responseJSON
