@@ -35,11 +35,6 @@
 </head>
 <body>
   <div id="header">
-    <div id="state-of-danbooru">
-      <a href="/static/state_of_danbooru">Is Danbooru heading in the right direction?</a>
-      | <a href="#" id="state-of-danbooru-link">Hide</a>
-    </div>
-    
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/") %><%= tag_header(params[:tags]) %></h2>
     <ul class="flat-list" id="navbar">
       <% if @current_user.is_member_or_higher? %>

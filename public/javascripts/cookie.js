@@ -54,14 +54,5 @@ Cookie = {
    	    $("upgrade-account").show()
       }
 		}
-		
-		$("state-of-danbooru-link").observe("click", function() {
-		  Cookie.put("state-of-danbooru-link-hidden", "1");
-		  $("state-of-danbooru").hide();
-		});
-
-		if (Cookie.get("state-of-danbooru-link-hidden") === "1") {
-		  $("state-of-danbooru").hide();
-		}
   }
 }
