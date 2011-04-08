@@ -220,11 +220,6 @@ public
         index_after_thousand(@tags, limit, before_id)
       else
         index_before_thousand(@tags, page, limit)
-
-        # If there are blank pages for this query, then fix the post count
-        if @posts.size == 0 && page > 1 && @tags.size == 1 && JobTask.pending_count("calculate_post_count") < 1000
-          JobTask.create(:task_type => "calculate_post_count", :data => {"tag_name" => @tags[0]}, :status => "pending")
-        end
       end
     
       respond_to do |fmt|
