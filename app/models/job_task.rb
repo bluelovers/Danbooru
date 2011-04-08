@@ -32,6 +32,12 @@ class JobTask < ActiveRecord::Base
       end
     rescue SystemExit => x
       update_attributes(:status => "pending")
+    rescue ActiveRecord::StatementInvalid => x
+      if x.to_s =~ /deadlock/i
+        update_attributes(:status => "pending", :status_message => "deadlock detected; retrying")
+      else
+        update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
+      end
     rescue Exception => x
       update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
     end
