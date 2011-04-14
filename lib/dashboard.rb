@@ -51,7 +51,11 @@ class Dashboard
   end
   
   def upload_activity
-    ActiveRecord::Base.select_all_sql("select posts.user_id, count(*) from posts join users on posts.user_id = users.id where posts.created_at > ? and users.level <= ? group by posts.user_id order by count(*) desc limit 10", min_date, max_level).map {|x| UserActivity.new(x)}
+    ActiveRecord::Base.without_timeout do
+      @upload_activity = ActiveRecord::Base.select_all_sql("select posts.user_id, count(*) from posts join users on posts.user_id = users.id where posts.created_at > ? and users.level <= ? group by posts.user_id order by count(*) desc limit 10", min_date, max_level).map {|x| UserActivity.new(x)}
+    end
+    
+    @upload_activity
   end
   
   def comment_activity(positive = false)
@@ -63,15 +67,23 @@ class Dashboard
   end
   
   def post_activity(positive = false)
-    if positive
-      ActiveRecord::Base.select_all_sql("SELECT post_votes.post_id, count(*) FROM post_votes JOIN posts ON posts.id = post_votes.post_id JOIN users ON users.id = posts.user_id WHERE post_votes.created_at > ? AND posts.score > 0 AND users.level <= ? GROUP BY post_votes.post_id HAVING count(*) >= 3 ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| PostActivity.new(x)}
-    else
-      ActiveRecord::Base.select_all_sql("SELECT post_votes.post_id, count(*) FROM post_votes JOIN posts ON posts.id = post_votes.post_id JOIN users ON users.id = posts.user_id WHERE post_votes.created_at > ? AND posts.score < 0 AND users.level <= ? AND posts.status <> 'deleted' GROUP BY post_votes.post_id HAVING count(*) >= 3 ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| PostActivity.new(x)}
+    ActiveRecord::Base.without_timeout do
+      if positive
+        @post_activity = ActiveRecord::Base.select_all_sql("SELECT post_votes.post_id, count(*) FROM post_votes JOIN posts ON posts.id = post_votes.post_id JOIN users ON users.id = posts.user_id WHERE post_votes.created_at > ? AND posts.score > 0 AND users.level <= ? GROUP BY post_votes.post_id HAVING count(*) >= 3 ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| PostActivity.new(x)}
+      else
+        @post_activity = ActiveRecord::Base.select_all_sql("SELECT post_votes.post_id, count(*) FROM post_votes JOIN posts ON posts.id = post_votes.post_id JOIN users ON users.id = posts.user_id WHERE post_votes.created_at > ? AND posts.score < 0 AND users.level <= ? AND posts.status <> 'deleted' GROUP BY post_votes.post_id HAVING count(*) >= 3 ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| PostActivity.new(x)}
+      end
     end
+    
+    @post_activity
   end
   
   def tag_activity
-    ActiveRecord::Base.select_all_sql("SELECT post_tag_histories.user_id, count(*) FROM post_tag_histories JOIN users ON users.id = post_tag_histories.user_id WHERE post_tag_histories.created_at > ? AND users.level <= ? GROUP BY post_tag_histories.user_id ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| UserActivity.new(x)}
+    ActiveRecord::Base.without_timeout do
+      @tag_activity = ActiveRecord::Base.select_all_sql("SELECT post_tag_histories.user_id, count(*) FROM post_tag_histories JOIN users ON users.id = post_tag_histories.user_id WHERE post_tag_histories.created_at > ? AND users.level <= ? GROUP BY post_tag_histories.user_id ORDER BY count(*) DESC LIMIT 10", min_date, max_level).map {|x| UserActivity.new(x)}
+    end
+    
+    @tag_activity
   end
   
   def note_activity
