@@ -73,11 +73,13 @@ module TagMethods
         q = Hash.new {|h, k| h[k] = []}
 
         scan_query(query).each do |token|
-          if token =~ /^(unlocked|user|sub|fav|md5|-rating|rating|width|height|mpixels|score|filesize|source|id|date|pool|parent|order|change|status|gentags|arttags|chartags|copytags|approver):(.+)$/
+          if token =~ /^(unlocked|user|sub|fastfav|fav|md5|-rating|rating|width|height|mpixels|score|filesize|source|id|date|pool|parent|order|change|status|gentags|arttags|chartags|copytags|approver):(.+)$/
             if $1 == "user"
               q[:user] = $2
             elsif $1 == "fav"
               q[:fav] = $2
+            elsif $1 == "fastfav"
+              q[:fastfav] = $2
             elsif $1 == "sub"
               q[:subscriptions] = $2
             elsif $1 == "md5"

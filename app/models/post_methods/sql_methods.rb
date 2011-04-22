@@ -135,6 +135,14 @@ module PostMethods
             q[:order] = "fav" unless q[:order].is_a?(String)
           end
         end
+        
+        if q[:fastfav].is_a?(String)
+          user = User.find_by_name(q[:fav])
+          
+          if user
+            conds << "p.id IN (select f.post_id from favorites f where f.user_id = #{user.id})"
+          end
+        end
     
         if q[:user].is_a?(String)
           user = User.find_by_name(q[:user])
