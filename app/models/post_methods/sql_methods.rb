@@ -130,7 +130,7 @@ module PostMethods
           user = User.find_by_name(q[:fav])
           
           if user
-            conds << "p.id IN (SELECT f.post_id FROM favorites WHERE f.user_id = #{user.id})"
+            conds << "p.id IN (SELECT f.post_id FROM favorites f WHERE f.user_id = #{user.id})"
             # joins << "JOIN favorites f ON f.post_id = p.id"
             # conds << "f.user_id = #{user.id}"
             # q[:order] = "fav" unless q[:order].is_a?(String)
