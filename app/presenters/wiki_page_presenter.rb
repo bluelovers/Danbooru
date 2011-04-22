@@ -7,7 +7,7 @@ class WikiPagePresenter < Presenter
     @title = title.downcase
     @wiki_page = WikiPage.find_page(title, version)
     @tag = Tag.find_by_name(title.downcase)
-    @posts = Post.find_by_tag_join(title, :limit => 8).select {|x| x.can_be_seen_by?(@user)}
+    @posts = Post.find_by_sql(Post.generate_sql(title, :order => "p.id DESC", :limit => 8)).select {|x| x.can_be_seen_by?(@user)}
   end
   
   def html_title
