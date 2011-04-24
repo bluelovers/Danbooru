@@ -108,7 +108,7 @@ class ArtistController < ApplicationController
     end
     
     if @artist
-      @posts = Post.find_by_sql(Post.generate_sql(@artist.name, :order => "p.id DESC", :limit => 6)).select {|x| x.can_be_seen_by?(@user)}
+      @posts = Post.find_by_sql(Post.generate_sql(@artist.name, :order => "p.id DESC", :limit => 6)).select {|x| x.can_be_seen_by?(@current_user)}
     else
       redirect_to :action => "create", :name => params[:name]
     end
