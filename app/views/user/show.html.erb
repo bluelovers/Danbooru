@@ -44,15 +44,15 @@
     </tr>
     <tr>
       <td><strong>Favorites</strong></td>
-      <td><%= link_to "View", :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></td>
+      <td><%= link_to "View", :controller => "post", :action => "index", :tags => "fastfav:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Comments</strong></td>
-      <td><%= link_to "View", :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
+      <td><%= link_to Comment.count(:conditions => "user_id = #{@user.id}"), :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Tag Edits</strong></td>
-      <td><%= link_to PostTagHistory.count(:conditions => "user_id = #{@user.id}"), :controller => "post_tag_history", :action => "index", :user_id => @user.id %></td>
+      <td><%= link_to "View", :controller => "post_tag_history", :action => "index", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong>Note Edits</strong></td>
@@ -64,7 +64,7 @@
     </tr>
     <tr>
       <td><strong>Forum Posts</strong></td>
-      <td><%= link_to "View", :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
+      <td><%= link_to ForumPost.count(:conditions => "user_id = #{@user.id}"), :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Pool Updates</strong></td>
@@ -102,7 +102,7 @@
 </div>
 
 <div style="margin-bottom: 1em; float: left; clear: both;">
-  <h4>Recent Favorites <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "fav:#{@user.name}" %></h4>
+  <h4>Recent Favorites <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "fastfav:#{@user.name}" %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.recent_favorite_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
 </div>
 

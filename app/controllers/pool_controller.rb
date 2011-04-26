@@ -84,7 +84,7 @@ class PoolController < ApplicationController
     if request.post?
       if @current_user.has_permission?(@pool)
         @pool.destroy
-        ModAction.create(:description => "deleted pool ##{@pool.id}", :user_id => @current_user.id)
+        ModAction.create(:description => "deleted pool ##{@pool.id} (#{@pool.name})", :user_id => @current_user.id)
         respond_to_success("Pool deleted", :action => "index")
       else
         access_denied()

@@ -20,6 +20,8 @@
     <li>Duplicate: just parent to the original</li>
   </ul>
 
+  <%= print_preview(@post) %>
+
   <% form_tag(:action => "flag") do %>
     <%= hidden_field_tag "id", @post.id %>
 

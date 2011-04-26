@@ -29,7 +29,7 @@ module DText
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
-    str.gsub!(/("[^"]+":(http:\/\/|\/)\S+|http:\/\/\S+)/m) do |link|
+    str.gsub!(/("[^"]+":(https?:\/\/|\/)\S+|https?:\/\/\S+)/m) do |link|
       if link =~ /^"([^"]+)":(.+)$/
         text = $1
         link = $2

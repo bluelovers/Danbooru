@@ -15,3 +15,5 @@ Post.find(:all, :conditions => ["status = 'flagged'"]).each do |post|
     Post.destroy_with_reason(post.id, "Unapproved in three days after returning to moderation queue", user)
   end
 end
+
+ModAction.destroy_all(["user_id = 1 and description like ?", "deleted post %"])

@@ -1,9 +1,9 @@
 module Danbooru
   def self.pixiv_rewrite(source)
     # Don't download the small version
-    if source =~ %r!(/img/.+?/.+?)_m.+$!
+    if source =~ %r!(/img/.+?/.+?)_[ms].+$!
       match = $1
-      source = source.sub(match + "_m", match)
+      source = source.sub(match + "_m", match).sub(match + "_s", match)
     end
     
     if source =~ %r!(\d+_p\d+)\.!
