@@ -11,6 +11,23 @@ class AdminController < ApplicationController
   def dashboard
     @dashboard = Dashboard.new(params[:min_date] || 2.days.ago.to_date, params[:max_level] || 20)
   end
+  
+  def new_batch_alias_and_implication
+  end
+  
+  def create_batch_alias_and_implication
+    @creator = BatchAliasAndImplicationCreator.new(params[:batch][:text], @current_user.id, params[:batch][:forum_id])
+    ActiveRecord::Base.transaction do
+      @creator.process!
+    end
+    
+    flash[:notice] = "Batch queued"
+    redirect_to :controller => "job_task", :action => "index"
+    
+  rescue => x
+    flash.now[:notice] = x.to_s
+    render :action => "new_batch_alias_and_implication"
+  end
 
   def edit_user
     if request.post?

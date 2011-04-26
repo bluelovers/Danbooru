@@ -104,6 +104,7 @@
     <% if @current_user.is_admin? %>
       <ul>
         <li><h4>Admin</h4></li>
+        <li><%= link_to("Batch Create Alias & Implication", :controller => "admin", :action => "new_batch_create_alias_and_implication") %></li>
         <li><%= link_to("Edit User", { :controller => "admin", :action => "edit_user" }) %></li>   
         <li><%= link_to("Reset Password", { :controller => "admin", :action => "reset_password" }) %></li>
         <li><%= link_to("Test Janitors", { :controller => "test_janitor", :action => "index" }) %></li>
