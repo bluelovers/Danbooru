@@ -22,7 +22,7 @@ module UserMethods
     end
     
     def has_permission?(record, foreign_key = :user_id)
-      if is_mod_or_higher?
+      if is_janitor_or_higher?
         true
       elsif record.respond_to?(foreign_key)
         record.__send__(foreign_key) == id
