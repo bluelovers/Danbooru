@@ -1,6 +1,7 @@
 class Pool < ActiveRecord::Base  
   belongs_to :user
   attr_protected :user_id, :post_count
+  has_and_belongs_to_many :posts
   
   class PostAlreadyExistsError < Exception
   end

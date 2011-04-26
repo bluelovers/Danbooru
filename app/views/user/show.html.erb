@@ -64,7 +64,7 @@
     </tr>
     <tr>
       <td><strong>Forum Posts</strong></td>
-      <td><%= link_to ForumPost.count(:conditions => "user_id = #{@user.id}"), :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
+      <td><%= link_to ForumPost.count(:conditions => "creator_id = #{@user.id}"), :controller => "forum", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Pool Updates</strong></td>
