@@ -94,7 +94,7 @@ module DText
     unless options[:inline]
       str.gsub!(/\s*\[quote\]\s*/m, "\n\n[quote]\n\n")
       str.gsub!(/\s*\[\/quote\]\s*/m, "\n\n[/quote]\n\n")
-      str.gsub!(/\s*\[spoilers?\]\s*/m, "\n\n[spoiler]\n\n")
+      str.gsub!(/\s*\[spoilers?\](?!\])\s*/m, "\n\n[spoiler]\n\n")
       str.gsub!(/\s*\[\/spoilers?\]\s*/m, "\n\n[/spoiler]\n\n")
     end
     
@@ -136,7 +136,7 @@ module DText
           ""
         end
 
-      when /\[spoilers?\]/
+      when /\[spoilers?\](?!\])/
         stack << "div"
         '<div class="spoiler">'
         

@@ -16,6 +16,11 @@ class DTextTest < ActiveSupport::TestCase
     )
   end
   
+  def test_wiki_links
+    assert_equal("<p>a <a href=\"/wiki/show?title=b\">b</a> c</p>", p("a [[b]] c"))
+    assert_equal("<p>a <a href=\"/wiki/show?title=spoiler\">spoiler</a> c</p>", p("a [[spoiler]] c"))
+  end
+  
   def test_spoilers
     assert_equal("<p>this is</p><div class=\"spoiler\"><p>an inline spoiler</p></div><p>.</p>", p("this is [spoiler]an inline spoiler[/spoiler]."))
     assert_equal("<p>this is</p><div class=\"spoiler\"><p>a block spoiler</p></div><p>.</p>", p("this is\n\n[spoiler]\na block spoiler\n[/spoiler]."))
