@@ -2,7 +2,7 @@
   <li><%= fast_link_to "List", :controller => "post", :action => "index" %></li>
   <li><%= fast_link_to "Upload", :controller => "post", :action => "upload" %></li>
   <% if @current_user.is_member_or_higher? %>
-    <li><%= fast_link_to "Favorites", :controller => "post", :action => "index", :tags => "fastfav:#{@current_user.name}" %></li>
+    <li><%= fast_link_to "Favorites", :controller => "favorite", :action => "index" %></li>
   <% else %>
     <li><%= fast_link_to "Favorites", :controller => "help", :action => "favorites" %></li>
   <% end %>

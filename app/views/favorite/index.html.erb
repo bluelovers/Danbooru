@@ -1,0 +1,107 @@
+<div id="post-list">  
+  <div class="sidebar">
+    <%= render :partial => "post/search" %>
+    
+    <%= print_advertisement("vertical") %>
+
+    <div style="margin-bottom: 1em;">
+      <h5>Mode</h5>
+      <form onsubmit="return false;" action="">
+        <select name="mode" id="mode" onchange="PostModeMenu.change()" style="width: 13em;">
+          <option value="view">View posts</option>
+          <option value="edit">Edit posts</option>
+          <option value="add-fav">Add to favorites</option>
+          <option value="remove-fav">Remove from favorites</option>
+          <% if @current_user.is_privileged_or_higher? %>
+            <option value="rating-s">Rate safe</option>
+            <option value="rating-q">Rate questionable</option>
+            <option value="rating-e">Rate explicit</option>
+            <option value="vote-up">Vote up</option>
+            <option value="vote-down">Vote down</option>
+            <option value="lock-rating">Lock rating</option>
+            <option value="lock-note">Lock notes</option>
+            <option value="edit-tag-script">Edit tag script</option>
+            <option value="apply-tag-script">Apply tag script</option>
+          <% end %>
+          <% if @current_user.is_janitor_or_higher? %>
+            <option value="approve">Approve post</option>
+          <% end %>
+        </select>          
+      </form>
+    </div>
+    
+    <div id="blacklisted-sidebar" style="display: none; margin-bottom: 1em;">
+      <h5>
+        <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
+        <span id="blacklist-count" class="post-count"></span>
+      </h5>
+      <ul id="blacklisted-list" style="display: none;">
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 1em;">
+      <div id="sidebar-tags">
+        <%= print_tag_sidebar(params[:tags]) %>
+      </div>
+    </div>
+  </div>
+  <div class="content" <% if CONFIG["can_see_ads"].call(@current_user) %>style="width: 60%;"<% end %>>
+    <%= print_advertisement("horizontal") %>      
+    
+    <div id="quick-edit" style="display: none; margin-bottom: 1em;">
+      <h4>Edit Tags</h4>
+      <% form_tag(:action => "update") do %>
+        <%= hidden_field_tag "id", "" %>
+        <%= hidden_field_tag "post[old_tags]", "" %>
+        <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
+        <%= submit_tag "Update" %>
+        <%= button_to_function "Cancel", "$('quick-edit').hide()" %>
+      <% end %>
+    </div>
+
+    <%= render :partial => "post/posts", :locals => {:posts => @posts} %>
+
+    <% content_for("blacklist") do %>
+      Post.blacklist_options = { replace: false };
+    <% end %>
+
+    <div id="paginator">
+      <%= favorites_paginator(@posts) %>
+    </div>    
+  </div>
+  
+  <% if CONFIG["can_see_ads"].call(@current_user) %>
+    <%= render :partial => "static/jlist_rss_ads" %>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  var submit_quick_edit = function(e) {
+    $("quick-edit").hide()
+    new Ajax.Request("/post/update.json", {
+      parameters: $("quick-edit").down("form").serialize(),
+      onSuccess: function(resp) {
+        var resp = resp.responseJSON
+        notice("Post updated")
+        $("quick-edit").hide()
+        Post.register(resp.post)
+      },
+      onFailure: function(resp) {
+        var resp = resp.responseJSON
+        notice("Error: " + resp.reason)
+      }
+    })
+    e.stop()    
+  }
+  
+  $("quick-edit").down("form").observe("submit", submit_quick_edit)
+  $("post_tags").observe("keydown", function(e) {
+    if(e.keyCode != Event.KEY_RETURN)
+      return;
+    submit_quick_edit(e);
+    e.stop();
+  })
+  PostModeMenu.init()
+</script>
+
+<%= render :partial => "post/footer" %>

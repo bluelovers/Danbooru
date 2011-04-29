@@ -1,0 +1,28 @@
+<h1>Batch Create Aliases &amp; Implications</h1>
+
+<% form_tag(:action => "create_batch_alias_and_implication") do %>
+  <pre>
+    Use the following format:
+    
+    remove alias aaa -> bbb
+    remove implication aaa -> bbb
+    create alias aaa -> bbb
+    create implication aaa -> bbb
+  </pre>
+  
+  <div class="input">
+    <label>
+      Script
+    </label>
+    <%= text_area "batch", "text", :size => "60x20" %>
+  </div>
+  
+  <div class="input">
+    <label>
+      Forum ID
+    </label>
+    <%= text_field "batch", "forum_id" %>
+  </div>
+  
+  <%= submit_tag %>
+<% end %>

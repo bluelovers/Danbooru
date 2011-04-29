@@ -21,4 +21,20 @@ module FavoriteHelper
 
     return html
   end
+  
+  def favorites_paginator(posts)
+    html = []
+    page = params[:page].to_i
+    page = 1 if page < 1
+
+    if page > 1
+      html << link_to("<<", :action => "index", :page => page - 1, :user_id => params[:user_id])
+    end
+    
+    if posts.size == 20
+      html << link_to(">>", :action => "index", :page => page + 1, :user_id => params[:user_id])
+    end
+    
+    html.join(" ")
+  end
 end

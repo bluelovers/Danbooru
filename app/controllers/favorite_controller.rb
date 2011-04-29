@@ -2,7 +2,7 @@ class FavoriteController < ApplicationController
   layout "default"
   before_filter :blocked_only, :only => [:create, :destroy]
   verify :method => :post, :only => [:create, :destroy]
-  helper :post
+  helper :post, :advertisement
 
   def create
     begin
@@ -21,6 +21,14 @@ class FavoriteController < ApplicationController
     @current_user.delete_favorite(@post.id)
     @post.reload
     respond_to_success("Post removed", {:controller => "post", :action => "show", :id => @post.id}, :api => {:score => @post.score, :post_id => @post.id, :favorited_users => favorited_users_for_post(@post)})
+  end
+  
+  def index
+    user = User.find_by_id(params[:user_id]) || @current_user
+    params[:tags] = "fastfav:#{user.name}"
+    page = params[:page].to_i
+    offset = (page < 1) ? 0 : ((page - 1) * 20)
+    @posts = user.favorited_posts(20, offset)
   end
   
   def list_users
