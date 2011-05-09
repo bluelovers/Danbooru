@@ -96,6 +96,10 @@ class AnonymousUser
     false
   end
   
+  def favorited_posts
+    []
+  end
+  
   CONFIG["user_levels"].each do |name, value|
     normalized_name = name.downcase.gsub(/ /, "_")
 
