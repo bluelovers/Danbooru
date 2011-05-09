@@ -8,4 +8,8 @@ class StaticController < ApplicationController
   def state_of_danbooru
     render :layout => "default"
   end
+  
+  def clear_cache
+    Cache.delete(params[:key])
+  end
 end
