@@ -96,7 +96,7 @@ class AnonymousUser
     false
   end
   
-  def favorited_posts
+  def favorited_posts(*args)
     []
   end
   
